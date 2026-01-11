@@ -70,7 +70,7 @@
         .shape-square {
             width: 150px;
             height: 150px;
-            border: 2px solid #50cc31;
+            border: 2px solid #48e662;
             transform: rotate(45deg);
             bottom: 20%;
             left: 20%;
@@ -224,7 +224,7 @@
             font-family: 'Orbitron', monospace;
             font-size: 24px;
             font-weight: 900;
-            background: linear-gradient(45deg, #ffffff, #50cc31);
+            background: linear-gradient(45deg, #ffffff, #48e662);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -292,7 +292,7 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: linear-gradient(90deg, #ffffff, #50cc31);
+            background: linear-gradient(90deg, #ffffff, #48e662);
             transition: width 0.3s ease;
             box-shadow: 0 0 10px rgba(17, 168, 255, 0.8);
         }
@@ -469,9 +469,9 @@
 
         .glitch-text::after {
             animation: glitch-2 0.5s infinite;
-            color: #50cc31;
+            color: #48e662;
             z-index: -1;
-            text-shadow: 2px 0 #50cc31;
+            text-shadow: 2px 0 #48e662;
         }
 
         @keyframes glitch-1 {
@@ -533,8 +533,8 @@
         }
 
         .cta-primary {
-            background: linear-gradient(45deg, #ffffff, #50cc31);
-            color: white;
+            background: linear-gradient(45deg, #ffffff, #48e662);
+            color: rgb(59, 59, 59);
             animation: pulse 2s infinite;
             box-shadow: 0 0 30px rgba(17, 168, 255, 0.5);
         }
@@ -597,7 +597,7 @@
     font-weight: 900;
     text-align: center;
     margin-bottom: 60px;
-    background: linear-gradient(45deg, #ffffff, #50cc31);
+    background: linear-gradient(45deg, #ffffff, #48e662);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-transform: uppercase;
@@ -669,7 +669,7 @@
             font-family: 'Orbitron', monospace;
             font-size: 2rem;
             margin-bottom: 20px;
-            background: linear-gradient(45deg, #50cc31, #ffffff);
+            background: linear-gradient(45deg, #48e662, #ffffff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -715,14 +715,15 @@
             align-items: center;
         }
 
-        .about-text h2 {
-            font-family: 'Orbitron', monospace;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            background: linear-gradient(45deg, #ffffff, #50cc31);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+ .about-text h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    line-height: 1.2;
+    margin-bottom: 30px;
+    background: linear-gradient(45deg, #ffffff, #48e662);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
         .about-text p {
             line-height: 1.8;
@@ -766,7 +767,7 @@
             height: 80%;
             top: 10%;
             left: 10%;
-            border-color: #50cc31;
+            border-color: #48e662;
             animation: rotate 15s linear infinite reverse;
             box-shadow: 0 0 30px rgba(17, 168, 255, 0.5);
         }
@@ -786,7 +787,7 @@
             position: absolute;
             width: 100px;
             height: 100px;
-            background: linear-gradient(45deg, #ffffff, #50cc31);
+            background: linear-gradient(45deg, #ffffff, #48e662);
             opacity: 0.3;
             clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
         }
@@ -881,7 +882,7 @@
         .submit-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(45deg, #ffffff, #50cc31);
+            background: linear-gradient(45deg, #ffffff, #48e662);
             color: white;
             border: none;
             border-radius: 5px;
@@ -907,7 +908,7 @@
             font-family: 'Orbitron', monospace;
             font-size: 2rem;
             margin-bottom: 30px;
-            background: linear-gradient(45deg, #ffffff, #50cc31);
+            background: linear-gradient(45deg, #ffffff, #48e662);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -922,7 +923,7 @@
         .info-icon {
             width: 50px;
             height: 50px;
-            background: linear-gradient(45deg, #FFFFFF, #50cc31);
+            background: linear-gradient(45deg, #FFFFFF, #48e662);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1004,7 +1005,7 @@
         }
 
         .footer-links a:hover {
-            color: #50cc31;
+            color: #48e662;
             text-shadow: 0 0 10px currentColor;
         }
 
@@ -1020,7 +1021,7 @@
         }
 
         .copyright a:hover {
-            color: #50cc31;
+            color: #48e662;
             text-shadow: 0 0 10px currentColor;
         }
 
@@ -1194,7 +1195,7 @@
     font-size: clamp(1.2rem, 4vw, 1.6rem);
     font-weight: 700;
     margin-bottom: 16px;
-    background: linear-gradient(45deg, #ffffff, #50cc31);
+    background: linear-gradient(45deg, #ffffff, #48e662);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-family: 'Orbitron', monospace;
@@ -1218,7 +1219,7 @@
     content: '▸';
     position: absolute;
     left: 0;
-    color: #50cc31;
+    color: #48e662;
     font-size: 1.2rem;
 }
 
@@ -1245,4 +1246,29 @@ h4 {
 
 h1, h2, h3, h4 {
   line-height: 1.2;
+}
+/* Horizontal scroll wrapper */
+.scroll-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+/* Only the track should prevent wrapping */
+.scroll-track {
+    display: flex;
+    gap: 32px;
+    min-width: max-content;
+    padding: 20px;
+    white-space: nowrap;
+}
+
+/* Cards must be allowed to wrap text */
+.capability-card {
+    flex: 0 0 320px;
+    display: inline-block;
+    white-space: normal; /* restores wrapping */
 }
