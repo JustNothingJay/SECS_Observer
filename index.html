@@ -29,16 +29,30 @@
         <div class="nav-container">
             <a href="#home" class="logo-link">
                 <svg class="logo-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#FF5E00;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#00B2FF;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <polygon points="20,2 38,14 38,26 20,38 2,26 2,14" fill="none" stroke="url(#logoGradient)" stroke-width="2"/>
-                    <polygon points="20,8 32,16 32,24 20,32 8,24 8,16" fill="url(#logoGradient)" opacity="0.3"/>
-                    <circle cx="20" cy="20" r="3" fill="url(#logoGradient)"/>
-                </svg>
+    <defs>
+        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF5E00;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#00B2FF;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+
+    <!-- Outer ring -->
+    <circle cx="20" cy="20" r="18"
+        fill="none"
+        stroke="url(#logoGradient)"
+        stroke-width="2" />
+
+    <!-- Middle ring -->
+    <circle cx="20" cy="20" r="12"
+        fill="none"
+        stroke="url(#logoGradient)"
+        stroke-width="1.5"
+        opacity="0.4" />
+
+    <!-- Core (sovereign green) -->
+    <circle cx="20" cy="20" r="4"
+        fill="#50cc31" />
+</svg>
                 <span class="logo-text">SECS</span>
             </a>
             <ul class="nav-links" id="navLinks">
@@ -99,117 +113,87 @@
     </div>
 </section>
 
-   <!-- Features Section with Tabs -->
-<section class="features" id="features">
+<section class="capabilities-scroll" id="features">
     <h2 class="section-title">Sovereign Capabilities</h2>
 
-    <div class="features-container">
-
-        <div class="feature-tabs">
-            <div class="tab-item active" data-tab="performance">
-                <span class="tab-icon">⚡</span>
-                <span>Deterministic Performance</span>
-            </div>
-            <div class="tab-item" data-tab="security">
-                <span class="tab-icon">🔒</span>
-                <span>Governed Security</span>
-            </div>
-            <div class="tab-item" data-tab="network">
-                <span class="tab-icon">🌐</span>
-                <span>Continuity Network</span>
-            </div>
-            <div class="tab-item" data-tab="analytics">
-                <span class="tab-icon">📊</span>
-                <span>Propagation Analytics</span>
-            </div>
-            <div class="tab-item" data-tab="integration">
-                <span class="tab-icon">🔧</span>
-                <span>Doctrine Integration</span>
-            </div>
+    <div class="scroll-container">
+        <!-- Card 1 -->
+        <div class="capability-card">
+            <h3 class="card-title">⚡ Deterministic Performance</h3>
+            <ul class="feature-list">
+                <li>Deterministic execution paths</li>
+                <li>Continuity‑preserving compute cycles</li>
+                <li>Predictable propagation latency</li>
+                <li>Trace‑anchored performance guarantees</li>
+            </ul>
+            <p class="feature-blurb">
+                SECS Sovereign executes with governed precision. No randomness, no drift —
+                every operation follows a traceable, reproducible path through the substrate.
+            </p>
         </div>
 
-        <div class="feature-content">
+        <!-- Card 2 -->
+        <div class="capability-card">
+            <h3 class="card-title">🔒 Governed Security</h3>
+            <ul class="feature-list">
+                <li>Doctrine‑pluggable governance layers</li>
+                <li>Immutable state transitions</li>
+                <li>Truth‑condition enforcement at every boundary</li>
+                <li>Continuity‑aware anomaly detection</li>
+                <li>Zero‑trust substrate architecture</li>
+            </ul>
+            <p class="feature-blurb">
+                Security is not an add‑on — it is a doctrinal invariant. Every action, state,
+                and transition is governed, validated, and anchored in truth‑conditions.
+            </p>
+        </div>
 
-            <!-- PERFORMANCE -->
-            <div class="content-panel active" id="performance">
-                <h3>Deterministic Performance</h3>
-                <p>
-                    SECS Sovereign executes with governed precision. No randomness, no drift — 
-                    every operation follows a traceable, reproducible path through the substrate.
-                </p>
-                <ul class="feature-list">
-                    <li>Deterministic execution paths</li>
-                    <li>Continuity‑preserving compute cycles</li>
-                    <li>Predictable propagation latency</li>
-                    <li>Trace‑anchored performance guarantees</li>
-                </ul>
-            </div>
+        <!-- Card 3 -->
+        <div class="capability-card">
+            <h3 class="card-title">🌐 Continuity Network</h3>
+            <ul class="feature-list">
+                <li>Continuity‑preserving routing</li>
+                <li>Propagation‑aware synchronization</li>
+                <li>Cross‑surface determinism guarantees</li>
+                <li>Distributed substrate coherence</li>
+                <li>Fault‑tolerant continuity channels</li>
+            </ul>
+            <p class="feature-blurb">
+                A substrate‑level network designed for continuity, not chaos.
+                Every node participates in the same governed propagation model.
+            </p>
+        </div>
 
-            <!-- SECURITY -->
-            <div class="content-panel" id="security">
-                <h3>Governed Security</h3>
-                <p>
-                    Security is not an add‑on — it is a doctrinal invariant. 
-                    Every action, state, and transition is governed, validated, and anchored in truth‑conditions.
-                </p>
-                <ul class="feature-list">
-                    <li>Doctrine‑pluggable governance layers</li>
-                    <li>Immutable state transitions</li>
-                    <li>Truth‑condition enforcement at every boundary</li>
-                    <li>Continuity‑aware anomaly detection</li>
-                    <li>Zero‑trust substrate architecture</li>
-                </ul>
-            </div>
+        <!-- Card 4 -->
+        <div class="capability-card">
+            <h3 class="card-title">📊 Propagation Analytics</h3>
+            <ul class="feature-list">
+                <li>Propagation trace introspection</li>
+                <li>Continuity‑phase classification</li>
+                <li>Substrate telemetry overlays</li>
+                <li>Doctrine‑aligned signal extraction</li>
+                <li>Narrative closure diagnostics</li>
+            </ul>
+            <p class="feature-blurb">
+                Analytics in SECS Sovereign is not reporting — it is the study of propagation itself.
+                Every tick becomes a story, every story becomes lived history.
+            </p>
+        </div>
 
-            <!-- NETWORK -->
-            <div class="content-panel" id="network">
-                <h3>Continuity Network</h3>
-                <p>
-                    A substrate‑level network designed for continuity, not chaos. 
-                    Every node participates in the same governed propagation model.
-                </p>
-                <ul class="feature-list">
-                    <li>Continuity‑preserving routing</li>
-                    <li>Propagation‑aware synchronization</li>
-                    <li>Cross‑surface determinism guarantees</li>
-                    <li>Distributed substrate coherence</li>
-                    <li>Fault‑tolerant continuity channels</li>
-                </ul>
-            </div>
-
-            <!-- ANALYTICS -->
-            <div class="content-panel" id="analytics">
-                <h3>Propagation Analytics</h3>
-                <p>
-                    Analytics in SECS Sovereign is not reporting — it is 
-                    the study of propagation itself. Every tick becomes a story, 
-                    every story becomes lived history.
-                </p>
-                <ul class="feature-list">
-                    <li>Propagation trace introspection</li>
-                    <li>Continuity‑phase classification</li>
-                    <li>Substrate telemetry overlays</li>
-                    <li>Doctrine‑aligned signal extraction</li>
-                    <li>Narrative closure diagnostics</li>
-                </ul>
-            </div>
-
-            <!-- INTEGRATION -->
-            <div class="content-panel" id="integration">
-                <h3>Doctrine Integration</h3>
-                <p>
-                    Integration is not about APIs — it is about aligning external systems 
-                    with the Sovereign substrate’s invariants and truth‑conditions.
-                </p>
-                <ul class="feature-list">
-                    <li>Doctrine‑aligned interface contracts</li>
-                    <li>Propagation‑safe event ingestion</li>
-                    <li>Continuity‑aware adapters</li>
-                    <li>Substrate‑level interoperability</li>
-                    <li>Governed integration surfaces</li>
-                </ul>
-            </div>
-
+        <!-- Card 5 -->
+        <div class="capability-card">
+            <h3 class="card-title">🔧 Doctrine Integration</h3>
+            <ul class="feature-list">
+                <li>Doctrine‑aligned interface contracts</li>
+                <li>Propagation‑safe event ingestion</li>
+                <li>Continuity‑aware adapters</li>
+                <li>Substrate‑level interoperability</li>
+                <li>Governed integration surfaces</li>
+            </ul>
+            <p class="feature-blurb">
+                Integration is not about APIs — it is about aligning external systems
+                with the Sovereign substrate’s invariants and truth‑conditions.
+            </p>
         </div>
     </div>
 </section>
@@ -322,17 +306,35 @@
         <p>© <span id="year"></span> SECS Sovereign. All rights governed.</p>
     </div>
 </footer>
-
 <script>
     // Auto-update year
     document.getElementById('year').textContent = new Date().getFullYear();
 </script>
-
 <script>
-    // Auto-update year
-    document.getElementById('year').textContent = new Date().getFullYear();
-</script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll('.tab-item');
+    const panels = document.querySelectorAll('.content-panel');
 
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+
+            // Remove active from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Hide all panels
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            // Show the selected panel
+            const targetId = tab.getAttribute('data-tab');
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+        });
+    });
+});
+</script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
