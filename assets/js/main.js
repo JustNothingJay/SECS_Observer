@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+
     // -----------------------------
     // FLOATING PARTICLES
     // -----------------------------
@@ -188,22 +189,98 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 3000);
 
     // -----------------------------
-    // OPTIONAL: AUTO-LOOP SCROLL
+    // SOVEREIGN CAPABILITIES CAROUSEL
     // -----------------------------
-    const scrollContainer = document.querySelector('.scroll-container');
-    if (scrollContainer) {
-        setInterval(() => {
-            scrollContainer.scrollLeft += 1;
+    const track = document.querySelector('.carousel-track');
+    const leftBtn = document.querySelector('.left-btn');
+    const rightBtn = document.querySelector('.right-btn');
 
-            if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 1) {
-                scrollContainer.scrollLeft = 0;
+    if (track && leftBtn && rightBtn) {
+        const firstCard = track.querySelector('.capability-card');
+        if (firstCard) {
+            // Dynamically get the gap between cards from CSS
+            const cardStyle = window.getComputedStyle(firstCard.parentElement);
+            const gap = parseInt(cardStyle.gap) || 0;
+            const cardWidth = firstCard.offsetWidth + gap;
+            const originalCards = Array.from(track.children);
+
+            // Duplicate original cards for infinite loop
+            originalCards.forEach(card => {
+                const clone = card.cloneNode(true);
+                track.appendChild(clone);
+            });
+
+            let position = 0;
+            const totalOriginal = originalCards.length;
+
+            function updateActiveCard() {
+                const cards = track.querySelectorAll('.capability-card');
+                const viewportCenter = track.parentElement.offsetWidth / 2;
+
+                cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const cardCenter = rect.left + rect.width / 2;
+                    const distance = Math.abs(viewportCenter - cardCenter);
+
+                    if (distance < rect.width / 2) {
+                        card.classList.add('active');
+                    } else {
+                        card.classList.remove('active');
+                    }
+                });
             }
-        }, 30);
+
+            function moveLeft() {
+                position -= cardWidth;
+                track.style.transform = `translateX(${position}px)`;
+
+                if (Math.abs(position) >= (cardWidth * totalOriginal)) {
+                    position = 0;
+                    track.style.transform = `translateX(${position}px)`;
+                }
+
+                updateActiveCard();
+            }
+
+            function moveRight() {
+                position += cardWidth;
+                track.style.transform = `translateX(${position}px)`;
+
+                if (position > 0) {
+                    position = -(cardWidth * (totalOriginal - 1));
+                    track.style.transform = `translateX(${position}px)`;
+                }
+
+                updateActiveCard();
+            }
+
+            leftBtn.addEventListener('click', moveRight);
+            rightBtn.addEventListener('click', moveLeft);
+
+            updateActiveCard();
+
+            // AUTO-SCROLL WITH HOVER PAUSE
+            let autoScrollInterval;
+
+            function startAutoScroll() {
+                autoScrollInterval = setInterval(() => {
+                    rightBtn.click();
+                }, 7000); // adjust delay here
+            }
+
+            function stopAutoScroll() {
+                clearInterval(autoScrollInterval);
+            }
+
+            track.addEventListener('mouseenter', stopAutoScroll);
+            track.addEventListener('mouseleave', startAutoScroll);
+
+            startAutoScroll();
+        }
     }
 
     // -----------------------------
     // INIT PARTICLES
     // -----------------------------
     createParticles();
-
-});
+})
