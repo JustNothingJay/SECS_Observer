@@ -1,0 +1,26 @@
+app = "secs-observer"
+
+[build]
+  # Use the lightweight static image to serve files from the repository root.
+  image = "flyio/static"
+
+[env]
+  # Serve from repository root
+  FLY_STATIC_DIR = "."
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls","http"]
+    port = 443
+
+# Static assets should be cached aggressively by CDN. Configure caching rules
+# at the CDN layer (e.g. Cloudflare) or via a proxy. This image respects
+# common cache headers; for deterministic builds ensure hashed assets for long
+# cache TTLs.

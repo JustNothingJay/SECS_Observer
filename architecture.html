@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Architecture — SECS Sovereign</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="/">SECS Sovereign</a>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/doctrine.html">Doctrine</a>
+        <a href="/pricing.html">Pricing</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Architecture</h1>
+
+    <section>
+      <h2>Substrate</h2>
+      <p>The underlying Substrate runtime provides deterministic execution primitives and a modular runtime environment.</p>
+    </section>
+
+    <section>
+      <h2>Governed Lane</h2>
+      <p>A governed lane is subject to explicit governance actions for upgrades and policy changes.</p>
+    </section>
+
+    <section>
+      <h2>Ungoverned Lane</h2>
+      <p>Ungoverned lanes operate under fixed contracts where deterministic behavior is required without active governance.</p>
+    </section>
+
+    <section>
+      <h2>Telemetry Daemon</h2>
+      <p>Collects runtime metrics, publishes observability signals, and feeds the metrics API and cockpit dashboards.</p>
+    </section>
+
+    <section>
+      <h2>Orchestrator</h2>
+      <p>Coordinates continuity markers, checkpoints, and corrective flows across replicas.</p>
+    </section>
+
+    <section>
+      <h2>Metrics API</h2>
+      <p>Serves runtime telemetry for dashboards and external observability systems.</p>
+    </section>
+
+    <section>
+      <h2>Cockpit</h2>
+      <p>The public-facing observability UI is available at <a href="https://secscockpit.live" target="_blank" rel="noopener">secscockpit.live</a>.</p>
+    </section>
+
+    <section>
+      <h2>Continuity Markers</h2>
+      <p>Markers provide checkpoints that define narrative closure and replay points for deterministic reconciliation.</p>
+    </section>
+
+    <section>
+      <h2>Collapse Paths</h2>
+      <p>Defined strategies for safely collapsing or migrating state when required by governance or operational constraints.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container"><a href="/">Back</a></div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
