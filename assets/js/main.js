@@ -195,88 +195,65 @@ document.addEventListener("DOMContentLoaded", function () {
     const leftBtn = document.querySelector('.left-btn');
     const rightBtn = document.querySelector('.right-btn');
 
-    if (track && leftBtn && rightBtn) {
-        const firstCard = track.querySelector('.capability-card');
+    let cardWidth = 380;
+    let gap = 24;
+    let position = 0;
+
+    function recalcCardWidth() {
+        const firstCard = track ? track.querySelector('.capability-card') : null;
         if (firstCard) {
-            // Dynamically get the gap between cards from CSS
-            const cardStyle = window.getComputedStyle(firstCard.parentElement);
-            const gap = parseInt(cardStyle.gap) || 0;
-            const cardWidth = firstCard.offsetWidth + gap;
-            const originalCards = Array.from(track.children);
-
-            // Duplicate original cards for infinite loop
-            originalCards.forEach(card => {
-                const clone = card.cloneNode(true);
-                track.appendChild(clone);
-            });
-
-            let position = 0;
-            const totalOriginal = originalCards.length;
-
-            function updateActiveCard() {
-                const cards = track.querySelectorAll('.capability-card');
-                const viewportCenter = track.parentElement.offsetWidth / 2;
-
-                cards.forEach(card => {
-                    const rect = card.getBoundingClientRect();
-                    const cardCenter = rect.left + rect.width / 2;
-                    const distance = Math.abs(viewportCenter - cardCenter);
-
-                    if (distance < rect.width / 2) {
-                        card.classList.add('active');
-                    } else {
-                        card.classList.remove('active');
-                    }
-                });
-            }
-
-            function moveLeft() {
-                position -= cardWidth;
-                track.style.transform = `translateX(${position}px)`;
-
-                if (Math.abs(position) >= (cardWidth * totalOriginal)) {
-                    position = 0;
-                    track.style.transform = `translateX(${position}px)`;
-                }
-
-                updateActiveCard();
-            }
-
-            function moveRight() {
-                position += cardWidth;
-                track.style.transform = `translateX(${position}px)`;
-
-                if (position > 0) {
-                    position = -(cardWidth * (totalOriginal - 1));
-                    track.style.transform = `translateX(${position}px)`;
-                }
-
-                updateActiveCard();
-            }
-
-            leftBtn.addEventListener('click', moveRight);
-            rightBtn.addEventListener('click', moveLeft);
-
-            updateActiveCard();
-
-            // AUTO-SCROLL WITH HOVER PAUSE
-            let autoScrollInterval;
-
-            function startAutoScroll() {
-                autoScrollInterval = setInterval(() => {
-                    rightBtn.click();
-                }, 7000); // adjust delay here
-            }
-
-            function stopAutoScroll() {
-                clearInterval(autoScrollInterval);
-            }
-
-            track.addEventListener('mouseenter', stopAutoScroll);
-            track.addEventListener('mouseleave', startAutoScroll);
-
-            startAutoScroll();
+            cardWidth = firstCard.offsetWidth;
+            const cardStyle = window.getComputedStyle(track);
+            gap = parseInt(cardStyle.gap) || 24;
         }
+    }
+
+    function moveLeft() {
+        position -= (cardWidth + gap);
+        track.style.transform = `translateX(${position}px)`;
+        updateActiveCard();
+    }
+
+    function moveRight() {
+        position += (cardWidth + gap);
+        track.style.transform = `translateX(${position}px)`;
+        updateActiveCard();
+    }
+
+    function updateActiveCard() {
+        const cards = track.querySelectorAll('.capability-card');
+        const viewportCenter = track.parentElement.offsetWidth / 2;
+        cards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            const cardCenter = rect.left + rect.width / 2;
+            const distance = Math.abs(viewportCenter - cardCenter);
+            if (distance < rect.width / 2) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+    }
+
+    function resetCarousel() {
+        position = 0;
+        track.style.transform = `translateX(${position}px)`;
+        updateActiveCard();
+    }
+
+    if (track && leftBtn && rightBtn) {
+        recalcCardWidth();
+        leftBtn.addEventListener('click', moveLeft);
+        rightBtn.addEventListener('click', moveRight);
+        window.addEventListener('resize', () => {
+            recalcCardWidth();
+            resetCarousel();
+        });
+        window.addEventListener('orientationchange', () => {
+            recalcCardWidth();
+            resetCarousel();
+        });
+        updateActiveCard();
     }
 
     // -----------------------------
