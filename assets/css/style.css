@@ -236,6 +236,14 @@
             align-items: center;
         }
 
+/* Generic centered container used across pages */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
         .logo-link {
             display: flex;
             align-items: center;
