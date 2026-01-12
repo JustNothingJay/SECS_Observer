@@ -301,11 +301,10 @@ main {
         }
 
         .nav-links {
-            display: flex;
-            gap: 30px;
+            display: grid;
+            grid-template-columns: repeat(3, auto);
+            gap: 12px 30px;
             list-style: none;
-            flex: 1 1 auto;
-            flex-wrap: wrap;
             align-items: center;
             justify-content: center;
         }
@@ -328,6 +327,24 @@ main {
         @media (max-width: 1400px) {
             .nav-links { gap: 18px; }
             .nav-links a { padding: 6px 10px; font-size: 13px; }
+        }
+
+        /* Place marked items on second row to balance nav into two lines */
+        .nav-links .bottom {
+            grid-row: 2;
+        }
+
+        /* Fallback to a flex wrapped layout on narrow screens */
+        @media (max-width: 800px) {
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px 18px;
+                justify-content: center;
+            }
+            .nav-links .bottom {
+                grid-row: auto;
+            }
         }
 
         @media (max-width: 1100px) {
