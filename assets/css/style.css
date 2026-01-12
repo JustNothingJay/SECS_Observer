@@ -1075,6 +1075,19 @@ main.doctrinal-surface h2 {
             text-align: center;
         }
 
+        /* Ensure footer body text uses the same site font as the rest of the site */
+        .footer,
+        footer,
+        .footer p,
+        .footer a,
+        .footer li,
+        .footer .footer-tagline,
+        .footer .footer-container {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 400;
+            color: #FFFFFF;
+        }
+
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
