@@ -94,19 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // -----------------------------
-    // CONTACT FORM
-    // -----------------------------
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            alert('Message sent! We\'ll get back to you soon.');
-            this.reset();
-        });
-    }
-
-    // -----------------------------
+     // -----------------------------
     // HERO TEXT ROTATOR
     // -----------------------------
     const textSets = document.querySelectorAll('.text-set');
@@ -188,73 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }, 3000);
 
-    // -----------------------------
-    // SOVEREIGN CAPABILITIES CAROUSEL
-    // -----------------------------
-    const track = document.querySelector('.carousel-track');
-    const leftBtn = document.querySelector('.left-btn');
-    const rightBtn = document.querySelector('.right-btn');
 
-    let cardWidth = 380;
-    let gap = 24;
-    let position = 0;
-
-    function recalcCardWidth() {
-        const firstCard = track ? track.querySelector('.capability-card') : null;
-        if (firstCard) {
-            cardWidth = firstCard.offsetWidth;
-            const cardStyle = window.getComputedStyle(track);
-            gap = parseInt(cardStyle.gap) || 24;
-        }
-    }
-
-    function moveLeft() {
-        position -= (cardWidth + gap);
-        track.style.transform = `translateX(${position}px)`;
-        updateActiveCard();
-    }
-
-    function moveRight() {
-        position += (cardWidth + gap);
-        track.style.transform = `translateX(${position}px)`;
-        updateActiveCard();
-    }
-
-    function updateActiveCard() {
-        const cards = track.querySelectorAll('.capability-card');
-        const viewportCenter = track.parentElement.offsetWidth / 2;
-        cards.forEach(card => {
-            const rect = card.getBoundingClientRect();
-            const cardCenter = rect.left + rect.width / 2;
-            const distance = Math.abs(viewportCenter - cardCenter);
-            if (distance < rect.width / 2) {
-                card.classList.add('active');
-            } else {
-                card.classList.remove('active');
-            }
-        });
-    }
-
-    function resetCarousel() {
-        position = 0;
-        track.style.transform = `translateX(${position}px)`;
-        updateActiveCard();
-    }
-
-    if (track && leftBtn && rightBtn) {
-        recalcCardWidth();
-        leftBtn.addEventListener('click', moveLeft);
-        rightBtn.addEventListener('click', moveRight);
-        window.addEventListener('resize', () => {
-            recalcCardWidth();
-            resetCarousel();
-        });
-        window.addEventListener('orientationchange', () => {
-            recalcCardWidth();
-            resetCarousel();
-        });
-        updateActiveCard();
-    }
 
     // -----------------------------
     // INIT PARTICLES

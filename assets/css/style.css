@@ -655,7 +655,21 @@
         flex-direction: column;
         gap: 40px;
     }
+@media (max-width: 768px) {
+    .about-graphic {
+        width: 70vw;
+        height: 70vw;
+        max-width: 300px;
+        max-height: 300px;
+        margin: 0 auto;
+    }
 
+    .about-graphic::before,
+    .about-graphic::after {
+        width: 100%;
+        height: 100%;
+    }
+}
     /* Ensure second row collapses as info → picture */
     .about-content:nth-of-type(2) .about-visual {
         order: 2;
@@ -1041,7 +1055,7 @@
         
 
 .capabilities-scroll {
-    padding: 60px 20px;
+    padding: 20px;
     overflow-x: hidden;
 }
 
@@ -1070,7 +1084,9 @@
     font-family: 'Orbitron', monospace;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
+    text-align: center;
 }
 
 .feature-list {
@@ -1152,6 +1168,46 @@ h1, h2, h3, h4 {
         margin-right: auto;
     }
 }
+
+/* Responsive navbar: show hamburger and collapse links on small screens */
+@media (max-width: 900px) {
+    .menu-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(10,10,10,0.98);
+        flex-direction: column;
+        gap: 0;
+        padding: 10px 20px 20px;
+        border-bottom: 1px solid rgba(17,168,255,0.08);
+    }
+
+    .nav-links li {
+        width: 100%;
+        margin: 6px 0;
+    }
+
+    .nav-links a {
+        display: block;
+        width: 100%;
+        padding: 12px 16px;
+        opacity: 0.95;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    nav {
+        padding: 12px 20px;
+    }
+}
 /* --- Sovereign Capabilities Carousel --- */
 
 /* Outer container holding arrows + viewport */
@@ -1214,6 +1270,24 @@ h1, h2, h3, h4 {
     white-space: normal;
     overflow-wrap: break-word;
     word-wrap: break-word;
+    text-align: center;
+}
+
+.capability-card p,
+.capability-card .feature-blurb,
+.capability-card ul,
+.capability-card li {
+    text-align: center;
+}
+
+/* Remove list markers inside capability cards (small left-side bullets) */
+.capability-card .feature-list {
+    padding-left: 0;
+}
+
+.capability-card .feature-list li::before {
+    content: none;
+    display: none;
 }
 
 /* Arrow buttons */
@@ -1263,7 +1337,9 @@ h1, h2, h3, h4 {
     font-family: 'Orbitron', monospace;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
+    text-align: center;
 }
 
 /* Feature list */
@@ -1323,15 +1399,5 @@ h1, h2, h3, h4 {
     .about-graphic-alt {
         margin-left: auto;
         margin-right: auto;
-    }
-}
-@media (max-width: 768px) {
-    .capability-card-wrapper {
-        flex: 0 0 100%;
-        max-width: 100%;
-        width: 100%;
-    }
-    .carousel-track {
-        gap: 20px;
     }
 }

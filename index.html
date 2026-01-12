@@ -59,7 +59,7 @@
                 <li><a href="#SECS" class="nav-link">SECS</a></li>
                 <li><a href="#quick-secs" class="nav-link">Quick SECS</a></li>
                 <li><a href="#secs-explained" class="nav-link">SECS Explained</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
+
             </ul>
             <div class="menu-toggle" id="menuToggle">
                 <span></span>
@@ -432,127 +432,85 @@
     // Auto-update year
     document.getElementById('year').textContent = new Date().getFullYear();
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const tabs = document.querySelectorAll('.tab-item');
-    const panels = document.querySelectorAll('.content-panel');
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-
-            // Remove active from all tabs
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
-            // Hide all panels
-            panels.forEach(panel => panel.classList.remove('active'));
-
-            // Show the selected panel
-            const targetId = tab.getAttribute('data-tab');
-            const targetPanel = document.getElementById(targetId);
-            if (targetPanel) {
-                targetPanel.classList.add('active');
-            }
-        });
-    });
-});
-</script>
 <script src="assets/js/main.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
     const track = document.querySelector('.carousel-track');
     const leftBtn = document.querySelector('.left-btn');
     const rightBtn = document.querySelector('.right-btn');
+    const cards = Array.from(track.querySelectorAll('.capability-card'));
 
-    if (!track || !leftBtn || !rightBtn) return;
+    if (!track || cards.length === 0) return;
 
-    // Measure card width AFTER render
-    const firstCard = track.querySelector('.capability-card');
-    const cardWidth = firstCard.offsetWidth + 40; // includes gap
+    let currentIndex = 0;
 
-    // Duplicate original cards for infinite loop
-    const originalCards = Array.from(track.children);
-    originalCards.forEach(card => {
-        const clone = card.cloneNode(true);
-        track.appendChild(clone);
-    });
-
-    let position = 0;
-    const totalOriginal = originalCards.length;
-
-    function moveLeft() {
-        position -= cardWidth;
-        track.style.transform = `translateX(${position}px)`;
-
-        // Reset when passing halfway
-        if (Math.abs(position) >= (cardWidth * totalOriginal)) {
-            position = 0;
-            track.style.transform = `translateX(${position}px)`;
-        }
-
-        updateActiveCard();
+    /* --- Height anchoring (no more jumps) --- */
+    function lockCarouselHeight() {
+        const viewport = document.querySelector('.carousel-viewport');
+        const maxHeight = Math.max(...cards.map(c => c.getBoundingClientRect().height));
+        viewport.style.height = `${maxHeight}px`;
     }
 
-    function moveRight() {
-        position += cardWidth;
-        track.style.transform = `translateX(${position}px)`;
+    /* --- Centering logic (measured, not assumed) --- */
+    function centerCard(index) {
+        const card = cards[index];
+        const trackRect = track.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
 
-        // Reset when going too far right
-        if (position > 0) {
-            position = -(cardWidth * (totalOriginal - 1));
-            track.style.transform = `translateX(${position}px)`;
-        }
+        const trackCenter = trackRect.width / 2;
+        const cardCenter = (cardRect.left - trackRect.left) + (cardRect.width / 2);
 
-        updateActiveCard();
+        const offset = cardCenter - trackCenter;
+
+        track.style.transform = `translateX(${-offset}px)`;
+        updateActiveCard(index);
     }
 
-    leftBtn.addEventListener('click', moveRight);
-    rightBtn.addEventListener('click', moveLeft);
-
-    // Center-card zoom logic
-    function updateActiveCard() {
-        const cards = track.querySelectorAll('.capability-card');
-        const viewportCenter = track.parentElement.offsetWidth / 2;
-
-        cards.forEach(card => {
-            const rect = card.getBoundingClientRect();
-            const cardCenter = rect.left + rect.width / 2;
-            const distance = Math.abs(viewportCenter - cardCenter);
-
-            if (distance < rect.width / 2) {
-                card.classList.add('active');
-            } else {
-                card.classList.remove('active');
-            }
+    /* --- Active card glow --- */
+    function updateActiveCard(index) {
+        cards.forEach((card, i) => {
+            card.classList.toggle('active', i === index);
         });
     }
 
-    updateActiveCard();
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const track = document.querySelector('.carousel-track');
-    if (!track) return;
-
-    let autoScrollInterval;
-
-    function startAutoScroll() {
-        autoScrollInterval = setInterval(() => {
-            const rightBtn = document.querySelector('.right-btn');
-            if (rightBtn) rightBtn.click();
-        }, 7000); // every 7 seconds
+    /* --- Navigation --- */
+    function moveNext() {
+        currentIndex = (currentIndex + 1) % cards.length;
+        centerCard(currentIndex);
     }
 
+    function movePrev() {
+        currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+        centerCard(currentIndex);
+    }
+
+    leftBtn.addEventListener('click', movePrev);
+    rightBtn.addEventListener('click', moveNext);
+
+    /* --- Auto-scroll --- */
+    let autoScrollInterval;
+    function startAutoScroll() {
+        autoScrollInterval = setInterval(moveNext, 7000);
+    }
     function stopAutoScroll() {
         clearInterval(autoScrollInterval);
     }
 
-    // Pause on hover
     track.addEventListener('mouseenter', stopAutoScroll);
     track.addEventListener('mouseleave', startAutoScroll);
 
+    /* --- Init --- */
+    lockCarouselHeight();
+    centerCard(currentIndex);
     startAutoScroll();
+
+    window.addEventListener('resize', () => {
+        lockCarouselHeight();
+        centerCard(currentIndex);
+    });
+
 });
 </script>
 </body>
