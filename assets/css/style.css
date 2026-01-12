@@ -1,5 +1,20 @@
 @charset "utf-8";
 
+@media (max-width: 720px) {
+    .nowrap-mobile {
+        white-space: nowrap;
+    }
+}
+@media (max-width: 720px) {
+    .mobile-br {
+        display: inline;
+    }
+}
+
+.mobile-br {
+    display: none;
+}
+
 /* CSS Document */
 
 * {
@@ -381,14 +396,18 @@ main {
         }
 
         /* Reduce spacing when many items cause wrapping */
-        @media (max-width: 1400px) {
-            .nav-links { gap: 18px; }
-            .nav-links a { padding: 6px 10px; font-size: 13px; }
+        @media (max-width: 720px) {
+            .nowrap-mobile {
+                white-space: nowrap;
+                display: inline-block;
+            }
+            .mobile-br {
+                display: block;
+            }
         }
-
         /* Place marked items on second row to balance nav into two lines */
-        .nav-links .bottom {
-            grid-row: 2;
+        .mobile-br {
+            display: none;
         }
 
         /* Fallback to a flex wrapped layout on narrow screens */
