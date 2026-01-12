@@ -257,11 +257,12 @@ main {
 
 /* Nav offset utility: apply to pages where content should start below fixed navbar */
 :root {
-    --nav-offset: 90px;
+    --nav-offset: 110px;
 }
 
 .with-nav-offset {
-    padding-top: var(--nav-offset);
+    padding-top: calc(var(--nav-offset) + 8px);
+    padding-bottom: 48px;
 }
 
         .logo-link {
