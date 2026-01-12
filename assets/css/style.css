@@ -1459,6 +1459,16 @@ h1, h2, h3, h4 {
     .when-secs-label { font-size: 0.85rem; letter-spacing: 0.12em; }
 }
 
+/* Utility: visually hidden (accessible, remains in DOM for screen readers) */
+.visually-hidden {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+    border: 0; padding: 0; margin: -1px;
+}
+
 /* Final override: ensure capability-card feature lists never show markers */
 .capability-card .feature-list {
     padding-left: 0 !important;
