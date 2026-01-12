@@ -1329,6 +1329,29 @@ h1, h2, h3, h4 {
     color: #00eaff;
 }
 
+/* Grid: two columns, collapse to one on small screens */
+.secsy-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* Header should span full width and be centered */
+.secsy-header {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Ensure glitch title centers */
+.secsy-header .glitch-title {
+    margin: 0 auto 8px auto;
+    width: 100%;
+}
+
 /* Gradient Accent Cards */
 .secsy-card {
     background: rgba(255,255,255,0.02);
@@ -1357,6 +1380,66 @@ h1, h2, h3, h4 {
     .glitch-title {
         font-size: clamp(1.8rem, 8vw, 3rem);
     }
+}
+
+/* Layout: two columns on desktop, single column on mobile */
+.secsy-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    gap: 24px;
+    align-items: start;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.secsy-header {
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 720px) {
+    .secsy-grid {
+        grid-template-columns: 1fr;
+    }
+    .secsy-header {
+        grid-column: auto;
+        text-align: left;
+    }
+}
+
+/* Compact label added to page headers: centered, subtle glitch */
+.when-secs-label {
+    display: block;
+    text-align: center;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+.when-secs-label::before,
+.when-secs-label::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    opacity: 0.12;
+    pointer-events: none;
+}
+.when-secs-label::before {
+    color: #ff008c;
+    transform: translateX(calc(-50% + 2px));
+}
+.when-secs-label::after {
+    color: #00eaff;
+    transform: translateX(calc(-50% - 2px));
+}
+
+@media (max-width: 720px) {
+    .when-secs-label { font-size: 0.85rem; letter-spacing: 0.12em; }
 }
 
 /* Final override: ensure capability-card feature lists never show markers */
