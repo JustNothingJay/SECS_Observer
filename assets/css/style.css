@@ -244,6 +244,26 @@
     box-sizing: border-box;
 }
 
+:root {
+    /* Height to offset main content below the fixed navbar. Adjust if navbar size changes. */
+    --nav-offset: 88px;
+}
+
+/* Ensure main content begins below the navbar and has some bottom breathing room */
+main {
+    padding-top: var(--nav-offset);
+    padding-bottom: 40px;
+}
+
+/* Nav offset utility: apply to pages where content should start below fixed navbar */
+:root {
+    --nav-offset: 90px;
+}
+
+.with-nav-offset {
+    padding-top: var(--nav-offset);
+}
+
         .logo-link {
             display: flex;
             align-items: center;
