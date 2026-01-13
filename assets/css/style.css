@@ -1,3 +1,4 @@
+@charset "utf-8";
 /* Ensure anchor targets are visible below fixed navbar */
 .hero,
 #quick-secs,
@@ -5,7 +6,6 @@
 #secsy {
     scroll-margin-top: var(--nav-offset);
 }
-@charset "utf-8";
 
 @media (max-width: 720px) {
     .nowrap-mobile {
