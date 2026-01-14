@@ -209,20 +209,12 @@
     </main>
 
     <!-- Footer -->
- <footer class="footer">
-<div id="footer"></div>
-<script>
-  fetch('/footer.html')
-    .then(r => r.text())
-    .then(html => document.getElementById('footer').innerHTML = html);
-</script>
-        <p>© <span id="year"></span> SECS Sovereign. All rights governed.</p>
-    </div>
-</footer>
-
-<script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-</script>
+    <div id="footer"></div>
+    <script>
+      fetch('/footer.html')
+        .then(r => r.text())
+        .then(html => document.getElementById('footer').innerHTML = html);
+    </script>
 
     <script src="assets/js/main.js?v=3"></script>
 </body>

@@ -93,16 +93,13 @@
     </main>
 
     <!-- Footer -->
-   
-
-    <div class="footer-bottom">
-    <!-- Universal Footer Include -->
     <div id="footer"></div>
     <script>
       fetch('/footer.html')
         .then(r => r.text())
         .then(html => document.getElementById('footer').innerHTML = html);
     </script>
+
     <script src="assets/js/main.js?v=3"></script>
 </body>
 </html>
