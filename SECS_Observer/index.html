@@ -474,17 +474,14 @@
 </section>
 
 <!-- Footer -->
-<footer class="footer">
-    <div class="footer-container">
+<div id="footer"></div>
+<script>
+  fetch('/footer.html')
+    .then(r => r.text())
+    .then(html => document.getElementById('footer').innerHTML = html);
+</script>
 
-        <div class="footer-section">
-            <div id="footer"></div>
-            <script>
-              fetch('/footer.html')
-                .then(r => r.text())
-                .then(html => document.getElementById('footer').innerHTML = html);
-            </script>
-<script src="assets/js/main.js?v=2"></script>
+<script src="assets/js/main.js?v=3"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
