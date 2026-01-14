@@ -105,9 +105,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function wrapTextInSpans(element) {
         const text = element.textContent;
-        element.innerHTML = text.split('').map((char, i) =>
-            `<span class="char" style="animation-delay: ${i * 0.05}s">${char === ' ' ? '&nbsp;' : char}</span>`
-        ).join('');
+        const words = text.split(' ');
+        let charIndex = 0;
+        element.innerHTML = words.map(word => {
+            const wordSpans = word.split('').map((char, i) => {
+                const span = `<span class="char" style="animation-delay: ${(charIndex + i) * 0.05}s">${char}</span>`;
+                return span;
+            }).join('');
+            charIndex += word.length + 1; // +1 for the space
+            return `<span class="word">${wordSpans}</span>`;
+        }).join(' ');
     }
 
     function animateTextIn(textSet) {

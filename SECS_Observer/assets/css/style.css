@@ -623,6 +623,11 @@ main {
             animation: charFlyIn 0.5s ease-out forwards;
         }
 
+        .word {
+            display: inline-block;
+            white-space: nowrap;
+        }
+
         @keyframes charFlyIn {
             to {
                 opacity: 1;
