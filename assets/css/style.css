@@ -1,4 +1,16 @@
-@charset "utf-8";
+/* Add 1.5em spacing before paragraphs in sections for all subpages except index.html */
+body:not(.index) section p + p {
+    margin-top: 1.5em;
+}
+
+/* For doctrine-card and similar subpage sections, ensure spacing even if not consecutive */
+body:not(.index) section p {
+    margin-top: 1.5em;
+}
+body:not(.index) section p:first-child {
+    margin-top: 0;
+}
+
 
 /* Ensure anchor targets are visible below fixed navbar */
 .hero,
