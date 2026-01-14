@@ -1,4 +1,5 @@
 @charset "utf-8";
+
 /* Ensure anchor targets are visible below fixed navbar */
 .hero,
 #quick-secs,
@@ -7,41 +8,76 @@
     scroll-margin-top: var(--nav-offset);
 }
 
+/* Updated glitch-text - consolidated */
 .glitch-text {
+    font-family: 'Orbitron', monospace;
     font-size: clamp(2rem, 8vw, 5rem);
-    line-height: 1.05;
-    word-break: normal;
-    hyphens: auto;
+    font-weight: 900;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 20px rgba(17, 168, 255, 0.5);
+    overflow: hidden;
+    line-height: 1.15;
+    word-break: break-all;
+    overflow-wrap: normal;
+    hyphens: none;
 }
 
-
-
-@media (max-width: 600px) {
+@media (max-width: 720px) {
     .glitch-text {
         font-size: clamp(1.8rem, 10vw, 3.2rem);
+        line-height: 1.2;
     }
-    .mobile-br {
-        display: inline;
-    }
-}
-
-@media (max-width: 720px) {
+    
     .nowrap-mobile {
         white-space: nowrap;
+        display: inline-block;
     }
-}
-@media (max-width: 720px) {
+    
     .mobile-br {
-        display: inline;
+        display: block;
+        height: 0;
     }
 }
- vv/00 c t cf cdt
 
-.mobile-br {
-    display: none;
+@media (max-width: 480px) {
+    .glitch-text {
+        font-size: clamp(1.6rem, 9vw, 2.8rem);
+    }
 }
 
-/* CSS Document */
+@media (min-width: 721px) {
+    .mobile-br {
+        display: none;
+    }
+}
+
+.subtitle {
+    font-size: clamp(1rem, 3.5vw, 1.5rem);
+    margin: 20px 0;
+    opacity: 0;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-weight: 300;
+    padding: 0 1rem;
+}
+
+.text-rotator {
+    position: relative;
+    min-height: 120px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+@media (max-width: 720px) {
+    .text-rotator {
+        min-height: 100px;
+    }
+}
 
 * {
             margin: 0;
@@ -566,17 +602,6 @@ main {
             display: block;
         }
 
-        .glitch-text {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(0.98rem, 2.94vw, 2.4rem);
-            font-weight: 900;
-            position: relative;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            text-shadow: 0 0 20px rgba(17, 168, 255, 0.5);
-            overflow: hidden;
-        }
-
         .char {
             display: inline-block;
             opacity: 0;
@@ -629,16 +654,6 @@ main {
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .glitch-text {
-            font-family: 'Orbitron', monospace;
-            font-size: clamp(2.6rem, 10vw, 3.8rem);
-            font-weight: 900;
-            position: relative;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            text-shadow: 0 0 20px rgba(17, 168, 255, 0.5);
         }
 
         .glitch-text::before,
@@ -1811,5 +1826,23 @@ h1, h2, h3, h4 {
     .about-graphic-alt {
         margin-left: auto;
         margin-right: auto;
+    }
+}
+@media (max-width: 720px) {
+    .glitch-text {
+        white-space: normal !important;
+    }
+    
+    .glitch-text .nowrap-mobile {
+        white-space: nowrap !important;
+        display: inline !important;
+    }
+    
+    .glitch-text .mobile-br {
+        display: block !important;
+    }
+    
+    .glitch-text .mobile-br br {
+        display: none;
     }
 }
