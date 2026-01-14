@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="SECS Sovereign — deterministic substrate, governed continuity, and truth-aligned computation.">
+  <title>Doctrinal SECS — SECS Sovereign</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css?v=4">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="canonical" href="https://secs.observer/">
+        <!-- Google Analytics (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-667KK00S7H');
+        </script>
+</head>
+
+<body>
+
+    <!-- Background Surfaces -->
+    <div class="grid-bg"></div>
+    <div class="gradient-overlay"></div>
+    <div class="scanlines"></div>
+
+    <!-- Animated Shapes -->
+    <div class="shapes-container">
+        <div class="shape shape-circle"></div>
+        <div class="shape shape-triangle"></div>
+        <div class="shape shape-square"></div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div id="particles"></div>
+
+    <!-- Navigation -->
+    <div id="nav"></div>
+        <script>
+            fetch('/nav.html')
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('nav').innerHTML = html;
+                    if (window.initMenuToggle) window.initMenuToggle();
+                });
+        </script>
+    </script>
+
+    <!-- Doctrinal Surface -->
+    <main class="container doctrinal-surface with-nav-offset">
+
+        <h1 class="doctrine-title">Doctrinal SECS</h1>
+        <p class="doctrine-subtitle">
+            The doctrinal substrate that shapes behaviour, guarantees determinism, and anchors the Sovereign system.
+        </p>
+
+        <div class="doctrine-grid">
+
+            <section class="secsy-card">
+                <h2>Continuity</h2>
+                <p>Continuity ensures a verifiable, auditable progression of state across execution windows so systems can be reconciled deterministically.</p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Deterministic Propagation</h2>
+                <p>Deterministic propagation means identical inputs produce identical state transitions, enabling reproducibility and low‑drift replication.</p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Governance</h2>
+                <p>Governance defines how changes to governed lanes are proposed, reviewed, and enacted — keeping the substrate aligned with stakeholder intent.</p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Zero‑Drift</h2>
+                <p>Zero‑drift is the commitment that, barring explicit governance changes, system state remains synchronized across replicas.</p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Narrative Closure</h2>
+                <p>Narrative closure defines how episodes of activity are concluded and archived as part of the continuity model.</p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Doctrine as Foundation</h2>
+                <p>The doctrine is the philosophical substrate that guides design choices, operational guarantees, and the project’s public commitments.</p>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+   
+
+    <div class="footer-bottom">
+    <!-- Universal Footer Include -->
+    <div id="footer"></div>
+    <script>
+      fetch('/footer.html')
+        .then(r => r.text())
+        .then(html => document.getElementById('footer').innerHTML = html);
+    </script>
+    <script src="assets/js/main.js?v=3"></script>
+</body>
+</html>

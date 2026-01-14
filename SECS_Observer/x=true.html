@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SECS Sovereign — deterministic substrate, governed continuity, and truth-aligned computation.">
+    <title>x = true — SECS Sovereign</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css?v=4">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="canonical" href="https://secs.observer/">
+</head>
+
+<body>
+
+    <!-- Background Surfaces -->
+    <div class="grid-bg"></div>
+    <div class="gradient-overlay"></div>
+    <div class="scanlines"></div>
+
+    <!-- Animated Shapes -->
+    <div class="shapes-container">
+        <div class="shape shape-circle"></div>
+        <div class="shape shape-triangle"></div>
+        <div class="shape shape-square"></div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div id="particles"></div>
+
+    <!-- Navigation Include -->
+    <div id="nav"></div>
+    <script>
+        fetch('/nav.html')
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById('nav').innerHTML = html;
+                if (window.initMenuToggle) window.initMenuToggle();
+            });
+    </script>
+
+    <!-- x = true Surface -->
+    <main class="container doctrinal-surface with-nav-offset">
+
+        <h1 class="doctrine-title">x = true</h1>
+        <p class="doctrine-subtitle">
+            The physics‑level validation of SECS Sovereign — the truth‑conditions, invariants, 
+            and computational laws the substrate must satisfy to exist as itself.
+        </p>
+
+        <div class="doctrine-grid">
+
+            <section class="secsy-card">
+                <h2>Truth‑Condition Execution</h2>
+                <p>
+                    SECS Sovereign executes only when all declared truth‑conditions hold. 
+                    If any invariant is violated, execution collapses deterministically. 
+                    This ensures the substrate never enters an undefined or probabilistic state.
+                </p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Determinism Envelope</h2>
+                <p>
+                    The substrate guarantees identical outputs for identical governed inputs 
+                    across all time, load, and topology. This is not statistical determinism — 
+                    it is exact determinism within the declared resolution of the system.
+                </p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Collapse Correctness</h2>
+                <p>
+                    Divergence is not tolerated. When behaviour deviates from the governed path, 
+                    the substrate isolates, collapses, and restores invariants. Collapse is a 
+                    correctness mechanism, not an error state.
+                </p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Purity Preservation</h2>
+                <p>
+        
+
+                    cannot survive execution. The substrate rejects impurity at the boundary 
+                    before it can propagate.
+                </p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Compliance With Computational Laws</h2>
+                <p>
+                    SECS Sovereign adheres to foundational computer science laws: 
+                    deterministic state transitions, referential transparency within governed mode, 
+                    and invariant‑preserving execution semantics.
+                </p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Identity‑Free Fairness</h2>
+                <p>
+                    Fairness is enforced without identity, tenancy, or routing metadata. 
+                    The substrate evaluates behaviour, not actors, ensuring deterministic fairness 
+                    without probabilistic heuristics.
+                </p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Topology‑Free Execution</h2>
+                <p>
+                    Execution is invariant across worker topologies. No noisy neighbours, 
+                    no scheduler heuristics, no locality bias. Behaviour remains identical 
+                    regardless of physical layout.
+                </p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Invariant Timing</h2>
+                <p>
+                    Timing envelopes remain stable across load and time. The substrate’s 
+                    timing behaviour is deterministic, measurable, and validated continuously 
+                    through the Permatest Beacon.
+                </p>
+            </section>
+
+            <section class="secsy-card">
+                <h2>Non‑Forkability</h2>
+                <p>
+                    The substrate cannot be cloned or imitated. Its guarantees emerge from 
+                    doctrine, invariants, and collapse rules — not configuration. 
+                    Partial replication is impossible.
+                </p>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+<footer class="footer">
+<div id="footer"></div>
+<script>
+  fetch('/footer.html')
+    .then(r => r.text())
+    .then(html => document.getElementById('footer').innerHTML = html);
+</script>
+        <p>© <span id="year"></span> SECS Sovereign. All rights governed.</p>
+    </div>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+    <script src="assets/js/main.js?v=3"></script>
+</body>
+</html>
