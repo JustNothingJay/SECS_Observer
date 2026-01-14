@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="SECS Sovereign — deterministic substrate, governed continuity, and truth-aligned computation.">
   <title>x = true — SECS Sovereign</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -116,9 +117,13 @@
                 <p>
         <div id="nav"></div>
         <script>
-          fetch('/nav.html')
-            .then(r => r.text())
-            .then(html => document.getElementById('nav').innerHTML = html);
+            fetch('/nav.html')
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('nav').innerHTML = html;
+                    if (window.initMenuToggle) window.initMenuToggle();
+                });
+        </script>
         </script>
                     cannot survive execution. The substrate rejects impurity at the boundary 
                     before it can propagate.

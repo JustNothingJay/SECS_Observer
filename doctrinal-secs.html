@@ -38,10 +38,14 @@
 
     <!-- Navigation -->
     <div id="nav"></div>
-    <script>
-      fetch('/nav.html')
-        .then(r => r.text())
-        .then(html => document.getElementById('nav').innerHTML = html);
+        <script>
+            fetch('/nav.html')
+                .then(r => r.text())
+                .then(html => {
+                    document.getElementById('nav').innerHTML = html;
+                    if (window.initMenuToggle) window.initMenuToggle();
+                });
+        </script>
     </script>
 
     <!-- Doctrinal Surface -->

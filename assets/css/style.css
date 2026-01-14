@@ -7,6 +7,24 @@
     scroll-margin-top: var(--nav-offset);
 }
 
+.glitch-text {
+    font-size: clamp(2rem, 8vw, 5rem);
+    line-height: 1.05;
+    word-break: normal;
+    hyphens: auto;
+}
+
+
+
+@media (max-width: 600px) {
+    .glitch-text {
+        font-size: clamp(1.8rem, 10vw, 3.2rem);
+    }
+    .mobile-br {
+        display: inline;
+    }
+}
+
 @media (max-width: 720px) {
     .nowrap-mobile {
         white-space: nowrap;
@@ -17,6 +35,7 @@
         display: inline;
     }
 }
+ vv/00 c t cf cdt
 
 .mobile-br {
     display: none;
@@ -1601,9 +1620,12 @@ h1, h2, h3, h4 {
     }
 
     .nav-links.active {
-        display: flex;
-        max-height: 400px;
-        opacity: 1;
+           display: flex;
+           max-height: 70vh;
+           opacity: 1;
+           overflow-y: auto;
+           overscroll-behavior: contain;
+           -webkit-overflow-scrolling: touch;
     }
 
     nav {
