@@ -862,6 +862,7 @@ h1, h2, h3, h4, h5 {
     border-radius: 6px;
     color: var(--text-primary);
     transition: all 0.15s ease;
+    cursor: pointer;
 }
 .paper-card:hover {
     background: rgba(255,255,255,0.03);
@@ -879,6 +880,143 @@ h1, h2, h3, h4, h5 {
 .paper-title {
     font-size: 0.9rem;
     line-height: 1.5;
+    flex: 1;
+}
+.paper-badge {
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+.paper-card:hover .paper-badge {
+    color: var(--accent-orange);
+    border-color: rgba(255,94,0,0.3);
+    background: rgba(255,94,0,0.08);
+}
+
+/* ── Research Section Nav ──────────────────────────────────────────── */
+.research-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 40px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+}
+.research-nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    text-decoration: none;
+}
+.research-nav a:hover {
+    color: var(--accent-blue);
+    background: rgba(0,178,255,0.08);
+    text-decoration: none;
+}
+
+/* ── Paper Preview Modal ───────────────────────────────────────────── */
+.paper-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+.paper-modal.active { display: flex; align-items: center; justify-content: center; }
+.paper-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+}
+.paper-modal-content {
+    position: relative;
+    background: #111216;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    max-width: 560px;
+    width: 90%;
+    padding: 28px 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: modalIn 0.15s ease-out;
+}
+@keyframes modalIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.paper-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+}
+.paper-modal-close:hover { color: var(--text-light); }
+.paper-modal-title {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    line-height: 1.4;
+    margin: 0 0 16px;
+    padding-right: 24px;
+}
+.paper-modal-abstract {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin: 0 0 24px;
+}
+.paper-modal-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.paper-modal-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-orange), #e04800);
+    padding: 10px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+.paper-modal-download:hover {
+    text-decoration: none;
+    color: #fff;
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 767px) {
+    .paper-modal-content { padding: 20px; }
+    .paper-modal-title { font-size: 1rem; }
+    .research-nav { gap: 4px; padding: 8px 10px; }
+    .research-nav a { font-size: 0.65rem; padding: 5px 10px; }
 }
 
 /* ── Animations (animate.css overrides for dark) ───────────────────── */
