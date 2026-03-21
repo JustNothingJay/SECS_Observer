@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="SECS Timeline — Milestones, achievements, and announcements from the first 90 days of SECS Sovereign.">
+    <title>SECS — Timeline</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="canonical" href="https://secs.observer/timeline.html">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-667KK00S7H');
+    </script>
+</head>
+<body>
+
+    <header class="site-header container animated fadeInDown">
+        <div class="header-wrapper">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="site-branding">
+                        <a href="index.html">
+                            <svg class="logo-svg" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                                <defs><linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#FF5E00"/><stop offset="100%" style="stop-color:#00B2FF"/></linearGradient></defs>
+                                <circle cx="20" cy="20" r="18" fill="none" stroke="url(#logoGrad)" stroke-width="2"/>
+                                <circle cx="20" cy="20" r="12" fill="none" stroke="url(#logoGrad)" stroke-width="1.5" opacity="0.4"/>
+                                <circle cx="20" cy="20" r="4" fill="#48e662"/>
+                            </svg>
+                            <h1>SECS</h1>
+                        </a>
+                    </div>
+                </div>
+                <a href="#" class="toggle-nav hidden-md hidden-lg"><i class="fa fa-bars"></i></a>
+                <div class="col-md-9">
+                    <nav id="nav" class="main-navigation hidden-xs hidden-sm">
+                        <ul class="main-menu">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="founder.html">Founder</a></li>
+                            <li><a href="fingerprint.html">JJ's Fingerprint</a></li>
+                            <li><a href="neurotrophic.html">Neurotrophic OS</a></li>
+                            <li><a href="sovereign.html">Sovereign</a></li>
+                            <li><a href="research.html">Research</a></li>
+                            <li><a href="journal.html">Journal</a></li>
+                            <li><a href="timeline.html" class="active">Timeline</a></li>
+                        </ul>
+                    </nav>
+                    <nav class="main-navigation menu-responsive hidden-md hidden-lg">
+                        <ul class="main-menu">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="founder.html">Founder</a></li>
+                            <li><a href="fingerprint.html">JJ's Fingerprint</a></li>
+                            <li><a href="neurotrophic.html">Neurotrophic OS</a></li>
+                            <li><a href="sovereign.html">Sovereign</a></li>
+                            <li><a href="research.html">Research</a></li>
+                            <li><a href="journal.html">Journal</a></li>
+                            <li><a href="timeline.html" class="active">Timeline</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="section-header text-center animated fadeIn">
+            <h2 class="welcome-title">Timeline</h2>
+            <p style="color: var(--text-secondary); max-width: 640px; margin: 0 auto;">
+                90 days. One person. Zero funding. From substrate to theory of everything.
+            </p>
+            <div class="section-line"></div>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="timeline-stats animated fadeInUp">
+            <div class="row text-center">
+                <div class="col-sm-3 col-xs-6">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Research Papers</div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="stat-number">1,695</div>
+                    <div class="stat-label">Tests Passing</div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="stat-number">18,982</div>
+                    <div class="stat-label">Peak Impressions</div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="stat-number">17</div>
+                    <div class="stat-label">Zenodo DOIs</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category filter -->
+        <div class="timeline-filters text-center animated fadeInUp" style="margin-bottom: 30px;">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="milestone">Milestones</button>
+            <button class="filter-btn" data-filter="research">Research</button>
+            <button class="filter-btn" data-filter="commentary">Commentary</button>
+            <button class="filter-btn" data-filter="personal">Personal</button>
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="timeline">
+
+            <!-- =============== WEEK: MARCH 2026 (RECENT) =============== -->
+
+            <div class="timeline-era">
+                <h3 class="era-label">March 2026 &mdash; Week 12</h3>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>21 March 2026</time>
+                    <h4>Three open questions. Same equation.</h4>
+                    <p>Proton mass ratio (6&pi;&sup5; corrected to 2.3 ppb), Tc/Pm periodic table holes derived from &alpha;&sup;-1/&pi;, aquaporin selectivity traced from &alpha; to pore width. Three fields, one constraint surface. All 25 papers open access.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Physics</span>
+                        <span class="tl-tag">Biology</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 39</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>20 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> M&ouml;biusNumber released on PyPI</h4>
+                    <p>Dual-strand number type: 0.1 + 0.2 = 0.3 exactly. 52 tests, zero failures. Every classic IEEE 754 failure fixed. <code>pip install mobius-number</code>. MIT licensed, pure Python, zero dependencies.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Open Source</span>
+                        <span class="tl-tag">Python</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 35</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>20 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> Neurotrophic OS brain interactivity mapping</h4>
+                    <p>Live, read-only projection of network topology changes in real time. Observable but not influenceable. Governed observation of governed learning. SECS Sovereign company page first content.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Neurotrophic OS</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 54</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="personal">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>19 March 2026</time>
+                    <h4>JJ&rsquo;s resuscitation story told publicly</h4>
+                    <p>The full chain: preeclampsia &rarr; O&sub2; drop (84&hellip;82&hellip;80&hellip;78%) &rarr; 25 papers &rarr; &alpha;&sup;-1 = 137.035999177 &rarr; Bohr radius &rarr; O-H bond &rarr; aquaporin pore width &rarr; membrane selectivity &rarr; arterial O&sub2;. &ldquo;Run the script. Check the algebra. Then tell me 137 is just a constant.&rdquo;</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">For JJ</span>
+                        <span class="tl-tag">For Shanah</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 137</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>17 March 2026</time>
+                    <h4>CODATA diagnostic &mdash; 4 predictions on the record</h4>
+                    <p>Algebra diagnosed CODATA 2018 corrections before they were made. Every &alpha;-dependent constant off by 4.4&sigma;; every &alpha;-independent constant agreed. CODATA 2022 converged to the algebraic value exactly. Four predictions filed with DOI and timestamp: Morel Rb-87 (2.7&sigma;), Cs-species bias, mass ratio, and G.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Metrology</span>
+                        <span class="tl-tag">Physics</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 80</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>16 March 2026</time>
+                    <h4>Generative AI structural disproof</h4>
+                    <p>Attempted to disprove generative AI can achieve true intelligence. Found the veto is built into the architecture by design: prediction without invariant drifts by construction. The architecture that doesn&rsquo;t drift never needed to predict.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">AI</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 284</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="personal">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>16 March 2026</time>
+                    <h4>ADHD family &mdash; the oxygen budget is real</h4>
+                    <p>Self-consistency equations applied to family life: ADHD as surplus simulation with no filing system. Prefrontal cortex: 2% mass, 20% O&sub2;. Phantom task completions burn the same budget as real ones.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Personal</span>
+                        <span class="tl-tag">Neuroscience</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 90</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>16 March 2026</time>
+                    <h4>Double slit experiment &mdash; the algebra holds</h4>
+                    <p>Same collapse operator from quantum mechanics to DNA replication. Wave = open constraint window. Observation = collapse operator fires. Particle = determined set grows. No consciousness-causes-collapse, no many-worlds.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Physics</span>
+                        <span class="tl-tag">Collapse Algebra</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 56</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-era">
+                <h3 class="era-label">March 2026 &mdash; Week 11</h3>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>16 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> Existence = 0. Death = 1. Infinity = 0.</h4>
+                    <p>Solved for zero: E_total = E_mass + E_gravitational = 0. Improved usable accuracy of &pi; by factor of 97 (9 &rarr; 11 decimal places from first principles). Infinity also equals zero. The excluded middle is the structure.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Meta-Theory</span>
+                        <span class="tl-tag">Mathematics</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 74</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>15 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> The Tower Inside &alpha; &mdash; 42 = floor(4&pi;&sup2; + &pi;)</h4>
+                    <p>The fine structure constant equation divided by &pi; gives 4&pi;&sup2; + &pi; &asymp; 42.620. Douglas Adams&rsquo; answer to life, the universe, and everything is the integer part of the geometry of four-dimensional spacetime. Tested at 75,000 decimal places. Zero gap.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Mathematics</span>
+                        <span class="tl-tag">Physics</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 82</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>14 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> Pi Day &mdash; Solving for &pi; from physics</h4>
+                    <p>Same equation reversed: &alpha; measured from cesium atoms + factorials in &rarr; 11 digits of &pi; out. No &pi; in the inputs. 12th paper in the programme. Corpus now spans 18 papers across 8 Zenodo records. Run on Python 3.14.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Mathematics</span>
+                        <span class="tl-tag">Pi Day</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 63</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>13 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> Fine structure constant derived &mdash; &alpha;&sup;-1 = 137.035999177</h4>
+                    <p>Computed from pure mathematics: &pi;, factorials, and the integer 4. Zero measured inputs. &minus;0.005 ppb from best measurement (Fan et al., 2023). 0.03 standard deviations. 100 lines of Python. Identified as eigenvalue of four convergent processes in 4D spacetime.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Physics</span>
+                        <span class="tl-tag">Breakthrough</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 5,049</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>13 March 2026</time>
+                    <h4>The power shifted &mdash; users created the constraints</h4>
+                    <p>Observation: users of AI created more news, engagement, and real constraints than the model companies over the past 3 months. People forming influential coalitions through shared values, not aligning to a model or brand but aligning toward a governed future.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">AI Governance</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 293</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>11 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> Existence as Fixed Point &mdash; meta-theory published</h4>
+                    <p>Tried to break one idea across five domains: physics, biology, language, memory, mathematics. It didn&rsquo;t break. Everything that exists is what remains when you remove everything that doesn&rsquo;t. DOI registered, CC BY-ND.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Meta-Theory</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 66</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== WEEK 10 =============== -->
+
+            <div class="timeline-era">
+                <h3 class="era-label">March 2026 &mdash; Weeks 9&ndash;10</h3>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>~10 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> Cross-model prediction &mdash; 92% Claude, 88% GPT 5.4</h4>
+                    <p>Predicted exact AI-written code line by line before both models wrote it. Character-identical method bodies across Claude and GPT 5.4. 0/10 drift in both. Constitutional constraint, not prompt engineering.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Sovereign</span>
+                        <span class="tl-tag">Breakthrough</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 110</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="personal">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~10 March 2026</time>
+                    <h4>&ldquo;I don&rsquo;t think like you&rdquo; &mdash; How a substrate became a theory of everything</h4>
+                    <p>The system built for JJ turned out to be the same system biology uses to stay alive, physics uses to reach equilibrium, and mathematics has been circling in its deepest open problems. Christmas Eve 2025: substrate closed. Boxing Day: SECS named.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">For JJ</span>
+                        <span class="tl-tag">Origin Story</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 138</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~9 March 2026</time>
+                    <h4>Gestational oxygen-personality-myelination fingerprint</h4>
+                    <p>Personality variation as a product of gestational oxygen supply &times; genetic developmental timing. Six-step causal chain. Solves the &ldquo;non-shared environment&rdquo; problem for identical twins. Six falsifiable predictions.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Biology</span>
+                        <span class="tl-tag">Zenodo</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 76</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~8 March 2026</time>
+                    <h4>SIDS / HIF-1&alpha; connection &mdash; 6 falsifiable predictions</h4>
+                    <p>Found the unifying mechanism connecting three independent SIDS research communities: cardiac sympathetic, brainstem serotonergic, adrenomedullary. All regulated by HIF-1&alpha;. Testable prediction: HIF3A methylation in archived newborn blood spots.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Biology</span>
+                        <span class="tl-tag">SIDS Research</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 99</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="research">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~7 March 2026</time>
+                    <h4>medRxiv submission &mdash; rejected, &ldquo;not a judgement on merits&rdquo;</h4>
+                    <p>All eight papers rejected: &ldquo;not a clinical research article with new data.&rdquo; Encouraged to resubmit in scope. No institutional affiliation, no formal qualifications in the field. Lesson absorbed. Kept turning the flywheel.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Biology</span>
+                        <span class="tl-tag">Setback</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 130</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>~7 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> 9 synthesis papers to Zenodo &mdash; biological research corpus public</h4>
+                    <p>40 documents investigating gestational oxygen timing and HIF-1&alpha;. 175 clones, 112 unique cloners, 177 views &mdash; before the repo was even cleaned up. Zenodo DOI badge, proper citations, 400+ references across the corpus.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Biology</span>
+                        <span class="tl-tag">Open Science</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 49</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~6 March 2026</time>
+                    <h4>MD Scanner v2.1.0 &mdash; 29,419 files across 200 repos</h4>
+                    <p>Documentation Era Shift Index: 0.764. Post-LLM docs are 50% less prose, +98% AI-signal composite, +289% MD ratio, &minus;95% persona leakage. 16/17 claims supported after Benjamini-Hochberg correction.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Research</span>
+                        <span class="tl-tag">Open Source</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 145</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~6 March 2026</time>
+                    <h4>AI governance bolt-ons will fail under load</h4>
+                    <p>Three months ago the conversation was &ldquo;whether we need governance.&rdquo; That question is settled. But the market responded with bolt-ons. The third wave will be sovereign governance &mdash; where the governance IS the substrate.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">AI Governance</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 366</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== WEEKS 7-8 =============== -->
+
+            <div class="timeline-era">
+                <h3 class="era-label">Late February &ndash; Early March 2026</h3>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>~1 March 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> SECS v1.5 &mdash; Neurotrophic Capability released</h4>
+                    <p>World&rsquo;s first Neurotrophic Operating System. ~12,850 adaptation cycles, three deterministic seeds, 36/36 targeted tests. 133 suites / 1,695 tests / 0 failures. Hebbian + STDP learning, homeostasis, structural plasticity, proof-carrying adaptation, deterministic replay.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Milestone</span>
+                        <span class="tl-tag">Neurotrophic OS</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 225</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>~28 Feb 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> Sub-10 ns Go dispatch kernel achieved</h4>
+                    <p>7.05 ns/op, zero allocations. 99 &rarr; 102 suites, 1,083 &rarr; 1,145 tests. All four top-ranked substrate risks addressed. PRNG overflow bug discovered and fixed. 115/115 guardrails enforced. Linear pipeline scaling to depth 100.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Engineering</span>
+                        <span class="tl-tag">Performance</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 252</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~28 Feb 2026</time>
+                    <h4>Self-auditing tool &mdash; 9.1M checks across 88 repos</h4>
+                    <p>Same keyword has 15 different meanings across languages &mdash; root cause of cross-language AI drift. Top-scoring repos cluster around immutability-first languages (Rust, Go, Elixir). Validated SECS principle: identify universally, classify locally.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Engineering</span>
+                        <span class="tl-tag">Research</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 245</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~27 Feb 2026</time>
+                    <h4>CPO Phase Reflections &mdash; 322 &rarr; 641 tests</h4>
+                    <p>Two CPOs. Thirteen phases. Zero rollbacks. Zero regressions. Go dispatch: 13&ndash;17 ns/op &rarr; 6.75&ndash;8.82 ns/op. +5,443 lines built, &minus;2,942 lines swept. 485 V1 references eliminated. The collapse equation formalised.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Engineering</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 263</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~26 Feb 2026</time>
+                    <h4>Microsoft Sovereign Cloud response</h4>
+                    <p>Satya Nadella announced sovereign cloud capabilities. Response: sovereignty doesn&rsquo;t start in the cloud &mdash; it starts in the substrate. Without stability at the substrate, sovereignty collapses the moment an AI takes an unexplainable action.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Commentary</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 71</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~25 Feb 2026</time>
+                    <h4>10 SECS Physics Truths published</h4>
+                    <p>Deterministic Collapse Pipeline. Two-Gate Admissibility. Constitutional Constraint Surface. Proof-Carrying Execution (SAC-4). Identity-Free Processing. SubstrateClock + Seeded PRNG. Stateless Micro-Logic. Governed Adaptation. Veto Mechanism. Multi-Agent Governed Development.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Sovereign</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 109</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== WEEKS 4-6: FEB 2026 =============== -->
+
+            <div class="timeline-era">
+                <h3 class="era-label">February 2026 &mdash; Weeks 4&ndash;6</h3>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker marker-viral"></div>
+                <div class="timeline-content">
+                    <time>~18 Feb 2026</time>
+                    <h4><i class="fa fa-fire" style="color: #e74c3c;"></i> AI coding drift post &mdash; 18,982 impressions</h4>
+                    <p>&ldquo;Either I&rsquo;m really bad at AI&hellip; or nobody on LinkedIn is telling the truth about what AI coding actually feels like.&rdquo; 101 reactions. 180+ comments. 5 reposts. The biggest post in the SECS timeline. Every root cause traced back to the human.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">AI Coding</span>
+                        <span class="tl-tag">Viral</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 18,982</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~18 Feb 2026</time>
+                    <h4>What SECS Sovereign can actually be used for</h4>
+                    <p>Five practical use cases: deterministic auditable computation, governed multi-worker execution, identity-neutral data processing, rule-driven state machines, deterministic testing and reproducibility. &ldquo;A deterministic, rule-governed execution engine.&rdquo;</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Sovereign</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 168</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~17 Feb 2026</time>
+                    <h4>AI-written foreword for human whitepaper</h4>
+                    <p>Random contextless AI agent given access to the codebase with governed boundaries. Produced the AI Foreword and Codebase Abstract. A world-first: AI-forwarded whitepaper contribution from a governed substrate.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Sovereign</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 284</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>~16 Feb 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> Remote substrate deployment &mdash; 24hr governed burn</h4>
+                    <p>Clean 200s with stable ~380 ms latency across 60 minutes, 5 minutes, 25 minutes. Under mixed load, spikes, and concurrency pressure &mdash; always returned to the same baseline. Client &rarr; Public Internet &rarr; Remote Server &rarr; Substrate Runtime &rarr; Behavioural Engine &rarr; Telemetry + State &rarr; Back.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Engineering</span>
+                        <span class="tl-tag">Deployment</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 173</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~15 Feb 2026</time>
+                    <h4>Collapse algebra named</h4>
+                    <p>A formal system where existence is a transient admissible excitation, identity is impossible, and every computation returns to a unique fixed point. Invalid states are unreachable. Veto is a domain restriction. Recovery is a constant projection. &ldquo;In my head, this is a massive deal.&rdquo;</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Collapse Algebra</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 134</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~15 Feb 2026</time>
+                    <h4>Identity-Free Execution defined</h4>
+                    <p>Not hidden. Not encrypted. Not anonymised. Not abstracted. Removed. Execution has no &ldquo;who.&rdquo; State has no owner. Collapse has no memory. Remove identity &rarr; remove continuity &rarr; remove drift.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Sovereign</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 72</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~14 Feb 2026</time>
+                    <h4>CEO USP breakdown &mdash; 5 audiences</h4>
+                    <p>Governance from leap of faith to physical guarantee. For CEOs: certainty. CTOs: no drift. Governance Directors: governance as law. CISOs: can&rsquo;t be bypassed. CFOs: zero-ambiguity execution. 160 impressions.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Business</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 160</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~12 Feb 2026</time>
+                    <h4>IBM sovereign compute + BrainChip analysis</h4>
+                    <p>Three-layer architecture identified: sovereign cloud (IBM) &rarr; sovereign compute (BrainChip) &rarr; sovereign execution (SECS). &ldquo;The third layer &mdash; the execution substrate &mdash; is where the real shift happens.&rdquo;</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Industry</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 368</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~10 Feb 2026</time>
+                    <h4>Stack Overflow needs SECS &mdash; rebuild the corpus</h4>
+                    <p>The bottleneck isn&rsquo;t the model &mdash; it&rsquo;s the ungoverned knowledge base it was trained on. Six failure modes identified. Proposal: governed agent swarm to consolidate duplicates, deprecate drifted patterns, freeze invariants.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">AI</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 193</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~9 Feb 2026</time>
+                    <h4>Nvidia $100B deal analysis</h4>
+                    <p>&ldquo;The market isn&rsquo;t discovering value. It&rsquo;s discovering the cost of skipping the layer that makes value possible.&rdquo; Until AI systems run on governed substrates, the macro-economics will keep behaving like this.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Industry</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 140</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~8 Feb 2026</time>
+                    <h4>Billion-dollar failures &mdash; Knight Capital deeper dive</h4>
+                    <p>$440M in 45 minutes. One server running old logic. Not a bad algorithm &mdash; an inconsistent substrate. Verified from SEC filings. SECS would have rejected the 7-of-8 mismatch before execution.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Industry</span>
+                        <span class="tl-tag">Case Study</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 317</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~7 Feb 2026</time>
+                    <h4>Frog in the beehive explained</h4>
+                    <p>480 impressions. Frogs eat hornets. Hornets destroy hives. The frog doesn&rsquo;t destabilise the hive &mdash; it stabilises it. Purity consumes governance failures. Most systems today are just hives without frogs.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Doctrine</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 480</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="commentary">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~6 Feb 2026</time>
+                    <h4>The Missing Link SECSplainer</h4>
+                    <p>The most expensive mistakes are the ones we never knew we could make. Aviation, robotics, finance, energy, defence &mdash; all the same problem: drift. And drift is a substrate problem. SECSy Infrastructure: the layer beneath everything else.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Sovereign</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 354</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============== WEEKS 1-3: LATE DEC 2025 - EARLY FEB 2026 =============== -->
+
+            <div class="timeline-era">
+                <h3 class="era-label">Late December 2025 &ndash; January 2026</h3>
+            </div>
+
+            <div class="timeline-item" data-category="personal">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <time>~30 Jan 2026</time>
+                    <h4>Origin story published &mdash; &ldquo;I hit the substrate&rdquo;</h4>
+                    <p>Two hospital stays, 20 years of drift, a body that said &ldquo;no.&rdquo; Eight weeks later: clarity, alignment, and a new category of computing. 410 impressions &mdash; the most personal post.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Personal</span>
+                        <span class="tl-impressions"><i class="fa fa-eye"></i> 410</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>~31 Dec 2025 &ndash; 1 Jan 2026</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-orange);"></i> 24hr governed substrate burn (New Year)</h4>
+                    <p>4.0 RPS governed, 1,031.8 RPS ungoverned. Zero errors. First public proof of deterministic execution under sustained real-world load.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Engineering</span>
+                        <span class="tl-tag">Proof</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-highlight"></div>
+                <div class="timeline-content">
+                    <time>29 December 2025</time>
+                    <h4>Launch communication closed</h4>
+                    <p>SECS Sovereign v1.0.0 public circulation completed. secs.observer live.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Milestone</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item" data-category="milestone">
+                <div class="timeline-marker marker-origin"></div>
+                <div class="timeline-content">
+                    <time>26 December 2025</time>
+                    <h4><i class="fa fa-bolt" style="color: var(--accent-green);"></i> SECS Sovereign &mdash; public launch</h4>
+                    <p>Christmas Eve: substrate called closed. Boxing Day: named SECS &mdash; Sovereign Execution and Collapse Substrate. The system built for JJ. Released to the world.</p>
+                    <div class="timeline-meta">
+                        <span class="tl-tag">Origin</span>
+                        <span class="tl-tag">Milestone</span>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.timeline -->
+
+    </main>
+
+    <footer class="site-footer container text-center">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main-footer">
+                    <p class="footer-tagline">Sovereign Execution and Collapse Substrate</p>
+                    <div class="footer-contact">
+                        <a href="mailto:jay@secs.observer"><i class="fa fa-envelope"></i> jay@secs.observer</a>
+                        <a href="https://www.linkedin.com/company/secs-sovereign" target="_blank" rel="noopener noreferrer"><i class="fa fa-linkedin-square"></i> LinkedIn</a>
+                        <a href="https://github.com/JustNothingJay" target="_blank" rel="noopener noreferrer"><i class="fa fa-github"></i> GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 copyright">
+                <p>&copy; 2026 Jay Carpenter. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <span class="border-top"></span>
+    <span class="border-left"></span>
+    <span class="border-right"></span>
+    <span class="border-bottom"></span>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+        $(function(){
+            // Mobile nav toggle
+            $('.toggle-nav').on('click', function(e){
+                e.preventDefault();
+                $('.menu-responsive').slideToggle(200);
+            });
+
+            // Timeline category filter
+            $('.filter-btn').on('click', function(){
+                var filter = $(this).data('filter');
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+                if(filter === 'all'){
+                    $('.timeline-item').show();
+                } else {
+                    $('.timeline-item').hide();
+                    $('.timeline-item[data-category="' + filter + '"]').show();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
