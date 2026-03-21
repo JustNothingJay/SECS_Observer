@@ -259,6 +259,19 @@
 
         function close() { modal.classList.remove('active'); }
 
+        // Track downloads via GA4
+        downloadEl.addEventListener('click', function () {
+            var href = downloadEl.href || '';
+            var filename = href.split('/').pop() || href;
+            if (typeof gtag === 'function') {
+                gtag('event', 'pdf_download', {
+                    event_category: 'research',
+                    event_label: filename,
+                    file_url: href
+                });
+            }
+        });
+
         cards.forEach(function (card) {
             card.addEventListener('click', function (e) {
                 e.preventDefault();
