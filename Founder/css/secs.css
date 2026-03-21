@@ -40,9 +40,9 @@
    Milestone marker    fa-bolt               timeline
    Viral marker        fa-fire               timeline
    Impressions         fa-eye                timeline
-   LinkedIn            fa-linkedin-square    journal, footer
-   GitHub              fa-github             footer, founder
-   Email               fa-envelope           footer, founder
+   LinkedIn            fa-brands fa-linkedin journal, footer
+   GitHub              fa-brands fa-github   footer, founder
+   Email               fa-solid fa-envelope  footer, founder
    PDF/Paper           fa-file-pdf-o         research
    Collapse Algebra    fa-cube               research
    Fine Structure      fa-bolt               research
