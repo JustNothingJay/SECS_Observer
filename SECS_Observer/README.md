@@ -1,3 +1,0 @@
-# Jay Carpenter — Founder of SECS Sovereign
-Jay Carpenter is the founder and architect of SECS Sovereign...
-# SECS_Observer
