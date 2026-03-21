@@ -35,6 +35,8 @@
    Insurance           fa-umbrella           sovereign(adaptor)
    Legal               fa-gavel              sovereign(adaptor)
    Supply Chain        fa-truck              sovereign(adaptor)
+   Observation         fa-eye                neurotrophic(lane)
+   Prediction/Forecast fa-chart-line         neurotrophic(lane)
    Milestone marker    fa-bolt               timeline
    Viral marker        fa-fire               timeline
    Impressions         fa-eye                timeline
@@ -902,6 +904,199 @@ h1, h2, h3, h4, h5 {
 }
 .neuro-capabilities { margin-bottom: 50px; }
 .neuro-capabilities .arch-block { margin-bottom: 16px; }
+
+/* Neurotrophic detail sections */
+.neuro-detail,
+.neuro-biology,
+.neuro-audience,
+.neuro-vs,
+.neuro-frog {
+    max-width: 900px;
+    margin: 0 auto 50px;
+}
+.neuro-body {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.85;
+    margin-bottom: 16px;
+}
+.neuro-body strong { color: var(--text-primary); }
+.neuro-body code {
+    background: rgba(255,94,0,0.08);
+    color: var(--accent-orange);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.85rem;
+}
+.neuro-body-closing {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.neuro-body-doctrine {
+    font-style: italic;
+    color: var(--accent-orange);
+    font-size: 1.05rem;
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    border-left: 3px solid var(--accent-orange);
+    background: rgba(255,94,0,0.04);
+}
+
+/* Dual-lane grid */
+.neuro-lane-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 28px;
+}
+.neuro-lane {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 24px;
+}
+.neuro-lane-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.neuro-lane-header i {
+    font-size: 1.2rem;
+    color: var(--accent-blue);
+}
+.neuro-lane-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.neuro-lane p {
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+.neuro-lane ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.neuro-lane ul li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 4px 0 4px 16px;
+    position: relative;
+    line-height: 1.6;
+}
+.neuro-lane ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+    font-weight: 700;
+}
+
+/* Audience grid */
+.neuro-audience-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+}
+.neuro-audience-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 16px;
+}
+.neuro-audience-item i {
+    font-size: 1.1rem;
+    color: var(--accent-orange);
+    margin-top: 2px;
+    min-width: 24px;
+    text-align: center;
+}
+.neuro-audience-item span {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Comparison layout */
+.neuro-comparison {
+    display: flex;
+    gap: 0;
+    margin-top: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.neuro-compare-col {
+    flex: 1;
+    padding: 28px;
+}
+.neuro-compare-col h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+.neuro-compare-col h4 i {
+    margin-right: 8px;
+    color: var(--accent-blue);
+}
+.neuro-compare-tagline {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+}
+.neuro-compare-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+}
+.neuro-compare-col ul li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding: 3px 0 3px 16px;
+    position: relative;
+    line-height: 1.6;
+}
+.neuro-compare-col ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+    font-weight: 700;
+}
+.neuro-compare-divider {
+    width: 1px;
+    background: var(--border-primary);
+}
+.neuro-compare-highlight {
+    background: rgba(255,94,0,0.03);
+    border-left: none;
+}
+.neuro-compare-highlight h4 i {
+    color: var(--accent-orange);
+}
+.neuro-compare-highlight ul li::before {
+    color: var(--accent-orange);
+}
+
+@media (max-width: 767px) {
+    .neuro-lane-grid { grid-template-columns: 1fr; }
+    .neuro-audience-grid { grid-template-columns: 1fr; }
+    .neuro-comparison { flex-direction: column; }
+    .neuro-compare-divider { width: 100%; height: 1px; }
+}
 
 /* ── JOURNAL PAGE ──────────────────────────────────────────────────── */
 .journal-feed {
