@@ -15,6 +15,8 @@
    Algebra             fa-cube               index, research
    Biology             fa-heartbeat          research, sovereign(adaptor)
    Möbius / Code       fa-code-fork          index, sovereign
+   MöbiusNumber        fa-brands fa-python   index, sovereign
+   MöbiusInteger       fa-brands fa-rust     index, sovereign
    Deterministic       fa-lock               sovereign
    Identity-Free       fa-eye-slash          sovereign
    Constitutional Gov  fa-balance-scale      sovereign
@@ -305,6 +307,44 @@ h1, h2, h3, h4, h5 {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--accent-orange);
+}
+
+/* Möbius split links */
+.mobius-split {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+}
+.mobius-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 10px;
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: border-color 0.3s, background 0.3s;
+}
+.mobius-link:hover {
+    border-color: var(--accent-orange);
+    background: rgba(255,94,0,0.04);
+    text-decoration: none;
+}
+.mobius-link i {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+}
+.mobius-link strong {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.mobius-link span {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.2px;
 }
 
 /* ── FOUNDER ───────────────────────────────────────────────────────── */
