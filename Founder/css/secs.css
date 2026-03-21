@@ -1,7 +1,53 @@
 /* ===================================================================
    SECS – secs.observer theme
    Dark substrate aesthetic. Minimal. Structural.
+   Font Awesome 6.5 Free (CDN) — https://fontawesome.com/icons
    =================================================================== */
+
+/* ── ICON INDEX ────────────────────────────────────────────────────
+   Canonical concept → icon mapping. One icon per concept, site-wide.
+
+   CONCEPT             ICON                  USED ON
+   ─────────────────── ───────────────────── ──────────────────────
+   Neurotrophic OS     fa-brain              index, neurotrophic
+   Sovereign/Substrate fa-server             index, sovereign
+   Research/Papers     fa-book               index, research, fingerprint, sovereign
+   Algebra             fa-cube               index, research
+   Biology             fa-heartbeat          research, sovereign(adaptor)
+   Möbius / Code       fa-code-fork          index, sovereign
+   Deterministic       fa-lock               sovereign
+   Identity-Free       fa-eye-slash          sovereign
+   Constitutional Gov  fa-balance-scale      sovereign
+   Physics-Only        fa-exchange           sovereign
+   Execution Pipeline  fa-route              sovereign(specs)
+   Performance         fa-gauge-high         sovereign(specs)
+   Implementation      fa-terminal           sovereign(specs), index
+   Adaptation          fa-leaf               sovereign(specs), index
+   Version History     fa-road               sovereign(specs)
+   Cockpit/Dashboard   fa-dashboard          sovereign(specs)
+   Healthcare          fa-heartbeat          sovereign(adaptor)
+   Fintech             fa-line-chart         sovereign(adaptor)
+   Defence             fa-fighter-jet        sovereign(adaptor)
+   Energy              fa-bolt               sovereign(adaptor), timeline
+   Automotive          fa-car                sovereign(adaptor)
+   Cybersecurity       fa-shield             sovereign(adaptor)
+   EdTech              fa-graduation-cap     sovereign(adaptor)
+   Insurance           fa-umbrella           sovereign(adaptor)
+   Legal               fa-gavel              sovereign(adaptor)
+   Supply Chain        fa-truck              sovereign(adaptor)
+   Milestone marker    fa-bolt               timeline
+   Viral marker        fa-fire               timeline
+   Impressions         fa-eye                timeline
+   LinkedIn            fa-linkedin-square    journal, footer
+   GitHub              fa-github             footer, founder
+   Email               fa-envelope           footer, founder
+   PDF/Paper           fa-file-pdf-o         research
+   Collapse Algebra    fa-cube               research
+   Fine Structure      fa-bolt               research
+   Topology            fa-globe              research
+   Synthesis           fa-sitemap            research
+   Bio Corpus          fa-flask              research, index
+   ─────────────────────────────────────────────────────────────── */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
