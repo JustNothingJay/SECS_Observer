@@ -226,7 +226,7 @@
                 e.stopPropagation();
                 var href = card.getAttribute('href') || card.getAttribute('data-href');
                 var title = (card.querySelector('.paper-title') || {}).textContent || '';
-                trackDownload(href, title);
+                trackEvent('pdf_download', href, title);
                 window.open(href, '_blank', 'noopener');
             });
             card.appendChild(badge);
@@ -268,10 +268,10 @@
         function close() { modal.classList.remove('active'); }
 
         // Track helper
-        function trackDownload(href, title) {
+        function trackEvent(eventName, href, title) {
             var filename = (href || '').split('/').pop() || href;
             if (typeof gtag === 'function') {
-                gtag('event', 'pdf_download', {
+                gtag('event', eventName, {
                     event_category: 'research',
                     event_label: filename,
                     paper_title: title || filename,
@@ -282,23 +282,24 @@
 
         // Track downloads via GA4 — modal download button
         downloadEl.addEventListener('click', function () {
-            trackDownload(downloadEl.href, titleEl.textContent);
+            trackEvent('pdf_download', downloadEl.href, titleEl.textContent);
         });
 
         cards.forEach(function (card) {
             var href = card.getAttribute('href') || card.getAttribute('data-href');
             var title = (card.querySelector('.paper-title') || {}).textContent || '';
 
-            // Left click → open modal
+            // Left click → open modal (track as preview)
             card.addEventListener('click', function (e) {
                 e.preventDefault();
                 var abstract = card.getAttribute('data-abstract') || getAbstract(href);
+                trackEvent('pdf_preview', href, title);
                 open(href, title, abstract);
             });
 
-            // Middle-click / ctrl+click bypass modal — track directly
+            // Middle-click / ctrl+click bypass modal — track as download
             card.addEventListener('auxclick', function () {
-                trackDownload(href, title);
+                trackEvent('pdf_download', href, title);
             });
         });
 
