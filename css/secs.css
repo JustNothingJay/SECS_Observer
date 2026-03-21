@@ -1573,3 +1573,279 @@ h1, h2, h3, h4, h5 {
     .timeline-era { padding-left: 40px; }
     .stat-number { font-size: 1.2rem; }
 }
+
+/* ── GTF PAGE ───────────────────────────────────────────────── */
+.gtf-intro { margin-bottom: 50px; }
+.gtf-intro .lead {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    text-align: center;
+    margin-bottom: 30px;
+}
+.gtf-pathway-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 30px 0;
+    padding: 24px 16px;
+    background: rgba(255,94,0,0.06);
+    border: 1px solid rgba(255,94,0,0.25);
+    border-radius: 8px;
+}
+.pathway-step {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    padding: 8px 14px;
+    background: rgba(0,178,255,0.08);
+    border: 1px solid rgba(0,178,255,0.2);
+    border-radius: 6px;
+    color: var(--accent-blue);
+}
+.pathway-step.pathway-outcome {
+    background: rgba(255,94,0,0.12);
+    border-color: rgba(255,94,0,0.35);
+    color: var(--accent-orange);
+    font-weight: 600;
+}
+.pathway-arrow {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+.gtf-core-statement {
+    font-size: 1.05rem;
+    color: var(--text-light);
+    line-height: 1.7;
+    text-align: center;
+    margin: 20px 0;
+}
+.gtf-section {
+    margin-bottom: 60px;
+}
+.gtf-section h3 {
+    font-size: 1.3rem;
+    color: var(--text-light);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.gtf-section h3 i {
+    color: var(--accent-blue);
+    margin-right: 8px;
+    font-size: 1rem;
+}
+.gtf-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.gtf-table thead th {
+    background: rgba(0,178,255,0.08);
+    color: var(--accent-blue);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(0,178,255,0.2);
+}
+.gtf-table tbody td {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-muted);
+    vertical-align: top;
+}
+.gtf-table tbody td strong {
+    color: var(--text-light);
+}
+.gtf-table tbody tr:hover td {
+    background: rgba(255,255,255,0.02);
+}
+.gtf-zero {
+    color: var(--accent-orange) !important;
+    font-weight: 600;
+}
+.gtf-highlight-row td {
+    background: rgba(255,94,0,0.06) !important;
+}
+.gtf-table-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 12px;
+}
+
+/* GTF Super-Window */
+.gtf-converge-box {
+    background: rgba(255,94,0,0.06);
+    border: 1px solid rgba(255,94,0,0.2);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 20px 0;
+}
+.gtf-converge-box h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent-orange);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+}
+.gtf-converge-box ol {
+    padding-left: 20px;
+    margin: 0;
+}
+.gtf-converge-box li {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+.gtf-single-event h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 24px 0 12px;
+}
+
+/* GTF Growing Into Deficit */
+.gtf-mechanism-box {
+    margin: 20px 0;
+}
+.mechanism-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    margin-bottom: 2px;
+    background: rgba(0,178,255,0.04);
+    border-left: 3px solid rgba(0,178,255,0.3);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+.mechanism-step:last-child {
+    background: rgba(255,94,0,0.06);
+    border-left-color: var(--accent-orange);
+    color: var(--text-light);
+    font-weight: 500;
+}
+.step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,178,255,0.15);
+    color: var(--accent-blue);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.mechanism-step:last-child .step-num {
+    background: rgba(255,94,0,0.2);
+    color: var(--accent-orange);
+}
+
+/* GTF Iron quadruple */
+.gtf-quadruple {
+    margin: 20px 0;
+}
+.quad-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 16px;
+    margin-bottom: 2px;
+    background: rgba(0,178,255,0.04);
+    border-left: 3px solid rgba(0,178,255,0.25);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+.quad-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,178,255,0.15);
+    color: var(--accent-blue);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* GTF Predictions */
+.gtf-predictions {
+    margin: 20px 0;
+}
+.prediction-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    margin-bottom: 4px;
+    background: rgba(72,230,98,0.04);
+    border-left: 3px solid rgba(72,230,98,0.25);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+.prediction-item strong {
+    color: var(--text-light);
+}
+.pred-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(72,230,98,0.15);
+    color: #48e662;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.gtf-gaps-note {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+}
+.gtf-gaps-note p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* GTF Closing / Links */
+.gtf-closing { text-align: center; }
+.gtf-links {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+.gtf-links .project-tile {
+    flex: 1;
+    max-width: 280px;
+}
+
+@media (max-width: 767px) {
+    .gtf-pathway-box { flex-direction: column; }
+    .pathway-arrow { transform: rotate(90deg); }
+    .gtf-table { font-size: 0.78rem; }
+    .gtf-converge-box { padding: 14px 16px; }
+    .gtf-links { flex-direction: column; align-items: center; }
+}
