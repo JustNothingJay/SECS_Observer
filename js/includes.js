@@ -216,11 +216,19 @@
         var cards = document.querySelectorAll('.paper-card');
         if (!cards.length) return;
 
-        // Inject PDF badges
+        // Inject PDF badges — clicking badge downloads directly (skips modal)
         cards.forEach(function (card) {
             var badge = document.createElement('span');
             badge.className = 'paper-badge';
             badge.textContent = 'PDF';
+            badge.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var href = card.getAttribute('href') || card.getAttribute('data-href');
+                var title = (card.querySelector('.paper-title') || {}).textContent || '';
+                trackDownload(href, title);
+                window.open(href, '_blank', 'noopener');
+            });
             card.appendChild(badge);
         });
 
@@ -259,26 +267,38 @@
 
         function close() { modal.classList.remove('active'); }
 
-        // Track downloads via GA4
-        downloadEl.addEventListener('click', function () {
-            var href = downloadEl.href || '';
-            var filename = href.split('/').pop() || href;
+        // Track helper
+        function trackDownload(href, title) {
+            var filename = (href || '').split('/').pop() || href;
             if (typeof gtag === 'function') {
                 gtag('event', 'pdf_download', {
                     event_category: 'research',
                     event_label: filename,
+                    paper_title: title || filename,
                     file_url: href
                 });
             }
+        }
+
+        // Track downloads via GA4 — modal download button
+        downloadEl.addEventListener('click', function () {
+            trackDownload(downloadEl.href, titleEl.textContent);
         });
 
         cards.forEach(function (card) {
+            var href = card.getAttribute('href') || card.getAttribute('data-href');
+            var title = (card.querySelector('.paper-title') || {}).textContent || '';
+
+            // Left click → open modal
             card.addEventListener('click', function (e) {
                 e.preventDefault();
-                var href = card.getAttribute('href') || card.getAttribute('data-href');
-                var title = card.querySelector('.paper-title').textContent;
                 var abstract = card.getAttribute('data-abstract') || getAbstract(href);
                 open(href, title, abstract);
+            });
+
+            // Middle-click / ctrl+click bypass modal — track directly
+            card.addEventListener('auxclick', function () {
+                trackDownload(href, title);
             });
         });
 
