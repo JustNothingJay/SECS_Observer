@@ -17,6 +17,7 @@
    Möbius / Code       fa-code-fork          index, sovereign
    MöbiusNumber        fa-brands fa-python   index, sovereign
    MöbiusInteger       fa-brands fa-rust     index, sovereign
+   MöbiusConstant      fa-brands fa-python   index, sovereign
    Deterministic       fa-lock               sovereign
    Identity-Free       fa-eye-slash          sovereign
    Constitutional Gov  fa-balance-scale      sovereign
@@ -309,14 +310,16 @@ h1, h2, h3, h4, h5 {
     color: var(--accent-orange);
 }
 
-/* Möbius split links */
+/* Möbius split links – flex-wrap keeps layout clean at 3+ items */
 .mobius-split {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
     margin-top: 14px;
 }
 .mobius-link {
-    flex: 1;
+    flex: 1 1 120px;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;

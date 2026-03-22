@@ -38,6 +38,51 @@
             ============================================================
             -->
 
+            <!-- Entry 012: Möbius Family — program continuation -->
+            <article class="journal-entry animated fadeInUp" id="entry-2026-03-22-001">
+                <div class="entry-meta">
+                    <time datetime="2026-03-22">22 March 2026</time>
+                    <span class="entry-category">Engineering</span>
+                </div>
+                <h3 class="entry-title">The M&ouml;bius Family grows: solving computational errors, for fun</h3>
+                <div class="entry-body">
+                    <p>When I released <strong>mobius-number</strong> it fixed one thing: <code>0.1 + 0.2 == 0.3</code>. A dual-strand number that carries both the fast IEEE 754 answer and the exact rational truth. pip&nbsp;install, import, done.</p>
+
+                    <p>Then <strong>mobius-integer</strong> brought the same idea to Rust &mdash; deterministic integer arithmetic with overflow protection, built for systems that can&rsquo;t afford silent wraps.</p>
+
+                    <p>Today the family gets a third member: <strong>mobius-constant</strong>.</p>
+
+                    <p>The problem it solves: irrational arithmetic is broken by construction in every mainstream language. <code>sqrt(2)**2</code> returns <code>2.0000000000000004</code>, not&nbsp;2. <code>pi * 0 + 1</code> might round. Every constant carries its birth error forward into every operation that touches it.</p>
+
+                    <p>The existing options &mdash; mpmath, SymPy, SageMath &mdash; are powerful but heavy. They pull in expression trees, symbolic engines, or entire CAS runtimes. Sometimes you just want a constant that knows its own digits and can prove <code>sqrt(2) ** 2 == 2</code> without importing a cathedral.</p>
+
+                    <p>mobius-constant carries three strands:</p>
+                    <ul>
+                        <li><strong>Binary</strong> &mdash; the IEEE 754 float, fast, for computation</li>
+                        <li><strong>Truth</strong> &mdash; 100 verified decimal digits, pre-computed and immutable</li>
+                        <li><strong>Polynomial</strong> &mdash; the minimal polynomial for algebraic constants, so the identity engine can resolve <code>x&sup2;</code> exactly from <code>ax&sup2; + bx + c = 0</code></li>
+                    </ul>
+
+                    <p>When you square &radic;2, the polynomial strand recognises the operation and returns the integer 2 &mdash; not by rounding, not by tolerance, but by algebraic identity. Same for &phi;&sup2; = &phi; + 1, and 1/&phi; = &phi; &minus; 1.</p>
+
+                    <p>It also ships pre-built singletons for &pi;, e, &radic;2, &radic;3, &phi;, ln&nbsp;2, and &alpha;<sup>&minus;1</sup> (the fine-structure constant inverse, verified against CODATA 2022 to 0.02&sigma;). They work with standard Python operators. Nothing else to install beyond mpmath.</p>
+
+                    <p>The M&ouml;bius family programme is simple: find a computational error that annoys people, build the lightest possible fix, ship it as a pip/cargo install, move on. Each package is small, self-contained, zero configuration. If the standard library ever fixes the underlying problem, the package becomes unnecessary &mdash; and that&rsquo;s fine.</p>
+
+                    <p>69 tests. 0.24 seconds. All green.</p>
+
+                    <p><code>pip install mobius-constant</code></p>
+                </div>
+                <div class="entry-tags">
+                    <span class="tag">M&ouml;bius Family</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">IEEE 754</span>
+                    <span class="tag">Open Source</span>
+                    <span class="tag">Irrational Constants</span>
+                    <span class="tag">Build In Public</span>
+                </div>
+            </article>
+
             <!-- Entry 011: Website is fixed. I am happy. -->
             <article class="journal-entry animated fadeInUp" id="entry-2026-03-21-001">
                 <div class="entry-meta">
