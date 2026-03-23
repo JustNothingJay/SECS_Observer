@@ -51,6 +51,38 @@
             ============================================================
             -->
 
+            <!-- Entry 014: One Measurement Derives Them All + mobius-units -->
+            <article class="journal-entry animated fadeInUp" id="entry-2026-03-24-001">
+                <div class="entry-meta">
+                    <time datetime="2026-03-24">24 March 2026</time>
+                    <span class="entry-category">Research</span>
+                </div>
+                <h3 class="entry-title">One measurement derives them all</h3>
+                <div class="entry-body">
+                    <p>How many numbers do you actually need to reproduce the entire CODATA table of fundamental constants?</p>
+
+                    <p>Five are exact &mdash; the 2019 SI definitions of <em>c</em>, <em>h</em>, <em>e</em>, <em>k<sub>B</sub></em>, <em>N<sub>A</sub></em>. Three are algebraic &mdash; the eigenvalue tower equations for &alpha;, the proton-electron mass ratio, and the Planck hierarchy. That leaves one measured input: the Rydberg constant, known to 1.1 parts per trillion.</p>
+
+                    <p>From those nine values, every atomic-scale constant is R<sub>&infin;</sub> times a power of &alpha; times exact SI factors. Every Planck-scale constant follows from the hierarchy formula. The derivation chain runs: Planck length (0.38&sigma;), Newton&rsquo;s gravitational constant (0.37&sigma;), Planck mass, Planck time, Planck temperature &mdash; all within 0.4&sigma; of CODATA 2022.</p>
+
+                    <p>Existing unit conversion libraries carry 20+ empirical conversion factors. The algebraic framework reduces that to one.</p>
+
+                    <p>Today I published the paper and the fourth M&ouml;bius family package. <strong>mobius-units</strong> implements the full derivation chain: all &alpha;-dependent constants flow from mobius-constant, not from hardcoded values. Three unit systems &mdash; atomic, particle, Planck &mdash; with cross-system bridges. 40 tests, zero failures.</p>
+
+                    <p>The M&ouml;bius family now has four members: mobius-number (floating point), mobius-integer (overflow), mobius-constant (irrational arithmetic), and mobius-units (dimensional analysis). Each fixes a different class of computational error. Each carries the fast answer and the exact answer.</p>
+
+                    <p><code>pip install mobius-units</code></p>
+                </div>
+                <div class="entry-tags">
+                    <span class="tag">Research</span>
+                    <span class="tag">M&ouml;bius Family</span>
+                    <span class="tag">Fine Structure Constant</span>
+                    <span class="tag">Metrology</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">Open Source</span>
+                </div>
+            </article>
+
             <!-- Entry 013: R-007 — Structural Age Regression at 10K scale -->
             <article class="journal-entry animated fadeInUp" id="entry-2026-03-23-001">
                 <div class="entry-meta">

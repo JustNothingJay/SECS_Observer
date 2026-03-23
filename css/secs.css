@@ -356,6 +356,47 @@ h1, h2, h3, h4, h5 {
     letter-spacing: 0.2px;
 }
 
+/* Möbius Family — full-width strip (home page) */
+.mobius-strip {
+    margin-top: 36px;
+    padding: 40px 32px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    background: var(--bg-card);
+    text-align: center;
+}
+.mobius-strip-header {
+    margin-bottom: 24px;
+}
+.mobius-strip-header .card-icon {
+    font-size: 1.6rem;
+    color: var(--accent-orange);
+    margin-bottom: 8px;
+}
+.mobius-strip-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+}
+.mobius-strip-header p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+.mobius-strip-grid {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.mobius-strip-grid .mobius-link {
+    flex: 1 1 160px;
+    max-width: 220px;
+}
+
 /* ── FOUNDER ───────────────────────────────────────────────────────── */
 .founder-section { padding-top: 40px; }
 .founder-story { padding: 0 0 40px; }
