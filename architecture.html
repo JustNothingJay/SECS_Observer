@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="SECS Sovereign System Architecture — a deterministic, identity-free Neurotrophic Operating System. Readable architecture overview from signal ingress through governed collapse to neurotrophic adaptation.">
+    <title>System Architecture — SECS</title>
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/architecture.html">
+    <meta property="og:title" content="System Architecture — SECS">
+    <meta property="og:description" content="A deterministic, identity-free Neurotrophic Operating System. From signal ingress through governed collapse to neurotrophic adaptation.">
+    <meta property="og:image" content="https://secs.observer/assets/hero-banner.png">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="System Architecture — SECS">
+    <meta name="twitter:description" content="A deterministic, identity-free Neurotrophic Operating System. From signal ingress through governed collapse to neurotrophic adaptation.">
+    <meta name="twitter:image" content="https://secs.observer/assets/hero-banner.png">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css">
+    <script src="js/includes.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-667KK00S7H');</script>
+
+    <style>
+        /* ── Architecture Page ─────────────────────────────────── */
+        /* Readability overrides — site --text-muted (#555963) is too dark */
+        .page-content {
+            --text-muted: #8b8f9a;
+        }
+        .arch-intro { margin-bottom: 50px; }
+        .arch-intro .lead {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .arch-section { margin-bottom: 60px; }
+        .arch-section h3 {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .arch-section h3 i {
+            color: var(--accent-blue);
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+        .arch-section p {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        .arch-section p strong {
+            color: var(--text-light);
+        }
+
+        /* Architecture diagram images */
+        .arch-img-stack {
+            margin: 24px 0;
+        }
+        .arch-img-stack img {
+            display: block;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            border-radius: 6px;
+        }
+        .arch-img-single {
+            margin: 24px 0;
+        }
+        .arch-img-single img {
+            display: block;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            border-radius: 6px;
+        }
+
+        /* Phase cards */
+        .arch-phases { margin: 30px 0; }
+        .arch-phase-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        .arch-phase-card:hover {
+            border-color: rgba(0,178,255,0.25);
+        }
+        .arch-phase-card h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+        }
+        .arch-phase-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Collapse step boxes */
+        .arch-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 24px 0;
+        }
+        .arch-step {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            padding: 10px 16px;
+            background: rgba(0,178,255,0.08);
+            border: 1px solid rgba(0,178,255,0.2);
+            border-radius: 6px;
+            color: var(--accent-blue);
+            text-align: center;
+            line-height: 1.4;
+        }
+        .arch-step .step-label {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .arch-step-arrow {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Properties & verticals tables */
+        .arch-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .arch-table thead th {
+            background: rgba(0,178,255,0.08);
+            color: var(--accent-blue);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(0,178,255,0.2);
+        }
+        .arch-table tbody td {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+        .arch-table tbody td strong {
+            color: var(--text-light);
+        }
+        .arch-table tbody tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+        .arch-table-note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 12px;
+        }
+
+        /* Governance layers */
+        .arch-gov-chain {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .arch-gov-layer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            padding: 8px 14px;
+            background: rgba(255,94,0,0.06);
+            border: 1px solid rgba(255,94,0,0.2);
+            border-radius: 6px;
+            color: var(--accent-orange);
+        }
+        .arch-gov-subset {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Cockpit boxes */
+        .arch-cockpit-row {
+            display: flex;
+            gap: 20px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .arch-cockpit-panel {
+            flex: 1;
+            min-width: 280px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 20px 24px;
+        }
+        .arch-cockpit-panel h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 14px;
+        }
+        .arch-cockpit-panel.stable h4 { color: var(--accent-blue); }
+        .arch-cockpit-panel.volatile h4 { color: var(--accent-orange); }
+        .arch-cockpit-panel.stable { border-top: 2px solid rgba(0,178,255,0.4); }
+        .arch-cockpit-panel.volatile { border-top: 2px solid rgba(255,94,0,0.4); }
+        .cockpit-surface {
+            margin-bottom: 10px;
+        }
+        .cockpit-surface h5 {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .cockpit-surface ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .cockpit-surface li {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding: 2px 0 2px 14px;
+            position: relative;
+        }
+        .cockpit-surface li::before {
+            content: '├─';
+            position: absolute;
+            left: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.2);
+        }
+        .cockpit-surface:last-child li:last-child::before {
+            content: '└─';
+        }
+        .cockpit-character {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        /* Core statement */
+        .arch-core-statement {
+            font-size: 1.05rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Version badge */
+        .arch-meta {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .arch-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            padding: 4px 12px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-muted);
+        }
+        .arch-badge.pub { color: #48e662; border-color: rgba(72,230,98,0.25); }
+
+        /* Flow summary */
+        .arch-flow-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 2px;
+            background: rgba(0,178,255,0.04);
+            border-left: 3px solid rgba(0,178,255,0.3);
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .arch-flow-item:last-child {
+            background: rgba(255,94,0,0.06);
+            border-left-color: var(--accent-orange);
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .flow-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(0,178,255,0.15);
+            color: var(--accent-blue);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .arch-flow-item:last-child .flow-num {
+            background: rgba(255,94,0,0.2);
+            color: var(--accent-orange);
+        }
+
+        /* Closing */
+        .arch-closing { text-align: center; }
+        .arch-closing-line {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-style: italic;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* Adaptor profiles */
+        .arch-adaptor-row {
+            display: flex;
+            gap: 20px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .arch-adaptor-card {
+            flex: 1;
+            min-width: 260px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 20px 24px;
+        }
+        .arch-adaptor-card h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 14px;
+        }
+        .arch-adaptor-card.stable-card h4 { color: var(--accent-blue); }
+        .arch-adaptor-card.volatile-card h4 { color: var(--accent-orange); }
+        .arch-adaptor-card.stable-card { border-top: 2px solid rgba(0,178,255,0.4); }
+        .arch-adaptor-card.volatile-card { border-top: 2px solid rgba(255,94,0,0.4); }
+        .arch-adaptor-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .arch-adaptor-card li {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            line-height: 1.5;
+        }
+        .arch-adaptor-card li strong {
+            color: var(--text-light);
+        }
+
+        @media (max-width: 767px) {
+            .arch-steps { flex-direction: column; }
+            .arch-step-arrow { transform: rotate(90deg); }
+            .arch-cockpit-row, .arch-adaptor-row { flex-direction: column; }
+            .arch-img-stack img, .arch-img-single img { max-width: 100%; }
+            .arch-gov-chain { flex-direction: column; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="container page-content">
+
+        <!-- ── HERO ── -->
+        <div class="section-header text-center">
+            <h2 class="animated fadeInLeft">System Architecture</h2>
+            <div class="section-line"></div>
+            <p class="section-subtitle animated fadeInRight">Neurotrophic Operating System &mdash; from signal to resolution</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+
+                <!-- ── META ── -->
+                <div class="arch-meta animated fadeIn">
+                    <span class="arch-badge">v1.0</span>
+                    <span class="arch-badge">2026-03-26</span>
+                    <span class="arch-badge pub">PUBLIC</span>
+                </div>
+
+                <!-- ── OVERVIEW ── -->
+                <div class="arch-intro animated fadeInUp">
+                    <p class="lead">
+                        A deterministic, identity-free substrate that processes signals through a governed collapse pipeline.
+                        Every input either resolves to a unique fixed point or is vetoed.
+                        Nothing persists uncommitted. Nothing executes ungoverned.
+                    </p>
+                    <p class="arch-core-statement">
+                        The system operates as a <strong>Neurotrophic OS</strong> &mdash; a substrate that maintains its own vitality,
+                        adapts its own structure, repairs its own faults, learns from its own history,
+                        and governs its own learning. External systems connect through certified adaptors.
+                    </p>
+                </div>
+
+                <!-- ── SYSTEM LAYERS ── -->
+                <div class="arch-section animated fadeInUp">
+                    <h3><i class="fa-solid fa-layer-group"></i> System Layers</h3>
+                    <p>
+                        Every signal travels one path, top to bottom. No branches. No ambiguity.
+                    </p>
+
+                    <div class="arch-img-stack">
+                        <img src="assets/arch/arch-01-external-world.png" alt="External World — real-time data, simulation inputs, human decisions">
+                        <img src="assets/arch/arch-02-connector-atom.png" alt="Connector ingress boundary and Atom sovereign dispatch kernel">
+                        <img src="assets/arch/arch-03-collapse-pipeline.png" alt="Collapse Pipeline — five sequential irreversible transformations">
+                        <img src="assets/arch/arch-04-governance-topology.png" alt="Governance Filtration and Topology seed graph">
+                    </div>
+                </div>
+
+                <!-- ── COLLAPSE PIPELINE ── -->
+                <div class="arch-section animated fadeInUp">
+                    <h3><i class="fa-solid fa-arrows-turn-to-dots"></i> Collapse Pipeline</h3>
+                    <p>
+                        Five sequential, irreversible transformations. Each signal enters the pipeline once
+                        and exits as either a resolved output or a veto. No branching. No partial pass.
+                    </p>
+
+                    <div class="arch-steps">
+                        <div class="arch-step"><strong>&alpha;</strong><span class="step-label">Admissibility</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step"><strong>&nu;</strong><span class="step-label">Validation</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step"><strong>&lambda;</strong><span class="step-label">Routing</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step"><strong>&rho;</strong><span class="step-label">Reaction</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step"><strong>&epsilon;</strong><span class="step-label">Extinction</span></div>
+                    </div>
+
+                    <div class="arch-flow-item"><span class="flow-num">&alpha;</span> Is this signal admissible? Binary gate, no partial pass.</div>
+                    <div class="arch-flow-item"><span class="flow-num">&nu;</span> Collapse possibility to well-formed element.</div>
+                    <div class="arch-flow-item"><span class="flow-num">&lambda;</span> Collapse to exactly one reaction path. No branching.</div>
+                    <div class="arch-flow-item"><span class="flow-num">&rho;</span> Deterministic reaction. Same input &rarr; same output.</div>
+                    <div class="arch-flow-item"><span class="flow-num">&epsilon;</span> Extinguish to purity (&omega;&#8320;). Nothing persists uncommitted.</div>
+
+                    <p style="margin-top: 20px;">
+                        <strong>C&sup2; = C</strong> &mdash; Collapse is a projection. Applying it twice changes nothing.<br>
+                        <strong>C&sup1;&#8315; &nexist;</strong> &mdash; Collapse is irreversible.<br>
+                        Six veto classes can reject at any stage. Vetoed signals are <strong>structurally impossible</strong>, not filtered.
+                    </p>
+                </div>
+
+                <!-- ── GOVERNANCE ── -->
+                <div class="arch-section animated fadeInUp">
+                    <h3><i class="fa-solid fa-shield-halved"></i> Governance Filtration</h3>
+                    <p>
+                        Constitutional layers. Each inherits constraints from below. Doctrine loaded at boot, immutable at runtime.
+                        No runtime self-modification of governance rules.
+                    </p>
+
+                    <div class="arch-gov-chain">
+                        <span class="arch-gov-layer">G&#8320;</span>
+                        <span class="arch-gov-subset">&sube;</span>
+                        <span class="arch-gov-layer">G&#8321;</span>
+                        <span class="arch-gov-subset">&sube;</span>
+                        <span class="arch-gov-layer">G&#8322;</span>
+                        <span class="arch-gov-subset">&sube;</span>
+                        <span class="arch-gov-layer">G&#8323;</span>
+                        <span class="arch-gov-subset">&sube;</span>
+                        <span class="arch-gov-layer">G&#8324;</span>
+                    </div>
+
+                    <div class="arch-adaptor-row">
+                        <div class="arch-adaptor-card stable-card">
+                            <h4>Constraint Surface</h4>
+                            <ul>
+                                <li><strong>FROZEN</strong> &mdash; defines what is admissible</li>
+                                <li>Cannot be modified at runtime</li>
+                                <li>Loaded from doctrine at boot</li>
+                            </ul>
+                        </div>
+                        <div class="arch-adaptor-card volatile-card">
+                            <h4>Adaptation Surface</h4>
+                            <ul>
+                                <li><strong>MUTABLE</strong> within bounds</li>
+                                <li>Parameters the neurotrophic layer can modify</li>
+                                <li>Bounded by the constraint surface</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── NEUROTROPHIC LAYER ── -->
+                <div class="arch-section animated fadeInUp">
+                    <h3><i class="fa-solid fa-brain"></i> Neurotrophic Layer &mdash; Governed Adaptation</h3>
+                    <p>
+                        The neurotrophic layer sits above the fast path and observes its output. It never interrupts
+                        the fast path. It learns from it, adapts parameters within bounds, and feeds changes back &mdash;
+                        but the fast path continues running unchanged through every adaptation cycle.
+                    </p>
+
+                    <div class="arch-img-single">
+                        <img src="assets/arch/arch-05-neurotrophic-layer.png" alt="Neurotrophic Layer — fast path and slow path with Phases A through E">
+                    </div>
+
+                    <div class="arch-phases">
+                        <div class="arch-phase-card">
+                            <h4><i class="fa-solid fa-heart-pulse"></i>&ensp;Phase A &mdash; Governed Homeostasis</h4>
+                            <p>Observes fast-path thermodynamic output (rate, latency, error, throughput). Evaluates against doctrine-defined set points. Adjusts operational parameters within constitutional bounds. The slow path watches, measures, reweights &mdash; the fast path runs unchanged.</p>
+                        </div>
+                        <div class="arch-phase-card">
+                            <h4><i class="fa-solid fa-diagram-project"></i>&ensp;Phase B &mdash; Structural Plasticity</h4>
+                            <p>Grows and prunes topology nodes. Adds new seeds, strengthens connections, removes underperforming paths. All growth bounded by the frozen constraint surface. This is how the system&rsquo;s structure evolves without violating its constitution.</p>
+                        </div>
+                        <div class="arch-phase-card">
+                            <h4><i class="fa-solid fa-screwdriver-wrench"></i>&ensp;Phase C &mdash; Cross-Domain Fault Repair</h4>
+                            <p>Astrocyte-model mediator. Detects faults across domain boundaries. Propagates bridge signals. Repairs damaged circuits before learning proceeds. Learning on damaged circuits produces drift &mdash; Phase C closes that gap.</p>
+                        </div>
+                        <div class="arch-phase-card">
+                            <h4><i class="fa-solid fa-clock-rotate-left"></i>&ensp;Phase D &mdash; Temporal Learning</h4>
+                            <p>Learns from history. Applies reward mechanisms. Balances beneficial outcomes against hostile ones. Accumulates evidence until prediction confidence reaches threshold. Adjusts weights, not rules.</p>
+                        </div>
+                        <div class="arch-phase-card">
+                            <h4><i class="fa-solid fa-infinity"></i>&ensp;Phase E &mdash; Meta-Learning &amp; Integration</h4>
+                            <p>Learns how to learn. Adjusts learning parameters (not logic). Coordinates across all four preceding phases. Reward functions are Founder-defined only &mdash; the system cannot author its own goals. Topology-aware learning adapts based on structural context.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── ADAPTOR ARCHITECTURE ── -->
+                <div class="arch-section animated fadeInUp">
+                    <h3><i class="fa-solid fa-plug"></i> Adaptor Architecture &mdash; External Connections</h3>
+                    <p>
+                        Adaptors are <strong>external certified processes</strong>. Not part of the substrate.
+                        HTTP boundary only. The substrate never changes &mdash; only the adaptor configuration surface changes.
+                    </p>
+
+                    <div class="arch-img-single">
+                        <img src="assets/arch/arch-06-adaptor-architecture.png" alt="Adaptor Architecture — Burn Orchestrator, STABLE and VOLATILE registries">
+                    </div>
+
+                    <div class="arch-adaptor-row">
+                        <div class="arch-adaptor-card stable-card">
+                            <h4>Stable Profile</h4>
+                            <ul>
+                                <li><strong>30&ndash;80 ms</strong> latency</li>
+                                <li><strong>0.3%</strong> error rate</li>
+                                <li>Predictable &mdash; deterministic behaviour</li>
+                            </ul>
+                        </div>
+                        <div class="arch-adaptor-card volatile-card">
+                            <h4>Volatile Profile</h4>
+                            <ul>
+                                <li><strong>20&ndash;500 ms</strong> latency</li>
+                                <li><strong>5%</strong> error rate</li>
+                                <li>Unpredictable &mdash; real-world variance</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 8px;">
+                        Same substrate. Same collapse pipeline. Same governance. Different constraint surface per vertical.
+                    </p>
+
+                    <div class="table-responsive" style="margin-top: 24px;">
+                        <table class="table arch-table">
+                            <thead>
+                                <tr>
+                                    <th>Vertical</th>
+                                    <th>Regulation</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Fintech</strong></td><td>MiFID II, SOX</td><td>Proven</td></tr>
+                                <tr><td><strong>Healthcare</strong></td><td>HIPAA, FDA 21 CFR Part 11</td><td>Proven</td></tr>
+                                <tr><td><strong>Defence</strong></td><td>NATO STANAG 4586, MIL-STD-882E</td><td>Proven</td></tr>
+                                <tr><td><strong>Insurance</strong></td><td>Solvency II, IDD</td><td>Proven</td></tr>
+                                <tr><td><strong>Legal</strong></td><td>EU AI Act (Art. 14), ECHR Art. 6</td><td>Proven</td></tr>
+                                <tr><td><strong>Energy</strong></td><td>NERC CIP, IEC 62443</td><td>Proven</td></tr>
+                                <tr><td><strong>Automotive</strong></td><td>ISO 26262, SOTIF (ISO 21448)</td><td>Proven</td></tr>
+                                <tr><td><strong>Cybersecurity</strong></td><td>NIST CSF 2.0, SOC 2 Type II</td><td>Proven</td></tr>
+                                <tr><td><strong>Supply Chain</strong></td><td>EU CSRD, CSDDD, Basel III</td><td>Proven</td></tr>
+                                <tr><td><strong>EdTech</strong></td><td>FERPA, COPPA, EU GDPR (Art. 22)</td><td>Proven</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ── OBSERVABILITY ── -->
+                <div class="arch-section animated fadeInUp">
+                    <h3><i class="fa-solid fa-gauge-high"></i> Observability &mdash; Dual-Lane Cockpit</h3>
+                    <p>
+                        Two independent cockpits. Same KPI set. Different data sources. Zero shared state.
+                    </p>
+
+                    <div class="arch-cockpit-row">
+                        <div class="arch-cockpit-panel stable">
+                            <h4>Stable Cockpit</h4>
+                            <div class="cockpit-surface">
+                                <h5>Rate Surface</h5>
+                                <ul>
+                                    <li>Current RPS</li>
+                                    <li>Min / Max / Avg</li>
+                                    <li>Historical Trend</li>
+                                </ul>
+                            </div>
+                            <div class="cockpit-surface">
+                                <h5>Timing Surface</h5>
+                                <ul>
+                                    <li>P50 / P95 / P99</li>
+                                    <li>Jitter</li>
+                                </ul>
+                            </div>
+                            <div class="cockpit-surface">
+                                <h5>Reliability Surface</h5>
+                                <ul>
+                                    <li>Error Rate / Count</li>
+                                    <li>Success Rate</li>
+                                </ul>
+                            </div>
+                            <div class="cockpit-surface">
+                                <h5>Governance Surface</h5>
+                                <ul>
+                                    <li>Throttle Rate</li>
+                                    <li>Capacity Utilisation</li>
+                                    <li>Accepted / Throttled</li>
+                                </ul>
+                            </div>
+                            <p class="cockpit-character">Muted · Precise · Minimal</p>
+                        </div>
+                        <div class="arch-cockpit-panel volatile">
+                            <h4>Volatile Cockpit</h4>
+                            <div class="cockpit-surface">
+                                <h5>Rate Surface</h5>
+                                <ul>
+                                    <li>Current RPS</li>
+                                    <li>Min / Max / Avg</li>
+                                    <li>Historical Trend</li>
+                                </ul>
+                            </div>
+                            <div class="cockpit-surface">
+                                <h5>Timing Surface</h5>
+                                <ul>
+                                    <li>P50 / P95 / P99</li>
+                                    <li>Jitter</li>
+                                </ul>
+                            </div>
+                            <div class="cockpit-surface">
+                                <h5>Reliability Surface</h5>
+                                <ul>
+                                    <li>Error Rate / Count</li>
+                                    <li>Success Rate</li>
+                                </ul>
+                            </div>
+                            <div class="cockpit-surface">
+                                <h5>Governance Surface</h5>
+                                <ul>
+                                    <li>Throttle Rate</li>
+                                    <li>Capacity Utilisation</li>
+                                    <li>Accepted / Throttled</li>
+                                </ul>
+                            </div>
+                            <p class="cockpit-character">Expressive · Dynamic · Wide</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── STRUCTURAL PROPERTIES ── -->
+                <div class="arch-section animated fadeInUp">
+                    <h3><i class="fa-solid fa-certificate"></i> Structural Properties</h3>
+
+                    <div class="table-responsive">
+                        <table class="table arch-table">
+                            <thead>
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Enforcement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><strong>Deterministic</strong></td><td>Same input &rarr; same output. Always. No unseeded randomness.</td></tr>
+                                <tr><td><strong>Identity-free</strong></td><td>No personal identifiers in the substrate. Constitutional.</td></tr>
+                                <tr><td><strong>Irreversible</strong></td><td>Collapse cannot be undone. C&sup1;&#8315; does not exist.</td></tr>
+                                <tr><td><strong>Idempotent</strong></td><td>C&sup2; = C. Collapsing a collapsed state changes nothing.</td></tr>
+                                <tr><td><strong>Governed</strong></td><td>All adaptation bounded by frozen constraint surface.</td></tr>
+                                <tr><td><strong>Additive</strong></td><td>Each neurotrophic phase adds capability. Nothing modified.</td></tr>
+                                <tr><td><strong>Constitutional</strong></td><td>Doctrine loaded at boot, immutable at runtime.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ── EXECUTION SUMMARY ── -->
+                <div class="arch-section animated fadeInUp">
+                    <h3><i class="fa-solid fa-route"></i> Execution Summary</h3>
+                    <p>
+                        Signal to resolution. One path.
+                    </p>
+
+                    <div class="arch-flow-item"><span class="flow-num">1</span> Signal arrives</div>
+                    <div class="arch-flow-item"><span class="flow-num">2</span> Connector validates (ingress boundary)</div>
+                    <div class="arch-flow-item"><span class="flow-num">3</span> Atom dispatches (O(1) Instamap lookup)</div>
+                    <div class="arch-flow-item"><span class="flow-num">4</span> Collapse pipeline executes (&alpha; &rarr; &nu; &rarr; &lambda; &rarr; &rho; &rarr; &epsilon;)</div>
+                    <div class="arch-flow-item"><span class="flow-num">5</span> Admissible? &mdash; No &rarr; VETOED (structurally impossible)</div>
+                    <div class="arch-flow-item"><span class="flow-num">6</span> Deterministic reaction produces output</div>
+                    <div class="arch-flow-item"><span class="flow-num">7</span> Extinction returns substrate to purity (&omega;&#8320;)</div>
+                    <div class="arch-flow-item"><span class="flow-num">8</span> Telemetry emitted to neurotrophic layer (read-only)</div>
+                    <div class="arch-flow-item"><span class="flow-num">9</span> Neurotrophic layer accumulates, learns, adapts (slow path)</div>
+                    <div class="arch-flow-item"><span class="flow-num">10</span> Prediction confidence threshold met &rarr; adaptation surface mutates</div>
+                    <div class="arch-flow-item"><span class="flow-num">11</span> Fast path continues. It doesn&rsquo;t know anything changed.</div>
+                </div>
+
+                <!-- ── CLOSING ── -->
+                <div class="arch-section arch-closing animated fadeInUp">
+                    <p class="arch-closing-line">
+                        The substrate never changes. Only the constraint surface changes.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+
+    <span class="border-top"></span><span class="border-left"></span><span class="border-right"></span><span class="border-bottom"></span>
+    <script src="js/jquery.min.js"></script>
+    <script>$(function(){$('.toggle-nav').on('click',function(e){e.preventDefault();$('.menu-responsive').slideToggle(200);});});</script>
+</body>
+</html>
