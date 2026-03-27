@@ -720,12 +720,12 @@
                                 <tr data-proof="healthcare"><td><strong>Healthcare</strong></td><td>HIPAA, FDA 21 CFR Part 11</td><td>Proven</td></tr>
                                 <tr data-proof="defence"><td><strong>Defence</strong></td><td>NATO STANAG 4586, MIL-STD-882E</td><td>Proven</td></tr>
                                 <tr data-proof="insurance"><td><strong>Insurance</strong></td><td>Solvency II, IDD</td><td>Proven</td></tr>
-                                <tr data-proof="legal"><td><strong>Legal</strong></td><td>EU AI Act (Art. 14), ECHR Art. 6</td><td>Proven</td></tr>
+                                <tr data-proof="legal"><td><strong>Legal</strong></td><td>EU AI Act (Art. 14), ECHR Art. 6</td><td>Adaptor-ready</td></tr>
                                 <tr data-proof="energy"><td><strong>Energy</strong></td><td>NERC CIP, IEC 62443</td><td>Proven</td></tr>
                                 <tr data-proof="automotive"><td><strong>Automotive</strong></td><td>ISO 26262, SOTIF (ISO 21448)</td><td>Proven</td></tr>
                                 <tr data-proof="cybersecurity"><td><strong>Cybersecurity</strong></td><td>NIST CSF 2.0, SOC 2 Type II</td><td>Proven</td></tr>
                                 <tr data-proof="supplychain"><td><strong>Supply Chain</strong></td><td>EU CSRD, CSDDD, Basel III</td><td>Proven</td></tr>
-                                <tr data-proof="edtech"><td><strong>EdTech</strong></td><td>FERPA, COPPA, EU GDPR (Art. 22)</td><td>Proven</td></tr>
+                                <tr data-proof="edtech"><td><strong>EdTech</strong></td><td>FERPA, COPPA, EU GDPR (Art. 22)</td><td>Adaptor-ready</td></tr>
                                 <tr data-proof="governedai"><td><strong>Governed AI</strong></td><td>No standard (substrate layer)</td><td>Proven</td></tr>
                             </tbody>
                         </table>
@@ -944,6 +944,7 @@
             },
             legal: {
                 title: 'Legal',
+                status: 'Adaptor-ready',
                 reg: 'EU AI Act (Art. 14) · ECHR Art. 6',
                 standard: 'EU AI Act Art. 14 requires transparency and human oversight in high-risk AI systems. ECHR Art. 6 guarantees the right to a fair trial, requiring jurisdiction clarity and auditable decision processes.',
                 tested: [
@@ -1014,6 +1015,7 @@
             },
             edtech: {
                 title: 'EdTech',
+                status: 'Adaptor-ready',
                 reg: 'FERPA · COPPA · EU GDPR (Art. 22)',
                 standard: 'FERPA protects student education records. COPPA requires parental consent for under-13 data collection. EU GDPR Art. 22 restricts automated decision-making on children.',
                 tested: [
@@ -1060,7 +1062,7 @@
                 h += '<li>' + d.tested[i] + '</li>';
             }
             h += '</ul></div>';
-            h += '<div class="proof-block"><h5>Why Proven</h5><p>' + d.proven + '</p></div>';
+            h += '<div class="proof-block"><h5>Why ' + (d.status || 'Proven') + '</h5><p>' + d.proven + '</p></div>';
             h += '<div class="proof-closure"><p><strong>Proof Closure:</strong> ' + d.closure + '</p></div>';
             content.innerHTML = h;
             overlay.classList.add('active');
