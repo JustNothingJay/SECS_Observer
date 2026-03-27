@@ -1028,17 +1028,19 @@
             },
             governedai: {
                 title: 'Governed AI',
-                reg: 'No external standard \u2014 SECS is the substrate layer',
-                standard: 'There is no regulatory standard for this vertical because SECS does not govern AI behaviour. AI governance middleware, agent orchestrators, and autonomous systems connect to SECS as adaptors \u2014 the same way fintech or healthcare does. Their reasoning is their concern. SECS governs the message.',
+                reg: 'Enterprise AI management \u2014 structured guardrails and drift governance',
+                standard: 'No regulator has defined a standard for AI agent governance yet. SECS provides a structured layer for enterprises managing AI products: guardrail scripts that run at critical decision points, agent drift handover processes, and envelope-level auditability. The layout, structure, and execution timing are the value \u2014 the scripts themselves can be modified to each customer\u2019s use case or deployed as-is.',
                 tested: [
-                    'AI agent traffic treated identically to any other vertical \u2014 same collapse pipeline, same admissibility function',
-                    'Agent governance platforms (middleware, orchestrators, reference monitors) connect via certified HTTP adaptor',
-                    'SECS does not inspect, interpret, or validate AI reasoning \u2014 it validates the message envelope against constitutional bounds',
-                    'If the agent\u2019s parameters pass admissibility (\u03B1\u2080 \u2227 \u03B1\u2C7C), the message collapses through the pipeline \u2014 if not, it is vetoed',
-                    'Identity-free: no model name, agent ID, session token, or API key enters the governance layer'
+                    'Guardrail assessment: AI agent products evaluated against up to 100 configurable rules covering admissibility, identity, drift, and action constraints',
+                    'Adaptor provisioning: operator defines the constraint surface, certified adaptor deployed with enforceable bounds per AI partner',
+                    'Kill switch: operator can revoke any adaptor certificate instantly \u2014 connection terminates, no graceful degradation',
+                    'Reasoning bound rules: configurable constraints such as reasoningTime > 30s \u2192 actionConstraints where DEL ALLOWED = BLOCK',
+                    'Envelope replay: when an agent deletes a file, moves data, or triggers an anomaly \u2014 every envelope in the execution chain is replayable, showing which system acted, in what sequence, under what authority',
+                    'Agent drift handover: structured process for detecting when AI behaviour drifts outside the certified surface, with automated flagging and operator escalation',
+                    'Authority chain tracing: full provenance from operator configuration \u2192 adaptor certificate \u2192 admissibility gate \u2192 collapse decision \u2192 outcome'
                 ],
-                proven: 'SECS is not a competing AI governance layer. It is the governed substrate that AI governance systems run on. The distinction is structural: middleware layers validate AI behaviour at the reasoning boundary; SECS validates the message at the collapse boundary. An AI agent\u2019s output becomes a signal. That signal either passes admissibility or it doesn\u2019t. The substrate does not care what produced it.',
-                closure: 'The AI governance vertical proves that SECS treats all external systems identically. No vertical gets special logic. No vertical bypasses the collapse pipeline. The substrate never changes \u2014 only the constraint surface changes. An AI agent connecting to SECS is just another connector with a certified adaptor. Its intelligence is irrelevant to the substrate.'
+                proven: 'Others are building AI management tooling. Many are ahead. But most are not taking the time to ensure the layout is correct, the structure is sound, and the guardrail scripts run at the critical moments. SECS provides that structural discipline: scripts that execute at the right time, drift processes that hand off cleanly, and envelope-level replay that answers the question \u201cwhy did the agent do that?\u201d The gap is not capability \u2014 it is rigour.',
+                closure: 'This vertical operates as an onboarding service or a deploy-as-is toolkit. An enterprise runs the guardrail assessment against their AI products, gets a gap report, and implements the adaptor configuration that closes those gaps. Every AI partner gets a certified adaptor, a kill switch, drift monitoring, and a full replay trail. The scripts are modifiable. The structure is not.'
             }
         };
 
