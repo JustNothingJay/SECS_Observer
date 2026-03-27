@@ -726,6 +726,7 @@
                                 <tr data-proof="cybersecurity"><td><strong>Cybersecurity</strong></td><td>NIST CSF 2.0, SOC 2 Type II</td><td>Proven</td></tr>
                                 <tr data-proof="supplychain"><td><strong>Supply Chain</strong></td><td>EU CSRD, CSDDD, Basel III</td><td>Proven</td></tr>
                                 <tr data-proof="edtech"><td><strong>EdTech</strong></td><td>FERPA, COPPA, EU GDPR (Art. 22)</td><td>Proven</td></tr>
+                                <tr data-proof="governedai"><td><strong>Governed AI</strong></td><td>No standard (substrate layer)</td><td>Proven</td></tr>
                             </tbody>
                         </table>
                         <p class="arch-table-note"><i class="fa-solid fa-hand-pointer" style="color: var(--accent-blue); margin-right: 6px;"></i>Click any row to see how &ldquo;Proven&rdquo; is defined for that vertical.</p>
@@ -1024,6 +1025,20 @@
                 ],
                 proven: 'FERPA and COPPA enforced as irrevocable structural predicates. Age-specific compliance: K-5 students require complianceStatus flag (COPPA under-13 protection). maxDepth:1 + maxSizeBytes:1024 is the globally most restrictive configuration, attesting to student privacy priority.',
                 closure: 'Certificate forbids studentName, studentId, parentName, email, deviceId. No student identity enters the decision layer. severeDriftMagnitude 0.6 prevents model drift from misclassifying student performance. Every learning path recommendation is deterministically replayable.'
+            },
+            governedai: {
+                title: 'Governed AI',
+                reg: 'No external standard \u2014 SECS is the substrate layer',
+                standard: 'There is no regulatory standard for this vertical because SECS does not govern AI behaviour. AI governance middleware, agent orchestrators, and autonomous systems connect to SECS as adaptors \u2014 the same way fintech or healthcare does. Their reasoning is their concern. SECS governs the message.',
+                tested: [
+                    'AI agent traffic treated identically to any other vertical \u2014 same collapse pipeline, same admissibility function',
+                    'Agent governance platforms (middleware, orchestrators, reference monitors) connect via certified HTTP adaptor',
+                    'SECS does not inspect, interpret, or validate AI reasoning \u2014 it validates the message envelope against constitutional bounds',
+                    'If the agent\u2019s parameters pass admissibility (\u03B1\u2080 \u2227 \u03B1\u2C7C), the message collapses through the pipeline \u2014 if not, it is vetoed',
+                    'Identity-free: no model name, agent ID, session token, or API key enters the governance layer'
+                ],
+                proven: 'SECS is not a competing AI governance layer. It is the governed substrate that AI governance systems run on. The distinction is structural: middleware layers validate AI behaviour at the reasoning boundary; SECS validates the message at the collapse boundary. An AI agent\u2019s output becomes a signal. That signal either passes admissibility or it doesn\u2019t. The substrate does not care what produced it.',
+                closure: 'The AI governance vertical proves that SECS treats all external systems identically. No vertical gets special logic. No vertical bypasses the collapse pipeline. The substrate never changes \u2014 only the constraint surface changes. An AI agent connecting to SECS is just another connector with a certified adaptor. Its intelligence is irrelevant to the substrate.'
             }
         };
 
