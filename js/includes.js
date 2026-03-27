@@ -23,7 +23,8 @@
         li('sovereign.html', 'Sovereign') +
         li('research.html', 'Research') +
         li('journal.html', 'Journal') +
-        li('timeline.html', 'Timeline');
+        li('timeline.html', 'Timeline') +
+        li('terminal.html', 'Terminal');
 
     /* ── Header ─────────────────────────────────────────────────── */
     w.secsHeader = function () {
