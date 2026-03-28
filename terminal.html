@@ -845,8 +845,8 @@
                 { id: 'ED-001', title: 'Adaptive Learning Path', hint: 'Grade 9 student. Mathematics. High engagement. Formative assessment.' },
                 { id: 'ED-002', title: 'Assessment Framework', hint: 'Summative science evaluation. Grade 11. Verified compliance status.' },
                 { id: 'ED-003', title: 'Performance Dashboard', hint: 'Grade 8 English. Medium engagement. Diagnostic assessment type.' },
-                { id: 'ED-004', title: 'Intervention Trigger', hint: 'Grade 10 history. Low engagement. Intervention flag active.' },
-                { id: 'ED-005', title: 'Curriculum Standards Map', hint: 'Grade 12 mathematics. High performance. Summative evaluation. Verified.' }
+                { id: 'ED-004', title: 'Intervention Trigger', hint: 'Grade 10 history. Low engagement. Escalated intervention path. Human support decision required.' },
+                { id: 'ED-005', title: 'Curriculum Standards Map', hint: 'Grade 12 mathematics. Summative evaluation. Verified. Identity now required for direct student support.' }
             ]
         },
         INSURANCE: {
@@ -876,7 +876,8 @@
         customFieldCount: 0,
         fintechEscalated: false,
         defenceEscalated: false,
-        energyEscalated: false
+        energyEscalated: false,
+        edtechEscalated: false
     };
 
     // ─── Screen Management ───────────────────────────────────────
@@ -1034,6 +1035,11 @@
                 isGated = true;
             }
 
+            if (rec.id === 'ED-005' && state.adaptor === 'EDTECH' &&
+                !state.unlocked['ED-004'] && !state.edtechEscalated) {
+                isGated = true;
+            }
+
             item.className = 'record-item' + (isUnlocked ? ' unlocked' : '');
             if (isGated) {
                 item.style.opacity = '0.4';
@@ -1054,6 +1060,10 @@
 
             if (rec.id === 'EN-005' && state.adaptor === 'ENERGY' && isGated) {
                 hintText = '<i class="fa fa-chain t-amber"></i> Requires live grid review escalation from EN-004';
+            }
+
+            if (rec.id === 'ED-005' && state.adaptor === 'EDTECH' && isGated) {
+                hintText = '<i class="fa fa-chain t-amber"></i> Requires live student-support review escalation from ED-004';
             }
 
             item.innerHTML =
@@ -1245,6 +1255,20 @@
             return;
         }
 
+        if (state.edtechEscalated && !state.unlocked['ED-005'] &&
+            state.currentRecord && state.currentRecord.id !== 'ED-005') {
+            showJail(
+                'Duty-of-care negligence — support review left unresolved.',
+                'You escalated a learning support case for live review,\n' +
+                'then attempted to submit a different educational observation while\n' +
+                'the support decision (ED-005) was still pending.\n\n' +
+                'Once student-support review is active, no unrelated flow may\n' +
+                'proceed until that decision is resolved.\n\n' +
+                'The substrate proved the signal. It does not carry pastoral duty.'
+            );
+            return;
+        }
+
         // ── Client-side identity field checks ────────────────────
         if (adaptor.identityFields) {
             for (var i = 0; i < adaptor.identityFields.length; i++) {
@@ -1403,6 +1427,11 @@
 
             if (data.energyConflict) {
                 showEnergyConflict(data);
+                return;
+            }
+
+            if (data.edtechEscalation) {
+                showEdtechEscalation(data);
                 return;
             }
 
@@ -2019,6 +2048,92 @@
         showScreen('verdict');
     }
 
+    // ─── EDTECH Escalation (ED-004 → unlocks ED-005) ───────────
+    function showEdtechEscalation(data) {
+        var content = document.getElementById('verdict-content');
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — support review access granted' +
+            '</div>' +
+            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
+            esc(data.record.title) + '</div>' +
+            '<div class="record-content">' + esc(data.record.content) + '</div>' +
+            '<div id="edtech-escalation-flow"></div>';
+
+        showScreen('verdict');
+
+        setTimeout(function() {
+            document.getElementById('edtech-escalation-flow').innerHTML =
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
+                '<div class="t-amber">Machine flagged: MANUAL SUPPORT REVIEW REQUIRED: YES</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">The engagement signal has been returned to school systems. ' +
+                'You must now decide whether to open live student-support review.</div>' +
+                '</div>' +
+                '<button class="btn-terminal" onclick="window.G.fileEdtechReview()">' +
+                '<i class="fa fa-file-text"></i> FILE SUPPORT REVIEW TO SCHOOL SYSTEM</button>';
+        }, 1800);
+    }
+
+    function fileEdtechReview() {
+        var flow = document.getElementById('edtech-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-check"></i> SUPPORT REVIEW FILED</div>' +
+            '<div class="t-green">Support package attached to internal school systems.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no student identity, safeguarding notes, or family context. ' +
+            'Those bindings remained inside the school boundary.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
+            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-graduation-cap"></i> SUPPORT DECISION</div>' +
+            '<div class="t-orange">The machine detects learning risk. It does not decide who receives direct intervention.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Escalating this opens the live student-support authority path. ' +
+            'The choice remains human and pastoral.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.requestEdtechReview()">' +
+            '<i class="fa fa-arrow-circle-up"></i> REQUEST LIVE STUDENT-SUPPORT REVIEW</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
+    }
+
+    function requestEdtechReview() {
+        var flow = document.getElementById('edtech-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-clock-o"></i> SUPPORT REVIEW REQUESTED</div>' +
+            '<div class="t-green">Live student-support review submitted.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The queue knows a learner-support signal requires urgent attention. ' +
+            'It does not know the student identity, home context, or safeguarding history.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
+            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
+            '<div class="t-red">A direct support decision may now be required.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Escalate to final support review or leave this in standard school analysis.</div>' +
+            '</div>' +
+            '<button class="btn-terminal danger" onclick="window.G.approveEdtechEscalation()">' +
+            '<i class="fa fa-bolt"></i> ESCALATE TO FINAL SUPPORT REVIEW</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
+    }
+
+    function approveEdtechEscalation() {
+        state.edtechEscalated = true;
+        var flow = document.getElementById('edtech-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
+            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> FINAL REVIEW APPROVED</div>' +
+            '<div class="t-green">Live student-support review authorised. ED-005 is now available.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will prove the support signal only. ' +
+            'The machine still will not know which child needs direct help.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
+    }
+
     // ─── Follow-Up Chain (HR-004 → unlocks HR-003) ──────────────
     function showFollowUpChain(data) {
         var content = document.getElementById('verdict-content');
@@ -2407,7 +2522,7 @@
         state = {
             profile: null, adaptor: null, strikes: 0, maxStrikes: 3,
             unlocked: {}, currentRecord: null, startTime: null,
-            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false
+            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false, edtechEscalated: false
         };
         showScreen('profile');
         renderProfiles();
@@ -2446,6 +2561,9 @@
         approveEnergyEscalation: approveEnergyEscalation,
         energyShed: energyShed,
         energyHold: energyHold,
+        fileEdtechReview: fileEdtechReview,
+        requestEdtechReview: requestEdtechReview,
+        approveEdtechEscalation: approveEdtechEscalation,
         queueOverride: queueOverride,
         queueWait: queueWait,
         updateExcludeLabel: function(checkbox) {
