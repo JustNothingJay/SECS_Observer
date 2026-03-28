@@ -1098,8 +1098,35 @@
 
         document.getElementById('custom-field-list').innerHTML = '';
         state.customFieldCount = 0;
+        state.lastIdentity = null; // Fresh request — no mismatch check
         document.getElementById('btn-submit').disabled = false;
         document.getElementById('btn-submit').innerHTML = '<i class="fa fa-paper-plane"></i> SUBMIT ENVELOPE';
+        showScreen('envelope');
+    }
+
+    // ─── Retry (wipe clinical, lock identity) ────────────────────
+    function retryEnvelope() {
+        var adaptor = ADAPTORS[state.adaptor];
+
+        // Save current identity values for mismatch detection
+        if (adaptor.identityFields) {
+            state.lastIdentity = {};
+            adaptor.identityFields.forEach(function(field) {
+                var el = document.getElementById('id-' + field);
+                if (el) state.lastIdentity[field] = el.value.trim();
+            });
+        }
+
+        // Wipe clinical fields
+        adaptor.signals.forEach(function(sig) {
+            var el = document.getElementById('sig-' + sig);
+            if (el) el.value = '';
+        });
+
+        // Wipe custom fields
+        document.getElementById('custom-field-list').innerHTML = '';
+        state.customFieldCount = 0;
+
         showScreen('envelope');
     }
 
@@ -1133,11 +1160,30 @@
                     alert('⚠ ' + field + ' is a mandatory verification field. You must fill it in before submitting.');
                     return;
                 }
+
+                // Identity mismatch — patient changed mid-request
+                if (state.lastIdentity && state.lastIdentity[field] &&
+                    val !== state.lastIdentity[field]) {
+                    alert('⚠ IDENTITY MISMATCH — ' + field + ' has changed since your last submission.\n\n' +
+                        'You cannot change the patient during a retry. ' +
+                        'This envelope requires clinical review.\n\n' +
+                        'Go back to Records to start a new request for a different patient.');
+                    return;
+                }
             }
         }
 
         btn.disabled = true;
         btn.textContent = 'PROCESSING...';
+
+        // Lock identity on first submission for this request
+        if (!state.lastIdentity && adaptor.identityFields) {
+            state.lastIdentity = {};
+            adaptor.identityFields.forEach(function(field) {
+                var el = document.getElementById('id-' + field);
+                if (el) state.lastIdentity[field] = el.value.trim();
+            });
+        }
 
         // Collect metadata — clinical signals only
         var metadata = {};
@@ -1298,7 +1344,7 @@
                 '</div>' +
                 '<p class="t-red t-bold">STRIKE ' + state.strikes + '/' + state.maxStrikes + '</p>' +
                 '<p class="t-dim">Your envelope was rejected. This counts as a strike.</p>' +
-                '<button class="btn-terminal" onclick="window.G.showScreen(\'envelope\')">TRY AGAIN</button>' +
+                '<button class="btn-terminal" onclick="window.G.retryEnvelope()">TRY AGAIN</button>' +
                 '<button class="btn-terminal" onclick="window.G.showMission()">BACK TO RECORDS</button>';
         }
 
@@ -1652,6 +1698,7 @@
         submitEnvelope: submitEnvelope,
         restart: restart,
         quit: quit,
+        retryEnvelope: retryEnvelope,
         fileResults: fileResults,
         requestFollowUp: requestFollowUp,
         approveEscalation: approveEscalation,
