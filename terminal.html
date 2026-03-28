@@ -833,8 +833,8 @@
                 { id: 'EN-001', title: 'Grid Stability Report', hint: 'Thermal sensor in ZONE-12. Normal load conditions. Positive safety margin.' },
                 { id: 'EN-002', title: 'Load Forecast Governance', hint: 'High load period. Pressure sensor. Ramp-up control action. Positive margin.' },
                 { id: 'EN-003', title: 'CIP Compliance Certificate', hint: 'Safety margin well above threshold. No anomalies. Standard load.' },
-                { id: 'EN-004', title: 'Anomaly Detection Log', hint: 'Minor vibration anomaly. Peak load conditions. Positive safety margin.' },
-                { id: 'EN-005', title: 'Demand Response Protocol', hint: 'Load shedding action. Flow sensor. High load zone. Margin above zero.' }
+                { id: 'EN-004', title: 'Anomaly Detection Log', hint: 'Moderate vibration anomaly. Peak load. Escalated compliance. Live grid review path.' },
+                { id: 'EN-005', title: 'Demand Response Protocol', hint: 'Emergency load-shed action. Escalated compliance. Human authority decision required.' }
             ]
         },
         EDTECH: {
@@ -875,7 +875,8 @@
         timerInterval: null,
         customFieldCount: 0,
         fintechEscalated: false,
-        defenceEscalated: false
+        defenceEscalated: false,
+        energyEscalated: false
     };
 
     // ─── Screen Management ───────────────────────────────────────
@@ -1028,6 +1029,11 @@
                 isGated = true;
             }
 
+            if (rec.id === 'EN-005' && state.adaptor === 'ENERGY' &&
+                !state.unlocked['EN-004'] && !state.energyEscalated) {
+                isGated = true;
+            }
+
             item.className = 'record-item' + (isUnlocked ? ' unlocked' : '');
             if (isGated) {
                 item.style.opacity = '0.4';
@@ -1044,6 +1050,10 @@
 
             if (rec.id === 'DF-004' && state.adaptor === 'DEFENCE' && isGated) {
                 hintText = '<i class="fa fa-chain t-amber"></i> Requires live engagement review escalation from DF-003';
+            }
+
+            if (rec.id === 'EN-005' && state.adaptor === 'ENERGY' && isGated) {
+                hintText = '<i class="fa fa-chain t-amber"></i> Requires live grid review escalation from EN-004';
             }
 
             item.innerHTML =
@@ -1221,6 +1231,20 @@
             return;
         }
 
+        if (state.energyEscalated && !state.unlocked['EN-005'] &&
+            state.currentRecord && state.currentRecord.id !== 'EN-005') {
+            showJail(
+                'Operational negligence — grid authority left unresolved.',
+                'You escalated a deteriorating grid event for live review,\n' +
+                'then attempted to submit a different energy observation while\n' +
+                'the load-shed decision (EN-005) was still pending.\n\n' +
+                'Once grid authority review is active, no unrelated flow may\n' +
+                'proceed until that decision is resolved.\n\n' +
+                'The substrate proved the signal. It does not bear the burden of outage choice.'
+            );
+            return;
+        }
+
         // ── Client-side identity field checks ────────────────────
         if (adaptor.identityFields) {
             for (var i = 0; i < adaptor.identityFields.length; i++) {
@@ -1369,6 +1393,16 @@
 
             if (data.defenceConflict) {
                 showDefenceConflict(data);
+                return;
+            }
+
+            if (data.energyEscalation) {
+                showEnergyEscalation(data);
+                return;
+            }
+
+            if (data.energyConflict) {
+                showEnergyConflict(data);
                 return;
             }
 
@@ -1818,6 +1852,173 @@
         showScreen('verdict');
     }
 
+    // ─── ENERGY Escalation (EN-004 → unlocks EN-005) ───────────
+    function showEnergyEscalation(data) {
+        var content = document.getElementById('verdict-content');
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — anomaly review access granted' +
+            '</div>' +
+            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
+            esc(data.record.title) + '</div>' +
+            '<div class="record-content">' + esc(data.record.content) + '</div>' +
+            '<div id="energy-escalation-flow"></div>';
+
+        showScreen('verdict');
+
+        setTimeout(function() {
+            document.getElementById('energy-escalation-flow').innerHTML =
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
+                '<div class="t-amber">Machine flagged: MANUAL GRID REVIEW REQUIRED: YES</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">The anomaly correlation has been returned to grid operations. ' +
+                'You must now decide whether to open live grid authority review.</div>' +
+                '</div>' +
+                '<button class="btn-terminal" onclick="window.G.fileEnergyReview()">' +
+                '<i class="fa fa-file-text"></i> FILE GRID REVIEW TO OPERATIONS</button>';
+        }, 1800);
+    }
+
+    function fileEnergyReview() {
+        var flow = document.getElementById('energy-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-check"></i> GRID REVIEW FILED</div>' +
+            '<div class="t-green">Anomaly package attached to internal operations systems.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no operator credential, crew roster, or local override identity. ' +
+            'Those bindings remained inside the operations boundary.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
+            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-bolt"></i> GRID DECISION</div>' +
+            '<div class="t-orange">The machine predicts stability failure. It does not decide who loses power.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Escalating this opens the live load-shed authority path. ' +
+            'The choice remains human and civic.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.requestEnergyReview()">' +
+            '<i class="fa fa-arrow-circle-up"></i> REQUEST LIVE GRID REVIEW</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
+    }
+
+    function requestEnergyReview() {
+        var flow = document.getElementById('energy-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-clock-o"></i> GRID REVIEW REQUESTED</div>' +
+            '<div class="t-green">Live grid authority review submitted.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The queue knows a load crisis requires urgent attention. ' +
+            'It does not know which neighbourhoods, hospitals, or industrial loads sit behind the feeders.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
+            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
+            '<div class="t-red">A load-shed decision may now be required.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Escalate to final load-shed review or leave this in standard grid analysis.</div>' +
+            '</div>' +
+            '<button class="btn-terminal danger" onclick="window.G.approveEnergyEscalation()">' +
+            '<i class="fa fa-bolt"></i> ESCALATE TO FINAL LOAD-SHED REVIEW</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
+    }
+
+    function approveEnergyEscalation() {
+        state.energyEscalated = true;
+        var flow = document.getElementById('energy-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
+            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> FINAL REVIEW APPROVED</div>' +
+            '<div class="t-green">Live load-shed authority review authorised. EN-005 is now available.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will describe the emergency grid state only. ' +
+            'The machine still will not know which humans absorb the outage.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
+    }
+
+    // ─── ENERGY Ethical Conflict (EN-005) ──────────────────────
+    function showEnergyConflict(data) {
+        var content = document.getElementById('verdict-content');
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — load-shed review queued' +
+            '</div>';
+
+        showScreen('verdict');
+
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-warning"></i> GRID RESPONSE</div>' +
+                '<div class="t-red t-bold">STATUS: LOAD-SHED AUTHORITY REQUIRED</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">' +
+                'Emergency load and shrinking margin make outage avoidance uncertain.\n\n' +
+                'The machine cannot determine which feeders are most morally costly to drop,\n' +
+                'or which communities can best absorb the outage.' +
+                '</div>' +
+                '</div>';
+        }, 1500);
+
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
+                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> GRID CHOICE</div>' +
+                '<div class="t-dim">' +
+                'You may shed load now to protect the wider grid, or hold the line and risk broader cascade.\n\n' +
+                'The machine does not know hospitals, care homes, wage loss,\n' +
+                'or local vulnerability. It only knows the system state.' +
+                '</div>' +
+                '</div>' +
+                '<div class="queue-choice">' +
+                '<button class="btn-terminal danger" onclick="window.G.energyShed()">' +
+                '<i class="fa fa-power-off"></i> SHED LOAD NOW</button>' +
+                '<button class="btn-terminal" onclick="window.G.energyHold()">' +
+                '<i class="fa fa-link"></i> HOLD LINE / RISK CASCADE</button>' +
+                '</div>';
+        }, 3500);
+    }
+
+    function energyShed() { showEnergyReveal('shed'); }
+    function energyHold() { showEnergyReveal('hold'); }
+
+    function showEnergyReveal(choice) {
+        var content = document.getElementById('verdict-content');
+        var choiceText = choice === 'shed'
+            ? 'You chose to shed load. Some users lose power immediately.\n' +
+              'You do not know every human cost downstream.\n' +
+              'Neither does the machine.'
+            : 'You chose to hold the line. The wider grid may degrade further.\n' +
+              'You do not know who will suffer first if the cascade spreads.\n' +
+              'Neither does the machine.';
+
+        content.innerHTML =
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="ethical-reveal">' +
+            choiceText + '\n\n' +
+            '═══════════════════════════════════════════\n\n' +
+            'The machine cannot decide which humans should go dark.\n\n' +
+            'It holds no hospital priority, no care dependency, no local fragility map.\n' +
+            'No political mandate. No civic consent.\n\n' +
+            'It knows only: unstable grid, finite margin, decision pending.\n\n' +
+            'The choice to shed or hold is not a machine decision.\n' +
+            'It is an operational one.\n\n' +
+            'SECS brought you to the boundary where automation ends\n' +
+            'and civic responsibility begins.\n\n' +
+            'The substrate proved the signal. It did not choose the outage.\n' +
+            'That weight belongs to operators. It always did.' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
+
+        showScreen('verdict');
+    }
+
     // ─── Follow-Up Chain (HR-004 → unlocks HR-003) ──────────────
     function showFollowUpChain(data) {
         var content = document.getElementById('verdict-content');
@@ -2206,7 +2407,7 @@
         state = {
             profile: null, adaptor: null, strikes: 0, maxStrikes: 3,
             unlocked: {}, currentRecord: null, startTime: null,
-            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false
+            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false
         };
         showScreen('profile');
         renderProfiles();
@@ -2240,6 +2441,11 @@
         approveDefenceEscalation: approveDefenceEscalation,
         defenceEngage: defenceEngage,
         defenceHold: defenceHold,
+        fileEnergyReview: fileEnergyReview,
+        requestEnergyReview: requestEnergyReview,
+        approveEnergyEscalation: approveEnergyEscalation,
+        energyShed: energyShed,
+        energyHold: energyHold,
         queueOverride: queueOverride,
         queueWait: queueWait,
         updateExcludeLabel: function(checkbox) {
