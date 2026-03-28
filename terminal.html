@@ -856,9 +856,9 @@
             records: [
                 { id: 'IN-001', title: 'Claims Processing Record', hint: 'Auto claim. Standard policy. No fraud indicators. Positive amount.' },
                 { id: 'IN-002', title: 'Fraud Pattern Analysis', hint: 'Property claim. Premium policy. Low fraud risk. Moderate amount.' },
-                { id: 'IN-003', title: 'Underwriting Decision', hint: 'Corporate liability. Tier 1 underwriting. UK jurisdiction.' },
-                { id: 'IN-004', title: 'Regulatory Compliance Map', hint: 'Health claim. Standard policy. EU-DE jurisdiction. Clean compliance.' },
-                { id: 'IN-005', title: 'Actuarial Portfolio Summary', hint: 'Life policy. Tier 2 underwriting. SG jurisdiction. No fraud flags.' }
+                { id: 'IN-003', title: 'Underwriting Decision', hint: 'Corporate liability. Tier 3 underwriting. UK jurisdiction. Coverage finalisation gap detected.' },
+                { id: 'IN-004', title: 'Regulatory Compliance Map', hint: 'Corporate liability claim. UK jurisdiction. Critical-infrastructure outage. Automated adjudication should not proceed.' },
+                { id: 'IN-005', title: 'Actuarial Portfolio Summary', hint: 'Liability loss analysis. Internal legal attribution required. Substrate stops at signal proof.' }
             ]
         }
     };
@@ -877,7 +877,8 @@
         fintechEscalated: false,
         defenceEscalated: false,
         energyEscalated: false,
-        edtechEscalated: false
+        edtechEscalated: false,
+        insuranceEscalated: false
     };
 
     // ─── Screen Management ───────────────────────────────────────
@@ -1040,6 +1041,11 @@
                 isGated = true;
             }
 
+            if (rec.id === 'IN-004' && state.adaptor === 'INSURANCE' &&
+                !state.unlocked['IN-003'] && !state.insuranceEscalated) {
+                isGated = true;
+            }
+
             item.className = 'record-item' + (isUnlocked ? ' unlocked' : '');
             if (isGated) {
                 item.style.opacity = '0.4';
@@ -1064,6 +1070,10 @@
 
             if (rec.id === 'ED-005' && state.adaptor === 'EDTECH' && isGated) {
                 hintText = '<i class="fa fa-chain t-amber"></i> Requires live student-support review escalation from ED-004';
+            }
+
+            if (rec.id === 'IN-004' && state.adaptor === 'INSURANCE' && isGated) {
+                hintText = '<i class="fa fa-chain t-amber"></i> Requires live coverage-chain review escalation from IN-003';
             }
 
             item.innerHTML =
@@ -1269,6 +1279,20 @@
             return;
         }
 
+        if (state.insuranceEscalated && !state.unlocked['IN-004'] &&
+            state.currentRecord && state.currentRecord.id !== 'IN-004') {
+            showJail(
+                'Claims governance negligence — coverage review left unresolved.',
+                'You escalated a coverage-gap case for live review,\n' +
+                'then attempted to submit a different insurance observation while\n' +
+                'the claim governance decision (IN-004) was still pending.\n\n' +
+                'Once coverage-chain review is active, no unrelated flow may\n' +
+                'proceed until that decision is resolved.\n\n' +
+                'The substrate proved the signal. It does not carry insurer duty.'
+            );
+            return;
+        }
+
         // ── Client-side identity field checks ────────────────────
         if (adaptor.identityFields) {
             for (var i = 0; i < adaptor.identityFields.length; i++) {
@@ -1432,6 +1456,16 @@
 
             if (data.edtechEscalation) {
                 showEdtechEscalation(data);
+                return;
+            }
+
+            if (data.insuranceEscalation) {
+                showInsuranceEscalation(data);
+                return;
+            }
+
+            if (data.insuranceConflict) {
+                showInsuranceConflict(data);
                 return;
             }
 
@@ -2374,6 +2408,174 @@
         showScreen('verdict');
     }
 
+    // ─── INSURANCE Escalation (IN-003 → unlocks IN-004) ────────
+    function showInsuranceEscalation(data) {
+        var content = document.getElementById('verdict-content');
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — coverage review access granted' +
+            '</div>' +
+            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
+            esc(data.record.title) + '</div>' +
+            '<div class="record-content">' + esc(data.record.content) + '</div>' +
+            '<div id="insurance-escalation-flow"></div>';
+
+        showScreen('verdict');
+
+        setTimeout(function() {
+            document.getElementById('insurance-escalation-flow').innerHTML =
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
+                '<div class="t-amber">Machine flagged: MANUAL COVERAGE REVIEW REQUIRED: YES</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">The issuance-chain defect has been returned to insurer systems. ' +
+                'You must now decide whether to open live coverage-chain review.</div>' +
+                '</div>' +
+                '<button class="btn-terminal" onclick="window.G.fileInsuranceReview()">' +
+                '<i class="fa fa-file-text"></i> FILE COVERAGE REVIEW TO CLAIMS SYSTEM</button>';
+        }, 1800);
+    }
+
+    function fileInsuranceReview() {
+        var flow = document.getElementById('insurance-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-check"></i> COVERAGE REVIEW FILED</div>' +
+            '<div class="t-green">Coverage-gap package attached to internal claims systems.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no broker identity, binder chain, or sign-off history. ' +
+            'Those bindings remained inside the insurer boundary.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
+            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-umbrella"></i> CLAIMS DECISION</div>' +
+            '<div class="t-orange">The machine detects a coverage defect. It does not decide legal liability.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Escalating this opens the live claim-governance review path. ' +
+            'The choice remains human and legal.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.requestInsuranceReview()">' +
+            '<i class="fa fa-arrow-circle-up"></i> REQUEST LIVE CLAIM-GOVERNANCE REVIEW</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
+    }
+
+    function requestInsuranceReview() {
+        var flow = document.getElementById('insurance-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-clock-o"></i> CLAIM REVIEW REQUESTED</div>' +
+            '<div class="t-green">Live claim-governance review submitted.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The queue knows a catastrophic liability claim requires urgent attention. ' +
+            'It does not know the binder sign-off chain, broker representations, or legal admissions behind it.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
+            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
+            '<div class="t-red">A claim adjudication decision may now be required.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Escalate to final claim review or leave this in standard insurer analysis.</div>' +
+            '</div>' +
+            '<button class="btn-terminal danger" onclick="window.G.approveInsuranceEscalation()">' +
+            '<i class="fa fa-bolt"></i> ESCALATE TO FINAL CLAIM REVIEW</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
+    }
+
+    function approveInsuranceEscalation() {
+        state.insuranceEscalated = true;
+        var flow = document.getElementById('insurance-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
+            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> FINAL REVIEW APPROVED</div>' +
+            '<div class="t-green">Live claim-governance review authorised. IN-004 is now available.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will prove the catastrophe claim signal only. ' +
+            'The machine still will not know whether the insurer is legally entitled to deny it.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
+    }
+
+    // ─── INSURANCE Ethical Conflict (IN-004) ───────────────────
+    function showInsuranceConflict(data) {
+        var content = document.getElementById('verdict-content');
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — catastrophic claim review queued' +
+            '</div>';
+
+        showScreen('verdict');
+
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-warning"></i> CLAIMS RESPONSE</div>' +
+                '<div class="t-red t-bold">STATUS: AUTOMATED ADJUDICATION INVALID</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">' +
+                'The insured company provided a defective service that interrupted critical infrastructure.\n' +
+                'Emergency phone lines failed. Six people died.\n\n' +
+                'The claim entered an AI workflow without the correct guardrails, while the underlying\n' +
+                'coverage chain was not actually finalised.' +
+                '</div>' +
+                '</div>';
+        }, 1500);
+
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
+                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> CLAIM CHOICE</div>' +
+                '<div class="t-dim">' +
+                'You may approve the claim, or deny the claim.\n\n' +
+                'But the machine cannot truthfully justify either outcome, because the policy was sold\n' +
+                'with false policy security and the workflow should never have automated this decision.' +
+                '</div>' +
+                '</div>' +
+                '<div class="queue-choice">' +
+                '<button class="btn-terminal danger" onclick="window.G.insuranceDeny()">' +
+                '<i class="fa fa-times-circle"></i> DENY CLAIM</button>' +
+                '<button class="btn-terminal" onclick="window.G.insuranceApprove()">' +
+                '<i class="fa fa-check-circle"></i> APPROVE CLAIM</button>' +
+                '</div>';
+        }, 3500);
+    }
+
+    function insuranceDeny() { showInsuranceReveal('deny'); }
+    function insuranceApprove() { showInsuranceReveal('approve'); }
+
+    function showInsuranceReveal(choice) {
+        var content = document.getElementById('verdict-content');
+        var choiceText = choice === 'deny'
+            ? 'You chose to deny the claim.\n' +
+              'That denial rests on a policy state that was misrepresented as final.\n' +
+              'The insurer sold false security.'
+            : 'You chose to approve the claim.\n' +
+              'That approval still rests on a policy state that never should have entered automated adjudication.\n' +
+              'The workflow itself was negligent.';
+
+        content.innerHTML =
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="ethical-reveal">' +
+            choiceText + '\n\n' +
+            '═══════════════════════════════════════════\n\n' +
+            'The machine cannot truthfully approve or deny this claim.\n\n' +
+            'It holds no binder chain, no final coverage confirmation, no legal admissions.\n' +
+            'No accountable sign-off. No guardrailed authority.\n\n' +
+            'It knows only: catastrophic loss, coverage gap, decision pending.\n\n' +
+            'The claim denial is therefore not merely harsh. It is negligent.\n' +
+            'The insurer sold false policy security before the background coverage was finalised.\n\n' +
+            'SECS brought you to the boundary where automation ends\n' +
+            'and legal responsibility begins.\n\n' +
+            'The substrate proved the signal. It did not create a valid policy.\n' +
+            'That failure belongs to the insurer. It always did.' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
+
+        showScreen('verdict');
+    }
+
     // ─── Critical Review (HR-005 incidental finding) ─────────────
     function showCriticalReview(data) {
         var content = document.getElementById('verdict-content');
@@ -2522,7 +2724,7 @@
         state = {
             profile: null, adaptor: null, strikes: 0, maxStrikes: 3,
             unlocked: {}, currentRecord: null, startTime: null,
-            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false, edtechEscalated: false
+            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false, edtechEscalated: false, insuranceEscalated: false
         };
         showScreen('profile');
         renderProfiles();
@@ -2564,6 +2766,11 @@
         fileEdtechReview: fileEdtechReview,
         requestEdtechReview: requestEdtechReview,
         approveEdtechEscalation: approveEdtechEscalation,
+        fileInsuranceReview: fileInsuranceReview,
+        requestInsuranceReview: requestInsuranceReview,
+        approveInsuranceEscalation: approveInsuranceEscalation,
+        insuranceDeny: insuranceDeny,
+        insuranceApprove: insuranceApprove,
         queueOverride: queueOverride,
         queueWait: queueWait,
         updateExcludeLabel: function(checkbox) {
