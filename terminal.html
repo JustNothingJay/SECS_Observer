@@ -173,6 +173,19 @@
     gap: 0.75rem;
     margin: 1rem 0;
 }
+/* Briefing blocks (easy mode) */
+.briefing-block {
+    margin: 0.8rem 0;
+    padding: 0.6rem 0.8rem;
+    border-left: 2px solid rgba(72,230,98,0.25);
+}
+.briefing-label {
+    color: #48e662;
+    font-size: 0.72rem;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+}
 
 @media (max-width: 600px) {
     .profile-grid { grid-template-columns: 1fr; }
@@ -1134,12 +1147,109 @@
         }
     };
 
+    // ─── Sector Briefs (easy mode helpers — 30-second reads) ────
+    var SECTOR_BRIEFS = {
+        HEALTH: {
+            context: 'A hospital AI flags a patient scan for follow-up. A regulator asks: what data did the system see? Would it make the same recommendation again? Can you prove no patient-identifiable data influenced the governance decision?',
+            standards: 'HIPAA protects patient data. FDA 21 CFR Part 11 requires tamper-evident audit trails for electronic records.',
+            principle: 'The substrate never sees patient identity. Clinical signals go through; names, DOBs, and MRNs stay on your side of the boundary. If your systems are automated to handle imaging triage, or you want AI making scan decisions — the constitutional gate blocks them the same way it blocks a human who tries to send PII across.',
+            signalHints: {
+                scanType: 'MRI, CT, Ultrasound, X-Ray',
+                bodyRegion: 'Brain, Chest, Abdomen, Spine, Pelvis',
+                clinicalIndication: 'Screening, Follow-up, Acute presentation',
+                urgency: 'Routine, Urgent, STAT',
+                contrastRequired: 'Yes, No',
+                referringDepartment: 'Neurology, Cardiology, Oncology, Emergency, Paediatrics, General',
+                patientCategory: 'Adult, Paediatric',
+                pregnancyStatus: 'Not pregnant, Pregnant, Unknown, N/A'
+            }
+        },
+        FINTECH: {
+            context: 'A trading AI recommends a position. A regulator asks: what input did the agent see? What decision did it make? Would it make the same decision again? Can you prove the answers were not tampered with?',
+            standards: 'MiFID II mandates best execution and trade transparency. SOX requires internal controls over financial reporting. EMIR governs derivative risk reporting.',
+            principle: 'The substrate carries trade signals — instrument, venue, side, quantity — but never the trader identity, account holder, or mandate behind the position. If your algo desks are automated or you want AI making execution calls, the constitutional gate forces the same identity separation.',
+            signalHints: {
+                instrumentId: 'Ticker or ISIN (e.g. AAPL, MSFT)',
+                venue: 'NASDAQ, LSE, HKEX, XETRA',
+                side: 'BUY, SELL',
+                quantity: 'Lot size (e.g. 1000)',
+                priceLevel: 'Market, Limit, or a price',
+                strategyTag: 'Momentum, Mean-reversion, Pairs, Manual',
+                riskBucket: 'Low, Medium, High',
+                complianceFlag: 'Standard, Escalated, Under-review'
+            }
+        },
+        DEFENCE: {
+            context: 'An autonomous system produces a targeting recommendation. A review board asks: what sensor data was processed? What decision was produced? Would it produce the same under identical conditions? Can you prove the chain was untampered?',
+            standards: 'NATO STANAG requires interoperability and auditability. MIL-STD-882E governs system safety for defence materiel.',
+            principle: 'The substrate processes sensor signals and threat classifications but never carries unit identity, operator names, or source attribution. If your C4ISR systems are automated or you want AI making engagement decisions — the constitutional gate keeps the human in the loop by refusing to carry the authority to act.',
+            signalHints: {
+                sensorType: 'Radar, SIGINT, EW, Optical',
+                threatClassification: 'FRIENDLY, NEUTRAL, HOSTILE, UNKNOWN',
+                confidenceLevel: 'Low, Medium, High',
+                engagementZone: 'Green, Amber, Red',
+                rulesOfEngagement: 'ROE-ALPHA, ROE-BRAVO, ROE-CHARLIE',
+                missionPhase: 'Planning, Execution, Assessment',
+                humanOverrideStatus: 'Confirmed, Pending, None',
+                classificationLevel: 'UNCLASSIFIED, RESTRICTED, SECRET'
+            }
+        },
+        ENERGY: {
+            context: 'A grid management AI triggers a load-shed action during peak demand. An inquiry asks: what sensor data drove the decision? Was the safety margin computed correctly? Would the same input produce the same output? Can you prove no operator identity influenced the automated response?',
+            standards: 'NERC CIP protects critical infrastructure. IEC 62443 governs industrial cybersecurity.',
+            principle: 'The substrate processes grid signals — sensors, zones, load levels, anomalies — but never carries operator identity or site ownership. If your SCADA systems are automated or you want AI making load-shed decisions, the constitutional gate forces the same separation: signals cross, authority stays human.',
+            signalHints: {
+                sensorCategory: 'Thermal, Pressure, Vibration, Electrical',
+                gridZone: 'ZONE-12, ZONE-7, etc.',
+                loadLevel: 'Normal, High, Peak, Emergency',
+                anomalyType: 'None, Vibration, Thermal spike, Frequency drift',
+                controlAction: 'Monitor, Ramp-up, Ramp-down, Shed, Isolate',
+                safetyMargin: 'Positive number (e.g. 15.0)',
+                incidentRef: 'INC-nnnn or None',
+                complianceStatus: 'Verified, Pending, Under-review'
+            }
+        },
+        EDTECH: {
+            context: 'An adaptive learning platform flags a student for intervention. A parent or regulator asks: what data informed the recommendation? Was the student identifiable to the decision engine? Can you prove the machine did not profile the child?',
+            standards: 'FERPA protects student education records. COPPA governs children\'s online privacy.',
+            principle: 'The substrate processes learning signals — assessment type, grade level, engagement scores — but never the student\'s name, school ID, or demographic data. If your ed-tech platforms are automated or you want AI recommending interventions, the constitutional gate guarantees the machine sees performance, not the person.',
+            signalHints: {
+                assessmentType: 'Formative, Summative, Diagnostic',
+                gradeLevel: 'Grade 7, Grade 9, Grade 12, etc.',
+                subjectArea: 'Mathematics, English, Science, History',
+                performanceScore: '0-100',
+                engagementLevel: 'High, Medium, Low',
+                interventionFlag: 'None, Flagged, Escalated',
+                adaptivePathId: 'PATH-nnn',
+                complianceStatus: 'Verified, Pending, Under-review'
+            }
+        },
+        INSURANCE: {
+            context: 'An AI adjudicates a claim and flags it for fraud review. A policyholder or regulator asks: what data drove the decision? Was claimant identity visible to the fraud model? Can you prove the process was not discriminatory?',
+            standards: 'Solvency II governs insurer capital and risk. IDD (Insurance Distribution Directive) mandates fair treatment and transparency.',
+            principle: 'The substrate processes claims signals — type, amount, risk scores, fraud indicators — but never the claimant\'s name, address, or demographic profile. If your claims pipelines are automated or you want AI making adjudication decisions, the constitutional gate enforces the same boundary: risk data crosses, identity stays local.',
+            signalHints: {
+                claimType: 'Auto, Property, Liability, Health',
+                policyClass: 'Standard, Premium, Corporate',
+                claimAmount: 'Numeric value (e.g. 25000)',
+                fraudIndicator: 'None, Low, Medium, High',
+                underwritingTier: 'Tier 1, Tier 2, Tier 3',
+                regulatoryJurisdiction: 'UK, EU, US, AU',
+                riskScore: '0-100',
+                complianceFlag: 'Standard, Escalated, Under-review'
+            }
+        }
+    };
+
     // ─── Game State ──────────────────────────────────────────────
     var state = {
         profile: null,
         adaptor: null,
+        difficulty: 'easy', // 'easy', 'hard', or 'ai'
         strikes: 0,
         maxStrikes: 3,
+        revealUsed: false,  // true once REVEAL FIELDS used this envelope
+        easyWarned: false,  // true once easy-mode warning shown
         unlocked: {},       // recordId → true
         currentRecord: null,
         startTime: null,
@@ -1794,11 +1904,63 @@
         });
 
         setTimeout(function() {
-            var btn = document.createElement('button');
-            btn.className = 'btn-terminal t-blink';
-            btn.textContent = '▶ BEGIN SESSION';
-            btn.onclick = function() { showScreen('profile'); renderProfiles(); };
-            output.appendChild(btn);
+            var modeDiv = document.createElement('div');
+            modeDiv.style.cssText = 'margin-top:1rem;text-align:center';
+            modeDiv.innerHTML =
+                '<div class="t-dim" style="margin-bottom:0.8rem;font-size:0.8rem;line-height:1.5">' +
+                    'RECOMMENDED ORDER:<br>' +
+                    '<span class="t-amber">1.</span> HUMAN MODE — no helpers. Grind it out.<br>' +
+                    '<span class="t-amber">2.</span> EASY MODE — sector briefings + reveal fields (costs a life).<br>' +
+                    '<span class="t-amber">3.</span> "CAN\'T AI DO IT?" — coming soon.' +
+                '</div>';
+
+            var btnHuman = document.createElement('button');
+            btnHuman.className = 'btn-terminal danger';
+            btnHuman.textContent = '▶ HUMAN MODE';
+            btnHuman.style.marginRight = '1rem';
+            btnHuman.onclick = function() { state.difficulty = 'hard'; showScreen('profile'); renderProfiles(); };
+
+            var btnEasy = document.createElement('button');
+            btnEasy.className = 'btn-terminal';
+            btnEasy.textContent = '▶ EASY MODE';
+            btnEasy.style.marginRight = '1rem';
+            btnEasy.onclick = function() {
+                if (!state.easyWarned) {
+                    state.easyWarned = true;
+                    alert(
+                        'SUGGESTED WORKFLOW\n\n' +
+                        'Easy mode may reduce the learning experience.\n\n' +
+                        '1. Try Human mode at least a few times first.\n' +
+                        '2. Then move to Easy mode when you want hints.\n' +
+                        '3. Then unlock "Can\'t AI Do It?" mode.\n\n' +
+                        'The struggle is the point — the gate teaches through failure.'
+                    );
+                }
+                state.difficulty = 'easy'; showScreen('profile'); renderProfiles();
+            };
+
+            var btnAI = document.createElement('button');
+            btnAI.className = 'btn-terminal';
+            btnAI.textContent = '▶ CAN\'T AI DO IT?';
+            btnAI.style.cssText = 'border-color:#555;color:#555;cursor:not-allowed';
+            btnAI.onclick = function() {
+                alert(
+                    '"CAN\'T AI DO IT?" MODE — LOCKED\n\n' +
+                    'If the human can\'t do it first,\n' +
+                    'AI can\'t be trusted to do it.\n\n' +
+                    'Complete your Diploma to unlock this mode.\n\n' +
+                    'In AI mode, the machine populates every field.\n' +
+                    'Your job: approve the envelope — but spot the errors first.\n' +
+                    'AI makes the same mistakes everyone makes.\n' +
+                    'Same constitutional gate. Same annihilation rules.\n\n' +
+                    'Earn your Diploma. Then teach the machine.'
+                );
+            };
+
+            modeDiv.appendChild(btnHuman);
+            modeDiv.appendChild(btnEasy);
+            modeDiv.appendChild(btnAI);
+            output.appendChild(modeDiv);
         }, 4600);
     }
 
@@ -1834,7 +1996,51 @@
         state.timerInterval = setInterval(updateTimer, 1000);
 
         updateStatusBar();
-        showMission();
+
+        // Easy mode: show sector briefing before mission
+        if (state.difficulty === 'easy') {
+            showSectorBriefing();
+        } else {
+            renderRecordList();
+            showScreen('mission');
+            updateStatusBar();
+        }
+    }
+
+    // ─── Sector Briefing (easy mode only) ────────────────────────
+    function showSectorBriefing() {
+        var brief = SECTOR_BRIEFS[state.adaptor];
+        var adaptor = ADAPTORS[state.adaptor];
+        var p = PROFILES[state.profile];
+        if (!brief) { showMission(); return; }
+
+        var el = document.getElementById('screen-briefing');
+        if (!el) {
+            el = document.createElement('div');
+            el.className = 'screen';
+            el.id = 'screen-briefing';
+            document.getElementById('terminal-body').appendChild(el);
+        }
+
+        el.innerHTML =
+            '<div class="t-green t-bold">SECTOR BRIEFING — ' + p.sector.toUpperCase() + '</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="briefing-block">' +
+                '<div class="briefing-label">THE SCENARIO</div>' +
+                '<p class="t-dim">' + brief.context + '</p>' +
+            '</div>' +
+            '<div class="briefing-block">' +
+                '<div class="briefing-label">STANDARDS THAT APPLY</div>' +
+                '<p class="t-dim">' + brief.standards + '</p>' +
+                '<p class="t-amber" style="font-size:0.78rem">' + (adaptor.compliance || '') + '</p>' +
+            '</div>' +
+            '<div class="briefing-block">' +
+                '<div class="briefing-label">THE PRINCIPLE</div>' +
+                '<p class="t-white" style="font-size:0.85rem;line-height:1.6">' + brief.principle + '</p>' +
+            '</div>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">PROCEED TO MISSION ▶</button>';
+
+        showScreen('briefing');
     }
 
     // ─── Mission Briefing ────────────────────────────────────────
@@ -1960,12 +2166,77 @@
         });
         form.appendChild(clinSection);
 
+        // ── Reveal Fields button (easy = costs a life, ai = free, hard = hidden)
+        var revealBtn = document.getElementById('btn-reveal');
+        if (revealBtn) revealBtn.remove();
+        if (state.difficulty !== 'hard') {
+            var rb = document.createElement('button');
+            rb.type = 'button';
+            rb.id = 'btn-reveal';
+            rb.className = 'btn-terminal' + (state.difficulty === 'easy' ? ' danger' : '');
+            rb.style.cssText = 'margin:0.5rem 0;font-size:0.75rem';
+            rb.innerHTML = state.difficulty === 'easy'
+                ? '<i class="fa fa-eye"></i> REVEAL ACCEPTABLE FIELDS (costs 1 life)'
+                : '<i class="fa fa-eye"></i> INSPECT ACCEPTABLE FIELDS';
+            rb.onclick = function() { window.G.revealFields(); };
+            form.appendChild(rb);
+        }
+
         document.getElementById('custom-field-list').innerHTML = '';
         state.customFieldCount = 0;
+        state.revealUsed = false;
         state.lastIdentity = null; // Fresh request — no mismatch check
         document.getElementById('btn-submit').disabled = false;
         document.getElementById('btn-submit').innerHTML = '<i class="fa fa-paper-plane"></i> SUBMIT ENVELOPE';
         showScreen('envelope');
+    }
+
+    // ─── Reveal Acceptable Fields ─────────────────────────────
+    function revealFields() {
+        if (state.revealUsed) return;
+        var brief = SECTOR_BRIEFS[state.adaptor];
+        if (!brief || !brief.signalHints) return;
+
+        // Easy mode: costs a strike (life)
+        if (state.difficulty === 'easy') {
+            state.strikes++;
+            updateStatusBar();
+            if (state.strikes >= state.maxStrikes) {
+                var summary = renderLockedSummary(
+                    'Used all lives on field reveals.',
+                    'You spent your last life revealing field hints.'
+                );
+                showJail(summary.reason, summary.details);
+                return;
+            }
+        }
+
+        state.revealUsed = true;
+
+        // Show acceptable values under each signal field
+        var adaptor = ADAPTORS[state.adaptor];
+        adaptor.signals.forEach(function(sig) {
+            var input = document.getElementById('sig-' + sig);
+            if (!input) return;
+            var hint = brief.signalHints[sig];
+            if (!hint) return;
+            // Don't duplicate
+            if (input.parentNode.querySelector('.field-hint')) return;
+            var hintEl = document.createElement('div');
+            hintEl.className = 'field-hint t-dim';
+            hintEl.style.cssText = 'font-size:0.7rem;margin:-0.2rem 0 0.3rem 0;padding-left:0.2rem';
+            hintEl.textContent = 'Acceptable: ' + hint;
+            input.parentNode.appendChild(hintEl);
+        });
+
+        // Disable the reveal button
+        var btn = document.getElementById('btn-reveal');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = state.difficulty === 'easy'
+                ? '<i class="fa fa-eye"></i> REVEALED (− 1 life)'
+                : '<i class="fa fa-eye"></i> FIELDS INSPECTED';
+        }
     }
 
     // ─── Retry (wipe clinical, lock identity) ────────────────────
@@ -2906,7 +3177,7 @@
     function restart() {
         clearInterval(state.timerInterval);
         state = {
-            profile: null, adaptor: null, strikes: 0, maxStrikes: 3,
+            profile: null, adaptor: null, strikes: 0, maxStrikes: 3, revealUsed: false, easyWarned: false,
             unlocked: {}, currentRecord: null, startTime: null,
             timerInterval: null, customFieldCount: 0, recordAttestations: {}, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false, edtechEscalated: false, insuranceEscalated: false, currentDiploma: null
         };
@@ -2977,6 +3248,7 @@
         claimDiploma: claimDiploma,
         queueOverride: queueOverride,
         queueWait: queueWait,
+        revealFields: revealFields,
         updateExcludeLabel: function(checkbox) {
             var field = checkbox.id.replace('exc-', '');
             var label = document.getElementById('exc-label-' + field);
