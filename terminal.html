@@ -883,6 +883,15 @@
         var bar = document.getElementById('status-bar');
         bar.style.display = (id === 'boot' || id === 'profile') ? 'none' : 'flex';
 
+        // Reset submit button when returning to envelope from any verdict
+        if (id === 'envelope') {
+            var btn = document.getElementById('btn-submit');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-paper-plane"></i> SUBMIT ENVELOPE';
+            }
+        }
+
         document.getElementById('header-status').textContent =
             id === 'boot' ? 'INITIALISING' :
             id === 'profile' ? 'AWAITING CLEARANCE' :
@@ -1262,21 +1271,22 @@
             // ANNIHILATE — strike
             state.strikes++;
             body.classList.add('verdict-annihilate');
+
+            // Track strikes before jail check
+            if (!state.strikeLog) state.strikeLog = [];
+            state.strikeLog.push(data.rule + ' — ' + data.message);
+
             updateStatusBar();
 
             if (state.strikes >= state.maxStrikes) {
                 setTimeout(function() {
                     showJail('Three constitutional violations.', 
-                        'Strike 1: ' + (state.strikeLog ? state.strikeLog[0] || '—' : '—') + '\n' +
-                        'Strike 2: ' + (state.strikeLog ? state.strikeLog[1] || '—' : '—') + '\n' +
-                        'Strike 3: ' + esc(data.rule) + ' — ' + esc(data.message));
+                        'Strike 1: ' + (state.strikeLog[0] || '—') + '\n' +
+                        'Strike 2: ' + (state.strikeLog[1] || '—') + '\n' +
+                        'Strike 3: ' + (state.strikeLog[2] || '—'));
                 }, 800);
                 return;
             }
-
-            // Track strikes
-            if (!state.strikeLog) state.strikeLog = [];
-            state.strikeLog.push(data.rule + ' — ' + data.message);
 
             content.innerHTML =
                 '<div class="t-red t-bold" style="font-size:1.1rem">✗ ANNIHILATED</div>' +
