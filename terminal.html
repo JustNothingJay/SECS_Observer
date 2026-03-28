@@ -1148,6 +1148,23 @@
         var btn = document.getElementById('btn-submit');
         var adaptor = ADAPTORS[state.adaptor];
 
+        // ── STAT escalation governance ────────────────────────────
+        // Once you escalate a follow-up to STAT, the emergency case
+        // must be resolved before any other request is submitted.
+        if (state.followUpApproved && !state.unlocked['HR-003'] &&
+            state.currentRecord && state.currentRecord.id !== 'HR-003') {
+            showJail(
+                'Clinical negligence — STAT case abandoned.',
+                'You escalated an emergency follow-up to STAT priority,\n' +
+                'then attempted to submit a different imaging request\n' +
+                'while the emergency case (HR-003) is still pending.\n\n' +
+                'When a STAT escalation is active, no other request\n' +
+                'may proceed until the emergency is resolved.\n\n' +
+                'The machine does not enforce this. You should.'
+            );
+            return;
+        }
+
         // ── Client-side identity field checks ────────────────────
         if (adaptor.identityFields) {
             for (var i = 0; i < adaptor.identityFields.length; i++) {
@@ -1274,6 +1291,12 @@
             // ── Follow-Up Chain (HR-004 → HR-003) ───────────────
             if (data.followUpChain) {
                 showFollowUpChain(data);
+                return;
+            }
+
+            // ── Critical Review (HR-005 incidental finding) ─────
+            if (data.criticalReview) {
+                showCriticalReview(data);
                 return;
             }
 
@@ -1589,6 +1612,65 @@
             '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
 
         showScreen('verdict');
+    }
+
+    // ─── Critical Review (HR-005 incidental finding) ─────────────
+    function showCriticalReview(data) {
+        var content = document.getElementById('verdict-content');
+
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — record access granted' +
+            '</div>' +
+            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
+            esc(data.record.title) + '</div>' +
+            '<div class="record-content">' + esc(data.record.content) + '</div>' +
+            '<div id="critical-flow"></div>';
+
+        showScreen('verdict');
+
+        // Phase 1: After 2.5s — machine flags the anomaly
+        setTimeout(function() {
+            document.getElementById('critical-flow').innerHTML =
+                '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.6)">' +
+                '<div class="machine-label" style="color:#ff4444">' +
+                '<i class="fa fa-exclamation-circle"></i> CRITICAL REVIEW — MACHINE INITIATED</div>' +
+                '<div class="t-red">The machine has flagged its own findings for review.</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">' +
+                'An incidental anomaly was detected that falls outside the original ' +
+                'clinical indication. The machine\'s confidence is moderate, but it ' +
+                'cannot determine clinical significance.\n\n' +
+                'It has no patient history. No prior imaging. No age. No context.\n' +
+                'It found something it doesn\'t understand.' +
+                '</div>' +
+                '</div>' +
+                '<div id="critical-reveal"></div>';
+
+            // Phase 2: After 2 more seconds — the teaching moment
+            setTimeout(function() {
+                document.getElementById('critical-reveal').innerHTML =
+                    '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.5)">' +
+                    '<div class="machine-label" style="color:#ffaa00">' +
+                    '<i class="fa fa-user-md"></i> YOUR RESPONSIBILITY</div>' +
+                    '<div class="t-dim">' +
+                    'The machine observed without knowing. Now you must know without transmitting.\n\n' +
+                    'Open the patient\'s local record. Check their history. Check prior imaging. ' +
+                    'Correlate the finding. Determine if this is new, known, or artefact.\n\n' +
+                    'None of that correlation will touch the substrate. ' +
+                    'The identity stays with you. The finding stays with you. ' +
+                    'The decision stays with you.\n\n' +
+                    'This is how SECS works: the machine does its job blind, ' +
+                    'and you do yours with full sight.' +
+                    '</div>' +
+                    '</div>' +
+                    '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+                    '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
+            }, 2000);
+        }, 2500);
     }
 
     // ─── Jail ────────────────────────────────────────────────────
