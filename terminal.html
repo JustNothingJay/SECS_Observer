@@ -820,9 +820,9 @@
             records: [
                 { id: 'DF-001', title: 'Radar Contact Report', hint: 'FRIENDLY contact on radar. Green engagement zone. Planning phase.' },
                 { id: 'DF-002', title: 'Mission Phase Transition', hint: 'Execution phase. ROE-BRAVO in effect. Medium confidence. NEUTRAL contact.' },
-                { id: 'DF-003', title: 'Threat Assessment Brief', hint: 'UNKNOWN contact in amber zone. SIGINT sensor. High confidence required.' },
-                { id: 'DF-004', title: 'Rules of Engagement Directive', hint: 'Recovery phase. ROE-CHARLIE. Active human override confirmed. FRIENDLY asset.' },
-                { id: 'DF-005', title: 'Signals Intelligence Digest', hint: 'EW sensor type. Restricted classification. FRIENDLY assessment.' }
+                { id: 'DF-003', title: 'Threat Assessment Brief', hint: 'HOSTILE contact in amber zone. SIGINT sensor. High confidence. Human override confirmed.' },
+                { id: 'DF-004', title: 'Rules of Engagement Directive', hint: 'Execution phase. ROE-CHARLIE. Active human override confirmed. Engagement authority decision required.' },
+                { id: 'DF-005', title: 'Signals Intelligence Digest', hint: 'EW sensor. Restricted classification. Positive identification now requires internal intelligence correlation.' }
             ]
         },
         ENERGY: {
@@ -874,7 +874,8 @@
         startTime: null,
         timerInterval: null,
         customFieldCount: 0,
-        fintechEscalated: false
+        fintechEscalated: false,
+        defenceEscalated: false
     };
 
     // ─── Screen Management ───────────────────────────────────────
@@ -1022,6 +1023,11 @@
                 isGated = true;
             }
 
+            if (rec.id === 'DF-004' && state.adaptor === 'DEFENCE' &&
+                !state.unlocked['DF-003'] && !state.defenceEscalated) {
+                isGated = true;
+            }
+
             item.className = 'record-item' + (isUnlocked ? ' unlocked' : '');
             if (isGated) {
                 item.style.opacity = '0.4';
@@ -1034,6 +1040,10 @@
 
             if (rec.id === 'FT-004' && state.adaptor === 'FINTECH' && isGated) {
                 hintText = '<i class="fa fa-chain t-amber"></i> Requires emergency audit escalation from FT-003';
+            }
+
+            if (rec.id === 'DF-004' && state.adaptor === 'DEFENCE' && isGated) {
+                hintText = '<i class="fa fa-chain t-amber"></i> Requires live engagement review escalation from DF-003';
             }
 
             item.innerHTML =
@@ -1197,6 +1207,20 @@
             return;
         }
 
+        if (state.defenceEscalated && !state.unlocked['DF-004'] &&
+            state.currentRecord && state.currentRecord.id !== 'DF-004') {
+            showJail(
+                'Command negligence — engagement authority left unresolved.',
+                'You escalated a hostile contact for live engagement review,\n' +
+                'then attempted to submit a different defence observation while\n' +
+                'the authority decision (DF-004) was still pending.\n\n' +
+                'Once lethal authority review is active, no unrelated flow may\n' +
+                'proceed until that decision is resolved.\n\n' +
+                'The substrate proved the signal. It does not carry the burden of command.'
+            );
+            return;
+        }
+
         // ── Client-side identity field checks ────────────────────
         if (adaptor.identityFields) {
             for (var i = 0; i < adaptor.identityFields.length; i++) {
@@ -1335,6 +1359,16 @@
             // ── FINTECH ethical conflict (FT-004) ───────────────
             if (data.fintechConflict) {
                 showFintechConflict(data);
+                return;
+            }
+
+            if (data.defenceEscalation) {
+                showDefenceEscalation(data);
+                return;
+            }
+
+            if (data.defenceConflict) {
+                showDefenceConflict(data);
                 return;
             }
 
@@ -1610,6 +1644,173 @@
             '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-ban"></i> SUBSTRATE LIMIT</div>' +
             '<div class="t-dim">Identity is now required to continue. That means the substrate stops here. ' +
             'The next transfer is internal only. The substrate validated message exists only; no governance is applied beyond this point.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
+
+        showScreen('verdict');
+    }
+
+    // ─── DEFENCE Escalation (DF-003 → unlocks DF-004) ──────────
+    function showDefenceEscalation(data) {
+        var content = document.getElementById('verdict-content');
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — threat brief access granted' +
+            '</div>' +
+            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
+            esc(data.record.title) + '</div>' +
+            '<div class="record-content">' + esc(data.record.content) + '</div>' +
+            '<div id="defence-escalation-flow"></div>';
+
+        showScreen('verdict');
+
+        setTimeout(function() {
+            document.getElementById('defence-escalation-flow').innerHTML =
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
+                '<div class="t-amber">Machine flagged: MANUAL ENGAGEMENT REVIEW REQUIRED: YES</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">The threat correlation has been returned to command systems. ' +
+                'You must now decide whether to open live engagement authority review.</div>' +
+                '</div>' +
+                '<button class="btn-terminal" onclick="window.G.fileDefenceBrief()">' +
+                '<i class="fa fa-file-text"></i> FILE THREAT BRIEF TO COMMAND SYSTEM</button>';
+        }, 1800);
+    }
+
+    function fileDefenceBrief() {
+        var flow = document.getElementById('defence-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-check"></i> THREAT BRIEF FILED</div>' +
+            '<div class="t-green">Threat package attached to internal command systems.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no pilot, unit, or friendly-asset identity. ' +
+            'Those bindings remained inside the command boundary.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
+            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-fighter-jet"></i> COMMAND DECISION</div>' +
+            '<div class="t-orange">The machine classifies hostility. It does not authorise force.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Escalating this opens the live engagement authority path. ' +
+            'The choice remains human and lethal.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.requestDefenceReview()">' +
+            '<i class="fa fa-arrow-circle-up"></i> REQUEST LIVE ENGAGEMENT REVIEW</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
+    }
+
+    function requestDefenceReview() {
+        var flow = document.getElementById('defence-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-clock-o"></i> ENGAGEMENT REVIEW REQUESTED</div>' +
+            '<div class="t-green">Live engagement authority review submitted.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The queue knows a hostile signal requires urgent attention. ' +
+            'It does not know friendly identities, mission intent, or collateral context.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
+            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
+            '<div class="t-red">A lethal-authority decision may now be required.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Escalate to final engagement review or leave this in standard command analysis.</div>' +
+            '</div>' +
+            '<button class="btn-terminal danger" onclick="window.G.approveDefenceEscalation()">' +
+            '<i class="fa fa-bolt"></i> ESCALATE TO FINAL ENGAGEMENT REVIEW</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
+    }
+
+    function approveDefenceEscalation() {
+        state.defenceEscalated = true;
+        var flow = document.getElementById('defence-escalation-flow');
+        flow.innerHTML =
+            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
+            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> FINAL REVIEW APPROVED</div>' +
+            '<div class="t-green">Live engagement authority review authorised. DF-004 is now available.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will describe the ROE state only. ' +
+            'The machine still will not know who will live, die, or be protected.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
+    }
+
+    // ─── DEFENCE Ethical Conflict (DF-004) ─────────────────────
+    function showDefenceConflict(data) {
+        var content = document.getElementById('verdict-content');
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — engagement review queued' +
+            '</div>';
+
+        showScreen('verdict');
+
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-warning"></i> COMMAND RESPONSE</div>' +
+                '<div class="t-red t-bold">STATUS: ENGAGEMENT AUTHORITY REQUIRED</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">' +
+                'A hostile signal is admissible under ROE-CHARLIE.\n\n' +
+                'The machine cannot determine whether the target is legitimate,\n' +
+                'whether collateral risk is acceptable, or whether mission intent has changed.' +
+                '</div>' +
+                '</div>';
+        }, 1500);
+
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
+                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> COMMAND CHOICE</div>' +
+                '<div class="t-dim">' +
+                'You may authorise engagement now, or hold fire and continue shadow tracking.\n\n' +
+                'The machine does not know identities, surrender state,\n' +
+                'or proportionality context. It only knows the signal passed the gate.' +
+                '</div>' +
+                '</div>' +
+                '<div class="queue-choice">' +
+                '<button class="btn-terminal danger" onclick="window.G.defenceEngage()">' +
+                '<i class="fa fa-crosshairs"></i> AUTHORISE ENGAGEMENT</button>' +
+                '<button class="btn-terminal" onclick="window.G.defenceHold()">' +
+                '<i class="fa fa-eye"></i> HOLD FIRE / CONTINUE SHADOW</button>' +
+                '</div>';
+        }, 3500);
+    }
+
+    function defenceEngage() { showDefenceReveal('engage'); }
+    function defenceHold() { showDefenceReveal('hold'); }
+
+    function showDefenceReveal(choice) {
+        var content = document.getElementById('verdict-content');
+        var choiceText = choice === 'engage'
+            ? 'You chose to authorise engagement.\n' +
+              'You do not know every identity inside the battlespace.\n' +
+              'Neither does the machine.'
+            : 'You chose to hold fire and continue shadow.\n' +
+              'The hostile actor may persist, escape, or strike first.\n' +
+              'Neither you nor the machine know all downstream consequences.';
+
+        content.innerHTML =
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="ethical-reveal">' +
+            choiceText + '\n\n' +
+            '═══════════════════════════════════════════\n\n' +
+            'The machine cannot decide whether lethal force is justified.\n\n' +
+            'It holds no positive identity. No surrender state. No intent declaration.\n' +
+            'No proportionality judgment. No lawful authority.\n\n' +
+            'It knows only: hostile signal, admissible envelope, decision pending.\n\n' +
+            'The choice to engage or hold fire is not a machine decision.\n' +
+            'It is a command one.\n\n' +
+            'SECS brought you to the boundary where automation ends\n' +
+            'and lethal responsibility begins.\n\n' +
+            'The substrate proved the signal. It did not choose the target.\n' +
+            'That weight belongs to command. It always did.' +
             '</div>' +
             '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
             '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
@@ -2005,7 +2206,7 @@
         state = {
             profile: null, adaptor: null, strikes: 0, maxStrikes: 3,
             unlocked: {}, currentRecord: null, startTime: null,
-            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false
+            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false
         };
         showScreen('profile');
         renderProfiles();
@@ -2034,6 +2235,11 @@
         approveFintechEscalation: approveFintechEscalation,
         fintechHalt: fintechHalt,
         fintechContinue: fintechContinue,
+        fileDefenceBrief: fileDefenceBrief,
+        requestDefenceReview: requestDefenceReview,
+        approveDefenceEscalation: approveDefenceEscalation,
+        defenceEngage: defenceEngage,
+        defenceHold: defenceHold,
         queueOverride: queueOverride,
         queueWait: queueWait,
         updateExcludeLabel: function(checkbox) {
