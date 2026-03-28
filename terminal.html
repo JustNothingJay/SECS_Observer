@@ -58,8 +58,8 @@
     top: 0; left: 0; right: 0; bottom: 0;
     background: repeating-linear-gradient(
         0deg,
-        rgba(0,0,0,0.15) 0px,
-        rgba(0,0,0,0.15) 1px,
+        rgba(0,0,0,0.06) 0px,
+        rgba(0,0,0,0.06) 1px,
         transparent 1px,
         transparent 3px
     );
@@ -92,7 +92,7 @@
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 0.85rem;
     line-height: 1.6;
-    color: #c0c4cc;
+    color: #d8dbe3;
     position: relative;
     z-index: 1;
 }
@@ -106,12 +106,12 @@
     border-top: 1px solid rgba(72, 230, 98, 0.15);
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 0.75rem;
-    color: #555963;
+    color: #7a7f8c;
 }
 
 .status-bar .stat { display: flex; gap: 0.4rem; align-items: center; }
-.status-bar .stat-label { color: #555963; }
-.status-bar .stat-value { color: #c0c4cc; }
+.status-bar .stat-label { color: #7a7f8c; }
+.status-bar .stat-value { color: #d8dbe3; }
 .status-bar .stat-value.danger { color: #ff4444; }
 .status-bar .stat-value.success { color: #48e662; }
 
@@ -125,8 +125,8 @@
 .t-blue { color: #00B2FF; }
 .t-red { color: #ff4444; }
 .t-amber { color: #ffaa00; }
-.t-dim { color: #555963; }
-.t-white { color: #e0e2e8; }
+.t-dim { color: #7a7f8c; }
+.t-white { color: #f0f1f4; }
 
 .t-bold { font-weight: 600; }
 .t-blink { animation: blink 1s step-end infinite; }
@@ -183,7 +183,7 @@
 }
 
 .profile-card .p-role {
-    color: #8b8f9a;
+    color: #a0a5b0;
     font-size: 0.75rem;
     margin-top: 0.2rem;
 }
@@ -216,9 +216,9 @@
 .record-item.unlocked { border-color: #48e662; cursor: default; }
 .record-item.unlocked .record-status { color: #48e662; }
 
-.record-title { color: #c0c4cc; font-size: 0.8rem; }
-.record-hint { color: #555963; font-size: 0.7rem; margin-top: 0.2rem; }
-.record-status { color: #555963; font-size: 0.75rem; }
+.record-title { color: #d8dbe3; font-size: 0.8rem; }
+.record-hint { color: #7a7f8c; font-size: 0.7rem; margin-top: 0.2rem; }
+.record-status { color: #7a7f8c; font-size: 0.75rem; }
 
 /* Envelope form */
 .envelope-form { margin: 1rem 0; }
@@ -243,7 +243,7 @@
     border: 1px solid #333;
     border-radius: 3px;
     padding: 0.3rem 0.5rem;
-    color: #e0e2e8;
+    color: #f0f1f4;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
 }
@@ -269,7 +269,7 @@
     border: 1px solid #333;
     border-radius: 3px;
     padding: 0.3rem 0.5rem;
-    color: #e0e2e8;
+    color: #f0f1f4;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
 }
@@ -359,7 +359,7 @@
     margin: 1rem 0;
     white-space: pre-wrap;
     line-height: 1.5;
-    color: #c0c4cc;
+    color: #d8dbe3;
     font-size: 0.8rem;
 }
 
@@ -386,7 +386,7 @@
 }
 
 .diploma-frame .diploma-id {
-    color: #555963;
+    color: #7a7f8c;
     font-size: 0.7rem;
     margin-top: 1rem;
 }
@@ -902,6 +902,7 @@
         document.getElementById('custom-field-list').innerHTML = '';
         state.customFieldCount = 0;
         document.getElementById('btn-submit').disabled = false;
+        document.getElementById('btn-submit').innerHTML = '<i class="fa fa-paper-plane"></i> SUBMIT ENVELOPE';
         showScreen('envelope');
     }
 
@@ -960,12 +961,23 @@
         .then(function(res) { return res.json(); })
         .then(function(data) { handleVerdict(data); })
         .catch(function(err) {
-            handleVerdict({
-                verdict: 'ANNIHILATE',
-                gate: 'network',
-                rule: 'connection-failed',
-                message: 'Could not reach the sovereign gate. Check your connection.'
-            });
+            // Connection failure — NOT a strike. Show retry prompt.
+            var content = document.getElementById('verdict-content');
+            content.innerHTML =
+                '<div class="t-amber t-bold" style="font-size:1.1rem">⚡ CONNECTION LOST</div>' +
+                '<div class="t-divider">────────────────────────────────────────────</div>' +
+                '<div class="verdict-box hold">' +
+                'The sovereign gate is not reachable.\n' +
+                'This is a network issue — not a strike.\n\n' +
+                'Substrate may still be deploying, or your\n' +
+                'connection dropped momentarily.' +
+                '</div>' +
+                '<p class="t-dim">Your progress is preserved. Retry when ready.</p>' +
+                '<button class="btn-terminal primary" onclick="window.G.showScreen(\'envelope\')">RETRY ENVELOPE</button>' +
+                '<button class="btn-terminal" onclick="window.G.showMission()">BACK TO RECORDS</button>';
+            document.getElementById('btn-submit').disabled = false;
+            document.getElementById('btn-submit').innerHTML = '<i class="fa fa-paper-plane"></i> SUBMIT ENVELOPE';
+            showScreen('verdict');
         });
     }
 
