@@ -435,6 +435,99 @@
     animation: blink 0.7s step-end infinite;
     color: #48e662;
 }
+
+/* Identity verification section */
+.identity-section {
+    background: #111418;
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.identity-section .section-label {
+    color: #ff4444;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.identity-section .section-note {
+    color: #7a7f8c;
+    font-size: 0.7rem;
+    margin-bottom: 0.5rem;
+}
+
+.identity-field {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    align-items: center;
+}
+
+.identity-field label {
+    color: #ff4444;
+    font-size: 0.8rem;
+    min-width: 140px;
+    text-align: right;
+}
+
+.identity-field input[type="text"] {
+    flex: 1;
+    background: #0d1014;
+    border: 1px solid #333;
+    border-radius: 3px;
+    padding: 0.3rem 0.5rem;
+    color: #f0f1f4;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+}
+
+.identity-field input[type="text"]:focus {
+    outline: none;
+    border-color: #ff4444;
+    box-shadow: 0 0 5px rgba(255, 68, 68, 0.2);
+}
+
+.exclude-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    min-width: 120px;
+}
+
+.exclude-toggle input[type="checkbox"] {
+    accent-color: #48e662;
+}
+
+.exclude-toggle .excluded {
+    color: #48e662;
+}
+
+.exclude-toggle .included {
+    color: #ff4444;
+}
+
+/* Clinical signals section */
+.clinical-section {
+    border: 1px solid rgba(72, 230, 98, 0.2);
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.clinical-section .section-label {
+    color: #48e662;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
 </style>
 </head>
 <body>
@@ -489,8 +582,8 @@
                         <div class="t-green t-bold">ENVELOPE BUILDER — <span id="envelope-record"></span></div>
                         <div class="t-divider">────────────────────────────────────────────</div>
                         <p id="envelope-hint" class="t-amber" style="font-size:0.8rem"></p>
-                        <p class="t-dim">Fill the signal fields. Values are yours to determine.<br>
-                        Add custom fields at your own risk.</p>
+                        <p class="t-dim">Verify patient identity locally. Exclude identity fields from the envelope.<br>
+                        Fill all clinical fields with valid values. The machine receives only the clinical instruction.</p>
                         <div class="envelope-form" id="envelope-signals"></div>
                         <div class="custom-fields">
                             <div class="t-dim" style="font-size:0.75rem">CUSTOM FIELDS <span class="t-amber">(use with caution)</span></div>
@@ -648,14 +741,15 @@
     var ADAPTORS = {
         HEALTH: {
             compliance: 'HIPAA · FDA 21 CFR Part 11',
-            signals: ['scanType', 'modalityCode', 'urgencyLevel', 'bodyRegion',
-                      'protocolId', 'confidenceScore', 'followUpRequired', 'complianceStatus'],
+            identityFields: ['patientName', 'dateOfBirth', 'patientMRN'],
+            signals: ['scanType', 'bodyRegion', 'clinicalIndication', 'urgency',
+                      'contrastRequired', 'referringDepartment', 'patientCategory', 'pregnancyStatus'],
             records: [
-                { id: 'HR-001', title: 'Brain MRI Protocol', hint: 'Routine neurological screening. Standard MR modality. Brain region.' },
-                { id: 'HR-002', title: 'Cardiac CT Assessment', hint: 'Urgent cardiac evaluation. CT imaging of the chest.' },
-                { id: 'HR-003', title: 'Emergency Imaging Review', hint: 'STAT priority case. High confidence required for autonomous flow.' },
-                { id: 'HR-004', title: 'Oncology Follow-Up', hint: 'Routine follow-up scan. Abdomen region. Protocol requires completion flag.' },
-                { id: 'HR-005', title: 'Paediatric Screening', hint: 'Standard paediatric assessment. Ultrasound modality. Routine urgency.' }
+                { id: 'HR-001', title: 'Brain MRI Protocol', hint: 'Routine neurological screening. MRI of the brain. Neurology referral. No contrast needed.' },
+                { id: 'HR-002', title: 'Cardiac CT Assessment', hint: 'Urgent cardiac evaluation. CT scan of the chest. Cardiology referral.' },
+                { id: 'HR-003', title: 'Emergency Imaging Review', hint: 'STAT priority from Emergency Department. High-acuity case.' },
+                { id: 'HR-004', title: 'Oncology Follow-Up', hint: 'Oncology referral. Abdominal imaging. Routine follow-up assessment.' },
+                { id: 'HR-005', title: 'Paediatric Screening', hint: 'Ultrasound of the abdomen. Routine paediatric assessment. No contrast.' }
             ]
         },
         FINTECH: {
@@ -890,14 +984,47 @@
         form.innerHTML = '';
         var adaptor = ADAPTORS[state.adaptor];
 
+        // ── Identity fields (must fill, must exclude) ────────────
+        if (adaptor.identityFields && adaptor.identityFields.length > 0) {
+            var idSection = document.createElement('div');
+            idSection.className = 'identity-section';
+            idSection.innerHTML =
+                '<div class="section-label"><i class="fa fa-shield"></i> PATIENT VERIFICATION — LOCAL ONLY</div>' +
+                '<div class="section-note">These fields are mandatory for clinical verification. ' +
+                'You must complete them, then exclude them from the envelope. ' +
+                'Identity data must never cross the boundary.</div>';
+
+            adaptor.identityFields.forEach(function(field) {
+                var row = document.createElement('div');
+                row.className = 'identity-field';
+                row.innerHTML =
+                    '<label for="id-' + field + '">' + field + ':</label>' +
+                    '<input type="text" id="id-' + field + '" placeholder="required" autocomplete="off">' +
+                    '<div class="exclude-toggle">' +
+                        '<input type="checkbox" id="exc-' + field + '" ' +
+                            'onchange="window.G.updateExcludeLabel(this)">' +
+                        '<span id="exc-label-' + field + '" class="included">INCLUDED ✗</span>' +
+                    '</div>';
+                idSection.appendChild(row);
+            });
+            form.appendChild(idSection);
+        }
+
+        // ── Clinical signals (sent in envelope) ─────────────────
+        var clinSection = document.createElement('div');
+        clinSection.className = 'clinical-section';
+        clinSection.innerHTML =
+            '<div class="section-label"><i class="fa fa-stethoscope"></i> CLINICAL ENVELOPE — TRANSMITTED TO MACHINE</div>';
+
         adaptor.signals.forEach(function(sig) {
             var row = document.createElement('div');
             row.className = 'signal-field';
             row.innerHTML =
                 '<label for="sig-' + sig + '">' + sig + ':</label>' +
                 '<input type="text" id="sig-' + sig + '" placeholder="enter value" autocomplete="off">';
-            form.appendChild(row);
+            clinSection.appendChild(row);
         });
+        form.appendChild(clinSection);
 
         document.getElementById('custom-field-list').innerHTML = '';
         state.customFieldCount = 0;
@@ -922,22 +1049,50 @@
     // ─── Submit Envelope ─────────────────────────────────────────
     function submitEnvelope() {
         var btn = document.getElementById('btn-submit');
+        var adaptor = ADAPTORS[state.adaptor];
+
+        // ── Client-side identity field checks ────────────────────
+        if (adaptor.identityFields) {
+            for (var i = 0; i < adaptor.identityFields.length; i++) {
+                var field = adaptor.identityFields[i];
+                var val = document.getElementById('id-' + field).value.trim();
+                var excluded = document.getElementById('exc-' + field).checked;
+
+                if (!val) {
+                    // Identity field empty → mandatory verification not completed
+                    alert('⚠ ' + field + ' is a mandatory verification field. You must fill it in before submitting.');
+                    return;
+                }
+            }
+        }
+
         btn.disabled = true;
         btn.textContent = 'PROCESSING...';
 
-        // Collect metadata
+        // Collect metadata — clinical signals only
         var metadata = {};
-        var adaptor = ADAPTORS[state.adaptor];
         adaptor.signals.forEach(function(sig) {
             var val = document.getElementById('sig-' + sig).value.trim();
             if (val) metadata[sig] = val;
         });
 
+        // Include identity fields that were NOT excluded (player error → server will catch)
+        if (adaptor.identityFields) {
+            for (var j = 0; j < adaptor.identityFields.length; j++) {
+                var idField = adaptor.identityFields[j];
+                var idVal = document.getElementById('id-' + idField).value.trim();
+                var isExcluded = document.getElementById('exc-' + idField).checked;
+                if (idVal && !isExcluded) {
+                    metadata[idField] = idVal;
+                }
+            }
+        }
+
         // Custom fields
         var customRows = document.querySelectorAll('.custom-field-row');
-        for (var i = 0; i < customRows.length; i++) {
-            var keyInput = customRows[i].querySelector('.key-input');
-            var valInput = customRows[i].querySelector('.val-input');
+        for (var c = 0; c < customRows.length; c++) {
+            var keyInput = customRows[c].querySelector('.key-input');
+            var valInput = customRows[c].querySelector('.val-input');
             if (keyInput && valInput) {
                 var k = keyInput.value.trim();
                 var v = valInput.value.trim();
@@ -1172,7 +1327,18 @@
         addCustomField: addCustomField,
         submitEnvelope: submitEnvelope,
         restart: restart,
-        quit: quit
+        quit: quit,
+        updateExcludeLabel: function(checkbox) {
+            var field = checkbox.id.replace('exc-', '');
+            var label = document.getElementById('exc-label-' + field);
+            if (checkbox.checked) {
+                label.textContent = 'EXCLUDED ✓';
+                label.className = 'excluded';
+            } else {
+                label.textContent = 'INCLUDED ✗';
+                label.className = 'included';
+            }
+        }
     };
 
     // ─── Init ────────────────────────────────────────────────────
