@@ -87,6 +87,23 @@
     color: #8b8f9a;
 }
 
+.terminal-header .status.active {
+    color: #dfffe5;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: radial-gradient(circle at center, rgba(72, 230, 98, 0.22) 0%, rgba(72, 230, 98, 0.1) 45%, rgba(72, 230, 98, 0.02) 100%);
+    box-shadow: 0 0 12px rgba(72, 230, 98, 0.18), inset 0 0 10px rgba(72, 230, 98, 0.06);
+    text-shadow: 0 0 6px rgba(72, 230, 98, 0.35);
+}
+
+.timer-icon {
+    color: #FF5E00;
+    font-size: 0.65rem;
+    vertical-align: middle;
+    margin-right: 0.25rem;
+    filter: drop-shadow(0 0 4px rgba(255, 94, 0, 0.25));
+}
+
 .terminal-body {
     padding: 1.5rem;
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
@@ -712,7 +729,7 @@
                     </div>
                     <div class="stat" style="margin-left:auto">
                         <span class="stat-label">TIME:</span>
-                        <span class="stat-value" id="sb-timer">00:00</span>
+                        <span class="stat-value" id="sb-timer-wrap"><i class="fa fa-heartbeat timer-icon" aria-hidden="true"></i><span id="sb-timer">00:00</span></span>
                     </div>
                 </div>
             </div>
@@ -907,6 +924,11 @@
             id === 'jail' ? 'LOCKOUT' :
             id === 'diploma' ? 'MISSION COMPLETE' :
             'ACTIVE';
+
+        document.getElementById('header-status').className =
+            id === 'boot' || id === 'profile' || id === 'jail' || id === 'diploma'
+                ? 'status'
+                : 'status active';
     }
 
     // ─── Boot Sequence ───────────────────────────────────────────
