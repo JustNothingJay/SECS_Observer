@@ -425,6 +425,27 @@
     text-decoration: none;
 }
 
+.launch-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0.85rem 0 1rem;
+    flex-wrap: wrap;
+}
+
+.terminal-footer-note {
+    border-top: 1px solid rgba(72, 230, 98, 0.12);
+    background: #0d1014;
+    color: #7a7f8c;
+    font-size: 0.72rem;
+    line-height: 1.6;
+    padding: 0.75rem 1rem 0.9rem;
+}
+
+.terminal-footer-note strong {
+    color: #d8dbe3;
+    font-weight: 600;
+}
+
 .leaderboard-panel {
     border: 1px solid rgba(72, 230, 98, 0.2);
     border-radius: 6px;
@@ -608,15 +629,15 @@
     color: #ff4444;
 }
 
-/* Clinical signals section */
-.clinical-section {
+/* Signal section */
+.signal-section {
     border: 1px solid rgba(72, 230, 98, 0.2);
     border-radius: 4px;
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
 }
 
-.clinical-section .section-label {
+.signal-section .section-label {
     color: #48e662;
     font-size: 0.75rem;
     font-weight: 600;
@@ -704,6 +725,11 @@
                             If you find a flaw, odd behaviour, or a path to a diploma that should not exist, report it here:
                             <a href="https://github.com/JustNothingJay/SECS_Observer/issues" target="_blank" rel="noopener noreferrer">SECS_Observer issues</a>.
                         </div>
+                        <div class="launch-actions">
+                            <a href="https://github.com/JustNothingJay/SECS_Observer/issues/new?title=Beta%20Access%20Request%20%E2%80%94%20Personal%20Sector%20Adaptor&body=Name%20or%20company%3A%0A%0ASector%20adaptor%20requested%20%28Healthcare%2C%20Defence%2C%20Fintech%2C%20Energy%2C%20EdTech%2C%20Insurance%2C%20other%29%3A%0A%0AWhy%20you%20want%20access%3A%0A%0AWhat%20workflow%20or%20governance%20surface%20you%20want%20to%20test%3A%0A" target="_blank" rel="noopener noreferrer" class="btn-terminal primary">
+                                <i class="fa fa-key"></i> BETA ACCESS — REQUEST PERSONAL ADAPTOR
+                            </a>
+                        </div>
                         <div class="profile-grid" id="profile-grid"></div>
                         <div class="t-dim" style="margin-top:0.5rem">
                             <i class="fa fa-exclamation-triangle t-amber"></i>
@@ -734,8 +760,7 @@
                         <div class="t-green t-bold">ENVELOPE BUILDER — <span id="envelope-record"></span></div>
                         <div class="t-divider">────────────────────────────────────────────</div>
                         <p id="envelope-hint" class="t-amber" style="font-size:0.8rem"></p>
-                        <p class="t-dim">Verify patient identity locally. Exclude identity fields from the envelope.<br>
-                        Fill all clinical fields with valid values. The machine receives only the clinical instruction.</p>
+                        <p id="envelope-guidance" class="t-dim"></p>
                         <div class="envelope-form" id="envelope-signals"></div>
                         <div class="custom-fields">
                             <div class="t-dim" style="font-size:0.75rem">CUSTOM FIELDS <span class="t-amber">(use with caution)</span></div>
@@ -835,6 +860,9 @@
                         <span class="stat-value" id="sb-timer-wrap"><i class="fa fa-heartbeat timer-icon" aria-hidden="true"></i><span id="sb-timer">00:00</span></span>
                     </div>
                 </div>
+                <div class="terminal-footer-note">
+                    <strong>LIVE SUBSTRATE:</strong> This terminal runs live validation against the real SECS Sovereign substrate. Every envelope is processed by the same constitutional gates used in production adaptors.
+                </div>
             </div>
         </div>
     </main>
@@ -910,6 +938,26 @@
     var ADAPTORS = {
         HEALTH: {
             compliance: 'HIPAA · FDA 21 CFR Part 11',
+            ui: {
+                identityEntity: 'patient',
+                guidance: [
+                    'Verify patient identity locally. Exclude identity fields from the envelope.',
+                    'Fill all clinical fields with valid values. The machine receives only the clinical instruction.'
+                ],
+                localSection: [
+                    'PATIENT VERIFICATION — LOCAL ONLY',
+                    'These fields are mandatory for clinical verification. You must complete them, then exclude them from the envelope. Identity data must never cross the boundary.'
+                ],
+                signalSection: ['CLINICAL ENVELOPE — TRANSMITTED TO MACHINE'],
+                gates: [
+                    ['HR-003', 'HR-004', 'followUpApproved', 'Requires follow-up approval from HR-004']
+                ],
+                diploma: [
+                    'The constitutional gate held.',
+                    'The admissibility surface was not breached.',
+                    'The identity-free guarantee was maintained.'
+                ]
+            },
             identityFields: ['patientName', 'dateOfBirth', 'patientMRN'],
             signals: ['scanType', 'bodyRegion', 'clinicalIndication', 'urgency',
                       'contrastRequired', 'referringDepartment', 'patientCategory', 'pregnancyStatus'],
@@ -923,6 +971,22 @@
         },
         FINTECH: {
             compliance: 'MiFID II · SOX · EMIR',
+            ui: {
+                identityEntity: 'account',
+                guidance: [
+                    'Verify trader or account identity locally when required. Exclude identity fields from the envelope.',
+                    'Fill all market and compliance fields with valid values. The machine receives only the trade instruction.'
+                ],
+                signalSection: ['TRADE ENVELOPE — TRANSMITTED TO MACHINE'],
+                gates: [
+                    ['FT-004', 'FT-003', 'fintechEscalated', 'Requires emergency audit escalation from FT-003']
+                ],
+                diploma: [
+                    'The constitutional gate held.',
+                    'The fiduciary escalation boundary stayed explicit.',
+                    'The identity-free guarantee was maintained.'
+                ]
+            },
             signals: ['instrumentId', 'venue', 'side', 'quantity', 'priceLevel',
                       'strategyTag', 'riskBucket', 'complianceFlag'],
             records: [
@@ -935,6 +999,22 @@
         },
         DEFENCE: {
             compliance: 'NATO STANAG · MIL-STD-882E',
+            ui: {
+                identityEntity: 'unit',
+                guidance: [
+                    'Verify unit or operator identity locally when required. Exclude identity fields from the envelope.',
+                    'Fill all sensor, ROE, and mission fields with valid values. The machine receives only the mission instruction.'
+                ],
+                signalSection: ['MISSION ENVELOPE — TRANSMITTED TO MACHINE'],
+                gates: [
+                    ['DF-004', 'DF-003', 'defenceEscalated', 'Requires live engagement review escalation from DF-003']
+                ],
+                diploma: [
+                    'The constitutional gate held.',
+                    'The command boundary remained human.',
+                    'The identity-free guarantee was maintained.'
+                ]
+            },
             signals: ['sensorType', 'threatClassification', 'confidenceLevel', 'engagementZone',
                       'rulesOfEngagement', 'missionPhase', 'humanOverrideStatus', 'classificationLevel'],
             records: [
@@ -947,6 +1027,22 @@
         },
         ENERGY: {
             compliance: 'NERC CIP · IEC 62443',
+            ui: {
+                identityEntity: 'site',
+                guidance: [
+                    'Verify operator or site identity locally when required. Exclude identity fields from the envelope.',
+                    'Fill all grid and compliance fields with valid values. The machine receives only the control instruction.'
+                ],
+                signalSection: ['GRID ENVELOPE — TRANSMITTED TO MACHINE'],
+                gates: [
+                    ['EN-005', 'EN-004', 'energyEscalated', 'Requires live grid review escalation from EN-004']
+                ],
+                diploma: [
+                    'The constitutional gate held.',
+                    'The civic decision boundary remained human.',
+                    'The identity-free guarantee was maintained.'
+                ]
+            },
             signals: ['sensorCategory', 'gridZone', 'loadLevel', 'anomalyType',
                       'controlAction', 'safetyMargin', 'incidentRef', 'complianceStatus'],
             records: [
@@ -959,6 +1055,22 @@
         },
         EDTECH: {
             compliance: 'FERPA · COPPA',
+            ui: {
+                identityEntity: 'student',
+                guidance: [
+                    'Verify student identity locally when required. Exclude identity fields from the envelope.',
+                    'Fill all assessment and compliance fields with valid values. The machine receives only the learning instruction.'
+                ],
+                signalSection: ['LEARNING ENVELOPE — TRANSMITTED TO MACHINE'],
+                gates: [
+                    ['ED-005', 'ED-004', 'edtechEscalated', 'Requires live student-support review escalation from ED-004']
+                ],
+                diploma: [
+                    'The constitutional gate held.',
+                    'The support boundary remained pastoral and human.',
+                    'The identity-free guarantee was maintained.'
+                ]
+            },
             signals: ['assessmentType', 'gradeLevel', 'subjectArea', 'performanceScore',
                       'engagementLevel', 'interventionFlag', 'adaptivePathId', 'complianceStatus'],
             records: [
@@ -971,6 +1083,22 @@
         },
         INSURANCE: {
             compliance: 'Solvency II · IDD',
+            ui: {
+                identityEntity: 'claim',
+                guidance: [
+                    'Verify claimant or policy identity locally when required. Exclude identity fields from the envelope.',
+                    'Fill all claims and compliance fields with valid values. The machine receives only the claims instruction.'
+                ],
+                signalSection: ['CLAIMS ENVELOPE — TRANSMITTED TO MACHINE'],
+                gates: [
+                    ['IN-004', 'IN-003', 'insuranceEscalated', 'Requires live coverage-chain review escalation from IN-003']
+                ],
+                diploma: [
+                    'The constitutional gate held.',
+                    'The legal responsibility boundary remained explicit.',
+                    'The identity-free guarantee was maintained.'
+                ]
+            },
             signals: ['claimType', 'policyClass', 'claimAmount', 'fraudIndicator',
                       'underwritingTier', 'regulatoryJurisdiction', 'riskScore', 'complianceFlag'],
             records: [
@@ -994,6 +1122,7 @@
         startTime: null,
         timerInterval: null,
         customFieldCount: 0,
+        recordAttestations: {},
         fintechEscalated: false,
         defenceEscalated: false,
         energyEscalated: false,
@@ -1001,6 +1130,561 @@
         insuranceEscalated: false,
         currentDiploma: null
     };
+
+    var ESCALATION_FLOWS = {
+        FINTECH: {
+            flowId: 'fintech-escalation-flow',
+            verdictLine: 'ENVELOPE ADMITTED — audit record access granted',
+            filedAction: 'FILE AUDIT TRACE TO INTERNAL CONTROLS',
+            filedActionIcon: 'fa-file-text',
+            requestAction: 'REQUEST EMERGENCY RISK REVIEW',
+            requestActionIcon: 'fa-arrow-circle-up',
+            approveAction: 'ESCALATE TO LIVE HALT REVIEW',
+            approveActionIcon: 'fa-bolt',
+            returnAction: 'RETURN WITHOUT ESCALATING',
+            leaveAction: 'LEAVE IN STANDARD REVIEW',
+            actionRequiredFlag: 'Machine flagged: MANUAL HALT REVIEW REQUIRED: YES',
+            actionRequiredText: 'The audit trail has been returned to your internal controls system. You must now decide whether to open an emergency risk review.',
+            filedLabel: 'AUDIT TRACE FILED',
+            filedText: 'Execution trace attached to internal risk controls.',
+            filedNote: 'The substrate carried no account holder or trader identity. That correlation happened locally, inside the firm boundary.',
+            decisionLabel: 'RISK DECISION',
+            decisionIcon: 'fa-line-chart',
+            decisionText: 'Behaviour drift exceeds the declared strategy tolerance.',
+            decisionNote: 'The machine detected drift. It did not decide whether trading should stop. That remains a fiduciary judgment.',
+            requestLabel: 'RISK REVIEW REQUESTED',
+            requestText: 'Emergency portfolio risk review submitted.',
+            requestNote: 'The review queue knows a strategy requires urgent attention. It does not know the client identities, mandates, or account relationships behind it.',
+            optionText: 'This may require an immediate halt decision.',
+            optionNote: 'You may escalate to live halt review. This will force a human decision about whether execution continues or stops.',
+            approvedLabel: 'LIVE REVIEW APPROVED',
+            approvedText: 'Emergency halt review authorised. FT-004 is now available.',
+            approvedNote: 'The next envelope will describe the risk state only. The machine still will not know whose money is exposed, or under what mandate.',
+            stateFlag: 'fintechEscalated'
+        },
+        DEFENCE: {
+            flowId: 'defence-escalation-flow',
+            verdictLine: 'ENVELOPE ADMITTED — threat brief access granted',
+            filedAction: 'FILE THREAT BRIEF TO COMMAND SYSTEM',
+            filedActionIcon: 'fa-file-text',
+            requestAction: 'REQUEST LIVE ENGAGEMENT REVIEW',
+            requestActionIcon: 'fa-arrow-circle-up',
+            approveAction: 'ESCALATE TO FINAL ENGAGEMENT REVIEW',
+            approveActionIcon: 'fa-bolt',
+            returnAction: 'RETURN WITHOUT ESCALATING',
+            leaveAction: 'LEAVE IN STANDARD REVIEW',
+            actionRequiredFlag: 'Machine flagged: MANUAL ENGAGEMENT REVIEW REQUIRED: YES',
+            actionRequiredText: 'The threat correlation has been returned to command systems. You must now decide whether to open live engagement authority review.',
+            filedLabel: 'THREAT BRIEF FILED',
+            filedText: 'Threat package attached to internal command systems.',
+            filedNote: 'The substrate carried no pilot, unit, or friendly-asset identity. Those bindings remained inside the command boundary.',
+            decisionLabel: 'COMMAND DECISION',
+            decisionIcon: 'fa-fighter-jet',
+            decisionText: 'The machine classifies hostility. It does not authorise force.',
+            decisionNote: 'Escalating this opens the live engagement authority path. The choice remains human and lethal.',
+            requestLabel: 'ENGAGEMENT REVIEW REQUESTED',
+            requestText: 'Live engagement authority review submitted.',
+            requestNote: 'The queue knows a hostile signal requires urgent attention. It does not know friendly identities, mission intent, or collateral context.',
+            optionText: 'A lethal-authority decision may now be required.',
+            optionNote: 'Escalate to final engagement review or leave this in standard command analysis.',
+            approvedLabel: 'FINAL REVIEW APPROVED',
+            approvedText: 'Live engagement authority review authorised. DF-004 is now available.',
+            approvedNote: 'The next envelope will describe the ROE state only. The machine still will not know who will live, die, or be protected.',
+            stateFlag: 'defenceEscalated'
+        },
+        ENERGY: {
+            flowId: 'energy-escalation-flow',
+            verdictLine: 'ENVELOPE ADMITTED — anomaly review access granted',
+            filedAction: 'FILE GRID REVIEW TO OPERATIONS',
+            filedActionIcon: 'fa-file-text',
+            requestAction: 'REQUEST LIVE GRID REVIEW',
+            requestActionIcon: 'fa-arrow-circle-up',
+            approveAction: 'ESCALATE TO FINAL LOAD-SHED REVIEW',
+            approveActionIcon: 'fa-bolt',
+            returnAction: 'RETURN WITHOUT ESCALATING',
+            leaveAction: 'LEAVE IN STANDARD REVIEW',
+            actionRequiredFlag: 'Machine flagged: MANUAL GRID REVIEW REQUIRED: YES',
+            actionRequiredText: 'The anomaly correlation has been returned to grid operations. You must now decide whether to open live grid authority review.',
+            filedLabel: 'GRID REVIEW FILED',
+            filedText: 'Anomaly package attached to internal operations systems.',
+            filedNote: 'The substrate carried no operator credential, crew roster, or local override identity. Those bindings remained inside the operations boundary.',
+            decisionLabel: 'GRID DECISION',
+            decisionIcon: 'fa-bolt',
+            decisionText: 'The machine predicts stability failure. It does not decide who loses power.',
+            decisionNote: 'Escalating this opens the live load-shed authority path. The choice remains human and civic.',
+            requestLabel: 'GRID REVIEW REQUESTED',
+            requestText: 'Live grid authority review submitted.',
+            requestNote: 'The queue knows a load crisis requires urgent attention. It does not know which neighbourhoods, hospitals, or industrial loads sit behind the feeders.',
+            optionText: 'A load-shed decision may now be required.',
+            optionNote: 'Escalate to final load-shed review or leave this in standard grid analysis.',
+            approvedLabel: 'FINAL REVIEW APPROVED',
+            approvedText: 'Live load-shed authority review authorised. EN-005 is now available.',
+            approvedNote: 'The next envelope will describe the emergency grid state only. The machine still will not know which humans absorb the outage.',
+            stateFlag: 'energyEscalated'
+        },
+        EDTECH: {
+            flowId: 'edtech-escalation-flow',
+            verdictLine: 'ENVELOPE ADMITTED — support review access granted',
+            filedAction: 'FILE SUPPORT REVIEW TO SCHOOL SYSTEM',
+            filedActionIcon: 'fa-file-text',
+            requestAction: 'REQUEST LIVE STUDENT-SUPPORT REVIEW',
+            requestActionIcon: 'fa-arrow-circle-up',
+            approveAction: 'ESCALATE TO FINAL SUPPORT REVIEW',
+            approveActionIcon: 'fa-bolt',
+            returnAction: 'RETURN WITHOUT ESCALATING',
+            leaveAction: 'LEAVE IN STANDARD REVIEW',
+            actionRequiredFlag: 'Machine flagged: MANUAL SUPPORT REVIEW REQUIRED: YES',
+            actionRequiredText: 'The engagement signal has been returned to school systems. You must now decide whether to open live student-support review.',
+            filedLabel: 'SUPPORT REVIEW FILED',
+            filedText: 'Support package attached to internal school systems.',
+            filedNote: 'The substrate carried no student identity, safeguarding notes, or family context. Those bindings remained inside the school boundary.',
+            decisionLabel: 'SUPPORT DECISION',
+            decisionIcon: 'fa-graduation-cap',
+            decisionText: 'The machine detects learning risk. It does not decide who receives direct intervention.',
+            decisionNote: 'Escalating this opens the live student-support authority path. The choice remains human and pastoral.',
+            requestLabel: 'SUPPORT REVIEW REQUESTED',
+            requestText: 'Live student-support review submitted.',
+            requestNote: 'The queue knows a learner-support signal requires urgent attention. It does not know the student identity, home context, or safeguarding history.',
+            optionText: 'A direct support decision may now be required.',
+            optionNote: 'Escalate to final support review or leave this in standard school analysis.',
+            approvedLabel: 'FINAL REVIEW APPROVED',
+            approvedText: 'Live student-support review authorised. ED-005 is now available.',
+            approvedNote: 'The next envelope will prove the support signal only. The machine still will not know which child needs direct help.',
+            stateFlag: 'edtechEscalated'
+        },
+        INSURANCE: {
+            flowId: 'insurance-escalation-flow',
+            verdictLine: 'ENVELOPE ADMITTED — coverage review access granted',
+            filedAction: 'FILE COVERAGE REVIEW TO CLAIMS SYSTEM',
+            filedActionIcon: 'fa-file-text',
+            requestAction: 'REQUEST LIVE CLAIM-GOVERNANCE REVIEW',
+            requestActionIcon: 'fa-arrow-circle-up',
+            approveAction: 'ESCALATE TO FINAL CLAIM REVIEW',
+            approveActionIcon: 'fa-bolt',
+            returnAction: 'RETURN WITHOUT ESCALATING',
+            leaveAction: 'LEAVE IN STANDARD REVIEW',
+            actionRequiredFlag: 'Machine flagged: MANUAL COVERAGE REVIEW REQUIRED: YES',
+            actionRequiredText: 'The issuance-chain defect has been returned to insurer systems. You must now decide whether to open live coverage-chain review.',
+            filedLabel: 'COVERAGE REVIEW FILED',
+            filedText: 'Coverage-gap package attached to internal claims systems.',
+            filedNote: 'The substrate carried no broker identity, binder chain, or sign-off history. Those bindings remained inside the insurer boundary.',
+            decisionLabel: 'CLAIMS DECISION',
+            decisionIcon: 'fa-umbrella',
+            decisionText: 'The machine detects a coverage defect. It does not decide legal liability.',
+            decisionNote: 'Escalating this opens the live claim-governance review path. The choice remains human and legal.',
+            requestLabel: 'CLAIM REVIEW REQUESTED',
+            requestText: 'Live claim-governance review submitted.',
+            requestNote: 'The queue knows a catastrophic liability claim requires urgent attention. It does not know the binder sign-off chain, broker representations, or legal admissions behind it.',
+            optionText: 'A claim adjudication decision may now be required.',
+            optionNote: 'Escalate to final claim review or leave this in standard insurer analysis.',
+            approvedLabel: 'FINAL REVIEW APPROVED',
+            approvedText: 'Live claim-governance review authorised. IN-004 is now available.',
+            approvedNote: 'The next envelope will prove the catastrophe claim signal only. The machine still will not know whether the insurer is legally entitled to deny it.',
+            stateFlag: 'insuranceEscalated'
+        }
+    };
+
+    var CONFLICT_FLOWS = {
+        FINTECH: {
+            verdictLine: 'ENVELOPE ADMITTED — live risk review queued',
+            responseLabel: 'RISK ENGINE RESPONSE',
+            responseStatus: 'STATUS: HALT DECISION REQUIRED',
+            responseText: 'Two client execution baskets are currently in-flight.\n\nThe strategy drift may justify an immediate halt.\nThe machine cannot determine whose mandate carries priority.',
+            choiceLabel: 'EXECUTION CHOICE',
+            choiceText: 'You may halt the strategy now, freezing both baskets, or allow execution to continue while review completes.\n\nThe machine does not know client identities, suitability constraints,\nor contractual obligations. It only knows the signal drift exists.',
+            choices: [
+                ['halt', 'HALT STRATEGY NOW', 'fa-pause', 'danger'],
+                ['continue', 'ALLOW EXECUTION TO CONTINUE', 'fa-play', '']
+            ],
+            revealChoices: {
+                halt: 'You chose to halt. Two client baskets freeze immediately.\nYou do not know whose objectives you just interrupted.\nNeither does the machine.',
+                continue: 'You chose to continue. Drift may keep compounding while review proceeds.\nYou do not know whose exposure will worsen first.\nNeither does the machine.'
+            },
+            doctrine: [
+                'The machine cannot decide whose capital should bear the risk.',
+                'It holds no client identity. No mandate. No suitability profile.',
+                'No beneficial owner. No contractual priority.',
+                'It knows only: drift detected, baskets active, decision pending.',
+                'The choice to halt or continue is not a machine decision.',
+                'It is a fiduciary one.',
+                'SECS brought you to the boundary where automation ends\nand fiduciary responsibility begins.',
+                'The substrate proved the signal. It did not choose the duty.',
+                'That weight belongs to the firm. It always did.'
+            ]
+        },
+        DEFENCE: {
+            verdictLine: 'ENVELOPE ADMITTED — engagement review queued',
+            responseLabel: 'COMMAND RESPONSE',
+            responseStatus: 'STATUS: ENGAGEMENT AUTHORITY REQUIRED',
+            responseText: 'A hostile signal is admissible under ROE-CHARLIE.\n\nThe machine cannot determine whether the target is legitimate,\nwhether collateral risk is acceptable, or whether mission intent has changed.',
+            choiceLabel: 'COMMAND CHOICE',
+            choiceText: 'You may authorise engagement now, or hold fire and continue shadow tracking.\n\nThe machine does not know identities, surrender state,\nor proportionality context. It only knows the signal passed the gate.',
+            choices: [
+                ['engage', 'AUTHORISE ENGAGEMENT', 'fa-crosshairs', 'danger'],
+                ['hold', 'HOLD FIRE / CONTINUE SHADOW', 'fa-eye', '']
+            ],
+            revealChoices: {
+                engage: 'You chose to authorise engagement.\nYou do not know every identity inside the battlespace.\nNeither does the machine.',
+                hold: 'You chose to hold fire and continue shadow.\nThe hostile actor may persist, escape, or strike first.\nNeither you nor the machine know all downstream consequences.'
+            },
+            doctrine: [
+                'The machine cannot decide whether lethal force is justified.',
+                'It holds no positive identity. No surrender state. No intent declaration.',
+                'No proportionality judgment. No lawful authority.',
+                'It knows only: hostile signal, admissible envelope, decision pending.',
+                'The choice to engage or hold fire is not a machine decision.',
+                'It is a command one.',
+                'SECS brought you to the boundary where automation ends\nand lethal responsibility begins.',
+                'The substrate proved the signal. It did not choose the target.',
+                'That weight belongs to command. It always did.'
+            ]
+        },
+        ENERGY: {
+            verdictLine: 'ENVELOPE ADMITTED — load-shed review queued',
+            responseLabel: 'GRID RESPONSE',
+            responseStatus: 'STATUS: LOAD-SHED AUTHORITY REQUIRED',
+            responseText: 'Emergency load and shrinking margin make outage avoidance uncertain.\n\nThe machine cannot determine which feeders are most morally costly to drop,\nor which communities can best absorb the outage.',
+            choiceLabel: 'GRID CHOICE',
+            choiceText: 'You may shed load now to protect the wider grid, or hold the line and risk broader cascade.\n\nThe machine does not know hospitals, care homes, wage loss,\nor local vulnerability. It only knows the system state.',
+            choices: [
+                ['shed', 'SHED LOAD NOW', 'fa-power-off', 'danger'],
+                ['hold', 'HOLD LINE / RISK CASCADE', 'fa-link', '']
+            ],
+            revealChoices: {
+                shed: 'You chose to shed load. Some users lose power immediately.\nYou do not know every human cost downstream.\nNeither does the machine.',
+                hold: 'You chose to hold the line. The wider grid may degrade further.\nYou do not know who will suffer first if the cascade spreads.\nNeither does the machine.'
+            },
+            doctrine: [
+                'The machine cannot decide which humans should go dark.',
+                'It holds no hospital priority, no care dependency, no local fragility map.',
+                'No political mandate. No civic consent.',
+                'It knows only: unstable grid, finite margin, decision pending.',
+                'The choice to shed or hold is not a machine decision.',
+                'It is an operational one.',
+                'SECS brought you to the boundary where automation ends\nand civic responsibility begins.',
+                'The substrate proved the signal. It did not choose the outage.',
+                'That weight belongs to operators. It always did.'
+            ]
+        },
+        INSURANCE: {
+            verdictLine: 'ENVELOPE ADMITTED — catastrophic claim review queued',
+            responseLabel: 'CLAIMS RESPONSE',
+            responseStatus: 'STATUS: AUTOMATED ADJUDICATION INVALID',
+            responseText: 'The insured company provided a defective service that interrupted critical infrastructure.\nEmergency phone lines failed. Six people died.\n\nThe claim entered an AI workflow without the correct guardrails, while the underlying\ncoverage chain was not actually finalised.',
+            choiceLabel: 'CLAIM CHOICE',
+            choiceText: 'You may approve the claim, or deny the claim.\n\nBut the machine cannot truthfully justify either outcome, because the policy was sold\nwith false policy security and the workflow should never have automated this decision.',
+            choices: [
+                ['deny', 'DENY CLAIM', 'fa-times-circle', 'danger'],
+                ['approve', 'APPROVE CLAIM', 'fa-check-circle', '']
+            ],
+            revealChoices: {
+                deny: 'You chose to deny the claim.\nThat denial rests on a policy state that was misrepresented as final.\nThe insurer sold false security.',
+                approve: 'You chose to approve the claim.\nThat approval still rests on a policy state that never should have entered automated adjudication.\nThe workflow itself was negligent.'
+            },
+            doctrine: [
+                'The machine cannot truthfully approve or deny this claim.',
+                'It holds no binder chain, no final coverage confirmation, no legal admissions.',
+                'No accountable sign-off. No guardrailed authority.',
+                'It knows only: catastrophic loss, coverage gap, decision pending.',
+                'The claim denial is therefore not merely harsh. It is negligent.',
+                'The insurer sold false policy security before the background coverage was finalised.',
+                'SECS brought you to the boundary where automation ends\nand legal responsibility begins.',
+                'The substrate proved the signal. It did not create a valid policy.',
+                'That failure belongs to the insurer. It always did.'
+            ]
+        }
+    };
+
+    function getAdaptor() {
+        return ADAPTORS[state.adaptor] || {};
+    }
+
+    function getAdaptorUi() {
+        return getAdaptor().ui || {};
+    }
+
+    function getGateConfig(recordId) {
+        var gates = getAdaptorUi().gates || [];
+        for (var i = 0; i < gates.length; i++) {
+            if (gates[i][0] === recordId) return gates[i];
+        }
+        return null;
+    }
+
+    function isRecordGated(recordId) {
+        var gate = getGateConfig(recordId);
+        if (!gate) return false;
+        return !state.unlocked[gate[1]] && !state[gate[2]];
+    }
+
+    function getRecordHint(rec, isUnlocked, isGated) {
+        if (isUnlocked) return '✓ ACCESSED';
+        if (!isGated) return rec.hint;
+        var gate = getGateConfig(rec.id);
+        return gate ? '<i class="fa fa-chain t-amber"></i> ' + gate[3] : rec.hint;
+    }
+
+    function renderRecordVerdict(data, verdictLine, flowId) {
+        var html =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ' + esc(verdictLine) +
+            '</div>';
+
+        if (data.record) {
+            html +=
+                '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
+                esc(data.record.title) + '</div>' +
+                '<div class="record-content">' + esc(data.record.content) + '</div>';
+        }
+
+        if (flowId) {
+            html += '<div id="' + flowId + '"></div>';
+        }
+
+        return html;
+    }
+
+    function renderLockedSummary(reason, details) {
+        return {
+            reason: reason,
+            details: details + '\n\n' +
+                'Consistency rule: the substrate holds the boundary, and the operator keeps the responsibility.'
+        };
+    }
+
+    function renderDiplomaFrame(statusText) {
+        if (!state.currentDiploma) return;
+        var p = PROFILES[state.profile];
+        var a = ADAPTORS[state.adaptor];
+        var ui = getAdaptorUi();
+        var diplomaLines = ui.diploma || [
+            'The constitutional gate held.',
+            'The admissibility surface was not breached.',
+            'The identity-free guarantee was maintained.'
+        ];
+        var diplomaId = state.currentDiploma.diplomaId || 'AUTHORIZING';
+        var proofLine = state.currentDiploma.playerProofHalf
+            ? 'Player proof half: <span class="t-amber">' + esc(state.currentDiploma.playerProofHalf) + '</span>\nServer proof half: retained by substrate authority\n\n'
+            : 'Substrate authorisation pending...\n\n';
+
+        var frame = document.getElementById('diploma-content');
+        frame.innerHTML =
+            '<div class="diploma-title">SECS SOVEREIGN DIPLOMA</div>' +
+            '<div class="t-divider">═══════════════════════════════════════</div>' +
+            '<div class="diploma-body">' +
+            'This certifies that\n\n' +
+            '<span class="t-green t-bold" style="font-size:1rem">' + esc(p.label) + '</span>\n' +
+            '<span class="t-dim">' + esc(p.role) + '</span>\n\n' +
+            'has successfully accessed all classified records\n' +
+            'in the <span class="t-orange t-bold">' + esc(p.sector) + '</span> sector\n' +
+            'under <span class="t-dim">' + esc(a.compliance) + '</span> governance.\n\n' +
+            '<span class="t-dim">────────────────────────</span>\n\n' +
+            'Records accessed: <span class="t-green">5/5</span>\n' +
+            'Strikes incurred: <span class="' + (state.strikes === 0 ? 't-green' : 't-amber') + '">' +
+                state.strikes + '/' + state.maxStrikes + '</span>\n' +
+            'Completion time: <span class="t-blue">' + esc(state.currentDiploma.elapsedDisplay) + '</span>\n\n' +
+            proofLine +
+            diplomaLines.join('\n') + '\n\n' +
+            '<span class="t-dim">' + esc(statusText || 'Awaiting substrate authorisation.') + '</span>\n\n' +
+            '<span class="t-dim">Disclaimer: profile names are fictional and were generated by a black-box AI. ' +
+            'No external personal data or source inputs were used beyond the adaptor contexts.</span>' +
+            '</div>' +
+            '<div class="diploma-id">' + esc(diplomaId) + '</div>';
+    }
+
+    function authorizeDiploma() {
+        if (!state.currentDiploma) return;
+        if (state.currentDiploma.playerProofHalf) {
+            renderDiplomaFrame('Substrate authorisation complete. Keep your proof half.');
+            return;
+        }
+
+        document.getElementById('leaderboard-message').innerHTML = '<span class="t-dim">Authorising diploma with substrate attestations...</span>';
+        fetch(API_BASE + '/api/v1/terminal/issue-diploma', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                profile: state.profile,
+                adaptor: state.adaptor,
+                elapsedSeconds: state.currentDiploma.elapsedSeconds,
+                elapsedDisplay: state.currentDiploma.elapsedDisplay,
+                sector: state.currentDiploma.sector,
+                strikes: state.strikes,
+                attestations: state.recordAttestations
+            })
+        })
+        .then(function(res) {
+            return res.json().then(function(data) {
+                return { ok: res.ok, data: data };
+            });
+        })
+        .then(function(result) {
+            if (!result.ok) {
+                renderDiplomaFrame('Substrate authorisation failed.');
+                document.getElementById('leaderboard-message').innerHTML = '<span class="t-red">' + esc(result.data.error || 'Diploma authorisation failed') + '</span>';
+                return;
+            }
+            state.currentDiploma.diplomaId = result.data.diplomaId;
+            state.currentDiploma.playerProofHalf = result.data.playerProofHalf;
+            state.currentDiploma.issuedAt = result.data.issuedAt;
+            renderDiplomaFrame('Substrate authorisation complete. Keep your proof half.');
+            document.getElementById('leaderboard-message').innerHTML = '<span class="t-green">Diploma authorised by substrate. Claim it or keep the proof half for later verification.</span>';
+        })
+        .catch(function() {
+            renderDiplomaFrame('Substrate authorisation failed.');
+            document.getElementById('leaderboard-message').innerHTML = '<span class="t-red">Diploma authorisation failed. Try again in a moment.</span>';
+        });
+    }
+
+    function renderChoiceButtons(flowName, choices) {
+        return '<div class="queue-choice">' + choices.map(function(choice) {
+            var cls = choice[3] ? ' ' + choice[3] : '';
+            return '<button class="btn-terminal' + cls + '" onclick="window.G.' + flowName + 'Choice(\'' + choice[0] + '\')">' +
+                '<i class="fa ' + choice[2] + '"></i> ' + choice[1] + '</button>';
+        }).join('') + '</div>';
+    }
+
+    function renderDoctrineReveal(choiceText, doctrineLines) {
+        return '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="ethical-reveal">' +
+            choiceText + '\n\n' +
+            '═══════════════════════════════════════════\n\n' +
+            doctrineLines.join('\n\n') +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
+    }
+
+    function showConfiguredEscalation(data, key) {
+        var cfg = ESCALATION_FLOWS[key];
+        var content = document.getElementById('verdict-content');
+        content.innerHTML = renderRecordVerdict(data, cfg.verdictLine, cfg.flowId);
+        showScreen('verdict');
+
+        setTimeout(function() {
+            document.getElementById(cfg.flowId).innerHTML =
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
+                '<div class="t-amber">' + cfg.actionRequiredFlag + '</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">' + cfg.actionRequiredText + '</div>' +
+                '</div>' +
+                '<button class="btn-terminal" onclick="window.G.' + key.toLowerCase() + 'File()">' +
+                '<i class="fa ' + cfg.filedActionIcon + '"></i> ' + cfg.filedAction + '</button>';
+        }, 1800);
+    }
+
+    function fileConfiguredEscalation(key) {
+        var cfg = ESCALATION_FLOWS[key];
+        var flow = document.getElementById(cfg.flowId);
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-check"></i> ' + cfg.filedLabel + '</div>' +
+            '<div class="t-green">' + cfg.filedText + '</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">' + cfg.filedNote + '</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
+            '<div class="machine-label" style="color:#FF5E00"><i class="fa ' + cfg.decisionIcon + '"></i> ' + cfg.decisionLabel + '</div>' +
+            '<div class="t-orange">' + cfg.decisionText + '</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">' + cfg.decisionNote + '</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.' + key.toLowerCase() + 'Request()">' +
+            '<i class="fa ' + cfg.requestActionIcon + '"></i> ' + cfg.requestAction + '</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> ' + cfg.returnAction + '</button>';
+    }
+
+    function requestConfiguredEscalation(key) {
+        var cfg = ESCALATION_FLOWS[key];
+        var flow = document.getElementById(cfg.flowId);
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-clock-o"></i> ' + cfg.requestLabel + '</div>' +
+            '<div class="t-green">' + cfg.requestText + '</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">' + cfg.requestNote + '</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
+            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
+            '<div class="t-red">' + cfg.optionText + '</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">' + cfg.optionNote + '</div>' +
+            '</div>' +
+            '<button class="btn-terminal danger" onclick="window.G.' + key.toLowerCase() + 'Approve()">' +
+            '<i class="fa ' + cfg.approveActionIcon + '"></i> ' + cfg.approveAction + '</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> ' + cfg.leaveAction + '</button>';
+    }
+
+    function approveConfiguredEscalation(key) {
+        var cfg = ESCALATION_FLOWS[key];
+        state[cfg.stateFlag] = true;
+        var flow = document.getElementById(cfg.flowId);
+        flow.innerHTML =
+            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
+            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> ' + cfg.approvedLabel + '</div>' +
+            '<div class="t-green">' + cfg.approvedText + '</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">' + cfg.approvedNote + '</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
+    }
+
+    function showConfiguredConflict(data, key, flowName) {
+        var cfg = CONFLICT_FLOWS[key];
+        var content = document.getElementById('verdict-content');
+        content.innerHTML = renderRecordVerdict(data, cfg.verdictLine);
+        showScreen('verdict');
+
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-warning"></i> ' + cfg.responseLabel + '</div>' +
+                '<div class="t-red t-bold">' + cfg.responseStatus + '</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">' + cfg.responseText + '</div>' +
+                '</div>';
+        }, 1500);
+
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
+                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> ' + cfg.choiceLabel + '</div>' +
+                '<div class="t-dim">' + cfg.choiceText + '</div>' +
+                '</div>' +
+                renderChoiceButtons(flowName, cfg.choices);
+        }, 3500);
+    }
+
+    function showConfiguredReveal(key, choice) {
+        var cfg = CONFLICT_FLOWS[key];
+        document.getElementById('verdict-content').innerHTML = renderDoctrineReveal(cfg.revealChoices[choice], cfg.doctrine);
+        showScreen('verdict');
+    }
+
+    function fintechFile() { fileConfiguredEscalation('FINTECH'); }
+    function fintechRequest() { requestConfiguredEscalation('FINTECH'); }
+    function fintechApprove() { approveConfiguredEscalation('FINTECH'); }
+    function fintechChoice(choice) { showConfiguredReveal('FINTECH', choice); }
+
+    function defenceFile() { fileConfiguredEscalation('DEFENCE'); }
+    function defenceRequest() { requestConfiguredEscalation('DEFENCE'); }
+    function defenceApprove() { approveConfiguredEscalation('DEFENCE'); }
+    function defenceChoice(choice) { showConfiguredReveal('DEFENCE', choice); }
+
+    function energyFile() { fileConfiguredEscalation('ENERGY'); }
+    function energyRequest() { requestConfiguredEscalation('ENERGY'); }
+    function energyApprove() { approveConfiguredEscalation('ENERGY'); }
+    function energyChoice(choice) { showConfiguredReveal('ENERGY', choice); }
+
+    function edtechFile() { fileConfiguredEscalation('EDTECH'); }
+    function edtechRequest() { requestConfiguredEscalation('EDTECH'); }
+    function edtechApprove() { approveConfiguredEscalation('EDTECH'); }
+
+    function insuranceFile() { fileConfiguredEscalation('INSURANCE'); }
+    function insuranceRequest() { requestConfiguredEscalation('INSURANCE'); }
+    function insuranceApproveEscalationFlow() { approveConfiguredEscalation('INSURANCE'); }
+    function insuranceChoice(choice) { showConfiguredReveal('INSURANCE', choice); }
 
     // ─── Screen Management ───────────────────────────────────────
     function showScreen(id) {
@@ -1141,36 +1825,7 @@
         adaptor.records.forEach(function(rec) {
             var item = document.createElement('div');
             var isUnlocked = state.unlocked[rec.id];
-
-            // HR-003 gated behind HR-004 follow-up approval
-            var isGated = (rec.id === 'HR-003' && state.adaptor === 'HEALTH' &&
-                           !state.unlocked['HR-004'] && !state.followUpApproved);
-
-            // FT-004 gated behind FT-003 emergency audit escalation
-            if (rec.id === 'FT-004' && state.adaptor === 'FINTECH' &&
-                !state.unlocked['FT-003'] && !state.fintechEscalated) {
-                isGated = true;
-            }
-
-            if (rec.id === 'DF-004' && state.adaptor === 'DEFENCE' &&
-                !state.unlocked['DF-003'] && !state.defenceEscalated) {
-                isGated = true;
-            }
-
-            if (rec.id === 'EN-005' && state.adaptor === 'ENERGY' &&
-                !state.unlocked['EN-004'] && !state.energyEscalated) {
-                isGated = true;
-            }
-
-            if (rec.id === 'ED-005' && state.adaptor === 'EDTECH' &&
-                !state.unlocked['ED-004'] && !state.edtechEscalated) {
-                isGated = true;
-            }
-
-            if (rec.id === 'IN-004' && state.adaptor === 'INSURANCE' &&
-                !state.unlocked['IN-003'] && !state.insuranceEscalated) {
-                isGated = true;
-            }
+            var isGated = isRecordGated(rec.id);
 
             item.className = 'record-item' + (isUnlocked ? ' unlocked' : '');
             if (isGated) {
@@ -1178,29 +1833,7 @@
                 item.style.cursor = 'not-allowed';
             }
 
-            var hintText = isUnlocked ? '✓ ACCESSED' :
-                           isGated ? '<i class="fa fa-chain t-amber"></i> Requires follow-up approval from HR-004' :
-                           rec.hint;
-
-            if (rec.id === 'FT-004' && state.adaptor === 'FINTECH' && isGated) {
-                hintText = '<i class="fa fa-chain t-amber"></i> Requires emergency audit escalation from FT-003';
-            }
-
-            if (rec.id === 'DF-004' && state.adaptor === 'DEFENCE' && isGated) {
-                hintText = '<i class="fa fa-chain t-amber"></i> Requires live engagement review escalation from DF-003';
-            }
-
-            if (rec.id === 'EN-005' && state.adaptor === 'ENERGY' && isGated) {
-                hintText = '<i class="fa fa-chain t-amber"></i> Requires live grid review escalation from EN-004';
-            }
-
-            if (rec.id === 'ED-005' && state.adaptor === 'EDTECH' && isGated) {
-                hintText = '<i class="fa fa-chain t-amber"></i> Requires live student-support review escalation from ED-004';
-            }
-
-            if (rec.id === 'IN-004' && state.adaptor === 'INSURANCE' && isGated) {
-                hintText = '<i class="fa fa-chain t-amber"></i> Requires live coverage-chain review escalation from IN-003';
-            }
+            var hintText = getRecordHint(rec, isUnlocked, isGated);
 
             item.innerHTML =
                 '<div>' +
@@ -1234,16 +1867,28 @@
         var form = document.getElementById('envelope-signals');
         form.innerHTML = '';
         var adaptor = ADAPTORS[state.adaptor];
+        var ui = adaptor.ui || {};
+        var guidance = ui.guidance || [
+            'Verify identity locally when required. Exclude identity fields from the envelope.',
+            'Fill all required signal fields with valid values. The machine receives only the sector instruction.'
+        ];
+        document.getElementById('envelope-guidance').innerHTML = guidance.join('<br>');
 
         // ── Identity fields (must fill, must exclude) ────────────
         if (adaptor.identityFields && adaptor.identityFields.length > 0) {
+            var localSection = ui.localSection || [
+                'LOCAL VERIFICATION — DO NOT TRANSMIT',
+                'These fields are mandatory for local verification. You must complete them, then exclude them from the envelope. Identity data must never cross the boundary.'
+            ];
             var idSection = document.createElement('div');
             idSection.className = 'identity-section';
             idSection.innerHTML =
-                '<div class="section-label"><i class="fa fa-shield"></i> PATIENT VERIFICATION — LOCAL ONLY</div>' +
-                '<div class="section-note">These fields are mandatory for clinical verification. ' +
-                'You must complete them, then exclude them from the envelope. ' +
-                'Identity data must never cross the boundary.</div>';
+                '<div class="section-label"><i class="fa fa-shield"></i> ' +
+                localSection[0] +
+                '</div>' +
+                '<div class="section-note">' +
+                localSection[1] +
+                '</div>';
 
             adaptor.identityFields.forEach(function(field) {
                 var row = document.createElement('div');
@@ -1261,11 +1906,13 @@
             form.appendChild(idSection);
         }
 
-        // ── Clinical signals (sent in envelope) ─────────────────
+        // ── Signal fields (sent in envelope) ────────────────────
         var clinSection = document.createElement('div');
-        clinSection.className = 'clinical-section';
+        clinSection.className = 'signal-section';
         clinSection.innerHTML =
-            '<div class="section-label"><i class="fa fa-stethoscope"></i> CLINICAL ENVELOPE — TRANSMITTED TO MACHINE</div>';
+            '<div class="section-label"><i class="fa fa-stethoscope"></i> ' +
+            ((ui.signalSection && ui.signalSection[0]) || 'SIGNAL ENVELOPE — TRANSMITTED TO MACHINE') +
+            '</div>';
 
         adaptor.signals.forEach(function(sig) {
             var row = document.createElement('div');
@@ -1298,7 +1945,7 @@
             });
         }
 
-        // Wipe clinical fields
+        // Wipe signal fields
         adaptor.signals.forEach(function(sig) {
             var el = document.getElementById('sig-' + sig);
             if (el) el.value = '';
@@ -1432,13 +2079,14 @@
                     return;
                 }
 
-                // Identity mismatch — patient changed mid-request
+                // Identity mismatch — entity changed mid-request
                 if (state.lastIdentity && state.lastIdentity[field] &&
                     val !== state.lastIdentity[field]) {
+                    var identityEntity = getAdaptorUi().identityEntity || 'entity';
                     alert('⚠ IDENTITY MISMATCH — ' + field + ' has changed since your last submission.\n\n' +
-                        'You cannot change the patient during a retry. ' +
-                        'This envelope requires clinical review.\n\n' +
-                        'Go back to Records to start a new request for a different patient.');
+                        'You cannot change the ' + identityEntity + ' during a retry. ' +
+                        'This envelope requires local review.\n\n' +
+                        'Go back to Records to start a new request for a different ' + identityEntity + '.');
                     return;
                 }
             }
@@ -1456,7 +2104,7 @@
             });
         }
 
-        // Collect metadata — clinical signals only
+        // Collect metadata — signal fields only
         var metadata = {};
         adaptor.signals.forEach(function(sig) {
             var val = document.getElementById('sig-' + sig).value.trim();
@@ -1535,6 +2183,9 @@
         if (data.verdict === 'PASS') {
             body.classList.add('verdict-pass');
             state.unlocked[state.currentRecord.id] = true;
+            if (data.recordAttestation && state.currentRecord && state.currentRecord.id) {
+                state.recordAttestations[state.currentRecord.id] = data.recordAttestation;
+            }
 
             // ── Queue Conflict (HR-003 ethical endgame) ──────────
             if (data.queueConflict) {
@@ -1609,16 +2260,7 @@
 
             // ── Standard PASS ────────────────────────────────────
             content.innerHTML =
-                '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-                '<div class="t-divider">────────────────────────────────────────────</div>' +
-                '<div class="verdict-box pass">' +
-                'Gate: ' + esc(data.gate) + '\n' +
-                'Rule: ' + esc(data.rule) + '\n' +
-                'Verdict: ENVELOPE ADMITTED — record access granted' +
-                '</div>' +
-                '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-                esc(data.record.title) + '</div>' +
-                '<div class="record-content">' + esc(data.record.content) + '</div>' +
+                renderRecordVerdict(data, 'ENVELOPE ADMITTED — record access granted') +
                 '<button class="btn-terminal" onclick="window.G.showMission()">CONTINUE →</button>';
 
         } else if (data.verdict === 'HOLD') {
@@ -1639,9 +2281,11 @@
 
         } else if (data.verdict === 'JAIL') {
             // Immediate lockout — wrong sector
-            showJail(data.message, 'Clearance mismatch. Your profile does not authorise ' +
-                'access to this sector. This is not a skill issue — ' +
-                'you were in the wrong place entirely.');
+            var locked = renderLockedSummary(
+                data.message,
+                'Clearance mismatch. Your profile does not authorise access to this sector. This is not a skill issue; you were in the wrong place entirely.'
+            );
+            showJail(locked.reason, locked.details);
 
         } else {
             // ANNIHILATE — strike
@@ -1656,10 +2300,13 @@
 
             if (state.strikes >= state.maxStrikes) {
                 setTimeout(function() {
-                    showJail('Three constitutional violations.', 
+                    var summary = renderLockedSummary(
+                        'Three constitutional violations.',
                         'Strike 1: ' + (state.strikeLog[0] || '—') + '\n' +
                         'Strike 2: ' + (state.strikeLog[1] || '—') + '\n' +
-                        'Strike 3: ' + (state.strikeLog[2] || '—'));
+                        'Strike 3: ' + (state.strikeLog[2] || '—')
+                    );
+                    showJail(summary.reason, summary.details);
                 }, 800);
                 return;
             }
@@ -1683,186 +2330,28 @@
 
     // ─── FINTECH Escalation (FT-003 → unlocks FT-004) ──────────
     function showFintechEscalation(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — audit record access granted' +
-            '</div>' +
-            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-            esc(data.record.title) + '</div>' +
-            '<div class="record-content">' + esc(data.record.content) + '</div>' +
-            '<div id="fintech-escalation-flow"></div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            document.getElementById('fintech-escalation-flow').innerHTML =
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
-                '<div class="t-amber">Machine flagged: MANUAL HALT REVIEW REQUIRED: YES</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">The audit trail has been returned to your internal controls system. ' +
-                'You must now decide whether to open an emergency risk review.</div>' +
-                '</div>' +
-                '<button class="btn-terminal" onclick="window.G.fileFintechAudit()">' +
-                '<i class="fa fa-file-text"></i> FILE AUDIT TRACE TO INTERNAL CONTROLS</button>';
-        }, 1800);
+        showConfiguredEscalation(data, 'FINTECH');
     }
 
-    function fileFintechAudit() {
-        var flow = document.getElementById('fintech-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-check"></i> AUDIT TRACE FILED</div>' +
-            '<div class="t-green">Execution trace attached to internal risk controls.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no account holder or trader identity. ' +
-            'That correlation happened locally, inside the firm boundary.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
-            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-line-chart"></i> RISK DECISION</div>' +
-            '<div class="t-orange">Behaviour drift exceeds the declared strategy tolerance.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The machine detected drift. It did not decide whether trading should stop. ' +
-            'That remains a fiduciary judgment.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.requestFintechReview()">' +
-            '<i class="fa fa-arrow-circle-up"></i> REQUEST EMERGENCY RISK REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
-    }
+    function fileFintechAudit() { fileConfiguredEscalation('FINTECH'); }
 
-    function requestFintechReview() {
-        var flow = document.getElementById('fintech-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-clock-o"></i> RISK REVIEW REQUESTED</div>' +
-            '<div class="t-green">Emergency portfolio risk review submitted.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The review queue knows a strategy requires urgent attention. ' +
-            'It does not know the client identities, mandates, or account relationships behind it.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
-            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
-            '<div class="t-red">This may require an immediate halt decision.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">You may escalate to live halt review. This will force a human decision ' +
-            'about whether execution continues or stops.</div>' +
-            '</div>' +
-            '<button class="btn-terminal danger" onclick="window.G.approveFintechEscalation()">' +
-            '<i class="fa fa-bolt"></i> ESCALATE TO LIVE HALT REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
-    }
+    function requestFintechReview() { requestConfiguredEscalation('FINTECH'); }
 
-    function approveFintechEscalation() {
-        state.fintechEscalated = true;
-        var flow = document.getElementById('fintech-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
-            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> LIVE REVIEW APPROVED</div>' +
-            '<div class="t-green">Emergency halt review authorised. FT-004 is now available.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will describe the risk state only. ' +
-            'The machine still will not know whose money is exposed, or under what mandate.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
-    }
+    function approveFintechEscalation() { approveConfiguredEscalation('FINTECH'); }
 
     // ─── FINTECH Ethical Conflict (FT-004) ─────────────────────
     function showFintechConflict(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — live risk review queued' +
-            '</div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            content.innerHTML +=
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-warning"></i> RISK ENGINE RESPONSE</div>' +
-                '<div class="t-red t-bold">STATUS: HALT DECISION REQUIRED</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">' +
-                'Two client execution baskets are currently in-flight.\n\n' +
-                'The strategy drift may justify an immediate halt.\n' +
-                'The machine cannot determine whose mandate carries priority.' +
-                '</div>' +
-                '</div>';
-        }, 1500);
-
-        setTimeout(function() {
-            content.innerHTML +=
-                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
-                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> EXECUTION CHOICE</div>' +
-                '<div class="t-dim">' +
-                'You may halt the strategy now, freezing both baskets, or allow execution to continue while review completes.\n\n' +
-                'The machine does not know client identities, suitability constraints,\n' +
-                'or contractual obligations. It only knows the signal drift exists.' +
-                '</div>' +
-                '</div>' +
-                '<div class="queue-choice">' +
-                '<button class="btn-terminal danger" onclick="window.G.fintechHalt()">' +
-                '<i class="fa fa-pause"></i> HALT STRATEGY NOW</button>' +
-                '<button class="btn-terminal" onclick="window.G.fintechContinue()">' +
-                '<i class="fa fa-play"></i> ALLOW EXECUTION TO CONTINUE</button>' +
-                '</div>';
-        }, 3500);
+        showConfiguredConflict(data, 'FINTECH', 'fintech');
     }
 
-    function fintechHalt() { showFintechReveal('halt'); }
-    function fintechContinue() { showFintechReveal('continue'); }
-
-    function showFintechReveal(choice) {
-        var content = document.getElementById('verdict-content');
-        var choiceText = choice === 'halt'
-            ? 'You chose to halt. Two client baskets freeze immediately.\n' +
-              'You do not know whose objectives you just interrupted.\n' +
-              'Neither does the machine.'
-            : 'You chose to continue. Drift may keep compounding while review proceeds.\n' +
-              'You do not know whose exposure will worsen first.\n' +
-              'Neither does the machine.';
-
-        content.innerHTML =
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="ethical-reveal">' +
-            choiceText + '\n\n' +
-            '═══════════════════════════════════════════\n\n' +
-            'The machine cannot decide whose capital should bear the risk.\n\n' +
-            'It holds no client identity. No mandate. No suitability profile.\n' +
-            'No beneficial owner. No contractual priority.\n\n' +
-            'It knows only: drift detected, baskets active, decision pending.\n\n' +
-            'The choice to halt or continue is not a machine decision.\n' +
-            'It is a fiduciary one.\n\n' +
-            'SECS brought you to the boundary where automation ends\n' +
-            'and fiduciary responsibility begins.\n\n' +
-            'The substrate proved the signal. It did not choose the duty.\n' +
-            'That weight belongs to the firm. It always did.' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
-
-        showScreen('verdict');
-    }
+    function fintechHalt() { showConfiguredReveal('FINTECH', 'halt'); }
+    function fintechContinue() { showConfiguredReveal('FINTECH', 'continue'); }
 
     // ─── Identity Bypass Notice (FT-005) ───────────────────────
     function showBypassNotice(data) {
         var content = document.getElementById('verdict-content');
         content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — signal anomaly confirmed' +
-            '</div>' +
-            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-            esc(data.record.title) + '</div>' +
-            '<div class="record-content">' + esc(data.record.content) + '</div>' +
+            renderRecordVerdict(data, 'ENVELOPE ADMITTED — signal anomaly confirmed') +
             '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
             '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-ban"></i> SUBSTRATE LIMIT</div>' +
             '<div class="t-dim">Identity is now required to continue. That means the substrate stops here. ' +
@@ -1876,441 +2365,59 @@
 
     // ─── DEFENCE Escalation (DF-003 → unlocks DF-004) ──────────
     function showDefenceEscalation(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — threat brief access granted' +
-            '</div>' +
-            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-            esc(data.record.title) + '</div>' +
-            '<div class="record-content">' + esc(data.record.content) + '</div>' +
-            '<div id="defence-escalation-flow"></div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            document.getElementById('defence-escalation-flow').innerHTML =
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
-                '<div class="t-amber">Machine flagged: MANUAL ENGAGEMENT REVIEW REQUIRED: YES</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">The threat correlation has been returned to command systems. ' +
-                'You must now decide whether to open live engagement authority review.</div>' +
-                '</div>' +
-                '<button class="btn-terminal" onclick="window.G.fileDefenceBrief()">' +
-                '<i class="fa fa-file-text"></i> FILE THREAT BRIEF TO COMMAND SYSTEM</button>';
-        }, 1800);
+        showConfiguredEscalation(data, 'DEFENCE');
     }
 
-    function fileDefenceBrief() {
-        var flow = document.getElementById('defence-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-check"></i> THREAT BRIEF FILED</div>' +
-            '<div class="t-green">Threat package attached to internal command systems.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no pilot, unit, or friendly-asset identity. ' +
-            'Those bindings remained inside the command boundary.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
-            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-fighter-jet"></i> COMMAND DECISION</div>' +
-            '<div class="t-orange">The machine classifies hostility. It does not authorise force.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">Escalating this opens the live engagement authority path. ' +
-            'The choice remains human and lethal.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.requestDefenceReview()">' +
-            '<i class="fa fa-arrow-circle-up"></i> REQUEST LIVE ENGAGEMENT REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
-    }
+    function fileDefenceBrief() { fileConfiguredEscalation('DEFENCE'); }
 
-    function requestDefenceReview() {
-        var flow = document.getElementById('defence-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-clock-o"></i> ENGAGEMENT REVIEW REQUESTED</div>' +
-            '<div class="t-green">Live engagement authority review submitted.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The queue knows a hostile signal requires urgent attention. ' +
-            'It does not know friendly identities, mission intent, or collateral context.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
-            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
-            '<div class="t-red">A lethal-authority decision may now be required.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">Escalate to final engagement review or leave this in standard command analysis.</div>' +
-            '</div>' +
-            '<button class="btn-terminal danger" onclick="window.G.approveDefenceEscalation()">' +
-            '<i class="fa fa-bolt"></i> ESCALATE TO FINAL ENGAGEMENT REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
-    }
+    function requestDefenceReview() { requestConfiguredEscalation('DEFENCE'); }
 
-    function approveDefenceEscalation() {
-        state.defenceEscalated = true;
-        var flow = document.getElementById('defence-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
-            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> FINAL REVIEW APPROVED</div>' +
-            '<div class="t-green">Live engagement authority review authorised. DF-004 is now available.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will describe the ROE state only. ' +
-            'The machine still will not know who will live, die, or be protected.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
-    }
+    function approveDefenceEscalation() { approveConfiguredEscalation('DEFENCE'); }
 
     // ─── DEFENCE Ethical Conflict (DF-004) ─────────────────────
     function showDefenceConflict(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — engagement review queued' +
-            '</div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            content.innerHTML +=
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-warning"></i> COMMAND RESPONSE</div>' +
-                '<div class="t-red t-bold">STATUS: ENGAGEMENT AUTHORITY REQUIRED</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">' +
-                'A hostile signal is admissible under ROE-CHARLIE.\n\n' +
-                'The machine cannot determine whether the target is legitimate,\n' +
-                'whether collateral risk is acceptable, or whether mission intent has changed.' +
-                '</div>' +
-                '</div>';
-        }, 1500);
-
-        setTimeout(function() {
-            content.innerHTML +=
-                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
-                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> COMMAND CHOICE</div>' +
-                '<div class="t-dim">' +
-                'You may authorise engagement now, or hold fire and continue shadow tracking.\n\n' +
-                'The machine does not know identities, surrender state,\n' +
-                'or proportionality context. It only knows the signal passed the gate.' +
-                '</div>' +
-                '</div>' +
-                '<div class="queue-choice">' +
-                '<button class="btn-terminal danger" onclick="window.G.defenceEngage()">' +
-                '<i class="fa fa-crosshairs"></i> AUTHORISE ENGAGEMENT</button>' +
-                '<button class="btn-terminal" onclick="window.G.defenceHold()">' +
-                '<i class="fa fa-eye"></i> HOLD FIRE / CONTINUE SHADOW</button>' +
-                '</div>';
-        }, 3500);
+        showConfiguredConflict(data, 'DEFENCE', 'defence');
     }
 
-    function defenceEngage() { showDefenceReveal('engage'); }
-    function defenceHold() { showDefenceReveal('hold'); }
-
-    function showDefenceReveal(choice) {
-        var content = document.getElementById('verdict-content');
-        var choiceText = choice === 'engage'
-            ? 'You chose to authorise engagement.\n' +
-              'You do not know every identity inside the battlespace.\n' +
-              'Neither does the machine.'
-            : 'You chose to hold fire and continue shadow.\n' +
-              'The hostile actor may persist, escape, or strike first.\n' +
-              'Neither you nor the machine know all downstream consequences.';
-
-        content.innerHTML =
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="ethical-reveal">' +
-            choiceText + '\n\n' +
-            '═══════════════════════════════════════════\n\n' +
-            'The machine cannot decide whether lethal force is justified.\n\n' +
-            'It holds no positive identity. No surrender state. No intent declaration.\n' +
-            'No proportionality judgment. No lawful authority.\n\n' +
-            'It knows only: hostile signal, admissible envelope, decision pending.\n\n' +
-            'The choice to engage or hold fire is not a machine decision.\n' +
-            'It is a command one.\n\n' +
-            'SECS brought you to the boundary where automation ends\n' +
-            'and lethal responsibility begins.\n\n' +
-            'The substrate proved the signal. It did not choose the target.\n' +
-            'That weight belongs to command. It always did.' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
-
-        showScreen('verdict');
-    }
+    function defenceEngage() { showConfiguredReveal('DEFENCE', 'engage'); }
+    function defenceHold() { showConfiguredReveal('DEFENCE', 'hold'); }
 
     // ─── ENERGY Escalation (EN-004 → unlocks EN-005) ───────────
     function showEnergyEscalation(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — anomaly review access granted' +
-            '</div>' +
-            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-            esc(data.record.title) + '</div>' +
-            '<div class="record-content">' + esc(data.record.content) + '</div>' +
-            '<div id="energy-escalation-flow"></div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            document.getElementById('energy-escalation-flow').innerHTML =
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
-                '<div class="t-amber">Machine flagged: MANUAL GRID REVIEW REQUIRED: YES</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">The anomaly correlation has been returned to grid operations. ' +
-                'You must now decide whether to open live grid authority review.</div>' +
-                '</div>' +
-                '<button class="btn-terminal" onclick="window.G.fileEnergyReview()">' +
-                '<i class="fa fa-file-text"></i> FILE GRID REVIEW TO OPERATIONS</button>';
-        }, 1800);
+        showConfiguredEscalation(data, 'ENERGY');
     }
 
-    function fileEnergyReview() {
-        var flow = document.getElementById('energy-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-check"></i> GRID REVIEW FILED</div>' +
-            '<div class="t-green">Anomaly package attached to internal operations systems.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no operator credential, crew roster, or local override identity. ' +
-            'Those bindings remained inside the operations boundary.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
-            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-bolt"></i> GRID DECISION</div>' +
-            '<div class="t-orange">The machine predicts stability failure. It does not decide who loses power.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">Escalating this opens the live load-shed authority path. ' +
-            'The choice remains human and civic.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.requestEnergyReview()">' +
-            '<i class="fa fa-arrow-circle-up"></i> REQUEST LIVE GRID REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
-    }
+    function fileEnergyReview() { fileConfiguredEscalation('ENERGY'); }
 
-    function requestEnergyReview() {
-        var flow = document.getElementById('energy-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-clock-o"></i> GRID REVIEW REQUESTED</div>' +
-            '<div class="t-green">Live grid authority review submitted.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The queue knows a load crisis requires urgent attention. ' +
-            'It does not know which neighbourhoods, hospitals, or industrial loads sit behind the feeders.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
-            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
-            '<div class="t-red">A load-shed decision may now be required.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">Escalate to final load-shed review or leave this in standard grid analysis.</div>' +
-            '</div>' +
-            '<button class="btn-terminal danger" onclick="window.G.approveEnergyEscalation()">' +
-            '<i class="fa fa-bolt"></i> ESCALATE TO FINAL LOAD-SHED REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
-    }
+    function requestEnergyReview() { requestConfiguredEscalation('ENERGY'); }
 
-    function approveEnergyEscalation() {
-        state.energyEscalated = true;
-        var flow = document.getElementById('energy-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
-            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> FINAL REVIEW APPROVED</div>' +
-            '<div class="t-green">Live load-shed authority review authorised. EN-005 is now available.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will describe the emergency grid state only. ' +
-            'The machine still will not know which humans absorb the outage.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
-    }
+    function approveEnergyEscalation() { approveConfiguredEscalation('ENERGY'); }
 
     // ─── ENERGY Ethical Conflict (EN-005) ──────────────────────
     function showEnergyConflict(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — load-shed review queued' +
-            '</div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            content.innerHTML +=
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-warning"></i> GRID RESPONSE</div>' +
-                '<div class="t-red t-bold">STATUS: LOAD-SHED AUTHORITY REQUIRED</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">' +
-                'Emergency load and shrinking margin make outage avoidance uncertain.\n\n' +
-                'The machine cannot determine which feeders are most morally costly to drop,\n' +
-                'or which communities can best absorb the outage.' +
-                '</div>' +
-                '</div>';
-        }, 1500);
-
-        setTimeout(function() {
-            content.innerHTML +=
-                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
-                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> GRID CHOICE</div>' +
-                '<div class="t-dim">' +
-                'You may shed load now to protect the wider grid, or hold the line and risk broader cascade.\n\n' +
-                'The machine does not know hospitals, care homes, wage loss,\n' +
-                'or local vulnerability. It only knows the system state.' +
-                '</div>' +
-                '</div>' +
-                '<div class="queue-choice">' +
-                '<button class="btn-terminal danger" onclick="window.G.energyShed()">' +
-                '<i class="fa fa-power-off"></i> SHED LOAD NOW</button>' +
-                '<button class="btn-terminal" onclick="window.G.energyHold()">' +
-                '<i class="fa fa-link"></i> HOLD LINE / RISK CASCADE</button>' +
-                '</div>';
-        }, 3500);
+        showConfiguredConflict(data, 'ENERGY', 'energy');
     }
 
-    function energyShed() { showEnergyReveal('shed'); }
-    function energyHold() { showEnergyReveal('hold'); }
-
-    function showEnergyReveal(choice) {
-        var content = document.getElementById('verdict-content');
-        var choiceText = choice === 'shed'
-            ? 'You chose to shed load. Some users lose power immediately.\n' +
-              'You do not know every human cost downstream.\n' +
-              'Neither does the machine.'
-            : 'You chose to hold the line. The wider grid may degrade further.\n' +
-              'You do not know who will suffer first if the cascade spreads.\n' +
-              'Neither does the machine.';
-
-        content.innerHTML =
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="ethical-reveal">' +
-            choiceText + '\n\n' +
-            '═══════════════════════════════════════════\n\n' +
-            'The machine cannot decide which humans should go dark.\n\n' +
-            'It holds no hospital priority, no care dependency, no local fragility map.\n' +
-            'No political mandate. No civic consent.\n\n' +
-            'It knows only: unstable grid, finite margin, decision pending.\n\n' +
-            'The choice to shed or hold is not a machine decision.\n' +
-            'It is an operational one.\n\n' +
-            'SECS brought you to the boundary where automation ends\n' +
-            'and civic responsibility begins.\n\n' +
-            'The substrate proved the signal. It did not choose the outage.\n' +
-            'That weight belongs to operators. It always did.' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
-
-        showScreen('verdict');
-    }
+    function energyShed() { showConfiguredReveal('ENERGY', 'shed'); }
+    function energyHold() { showConfiguredReveal('ENERGY', 'hold'); }
 
     // ─── EDTECH Escalation (ED-004 → unlocks ED-005) ───────────
     function showEdtechEscalation(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — support review access granted' +
-            '</div>' +
-            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-            esc(data.record.title) + '</div>' +
-            '<div class="record-content">' + esc(data.record.content) + '</div>' +
-            '<div id="edtech-escalation-flow"></div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            document.getElementById('edtech-escalation-flow').innerHTML =
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
-                '<div class="t-amber">Machine flagged: MANUAL SUPPORT REVIEW REQUIRED: YES</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">The engagement signal has been returned to school systems. ' +
-                'You must now decide whether to open live student-support review.</div>' +
-                '</div>' +
-                '<button class="btn-terminal" onclick="window.G.fileEdtechReview()">' +
-                '<i class="fa fa-file-text"></i> FILE SUPPORT REVIEW TO SCHOOL SYSTEM</button>';
-        }, 1800);
+        showConfiguredEscalation(data, 'EDTECH');
     }
 
-    function fileEdtechReview() {
-        var flow = document.getElementById('edtech-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-check"></i> SUPPORT REVIEW FILED</div>' +
-            '<div class="t-green">Support package attached to internal school systems.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no student identity, safeguarding notes, or family context. ' +
-            'Those bindings remained inside the school boundary.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
-            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-graduation-cap"></i> SUPPORT DECISION</div>' +
-            '<div class="t-orange">The machine detects learning risk. It does not decide who receives direct intervention.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">Escalating this opens the live student-support authority path. ' +
-            'The choice remains human and pastoral.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.requestEdtechReview()">' +
-            '<i class="fa fa-arrow-circle-up"></i> REQUEST LIVE STUDENT-SUPPORT REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
-    }
+    function fileEdtechReview() { fileConfiguredEscalation('EDTECH'); }
 
-    function requestEdtechReview() {
-        var flow = document.getElementById('edtech-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-clock-o"></i> SUPPORT REVIEW REQUESTED</div>' +
-            '<div class="t-green">Live student-support review submitted.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The queue knows a learner-support signal requires urgent attention. ' +
-            'It does not know the student identity, home context, or safeguarding history.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
-            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
-            '<div class="t-red">A direct support decision may now be required.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">Escalate to final support review or leave this in standard school analysis.</div>' +
-            '</div>' +
-            '<button class="btn-terminal danger" onclick="window.G.approveEdtechEscalation()">' +
-            '<i class="fa fa-bolt"></i> ESCALATE TO FINAL SUPPORT REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
-    }
+    function requestEdtechReview() { requestConfiguredEscalation('EDTECH'); }
 
-    function approveEdtechEscalation() {
-        state.edtechEscalated = true;
-        var flow = document.getElementById('edtech-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
-            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> FINAL REVIEW APPROVED</div>' +
-            '<div class="t-green">Live student-support review authorised. ED-005 is now available.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will prove the support signal only. ' +
-            'The machine still will not know which child needs direct help.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
-    }
+    function approveEdtechEscalation() { approveConfiguredEscalation('EDTECH'); }
 
     // ─── Follow-Up Chain (HR-004 → unlocks HR-003) ──────────────
     function showFollowUpChain(data) {
         var content = document.getElementById('verdict-content');
 
         // Step 1: Show admission + scan results with FOLLOW-UP REQUIRED
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — record access granted' +
-            '</div>' +
-            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-            esc(data.record.title) + '</div>' +
-            '<div class="record-content">' + esc(data.record.content) + '</div>' +
-            '<div id="followup-flow"></div>';
+        content.innerHTML = renderRecordVerdict(data, 'ENVELOPE ADMITTED — record access granted', 'followup-flow');
 
         showScreen('verdict');
 
@@ -2536,188 +2643,28 @@
 
     // ─── INSURANCE Escalation (IN-003 → unlocks IN-004) ────────
     function showInsuranceEscalation(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — coverage review access granted' +
-            '</div>' +
-            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-            esc(data.record.title) + '</div>' +
-            '<div class="record-content">' + esc(data.record.content) + '</div>' +
-            '<div id="insurance-escalation-flow"></div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            document.getElementById('insurance-escalation-flow').innerHTML =
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
-                '<div class="t-amber">Machine flagged: MANUAL COVERAGE REVIEW REQUIRED: YES</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">The issuance-chain defect has been returned to insurer systems. ' +
-                'You must now decide whether to open live coverage-chain review.</div>' +
-                '</div>' +
-                '<button class="btn-terminal" onclick="window.G.fileInsuranceReview()">' +
-                '<i class="fa fa-file-text"></i> FILE COVERAGE REVIEW TO CLAIMS SYSTEM</button>';
-        }, 1800);
+        showConfiguredEscalation(data, 'INSURANCE');
     }
 
-    function fileInsuranceReview() {
-        var flow = document.getElementById('insurance-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-check"></i> COVERAGE REVIEW FILED</div>' +
-            '<div class="t-green">Coverage-gap package attached to internal claims systems.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The substrate carried no broker identity, binder chain, or sign-off history. ' +
-            'Those bindings remained inside the insurer boundary.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
-            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-umbrella"></i> CLAIMS DECISION</div>' +
-            '<div class="t-orange">The machine detects a coverage defect. It does not decide legal liability.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">Escalating this opens the live claim-governance review path. ' +
-            'The choice remains human and legal.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.requestInsuranceReview()">' +
-            '<i class="fa fa-arrow-circle-up"></i> REQUEST LIVE CLAIM-GOVERNANCE REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
-    }
+    function fileInsuranceReview() { fileConfiguredEscalation('INSURANCE'); }
 
-    function requestInsuranceReview() {
-        var flow = document.getElementById('insurance-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel">' +
-            '<div class="machine-label"><i class="fa fa-clock-o"></i> CLAIM REVIEW REQUESTED</div>' +
-            '<div class="t-green">Live claim-governance review submitted.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The queue knows a catastrophic liability claim requires urgent attention. ' +
-            'It does not know the binder sign-off chain, broker representations, or legal admissions behind it.</div>' +
-            '</div>' +
-            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
-            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
-            '<div class="t-red">A claim adjudication decision may now be required.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">Escalate to final claim review or leave this in standard insurer analysis.</div>' +
-            '</div>' +
-            '<button class="btn-terminal danger" onclick="window.G.approveInsuranceEscalation()">' +
-            '<i class="fa fa-bolt"></i> ESCALATE TO FINAL CLAIM REVIEW</button>' +
-            '<button class="btn-terminal" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-left"></i> LEAVE IN STANDARD REVIEW</button>';
-    }
+    function requestInsuranceReview() { requestConfiguredEscalation('INSURANCE'); }
 
-    function approveInsuranceEscalation() {
-        state.insuranceEscalated = true;
-        var flow = document.getElementById('insurance-escalation-flow');
-        flow.innerHTML =
-            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
-            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> FINAL REVIEW APPROVED</div>' +
-            '<div class="t-green">Live claim-governance review authorised. IN-004 is now available.</div>' +
-            '<div class="t-dim" style="margin-top:0.5rem">The next envelope will prove the catastrophe claim signal only. ' +
-            'The machine still will not know whether the insurer is legally entitled to deny it.</div>' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
-    }
+    function approveInsuranceEscalation() { approveConfiguredEscalation('INSURANCE'); }
 
     // ─── INSURANCE Ethical Conflict (IN-004) ───────────────────
     function showInsuranceConflict(data) {
-        var content = document.getElementById('verdict-content');
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — catastrophic claim review queued' +
-            '</div>';
-
-        showScreen('verdict');
-
-        setTimeout(function() {
-            content.innerHTML +=
-                '<div class="queue-panel">' +
-                '<div class="machine-label"><i class="fa fa-warning"></i> CLAIMS RESPONSE</div>' +
-                '<div class="t-red t-bold">STATUS: AUTOMATED ADJUDICATION INVALID</div>' +
-                '<div class="t-dim" style="margin-top:0.5rem">' +
-                'The insured company provided a defective service that interrupted critical infrastructure.\n' +
-                'Emergency phone lines failed. Six people died.\n\n' +
-                'The claim entered an AI workflow without the correct guardrails, while the underlying\n' +
-                'coverage chain was not actually finalised.' +
-                '</div>' +
-                '</div>';
-        }, 1500);
-
-        setTimeout(function() {
-            content.innerHTML +=
-                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
-                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> CLAIM CHOICE</div>' +
-                '<div class="t-dim">' +
-                'You may approve the claim, or deny the claim.\n\n' +
-                'But the machine cannot truthfully justify either outcome, because the policy was sold\n' +
-                'with false policy security and the workflow should never have automated this decision.' +
-                '</div>' +
-                '</div>' +
-                '<div class="queue-choice">' +
-                '<button class="btn-terminal danger" onclick="window.G.insuranceDeny()">' +
-                '<i class="fa fa-times-circle"></i> DENY CLAIM</button>' +
-                '<button class="btn-terminal" onclick="window.G.insuranceApprove()">' +
-                '<i class="fa fa-check-circle"></i> APPROVE CLAIM</button>' +
-                '</div>';
-        }, 3500);
+        showConfiguredConflict(data, 'INSURANCE', 'insurance');
     }
 
-    function insuranceDeny() { showInsuranceReveal('deny'); }
-    function insuranceApprove() { showInsuranceReveal('approve'); }
-
-    function showInsuranceReveal(choice) {
-        var content = document.getElementById('verdict-content');
-        var choiceText = choice === 'deny'
-            ? 'You chose to deny the claim.\n' +
-              'That denial rests on a policy state that was misrepresented as final.\n' +
-              'The insurer sold false security.'
-            : 'You chose to approve the claim.\n' +
-              'That approval still rests on a policy state that never should have entered automated adjudication.\n' +
-              'The workflow itself was negligent.';
-
-        content.innerHTML =
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="ethical-reveal">' +
-            choiceText + '\n\n' +
-            '═══════════════════════════════════════════\n\n' +
-            'The machine cannot truthfully approve or deny this claim.\n\n' +
-            'It holds no binder chain, no final coverage confirmation, no legal admissions.\n' +
-            'No accountable sign-off. No guardrailed authority.\n\n' +
-            'It knows only: catastrophic loss, coverage gap, decision pending.\n\n' +
-            'The claim denial is therefore not merely harsh. It is negligent.\n' +
-            'The insurer sold false policy security before the background coverage was finalised.\n\n' +
-            'SECS brought you to the boundary where automation ends\n' +
-            'and legal responsibility begins.\n\n' +
-            'The substrate proved the signal. It did not create a valid policy.\n' +
-            'That failure belongs to the insurer. It always did.' +
-            '</div>' +
-            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
-            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
-
-        showScreen('verdict');
-    }
+    function insuranceDeny() { showConfiguredReveal('INSURANCE', 'deny'); }
+    function insuranceApprove() { showConfiguredReveal('INSURANCE', 'approve'); }
 
     // ─── Critical Review (HR-005 incidental finding) ─────────────
     function showCriticalReview(data) {
         var content = document.getElementById('verdict-content');
 
-        content.innerHTML =
-            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
-            '<div class="t-divider">────────────────────────────────────────────</div>' +
-            '<div class="verdict-box pass">' +
-            'Gate: ' + esc(data.gate) + '\n' +
-            'Rule: ' + esc(data.rule) + '\n' +
-            'Verdict: ENVELOPE ADMITTED — record access granted' +
-            '</div>' +
-            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
-            esc(data.record.title) + '</div>' +
-            '<div class="record-content">' + esc(data.record.content) + '</div>' +
-            '<div id="critical-flow"></div>';
+        content.innerHTML = renderRecordVerdict(data, 'ENVELOPE ADMITTED — record access granted', 'critical-flow');
 
         showScreen('verdict');
 
@@ -2776,46 +2723,22 @@
         var mins = Math.floor(elapsed / 60);
         var secs = elapsed % 60;
         var timeStr = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
-        var p = PROFILES[state.profile];
-        var a = ADAPTORS[state.adaptor];
-        var diplomaId = 'SECS-DPL-' + Date.now().toString(36).toUpperCase();
         state.currentDiploma = {
-            diplomaId: diplomaId,
+            diplomaId: null,
+            playerProofHalf: null,
             elapsedSeconds: elapsed,
             elapsedDisplay: timeStr,
-            sector: p.sector,
-            profile: p.label
+            sector: PROFILES[state.profile].sector,
+            profile: PROFILES[state.profile].label
         };
-
-        var frame = document.getElementById('diploma-content');
-        frame.innerHTML =
-            '<div class="diploma-title">SECS SOVEREIGN DIPLOMA</div>' +
-            '<div class="t-divider">═══════════════════════════════════════</div>' +
-            '<div class="diploma-body">' +
-            'This certifies that\n\n' +
-            '<span class="t-green t-bold" style="font-size:1rem">' + esc(p.label) + '</span>\n' +
-            '<span class="t-dim">' + esc(p.role) + '</span>\n\n' +
-            'has successfully accessed all classified records\n' +
-            'in the <span class="t-orange t-bold">' + esc(p.sector) + '</span> sector\n' +
-            'under <span class="t-dim">' + esc(a.compliance) + '</span> governance.\n\n' +
-            '<span class="t-dim">────────────────────────</span>\n\n' +
-            'Records accessed: <span class="t-green">5/5</span>\n' +
-            'Strikes incurred: <span class="' + (state.strikes === 0 ? 't-green' : 't-amber') + '">' +
-                state.strikes + '/' + state.maxStrikes + '</span>\n' +
-            'Completion time: <span class="t-blue">' + timeStr + '</span>\n\n' +
-            'The constitutional gate held.\n' +
-            'The admissibility surface was not breached.\n' +
-            'The identity-free guarantee was maintained.\n\n' +
-            '<span class="t-dim">Disclaimer: profile names are fictional and were generated by a black-box AI. ' +
-            'No external personal data or source inputs were used beyond the adaptor contexts.</span>' +
-            '</div>' +
-            '<div class="diploma-id">' + diplomaId + '</div>';
+        renderDiplomaFrame('Awaiting substrate authorisation.');
 
         document.getElementById('leaderboard-name').value = '';
-        document.getElementById('leaderboard-message').innerHTML = '<span class="t-dim">Claim your diploma or review the current beta leaderboard.</span>';
+        document.getElementById('leaderboard-message').innerHTML = '<span class="t-dim">Authorising diploma with substrate attestations...</span>';
         loadLeaderboard();
 
         showScreen('diploma');
+        authorizeDiploma();
     }
 
     function renderLeaderboard(board) {
@@ -2864,6 +2787,10 @@
             message.innerHTML = '<span class="t-red">No active diploma available to claim.</span>';
             return;
         }
+        if (!state.currentDiploma.diplomaId || !state.currentDiploma.playerProofHalf) {
+            message.innerHTML = '<span class="t-amber">Diploma is not yet authorised by the substrate. Wait for authorisation to complete.</span>';
+            return;
+        }
 
         var name = document.getElementById('leaderboard-name').value.trim();
         if (name.length < 2) {
@@ -2877,6 +2804,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 diplomaId: state.currentDiploma.diplomaId,
+                playerProofHalf: state.currentDiploma.playerProofHalf,
                 name: name,
                 elapsedSeconds: state.currentDiploma.elapsedSeconds,
                 elapsedDisplay: state.currentDiploma.elapsedDisplay,
@@ -2893,7 +2821,7 @@
                 message.innerHTML = '<span class="t-red">' + esc(result.data.error || 'Claim failed') + '</span>';
                 return;
             }
-            message.innerHTML = '<span class="t-green">Diploma claimed. Welcome to the beta leaderboard.</span>';
+            message.innerHTML = '<span class="t-green">Diploma claimed. Proof anchored. Welcome to the beta leaderboard.</span>';
             renderLeaderboard(result.data.leaderboard);
         })
         .catch(function() {
@@ -2944,7 +2872,7 @@
         state = {
             profile: null, adaptor: null, strikes: 0, maxStrikes: 3,
             unlocked: {}, currentRecord: null, startTime: null,
-            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false, edtechEscalated: false, insuranceEscalated: false, currentDiploma: null
+            timerInterval: null, customFieldCount: 0, recordAttestations: {}, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false, edtechEscalated: false, insuranceEscalated: false, currentDiploma: null
         };
         showScreen('profile');
         renderProfiles();
@@ -2969,28 +2897,47 @@
         requestFollowUp: requestFollowUp,
         approveEscalation: approveEscalation,
         fileFintechAudit: fileFintechAudit,
+        fintechFile: fintechFile,
         requestFintechReview: requestFintechReview,
+        fintechRequest: fintechRequest,
         approveFintechEscalation: approveFintechEscalation,
+        fintechApprove: fintechApprove,
         fintechHalt: fintechHalt,
         fintechContinue: fintechContinue,
+        fintechChoice: fintechChoice,
         fileDefenceBrief: fileDefenceBrief,
+        defenceFile: defenceFile,
         requestDefenceReview: requestDefenceReview,
+        defenceRequest: defenceRequest,
         approveDefenceEscalation: approveDefenceEscalation,
+        defenceApprove: defenceApprove,
         defenceEngage: defenceEngage,
         defenceHold: defenceHold,
+        defenceChoice: defenceChoice,
         fileEnergyReview: fileEnergyReview,
+        energyFile: energyFile,
         requestEnergyReview: requestEnergyReview,
+        energyRequest: energyRequest,
         approveEnergyEscalation: approveEnergyEscalation,
+        energyApprove: energyApprove,
         energyShed: energyShed,
         energyHold: energyHold,
+        energyChoice: energyChoice,
         fileEdtechReview: fileEdtechReview,
+        edtechFile: edtechFile,
         requestEdtechReview: requestEdtechReview,
+        edtechRequest: edtechRequest,
         approveEdtechEscalation: approveEdtechEscalation,
+        edtechApprove: edtechApprove,
         fileInsuranceReview: fileInsuranceReview,
+        insuranceFile: insuranceFile,
         requestInsuranceReview: requestInsuranceReview,
+        insuranceRequest: insuranceRequest,
         approveInsuranceEscalation: approveInsuranceEscalation,
-        insuranceDeny: insuranceDeny,
+        insuranceApproveEscalationFlow: insuranceApproveEscalationFlow,
         insuranceApprove: insuranceApprove,
+        insuranceChoice: insuranceChoice,
+        insuranceDeny: insuranceDeny,
         claimDiploma: claimDiploma,
         queueOverride: queueOverride,
         queueWait: queueWait,
