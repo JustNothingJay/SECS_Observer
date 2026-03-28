@@ -408,6 +408,86 @@
     margin-top: 1rem;
 }
 
+.launch-note {
+    border: 1px solid rgba(255, 170, 0, 0.35);
+    background: rgba(255, 170, 0, 0.04);
+    border-radius: 4px;
+    padding: 0.9rem 1rem;
+    margin: 0.75rem 0 1rem;
+    color: #d8dbe3;
+    font-size: 0.76rem;
+    line-height: 1.6;
+}
+
+.launch-note a,
+.leaderboard-panel a {
+    color: #48e662;
+    text-decoration: none;
+}
+
+.leaderboard-panel {
+    border: 1px solid rgba(72, 230, 98, 0.2);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: #0d1014;
+}
+
+.leaderboard-panel .panel-title {
+    color: #48e662;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+.leaderboard-form {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0.75rem 0;
+}
+
+.leaderboard-form input {
+    background: #111418;
+    border: 1px solid #333;
+    color: #d8dbe3;
+    border-radius: 4px;
+    padding: 0.55rem 0.7rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.78rem;
+    min-width: 220px;
+}
+
+.leaderboard-message {
+    min-height: 1.2rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.76rem;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 0.45rem 0.35rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: left;
+}
+
+.leaderboard-table th {
+    color: #7a7f8c;
+    font-weight: 600;
+}
+
+.leaderboard-empty {
+    color: #7a7f8c;
+    font-size: 0.75rem;
+    padding: 0.5rem 0;
+}
+
 /* Jail screen */
 .jail-art {
     white-space: pre;
@@ -618,6 +698,12 @@
                         <div class="t-divider">────────────────────────────────────────────</div>
                         <p class="t-dim">Your profile determines which sector you can access.<br>
                         Choose carefully. Wrong sector = immediate lockout.</p>
+                        <div class="launch-note">
+                            <span class="t-amber t-bold">BETA</span> — This is a live real-world substrate test of the SECS terminal gate.<br>
+                            The governance boundary is real. The content is experimental. The purpose right now is feedback, breakage discovery, and playability testing.<br>
+                            If you find a flaw, odd behaviour, or a path to a diploma that should not exist, report it here:
+                            <a href="https://github.com/JustNothingJay/SECS_Observer/issues" target="_blank" rel="noopener noreferrer">SECS_Observer issues</a>.
+                        </div>
                         <div class="profile-grid" id="profile-grid"></div>
                         <div class="t-dim" style="margin-top:0.5rem">
                             <i class="fa fa-exclamation-triangle t-amber"></i>
@@ -697,6 +783,23 @@
                     <!-- ═══ DIPLOMA ═══ -->
                     <div class="screen" id="screen-diploma">
                         <div class="diploma-frame" id="diploma-content"></div>
+                        <div class="leaderboard-panel">
+                            <div class="panel-title">FULLY QUALIFIED SECS USER</div>
+                            <div class="t-dim" style="font-size:0.75rem; line-height:1.6">
+                                Beta leaderboard: claim your diploma with the code above. This stores only your chosen display name, diploma code, sector, and total completion time.
+                            </div>
+                            <div class="leaderboard-form">
+                                <input type="text" id="leaderboard-name" maxlength="32" placeholder="enter display name">
+                                <button class="btn-terminal primary" onclick="window.G.claimDiploma()">
+                                    <i class="fa fa-trophy"></i> CLAIM DIPLOMA
+                                </button>
+                                <a href="https://github.com/JustNothingJay/SECS_Observer/issues" target="_blank" rel="noopener noreferrer" class="btn-terminal">
+                                    <i class="fa fa-bug"></i> GIVE FEEDBACK
+                                </a>
+                            </div>
+                            <div class="leaderboard-message" id="leaderboard-message"></div>
+                            <div id="leaderboard-list" class="leaderboard-empty">Loading leaderboard...</div>
+                        </div>
                         <div style="text-align:center;margin-top:1rem">
                             <button class="btn-terminal" onclick="window.G.restart()">
                                 <i class="fa fa-refresh"></i> NEW SESSION
@@ -895,7 +998,8 @@
         defenceEscalated: false,
         energyEscalated: false,
         edtechEscalated: false,
-        insuranceEscalated: false
+        insuranceEscalated: false,
+        currentDiploma: null
     };
 
     // ─── Screen Management ───────────────────────────────────────
@@ -2675,6 +2779,13 @@
         var p = PROFILES[state.profile];
         var a = ADAPTORS[state.adaptor];
         var diplomaId = 'SECS-DPL-' + Date.now().toString(36).toUpperCase();
+        state.currentDiploma = {
+            diplomaId: diplomaId,
+            elapsedSeconds: elapsed,
+            elapsedDisplay: timeStr,
+            sector: p.sector,
+            profile: p.label
+        };
 
         var frame = document.getElementById('diploma-content');
         frame.innerHTML =
@@ -2700,7 +2811,94 @@
             '</div>' +
             '<div class="diploma-id">' + diplomaId + '</div>';
 
+        document.getElementById('leaderboard-name').value = '';
+        document.getElementById('leaderboard-message').innerHTML = '<span class="t-dim">Claim your diploma or review the current beta leaderboard.</span>';
+        loadLeaderboard();
+
         showScreen('diploma');
+    }
+
+    function renderLeaderboard(board) {
+        var mount = document.getElementById('leaderboard-list');
+        if (!mount) return;
+        if (!board || !board.entries || board.entries.length === 0) {
+            mount.className = 'leaderboard-empty';
+            mount.innerHTML = 'No diplomas claimed yet.';
+            return;
+        }
+
+        mount.className = '';
+        var rows = board.entries.map(function(entry) {
+            return '<tr>' +
+                '<td>' + esc(String(entry.rank)) + '</td>' +
+                '<td>' + esc(entry.name) + '</td>' +
+                '<td>' + esc(entry.elapsedDisplay) + '</td>' +
+                '<td>' + esc(entry.sector || '—') + '</td>' +
+                '</tr>';
+        }).join('');
+
+        mount.innerHTML =
+            '<div class="t-dim" style="font-size:0.72rem; margin-bottom:0.5rem">Total claimed diplomas: ' + esc(String(board.totalClaims || 0)) + '</div>' +
+            '<table class="leaderboard-table">' +
+            '<thead><tr><th>#</th><th>Name</th><th>Total Time</th><th>Sector</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody>' +
+            '</table>';
+    }
+
+    function loadLeaderboard() {
+        fetch(API_BASE + '/api/v1/terminal/leaderboard')
+            .then(function(res) { return res.json(); })
+            .then(function(data) { renderLeaderboard(data); })
+            .catch(function() {
+                var mount = document.getElementById('leaderboard-list');
+                if (mount) {
+                    mount.className = 'leaderboard-empty';
+                    mount.innerHTML = 'Leaderboard unavailable right now.';
+                }
+            });
+    }
+
+    function claimDiploma() {
+        var message = document.getElementById('leaderboard-message');
+        if (!state.currentDiploma) {
+            message.innerHTML = '<span class="t-red">No active diploma available to claim.</span>';
+            return;
+        }
+
+        var name = document.getElementById('leaderboard-name').value.trim();
+        if (name.length < 2) {
+            message.innerHTML = '<span class="t-amber">Enter a display name with at least 2 characters.</span>';
+            return;
+        }
+
+        message.innerHTML = '<span class="t-dim">Claiming diploma...</span>';
+        fetch(API_BASE + '/api/v1/terminal/claim-diploma', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                diplomaId: state.currentDiploma.diplomaId,
+                name: name,
+                elapsedSeconds: state.currentDiploma.elapsedSeconds,
+                elapsedDisplay: state.currentDiploma.elapsedDisplay,
+                sector: state.currentDiploma.sector
+            })
+        })
+        .then(function(res) {
+            return res.json().then(function(data) {
+                return { ok: res.ok, data: data };
+            });
+        })
+        .then(function(result) {
+            if (!result.ok) {
+                message.innerHTML = '<span class="t-red">' + esc(result.data.error || 'Claim failed') + '</span>';
+                return;
+            }
+            message.innerHTML = '<span class="t-green">Diploma claimed. Welcome to the beta leaderboard.</span>';
+            renderLeaderboard(result.data.leaderboard);
+        })
+        .catch(function() {
+            message.innerHTML = '<span class="t-red">Claim failed. Try again in a moment.</span>';
+        });
     }
 
     // ─── Status Bar ──────────────────────────────────────────────
@@ -2746,7 +2944,7 @@
         state = {
             profile: null, adaptor: null, strikes: 0, maxStrikes: 3,
             unlocked: {}, currentRecord: null, startTime: null,
-            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false, edtechEscalated: false, insuranceEscalated: false
+            timerInterval: null, customFieldCount: 0, followUpApproved: false, fintechEscalated: false, defenceEscalated: false, energyEscalated: false, edtechEscalated: false, insuranceEscalated: false, currentDiploma: null
         };
         showScreen('profile');
         renderProfiles();
@@ -2793,6 +2991,7 @@
         approveInsuranceEscalation: approveInsuranceEscalation,
         insuranceDeny: insuranceDeny,
         insuranceApprove: insuranceApprove,
+        claimDiploma: claimDiploma,
         queueOverride: queueOverride,
         queueWait: queueWait,
         updateExcludeLabel: function(checkbox) {
