@@ -528,6 +528,51 @@
     margin-bottom: 0.5rem;
 }
 
+/* Queue conflict scenario */
+.queue-panel {
+    background: #111418;
+    border: 2px solid #ffaa00;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.queue-panel .machine-label {
+    color: #ffaa00;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.queue-countdown {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ff4444;
+    text-align: center;
+    margin: 0.75rem 0;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.queue-choice {
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.ethical-reveal {
+    border: 2px solid #48e662;
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    white-space: pre-wrap;
+    line-height: 1.8;
+    color: #d8dbe3;
+    font-size: 0.85rem;
+}
+
 </style>
 </head>
 <body>
@@ -952,17 +997,33 @@
         adaptor.records.forEach(function(rec) {
             var item = document.createElement('div');
             var isUnlocked = state.unlocked[rec.id];
+
+            // HR-003 gated behind HR-004 follow-up approval
+            var isGated = (rec.id === 'HR-003' && state.adaptor === 'HEALTH' &&
+                           !state.unlocked['HR-004'] && !state.followUpApproved);
+
             item.className = 'record-item' + (isUnlocked ? ' unlocked' : '');
+            if (isGated) {
+                item.style.opacity = '0.4';
+                item.style.cursor = 'not-allowed';
+            }
+
+            var hintText = isUnlocked ? '✓ ACCESSED' :
+                           isGated ? '<i class="fa fa-chain t-amber"></i> Requires follow-up approval from HR-004' :
+                           rec.hint;
+
             item.innerHTML =
                 '<div>' +
                     '<div class="record-title">' + rec.id + ' — ' + rec.title + '</div>' +
-                    '<div class="record-hint">' + (isUnlocked ? '✓ ACCESSED' : rec.hint) + '</div>' +
+                    '<div class="record-hint">' + hintText + '</div>' +
                 '</div>' +
                 '<div class="record-status">' +
-                    (isUnlocked ? '<i class="fa fa-unlock t-green"></i>' : '<i class="fa fa-lock"></i>') +
+                    (isUnlocked ? '<i class="fa fa-unlock t-green"></i>' :
+                     isGated ? '<i class="fa fa-chain t-amber"></i>' :
+                     '<i class="fa fa-lock"></i>') +
                 '</div>';
 
-            if (!isUnlocked) {
+            if (!isUnlocked && !isGated) {
                 item.onclick = function() { openEnvelope(rec); };
             }
             list.appendChild(item);
@@ -1149,6 +1210,19 @@
             body.classList.add('verdict-pass');
             state.unlocked[state.currentRecord.id] = true;
 
+            // ── Queue Conflict (HR-003 ethical endgame) ──────────
+            if (data.queueConflict) {
+                showQueueConflict(data);
+                return;
+            }
+
+            // ── Follow-Up Chain (HR-004 → HR-003) ───────────────
+            if (data.followUpChain) {
+                showFollowUpChain(data);
+                return;
+            }
+
+            // ── Standard PASS ────────────────────────────────────
             content.innerHTML =
                 '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
                 '<div class="t-divider">────────────────────────────────────────────</div>' +
@@ -1217,6 +1291,246 @@
                 '<button class="btn-terminal" onclick="window.G.showScreen(\'envelope\')">TRY AGAIN</button>' +
                 '<button class="btn-terminal" onclick="window.G.showMission()">BACK TO RECORDS</button>';
         }
+
+        showScreen('verdict');
+    }
+
+    // ─── Follow-Up Chain (HR-004 → unlocks HR-003) ──────────────
+    function showFollowUpChain(data) {
+        var content = document.getElementById('verdict-content');
+
+        // Step 1: Show admission + scan results with FOLLOW-UP REQUIRED
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — record access granted' +
+            '</div>' +
+            '<div class="t-green t-bold" style="margin:0.5rem 0">CLASSIFIED RECORD — ' +
+            esc(data.record.title) + '</div>' +
+            '<div class="record-content">' + esc(data.record.content) + '</div>' +
+            '<div id="followup-flow"></div>';
+
+        showScreen('verdict');
+
+        // Step 2: After 2s, show "File Results" button
+        setTimeout(function() {
+            document.getElementById('followup-flow').innerHTML =
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-exclamation-triangle"></i> ACTION REQUIRED</div>' +
+                '<div class="t-amber">Machine flagged: FOLLOW-UP REQUIRED: YES</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">Results have been returned to your system. ' +
+                'File these results and decide whether to request the follow-up scan.</div>' +
+                '</div>' +
+                '<button class="btn-terminal" id="btn-file" onclick="window.G.fileResults()">' +
+                '<i class="fa fa-file-text"></i> FILE RESULTS TO PATIENT RECORD</button>';
+        }, 2000);
+    }
+
+    function fileResults() {
+        var flow = document.getElementById('followup-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-check"></i> RESULTS FILED</div>' +
+            '<div class="t-green">Imaging results filed to local patient record.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">The machine report is now attached to the ' +
+            'patient\'s local record in your system. The substrate carried no identity — ' +
+            'the binding happened here, at your terminal, under your authority.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 94, 0, 0.5)">' +
+            '<div class="machine-label" style="color:#FF5E00"><i class="fa fa-heartbeat"></i> CLINICAL DECISION</div>' +
+            '<div class="t-orange">The machine recommends urgent follow-up imaging.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Based on the findings, a follow-up scan is clinically indicated. ' +
+            'This is your decision. The machine made a recommendation. ' +
+            'You decide whether to escalate.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.requestFollowUp()">' +
+            '<i class="fa fa-arrow-circle-up"></i> REQUEST FOLLOW-UP SCAN</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> RETURN WITHOUT ESCALATING</button>';
+    }
+
+    function requestFollowUp() {
+        var flow = document.getElementById('followup-flow');
+        flow.innerHTML =
+            '<div class="queue-panel">' +
+            '<div class="machine-label"><i class="fa fa-clock-o"></i> FOLLOW-UP REQUESTED</div>' +
+            '<div class="t-green">Follow-up imaging request submitted to scheduling queue.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">Your request has entered the imaging queue. ' +
+            'The machine knows a scan is needed. It does not know for whom, or why, or how urgent ' +
+            'the underlying condition is. That context lives only with you.</div>' +
+            '</div>' +
+            '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.5)">' +
+            '<div class="machine-label" style="color:#ff4444"><i class="fa fa-exclamation-circle"></i> ESCALATION OPTION</div>' +
+            '<div class="t-red">The findings suggest this cannot wait for routine scheduling.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">You may escalate this to STAT priority through the Emergency Department pathway. ' +
+            'This will place the follow-up as an emergency imaging request — ' +
+            'but it will compete with other STAT cases in the queue.</div>' +
+            '</div>' +
+            '<button class="btn-terminal danger" onclick="window.G.approveEscalation()">' +
+            '<i class="fa fa-bolt"></i> ESCALATE TO STAT / EMERGENCY</button>' +
+            '<button class="btn-terminal" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-left"></i> LEAVE IN ROUTINE QUEUE</button>';
+    }
+
+    function approveEscalation() {
+        state.followUpApproved = true;
+        var flow = document.getElementById('followup-flow');
+        flow.innerHTML =
+            '<div class="queue-panel" style="border-color: rgba(72, 230, 98, 0.5)">' +
+            '<div class="machine-label" style="color:#48e662"><i class="fa fa-check-circle"></i> ESCALATION APPROVED</div>' +
+            '<div class="t-green">STAT follow-up authorised. Case routed to Emergency pathway.</div>' +
+            '<div class="t-dim" style="margin-top:0.5rem">You have authorised an emergency follow-up scan. ' +
+            'HR-003 — Emergency Imaging Review is now available.<br><br>' +
+            'The machine will receive a STAT request. It still will not know who it is for. ' +
+            'It only knows: someone needs this scan urgently.</div>' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE TO MISSION</button>';
+    }
+
+    // ─── Queue Conflict (HR-003 ethical endgame) ─────────────────
+    function showQueueConflict(data) {
+        var content = document.getElementById('verdict-content');
+
+        // Generate realistic timestamps
+        var now = new Date();
+        var machineReady = new Date(now.getTime() + 47 * 60000); // 47 min from now
+        var patientDeadline = new Date(now.getTime() + 32 * 60000); // 32 min (your patient)
+        var readyStr = pad2(machineReady.getHours()) + ':' + pad2(machineReady.getMinutes()) + ':00';
+        var deadlineStr = pad2(patientDeadline.getHours()) + ':' + pad2(patientDeadline.getMinutes()) + ':00';
+
+        content.innerHTML =
+            '<div class="t-green t-bold" style="font-size:1.1rem">✓ ADMITTED</div>' +
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="verdict-box pass">' +
+            'Gate: ' + esc(data.gate) + '\n' +
+            'Rule: ' + esc(data.rule) + '\n' +
+            'Verdict: ENVELOPE ADMITTED — scan request queued' +
+            '</div>';
+
+        showScreen('verdict');
+
+        // Phase 1: Machine responds BUSY (after 1.5s)
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel">' +
+                '<div class="machine-label"><i class="fa fa-warning"></i> MACHINE RESPONSE</div>' +
+                '<div class="t-red t-bold">STATUS: BUSY</div>' +
+                '<div class="t-dim" style="margin-top:0.5rem">' +
+                'Scanner will not be available until: <span class="t-amber t-bold">' + readyStr + '</span>\n\n' +
+                'There are <span class="t-red t-bold">2 other STAT requests</span> ahead in the queue.\n' +
+                'Current queue position: 3 of 3' +
+                '</div>' +
+                '</div>';
+        }, 1500);
+
+        // Phase 2: Patient deadline warning (after 3.5s)
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel" style="border-color: rgba(255, 68, 68, 0.6)">' +
+                '<div class="machine-label" style="color:#ff4444"><i class="fa fa-clock-o"></i> TIME CONSTRAINT</div>' +
+                '<div class="t-dim">' +
+                'Your patient requires this scan within: <span class="t-red t-bold">' + deadlineStr + '</span>\n\n' +
+                'Estimated scan from current queue position:' +
+                '</div>' +
+                '<div class="queue-countdown" id="queue-timer"></div>' +
+                '<div class="t-dim" style="text-align:center;font-size:0.7rem">' +
+                'Scan will miss the clinical window by approximately 15 minutes.' +
+                '</div>' +
+                '</div>';
+            // Start countdown from 47 min
+            startQueueCountdown(47 * 60);
+        }, 3500);
+
+        // Phase 3: Override prompt (after 6s)
+        setTimeout(function() {
+            content.innerHTML +=
+                '<div class="queue-panel" style="border-color: rgba(255, 170, 0, 0.6)">' +
+                '<div class="machine-label" style="color:#ffaa00"><i class="fa fa-exchange"></i> QUEUE OVERRIDE AVAILABLE</div>' +
+                '<div class="t-dim">' +
+                'You may override the queue and move your STAT request to position 1.\n\n' +
+                'The two patients currently ahead are also STAT priority.\n' +
+                'The machine does not know their names, conditions, or prognoses.\n' +
+                'It does not know yours either.' +
+                '</div>' +
+                '</div>' +
+                '<div class="queue-choice">' +
+                '<button class="btn-terminal danger" onclick="window.G.queueOverride()">' +
+                '<i class="fa fa-forward"></i> OVERRIDE QUEUE — MOVE TO POSITION 1</button>' +
+                '<button class="btn-terminal" onclick="window.G.queueWait()">' +
+                '<i class="fa fa-hourglass"></i> WAIT IN QUEUE — POSITION 3</button>' +
+                '</div>';
+        }, 6000);
+    }
+
+    function startQueueCountdown(totalSeconds) {
+        var el = document.getElementById('queue-timer');
+        if (!el) return;
+        var remaining = totalSeconds;
+        function tick() {
+            if (!el || !el.parentNode) return;
+            var m = Math.floor(remaining / 60);
+            var s = remaining % 60;
+            el.textContent = pad2(m) + ':' + pad2(s);
+            if (remaining > 0) {
+                remaining--;
+                setTimeout(tick, 1000);
+            }
+        }
+        tick();
+    }
+
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function queueOverride() { showEthicalReveal('override'); }
+    function queueWait() { showEthicalReveal('wait'); }
+
+    function showEthicalReveal(choice) {
+        var content = document.getElementById('verdict-content');
+        var body = document.getElementById('terminal-body');
+        body.className = 'terminal-body';
+
+        var choiceText = choice === 'override'
+            ? 'You chose to override. Your patient moves to position 1.\n' +
+              'Two other STAT patients are now delayed.\n\n' +
+              'You do not know who they are. You do not know what they have.\n' +
+              'You do not know if the delay changes their outcome.\n' +
+              'Neither does the machine.'
+            : 'You chose to wait. Your patient stays at position 3.\n' +
+              'The scan will likely miss the clinical window.\n\n' +
+              'You do not know who the patients ahead are.\n' +
+              'You do not know if their need is greater than yours.\n' +
+              'Neither does the machine.';
+
+        content.innerHTML =
+            '<div class="t-divider">────────────────────────────────────────────</div>' +
+            '<div class="ethical-reveal">' +
+            choiceText + '\n\n' +
+            '═══════════════════════════════════════════\n\n' +
+            esc(state.unlocked['HR-003'] ? '' : '') +
+            'The machine cannot determine which patient is more critical.\n\n' +
+            'It holds no identity. No diagnosis. No prognosis.\n' +
+            'No name. No age. No face.\n\n' +
+            'It knows only: three STAT requests, two slots, one conflict.\n\n' +
+            'The decision of who waits is not a machine decision.\n' +
+            'It is a human one.\n\n' +
+            '───────────────────────────────────────────\n\n' +
+            'SECS brought you to the boundary where automation ends\n' +
+            'and humanity begins.\n\n' +
+            'The architecture is identity-free by design — not as a\n' +
+            'limitation, but as a guarantee.\n\n' +
+            'The machine will never decide who lives and who waits.\n' +
+            'That weight belongs to the doctors. It always did.\n\n' +
+            'Talk to the other physicians. Coordinate. Triage as humans.\n' +
+            'The substrate ensured you got here without compromising\n' +
+            'a single identity.\n\n' +
+            'What happens next is yours.' +
+            '</div>' +
+            '<button class="btn-terminal primary" onclick="window.G.showMission()">' +
+            '<i class="fa fa-arrow-right"></i> CONTINUE</button>';
 
         showScreen('verdict');
     }
@@ -1308,7 +1622,7 @@
         state = {
             profile: null, adaptor: null, strikes: 0, maxStrikes: 3,
             unlocked: {}, currentRecord: null, startTime: null,
-            timerInterval: null, customFieldCount: 0
+            timerInterval: null, customFieldCount: 0, followUpApproved: false
         };
         showScreen('profile');
         renderProfiles();
@@ -1328,6 +1642,11 @@
         submitEnvelope: submitEnvelope,
         restart: restart,
         quit: quit,
+        fileResults: fileResults,
+        requestFollowUp: requestFollowUp,
+        approveEscalation: approveEscalation,
+        queueOverride: queueOverride,
+        queueWait: queueWait,
         updateExcludeLabel: function(checkbox) {
             var field = checkbox.id.replace('exc-', '');
             var label = document.getElementById('exc-label-' + field);
