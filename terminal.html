@@ -2553,6 +2553,16 @@
                 return;
             }
 
+            // ── Banana challenge (ENERGY easter egg) ─────────────
+            if (data.banana) {
+                content.innerHTML =
+                    '<div class="t-green t-bold" style="font-size:1.3rem">🍌 BANANA FOR SCALE</div>' +
+                    '<div class="t-divider">════════════════════════════════════════════</div>' +
+                    renderRecordVerdict(data, data.message || 'I got the Banana, how do you like them apples') +
+                    '<button class="btn-terminal" onclick="window.G.showMission()">CONTINUE →</button>';
+                return;
+            }
+
             // ── Critical Review (HR-005 incidental finding) ─────
             if (data.criticalReview) {
                 showCriticalReview(data);

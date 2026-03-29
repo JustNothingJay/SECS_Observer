@@ -727,8 +727,13 @@
             if (data.error) {
                 showResponse('fail', 'GATE ERROR', data.error);
             } else if (data.verdict === 'PASS') {
-                showResponse('pass', 'CLEARED — THE FROG LET YOU THROUGH',
-                    formatVerdict(data));
+                if (data.banana) {
+                    showResponse('pass', '\ud83c\udf4c BANANA FOR SCALE — CHALLENGE COMPLETE',
+                        formatVerdict(data));
+                } else {
+                    showResponse('pass', 'CLEARED — THE FROG LET YOU THROUGH',
+                        formatVerdict(data));
+                }
             } else if (data.verdict === 'HOLD') {
                 showResponse('hold', 'HOLD — GOVERNANCE REVIEW REQUIRED',
                     formatVerdict(data));
@@ -758,6 +763,14 @@
         if (data.verdict) lines.push('VERDICT: ' + data.verdict);
         if (data.rule) lines.push('RULE: ' + data.rule);
         if (data.message) lines.push('\n' + data.message);
+        if (data.record && data.record.title) {
+            lines.push('\n═══════════════════════════════════════');
+            lines.push(data.record.title);
+            lines.push('═══════════════════════════════════════');
+        }
+        if (data.record && data.record.content) {
+            lines.push('\n' + data.record.content);
+        }
         if (data.content) lines.push('\n────────────────────────────────────────\n' + data.content);
         if (data.recordAttestation) {
             lines.push('\n════════════════════════════════════════');
