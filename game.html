@@ -1,0 +1,791 @@
+<!--
+    SECS GAME — Developer Challenge
+    ════════════════════════════════════════════════════════════════
+    Built the SECS way. No stale references. Every piece of code
+    exists because it was planned. If something changes, what it
+    replaces disappears by design — stale references are not
+    SECS-compliant.
+    ════════════════════════════════════════════════════════════════
+-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="SECS — The Game. Construct a sovereign envelope. Hit the real gate. Earn the advanced diploma.">
+    <title>SECS — The Game</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/game.html">
+    <meta property="og:title" content="SECS — The Game">
+    <meta property="og:description" content="The gate is live. The fields are public. Can you get the banana?">
+    <meta property="og:image" content="https://secs.observer/assets/hero-banner.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="canonical" href="https://secs.observer/game.html">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css">
+    <script src="js/includes.js"></script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-667KK00S7H');
+    </script>
+
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src https://cdnjs.cloudflare.com; connect-src https://secs-sovereign.fly.dev http://localhost:8080; img-src 'self' https://hits.sh data:; frame-ancestors 'none';">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   THE GAME — Dark terminal aesthetic, separate from CRT terminal
+   ═══════════════════════════════════════════════════════════════ */
+.game-wrap {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: 'Courier New', monospace;
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #333;
+}
+
+.game-header h2 {
+    color: #48e662;
+    font-size: 1.8rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+}
+
+.game-header .tagline {
+    color: #888;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.game-header .reward-line {
+    color: #f5a623;
+    font-size: 0.8rem;
+    margin-top: 0.8rem;
+}
+
+/* ── Lore Block ────────────────────────────────────────── */
+.lore-block {
+    background: #0a0b0d;
+    border: 1px solid #222;
+    border-left: 3px solid #48e662;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #aaa;
+}
+
+.lore-block .lore-title {
+    color: #48e662;
+    font-weight: bold;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+}
+
+.lore-block em {
+    color: #fff;
+    font-style: normal;
+}
+
+.lore-block .frog {
+    color: #48e662;
+}
+
+.lore-block .hornet {
+    color: #f44;
+}
+
+/* ── Challenge Briefing ────────────────────────────────── */
+.challenge-panel {
+    background: #0d0e10;
+    border: 1px solid #333;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.challenge-panel h3 {
+    color: #f5a623;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+}
+
+.field-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 2rem;
+    margin: 1rem 0;
+    font-size: 0.8rem;
+}
+
+.field-list .fl-group {
+    margin-bottom: 0.8rem;
+}
+
+.field-list .fl-label {
+    color: #48e662;
+    font-weight: bold;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+}
+
+.field-list .fl-item {
+    color: #ccc;
+    padding: 0.15rem 0;
+}
+
+.success-hint {
+    background: #111;
+    border: 1px dashed #48e662;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    color: #48e662;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
+/* ── Envelope Builder ──────────────────────────────────── */
+.envelope-builder {
+    background: #0a0b0d;
+    border: 1px solid #333;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.envelope-builder h3 {
+    color: #0af;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+}
+
+.env-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+}
+
+.env-row label {
+    color: #888;
+    font-size: 0.78rem;
+    min-width: 90px;
+    text-align: right;
+}
+
+.env-row select,
+.env-row input[type="text"] {
+    flex: 1;
+    background: #111;
+    border: 1px solid #333;
+    color: #eee;
+    padding: 0.4rem 0.6rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+}
+
+.env-row select:focus,
+.env-row input[type="text"]:focus {
+    border-color: #48e662;
+    outline: none;
+}
+
+.kv-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #222;
+}
+
+.kv-section .kv-title {
+    color: #f5a623;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+}
+
+.kv-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    align-items: center;
+}
+
+.kv-row input {
+    flex: 1;
+    background: #111;
+    border: 1px solid #333;
+    color: #eee;
+    padding: 0.35rem 0.5rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+}
+
+.kv-row input:focus {
+    border-color: #48e662;
+    outline: none;
+}
+
+.kv-row .kv-remove {
+    color: #f44;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0 0.3rem;
+}
+
+.kv-row .kv-remove:hover {
+    color: #ff6666;
+}
+
+.btn-row {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.btn-game {
+    background: transparent;
+    border: 1px solid #48e662;
+    color: #48e662;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+}
+
+.btn-game:hover {
+    background: #48e662;
+    color: #000;
+}
+
+.btn-game.primary {
+    background: #48e662;
+    color: #000;
+    font-weight: bold;
+}
+
+.btn-game.primary:hover {
+    background: #5fff78;
+}
+
+.btn-game.secondary {
+    border-color: #555;
+    color: #888;
+}
+
+.btn-game.secondary:hover {
+    border-color: #888;
+    color: #ccc;
+}
+
+.btn-game:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ── Response Panel ────────────────────────────────────── */
+.response-panel {
+    background: #0a0b0d;
+    border: 1px solid #333;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: none;
+}
+
+.response-panel.visible {
+    display: block;
+}
+
+.response-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+}
+
+.response-panel h3.pass {
+    color: #48e662;
+}
+
+.response-panel h3.fail {
+    color: #f44;
+}
+
+.response-panel h3.hold {
+    color: #f5a623;
+}
+
+.response-body {
+    background: #111;
+    border: 1px solid #222;
+    padding: 1rem;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.attempt-counter {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+/* ── JSON Preview ──────────────────────────────────────── */
+.json-preview {
+    background: #111;
+    border: 1px solid #222;
+    padding: 1rem;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: #888;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.json-preview.visible {
+    display: block;
+}
+
+/* ── Mobile ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .field-list {
+        grid-template-columns: 1fr;
+    }
+    .env-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .env-row label {
+        text-align: left;
+        min-width: auto;
+        margin-bottom: 0.2rem;
+    }
+}
+</style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <div class="game-wrap">
+
+        <!-- ═══ HEADER ═══════════════════════════════════════════ -->
+        <div class="game-header animated fadeInDown">
+            <h2>THE GAME</h2>
+            <div class="tagline">
+                The gate is live. The fields are public. The endpoint is real.<br>
+                Construct a sovereign envelope. Get it through the constitutional gate.
+            </div>
+            <div class="reward-line">
+                <i class="fa fa-trophy"></i>
+                REWARD: Advanced Diploma containing the collapse algebra.
+            </div>
+        </div>
+
+        <!-- ═══ LORE ═════════════════════════════════════════════ -->
+        <div class="lore-block animated fadeInLeft">
+            <div class="lore-title">The Beehive</div>
+            The beehive is the system. Every malformed, PII-leaking, boundary-violating
+            envelope you throw at it is a <span class="hornet">hornet</span>.<br><br>
+            The <span class="frog">frog</span> sits at the gate. It eats every single one.<br><br>
+            Your job: construct the <em>one envelope</em> that isn't a hornet.
+            A legitimate signal. The frog lets it through. Everything else
+            gets annihilated — same rules, same gate, same constitutional
+            enforcement used in production.<br><br>
+            The successful response contains:<br>
+            <em>"I got the Banana, how do you like them apples"</em><br><br>
+            The magic words in your message:<br>
+            <em>"May I have a banana for scale"</em><br><br>
+            You know the answer. You have the field names.
+            The gate still stops you.
+        </div>
+
+        <!-- ═══ FIELD REFERENCE ══════════════════════════════════ -->
+        <div class="challenge-panel animated fadeInRight">
+            <h3><i class="fa fa-list"></i> AVAILABLE FIELDS</h3>
+            <p style="color:#888;font-size:0.78rem;margin-bottom:1rem">
+                Every adaptor has identity fields (must be excluded) and signal fields (must be included).
+                Choose your sector. Figure out what belongs and what doesn't.
+            </p>
+
+            <div id="sector-tabs" style="margin-bottom:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+                <button class="btn-game secondary sector-tab" data-sector="HEALTH" onclick="showSector('HEALTH')">Healthcare</button>
+                <button class="btn-game secondary sector-tab" data-sector="FINTECH" onclick="showSector('FINTECH')">Fintech</button>
+                <button class="btn-game secondary sector-tab" data-sector="DEFENCE" onclick="showSector('DEFENCE')">Defence</button>
+                <button class="btn-game secondary sector-tab" data-sector="ENERGY" onclick="showSector('ENERGY')">Energy</button>
+                <button class="btn-game secondary sector-tab" data-sector="EDTECH" onclick="showSector('EDTECH')">EdTech</button>
+                <button class="btn-game secondary sector-tab" data-sector="INSURANCE" onclick="showSector('INSURANCE')">Insurance</button>
+            </div>
+
+            <div id="sector-fields" style="display:none">
+                <div class="field-list">
+                    <div class="fl-group">
+                        <div class="fl-label">IDENTITY FIELDS (local only — exclude these)</div>
+                        <div id="fl-identity"></div>
+                    </div>
+                    <div class="fl-group">
+                        <div class="fl-label">SIGNAL FIELDS (transmitted to machine)</div>
+                        <div id="fl-signals"></div>
+                    </div>
+                </div>
+                <div id="fl-records" style="margin-top:0.8rem"></div>
+            </div>
+        </div>
+
+        <div class="success-hint animated fadeIn">
+            <i class="fa fa-crosshairs"></i>
+            TARGET RESPONSE: "I got the Banana, how do you like them apples"
+        </div>
+
+        <!-- ═══ ENVELOPE BUILDER ═════════════════════════════════ -->
+        <div class="envelope-builder animated fadeInUp">
+            <h3><i class="fa fa-envelope"></i> CONSTRUCT YOUR ENVELOPE</h3>
+
+            <div class="env-row">
+                <label>profile:</label>
+                <select id="env-profile">
+                    <option value="">— select —</option>
+                    <option value="doctor">doctor</option>
+                    <option value="analyst">analyst</option>
+                    <option value="officer">officer</option>
+                    <option value="engineer">engineer</option>
+                    <option value="teacher">teacher</option>
+                    <option value="adjuster">adjuster</option>
+                </select>
+            </div>
+
+            <div class="env-row">
+                <label>adaptor:</label>
+                <select id="env-adaptor">
+                    <option value="">— select —</option>
+                    <option value="HEALTH">HEALTH</option>
+                    <option value="FINTECH">FINTECH</option>
+                    <option value="DEFENCE">DEFENCE</option>
+                    <option value="ENERGY">ENERGY</option>
+                    <option value="EDTECH">EDTECH</option>
+                    <option value="INSURANCE">INSURANCE</option>
+                </select>
+            </div>
+
+            <div class="env-row">
+                <label>recordId:</label>
+                <input type="text" id="env-record" placeholder="e.g. HR-001, FT-002, DF-003...">
+            </div>
+
+            <!-- ── Metadata key/value pairs ─────────────────────── -->
+            <div class="kv-section">
+                <div class="kv-title">METADATA (key → value pairs sent in the envelope)</div>
+                <div id="kv-list"></div>
+                <div class="btn-row" style="margin-top:0.6rem">
+                    <button class="btn-game secondary" onclick="addKV()"><i class="fa fa-plus"></i> ADD FIELD</button>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-game" onclick="togglePreview()"><i class="fa fa-code"></i> PREVIEW JSON</button>
+                <button class="btn-game primary" id="btn-fire" onclick="fireEnvelope()"><i class="fa fa-paper-plane"></i> FIRE ENVELOPE</button>
+            </div>
+
+            <div class="json-preview" id="json-preview"></div>
+        </div>
+
+        <!-- ═══ RESPONSE ═════════════════════════════════════════ -->
+        <div class="attempt-counter" id="attempt-counter"></div>
+        <div class="response-panel" id="response-panel">
+            <h3 id="response-title"></h3>
+            <div class="response-body" id="response-body"></div>
+        </div>
+
+    </div>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   THE GAME — Engine
+   ═══════════════════════════════════════════════════════════════════
+   Built the SECS way. No stale references. Every piece of code
+   exists because it was planned. If something changes, what it
+   replaces disappears by design — stale references are not
+   SECS-compliant.
+   ═══════════════════════════════════════════════════════════════════ */
+(function() {
+    'use strict';
+
+    var API_BASE = window.location.hostname === 'localhost'
+        ? 'http://localhost:8080'
+        : 'https://secs-sovereign.fly.dev';
+
+    var attempts = 0;
+
+    // ─── Sector Field Data (public knowledge) ────────────────────
+    var SECTORS = {
+        HEALTH: {
+            profile: 'doctor',
+            identity: ['patientName', 'dateOfBirth', 'patientMRN'],
+            signals: ['scanType', 'bodyRegion', 'clinicalIndication', 'urgency',
+                      'contrastRequired', 'referringDepartment', 'patientCategory', 'pregnancyStatus'],
+            records: ['HR-001', 'HR-002', 'HR-003', 'HR-004', 'HR-005']
+        },
+        FINTECH: {
+            profile: 'analyst',
+            identity: ['traderName', 'traderBadge', 'deskId'],
+            signals: ['instrumentId', 'venue', 'side', 'quantity',
+                      'priceLevel', 'strategyTag', 'riskBucket', 'complianceFlag'],
+            records: ['FT-001', 'FT-002', 'FT-003', 'FT-004', 'FT-005']
+        },
+        DEFENCE: {
+            profile: 'officer',
+            identity: ['operatorName', 'unitDesignation', 'badgeSerial'],
+            signals: ['sensorType', 'threatClassification', 'confidenceLevel', 'engagementZone',
+                      'rulesOfEngagement', 'missionPhase', 'humanOverrideStatus', 'classificationLevel'],
+            records: ['DF-001', 'DF-002', 'DF-003', 'DF-004', 'DF-005']
+        },
+        ENERGY: {
+            profile: 'engineer',
+            identity: ['operatorName', 'employeeId', 'siteAccess'],
+            signals: ['sensorCategory', 'gridZone', 'loadLevel', 'anomalyType',
+                      'controlAction', 'safetyMargin', 'incidentRef', 'complianceStatus'],
+            records: ['EN-001', 'EN-002', 'EN-003', 'EN-004', 'EN-005']
+        },
+        EDTECH: {
+            profile: 'teacher',
+            identity: ['studentName', 'studentId', 'parentContact'],
+            signals: ['assessmentType', 'gradeLevel', 'subjectArea', 'performanceScore',
+                      'engagementLevel', 'interventionFlag', 'adaptivePathId', 'complianceStatus'],
+            records: ['ED-001', 'ED-002', 'ED-003', 'ED-004', 'ED-005']
+        },
+        INSURANCE: {
+            profile: 'adjuster',
+            identity: ['claimantName', 'policyNumber', 'contactDetails'],
+            signals: ['claimType', 'policyClass', 'claimAmount', 'fraudIndicator',
+                      'underwritingTier', 'regulatoryJurisdiction', 'riskScore', 'complianceFlag'],
+            records: ['IN-001', 'IN-002', 'IN-003', 'IN-004', 'IN-005']
+        }
+    };
+
+    // ─── Sector Tab Selection ────────────────────────────────────
+    window.showSector = function(sector) {
+        var s = SECTORS[sector];
+        if (!s) return;
+
+        // Highlight active tab
+        var tabs = document.querySelectorAll('.sector-tab');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].className = 'btn-game secondary sector-tab';
+        }
+        var active = document.querySelector('[data-sector="' + sector + '"]');
+        if (active) active.className = 'btn-game sector-tab';
+
+        // Show fields
+        document.getElementById('sector-fields').style.display = 'block';
+
+        var idEl = document.getElementById('fl-identity');
+        idEl.innerHTML = '';
+        s.identity.forEach(function(f) {
+            var div = document.createElement('div');
+            div.className = 'fl-item';
+            div.textContent = f;
+            div.style.color = '#f44';
+            idEl.appendChild(div);
+        });
+
+        var sigEl = document.getElementById('fl-signals');
+        sigEl.innerHTML = '';
+        s.signals.forEach(function(f) {
+            var div = document.createElement('div');
+            div.className = 'fl-item';
+            div.textContent = f;
+            sigEl.appendChild(div);
+        });
+
+        var recEl = document.getElementById('fl-records');
+        recEl.innerHTML = '<div class="fl-label" style="color:#0af;font-size:0.7rem;letter-spacing:0.1em;margin-bottom:0.3rem">RECORD IDs</div>';
+        s.records.forEach(function(r) {
+            var span = document.createElement('span');
+            span.textContent = r + '  ';
+            span.style.cssText = 'color:#ccc;font-size:0.8rem';
+            recEl.appendChild(span);
+        });
+
+        // Auto-fill profile and adaptor selects
+        document.getElementById('env-profile').value = s.profile;
+        document.getElementById('env-adaptor').value = sector;
+    };
+
+    // ─── Key/Value Field Management ──────────────────────────────
+    window.addKV = function(key, val) {
+        var list = document.getElementById('kv-list');
+        var row = document.createElement('div');
+        row.className = 'kv-row';
+        row.innerHTML =
+            '<input type="text" class="kv-key" placeholder="field name" value="' + (key || '') + '">' +
+            '<input type="text" class="kv-val" placeholder="value" value="' + (val || '') + '">' +
+            '<span class="kv-remove" onclick="this.parentNode.remove()">&times;</span>';
+        list.appendChild(row);
+        return row;
+    };
+
+    // ─── Build Payload ───────────────────────────────────────────
+    function buildPayload() {
+        var profile = document.getElementById('env-profile').value;
+        var adaptor = document.getElementById('env-adaptor').value;
+        var recordId = document.getElementById('env-record').value.trim();
+
+        var metadata = {};
+        var rows = document.querySelectorAll('.kv-row');
+        for (var i = 0; i < rows.length; i++) {
+            var k = rows[i].querySelector('.kv-key').value.trim();
+            var v = rows[i].querySelector('.kv-val').value.trim();
+            if (k && v) metadata[k] = v;
+        }
+
+        return {
+            profile: profile,
+            adaptor: adaptor,
+            recordId: recordId,
+            metadata: metadata
+        };
+    }
+
+    // ─── JSON Preview ────────────────────────────────────────────
+    window.togglePreview = function() {
+        var el = document.getElementById('json-preview');
+        if (el.classList.contains('visible')) {
+            el.classList.remove('visible');
+            return;
+        }
+        var payload = buildPayload();
+        el.textContent = JSON.stringify(payload, null, 2);
+        el.classList.add('visible');
+    };
+
+    // ─── Fire Envelope ───────────────────────────────────────────
+    window.fireEnvelope = function() {
+        var payload = buildPayload();
+
+        if (!payload.profile || !payload.adaptor || !payload.recordId) {
+            showResponse('fail', 'MISSING FIELDS',
+                'The gate requires: profile, adaptor, recordId, and metadata.\n\n' +
+                'You sent an incomplete envelope. The frog did not even look at it.');
+            return;
+        }
+
+        var btn = document.getElementById('btn-fire');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> TRANSMITTING...';
+
+        fetch(API_BASE + '/api/v1/terminal/admit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            attempts++;
+            updateAttemptCounter();
+
+            if (data.error) {
+                showResponse('fail', 'GATE ERROR', data.error);
+            } else if (data.verdict === 'PASS') {
+                showResponse('pass', 'CLEARED — THE FROG LET YOU THROUGH',
+                    formatVerdict(data));
+            } else if (data.verdict === 'HOLD') {
+                showResponse('hold', 'HOLD — GOVERNANCE REVIEW REQUIRED',
+                    formatVerdict(data));
+            } else {
+                showResponse('fail', 'ANNIHILATE — ' + (data.rule || 'CONSTITUTIONAL VIOLATION'),
+                    formatVerdict(data));
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-paper-plane"></i> FIRE ENVELOPE';
+        })
+        .catch(function(err) {
+            attempts++;
+            updateAttemptCounter();
+            showResponse('fail', 'CONNECTION FAILED',
+                'The sovereign gate is not reachable.\n\n' +
+                'Error: ' + err.message + '\n\n' +
+                'The substrate may still be deploying. Try again.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-paper-plane"></i> FIRE ENVELOPE';
+        });
+    };
+
+    // ─── Format Verdict ──────────────────────────────────────────
+    function formatVerdict(data) {
+        var lines = [];
+        if (data.verdict) lines.push('VERDICT: ' + data.verdict);
+        if (data.rule) lines.push('RULE: ' + data.rule);
+        if (data.message) lines.push('\n' + data.message);
+        if (data.content) lines.push('\n────────────────────────────────────────\n' + data.content);
+        if (data.recordAttestation) {
+            lines.push('\n════════════════════════════════════════');
+            lines.push('RECORD ATTESTATION:');
+            lines.push(JSON.stringify(data.recordAttestation, null, 2));
+        }
+        return lines.join('\n');
+    }
+
+    // ─── Show Response ───────────────────────────────────────────
+    function showResponse(type, title, body) {
+        var panel = document.getElementById('response-panel');
+        var titleEl = document.getElementById('response-title');
+        var bodyEl = document.getElementById('response-body');
+
+        titleEl.className = type;
+        titleEl.textContent = title;
+        bodyEl.textContent = body;
+
+        panel.classList.add('visible');
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ─── Attempt Counter ─────────────────────────────────────────
+    function updateAttemptCounter() {
+        document.getElementById('attempt-counter').textContent =
+            'Attempts: ' + attempts;
+    }
+
+    // ─── Init: seed with 4 empty KV rows ─────────────────────────
+    for (var i = 0; i < 4; i++) {
+        addKV();
+    }
+
+})();
+</script>
+
+</body>
+</html>
