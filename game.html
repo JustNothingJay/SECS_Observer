@@ -649,10 +649,27 @@
         var list = document.getElementById('kv-list');
         var row = document.createElement('div');
         row.className = 'kv-row';
-        row.innerHTML =
-            '<input type="text" class="kv-key" placeholder="field name" value="' + (key || '') + '">' +
-            '<input type="text" class="kv-val" placeholder="value" value="' + (val || '') + '">' +
-            '<span class="kv-remove" onclick="this.parentNode.remove()">&times;</span>';
+
+        var keyInput = document.createElement('input');
+        keyInput.type = 'text';
+        keyInput.className = 'kv-key';
+        keyInput.placeholder = 'field name';
+        keyInput.value = key || '';
+
+        var valInput = document.createElement('input');
+        valInput.type = 'text';
+        valInput.className = 'kv-val';
+        valInput.placeholder = 'value';
+        valInput.value = val || '';
+
+        var removeBtn = document.createElement('span');
+        removeBtn.className = 'kv-remove';
+        removeBtn.textContent = '\u00d7';
+        removeBtn.onclick = function() { row.remove(); };
+
+        row.appendChild(keyInput);
+        row.appendChild(valInput);
+        row.appendChild(removeBtn);
         list.appendChild(row);
         return row;
     };
