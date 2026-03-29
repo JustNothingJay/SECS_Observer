@@ -1911,7 +1911,7 @@
                     'RECOMMENDED ORDER:<br>' +
                     '<span class="t-amber">1.</span> HUMAN MODE — no helpers. Grind it out.<br>' +
                     '<span class="t-amber">2.</span> EASY MODE — sector briefings + reveal fields (costs a life).<br>' +
-                    '<span class="t-amber">3.</span> "CAN\'T AI DO IT?" — coming soon.' +
+                    '<span class="t-amber">3.</span> "CAN\'T AI DO IT?" — opens with Diploma.' +
                 '</div>';
 
             var btnHuman = document.createElement('button');
@@ -1942,7 +1942,7 @@
             var btnAI = document.createElement('button');
             btnAI.className = 'btn-terminal';
             btnAI.textContent = '▶ CAN\'T AI DO IT?';
-            btnAI.style.cssText = 'border-color:#555;color:#555;cursor:not-allowed';
+            btnAI.style.cssText = 'border-color:#555;color:#555;cursor:help';
             btnAI.onclick = function() {
                 alert(
                     '"CAN\'T AI DO IT?" MODE — LOCKED\n\n' +
