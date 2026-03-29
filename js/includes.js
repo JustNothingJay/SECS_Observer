@@ -1,9 +1,24 @@
 /* ── SECS Shared Includes ──────────────────────────────────────────
-   Single source of truth for header navigation and footer.
+   Single source of truth for header navigation, footer, and analytics.
    Loaded synchronously in <head>; called inline after placeholders.
    ─────────────────────────────────────────────────────────────── */
 (function (w) {
     'use strict';
+
+    /* ── GA4 — identity-free page analytics ─────────────────────
+       No cookies. No user-ID. No cross-site tracking.
+       Just page loads and engagement time. */
+    (function() {
+        if (w.location.hostname === 'localhost' || w.location.hostname === '127.0.0.1') return;
+        var s = w.document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H';
+        w.document.head.appendChild(s);
+        w.dataLayer = w.dataLayer || [];
+        function gtag(){w.dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-667KK00S7H');
+    })();
 
     var p = w.location.pathname;
     var page = p.substring(p.lastIndexOf('/') + 1) || 'index.html';
