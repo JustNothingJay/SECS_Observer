@@ -37,8 +37,8 @@
         li('neurotrophic.html', 'Neurotrophic OS') +
         li('sovereign.html', 'Sovereign') +
         li('research.html', 'Research') +
-        li('glossary.html', 'Glossary') +
-        li('landscape.html', 'Landscape') +
+        li('terminal.html', 'Terminal') +
+        li('game.html', 'The Game') +
         li('journal.html', 'Journal') +
         li('timeline.html', 'Timeline');
 
