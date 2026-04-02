@@ -1,1 +1,71 @@
-# SECS_Observer
+# SECS Observer — secs.observer
+
+Public-facing website for the SECS (Sovereign Emergent Constraint Surface) research programme.
+
+**Live site:** [https://secs.observer](https://secs.observer)
+
+---
+
+## What it is
+
+A static site presenting the unified framework that treats thermodynamic, algebraic, biological, and computational systems as expressions of the same underlying structure. One tower equation — zero measured inputs — derives α, μ, mₑ, mₚ, and G from π alone.
+
+## Tech stack
+
+| Layer | Tool |
+|-------|------|
+| Markup | HTML5 + CSS3 + vanilla JS |
+| UI | Bootstrap 4, Font Awesome 6.5, Animate.css |
+| Fonts | Inter, JetBrains Mono (Google Fonts) |
+| Analytics | GA4 (identity-free, no cookies) |
+| Hosting | GitHub Pages (CNAME → secs.observer) |
+
+No build step. No framework. No backend.
+
+## Pages
+
+| Page | File | Description |
+|------|------|-------------|
+| Home | `index.html` | Overview, card links to main sections |
+| Founder | `founder.html` | Jay Carpenter — background and motivation |
+| System Architecture | `architecture.html` | Six progressive architecture diagrams |
+| Sovereign | `sovereign.html` | Deterministic observation substrate — specs, use cases, adaptors |
+| Neurotrophic OS | `neurotrophic.html` | Behavioural observation and predictive modelling layer |
+| Research | `research.html` | 34 papers + 3 software packages across 6 categories, all DOI-registered |
+| Timeline | `timeline.html` | 90-day build log with filterable milestones |
+| Journal | `journal.html` | Announcements |
+| JJ's Fingerprint | `fingerprint.html` | Research fingerprint |
+| GTF | `gtf.html` | Gestational Timing Framework |
+| Game | `game.html` | Interactive substrate game |
+
+## Architecture diagrams
+
+Six PNGs in `assets/arch/` trace the system from external signals through to adaptor deployment:
+
+1. External World
+2. Connector Atom
+3. Collapse Pipeline
+4. Governance Topology
+5. Neurotrophic Layer
+6. Adaptor Architecture
+
+## Local development
+
+Open `index.html` in a browser. No install required.
+
+## Related repositories
+
+- [SECS_Sovereign](https://github.com/JustNothingJay/SECS_Sovereign) — Core framework, papers, and scripts
+- [SECS_Research](https://github.com/JustNothingJay/SECS_Research) — DOI-registered paper corpus (34 papers + 3 software packages)
+- [mobius-constant](https://github.com/JustNothingJay/mobius-constant) — Exact irrational arithmetic
+- [mobius-number](https://github.com/JustNothingJay/mobius-number) — IEEE 754 floating-point fix
+- [mobius-integer](https://github.com/JustNothingJay/mobius-integer) — Dual-strand integer (Rust)
+- [mobius-units](https://github.com/JustNothingJay/mobius-units) — Fundamental constants from the eigenvalue tower
+
+## Author
+
+Jay Carpenter
+
+## License
+
+See [LICENSE](LICENSE) for details.
