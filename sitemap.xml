@@ -32,4 +32,10 @@
   <url>
     <loc>https://secs.observer/game.html</loc>
   </url>
+  <url>
+    <loc>https://secs.observer/terminal.html</loc>
+  </url>
+  <url>
+    <loc>https://secs.observer/architecture.html</loc>
+  </url>
 </urlset>
