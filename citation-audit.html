@@ -61,6 +61,18 @@
             margin: 0 auto;
             line-height: 1.8;
         }
+        .audit-hero .sentinel-disclaimer {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            max-width: 620px;
+            margin: 16px auto 0;
+            line-height: 1.6;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 14px;
+        }
+        .audit-hero .sentinel-disclaimer a {
+            color: var(--accent-blue);
+        }
 
         /* Stat Grid */
         .stat-grid {
@@ -413,12 +425,18 @@
 
         <!-- ── Hero ──────────────────────────────────────── -->
         <div class="audit-hero animated fadeInUp">
-            <div class="verdict-badge verdict-pass"><i class="fa-solid fa-circle-check"></i>&ensp;ZERO FABRICATIONS DETECTED</div>
+            <div class="verdict-badge verdict-pass"><i class="fa-solid fa-shield-halved"></i>&ensp;SECS SENTINEL VERIFIED</div>
             <h2>Citation Audit</h2>
             <p class="audit-subtitle">
                 Automated two-pass verification of every external reference across 47 published works.
                 285 unique citations extracted, cross-referenced against CrossRef, doi.org, and Open Library.
                 Every reference is real. Every source exists.
+            </p>
+            <p class="sentinel-disclaimer">
+                <em>SECS Sentinel Verified</em> denotes verification by the internal audit pipeline that preceded
+                <a href="https://github.com/JustNothingJay/citation-sentinel" target="_blank" rel="noopener noreferrer">citation-sentinel</a>,
+                the open-source tool built from this methodology.
+                The methodology is identical; the internal version was purpose-built for the SECS corpus.
             </p>
         </div>
 
@@ -698,6 +716,9 @@
                 <p style="margin-top: 16px;">
                     Source code:
                     <a href="https://github.com/JustNothingJay/SECS_Sovereign" target="_blank" rel="noopener noreferrer">github.com/JustNothingJay/SECS_Sovereign</a>
+                    <br>
+                    Open-source tool (generalised from this methodology):
+                    <a href="https://github.com/JustNothingJay/citation-sentinel" target="_blank" rel="noopener noreferrer">github.com/JustNothingJay/citation-sentinel</a>
                 </p>
             </div>
         </section>

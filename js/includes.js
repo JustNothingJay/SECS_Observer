@@ -29,19 +29,50 @@
         return '<li><a href="' + href + '"' + cls + '>' + label + '</a></li>';
     }
 
+    /* Group check — is current page inside a dropdown? */
+    function groupActive(pages) {
+        for (var i = 0; i < pages.length; i++) {
+            if (page === pages[i]) return true;
+        }
+        return false;
+    }
+
+    function dropdown(label, items, pages) {
+        var active = groupActive(pages) ? ' active' : '';
+        var html = '<li class="nav-group">' +
+            '<a href="#" class="nav-group-toggle' + active + '">' + label + ' <i class="fa fa-caret-down"></i></a>' +
+            '<ul class="nav-dropdown">';
+        for (var i = 0; i < items.length; i++) {
+            html += items[i];
+        }
+        html += '</ul></li>';
+        return html;
+    }
+
     var navItems =
         li('index.html', 'Home') +
         li('founder.html', 'Founder') +
-        li('fingerprint.html', 'JJ\u2019s Fingerprint') +
-        li('gtf.html', 'GTF') +
-        li('neurotrophic.html', 'Neurotrophic OS') +
-        li('sovereign.html', 'Sovereign') +
-        li('research.html', 'Research') +
-        li('terminal.html', 'Terminal') +
-        li('game.html', 'The Game') +
-        li('journal.html', 'Journal') +
-        li('timeline.html', 'Timeline')
-        li('architecture.html', 'Architecture') +;
+        dropdown('Framework', [
+            li('architecture.html', 'Architecture'),
+            li('neurotrophic.html', 'Neurotrophic OS'),
+            li('sovereign.html', 'Sovereign'),
+            li('gtf.html', 'GTF')
+        ], ['architecture.html', 'neurotrophic.html', 'sovereign.html', 'gtf.html']) +
+        dropdown('Research', [
+            li('research.html', 'Papers'),
+            li('timeline.html', 'Timeline'),
+            li('citation-audit.html', 'Citation Audit'),
+            li('terminal.html', 'Terminal')
+        ], ['research.html', 'timeline.html', 'citation-audit.html', 'terminal.html']) +
+        dropdown('Governance', [
+            li('glossary.html', 'Glossary'),
+            li('landscape.html', 'Landscape')
+        ], ['glossary.html', 'landscape.html']) +
+        dropdown('More', [
+            li('fingerprint.html', 'JJ\u2019s Fingerprint'),
+            li('game.html', 'The Game'),
+            li('journal.html', 'Journal')
+        ], ['fingerprint.html', 'game.html', 'journal.html']);
 
     /* ── Header ─────────────────────────────────────────────────── */
     w.secsHeader = function () {
@@ -335,6 +366,25 @@
             var menu = document.querySelector('.menu-responsive');
             if (menu) {
                 menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+            }
+        });
+
+        // Mobile dropdown group toggles
+        document.addEventListener('click', function (e) {
+            var groupToggle = e.target.closest('.menu-responsive .nav-group-toggle');
+            if (!groupToggle) return;
+            e.preventDefault();
+            var group = groupToggle.closest('.nav-group');
+            if (group) {
+                group.classList.toggle('open');
+            }
+        });
+
+        // Desktop: prevent group toggle links from navigating
+        document.addEventListener('click', function (e) {
+            var groupToggle = e.target.closest('.main-navigation:not(.menu-responsive) .nav-group-toggle');
+            if (groupToggle) {
+                e.preventDefault();
             }
         });
     });
