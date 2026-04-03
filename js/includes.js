@@ -64,10 +64,6 @@
             li('citation-audit.html', 'Citation Audit'),
             li('terminal.html', 'Terminal')
         ], ['research.html', 'timeline.html', 'citation-audit.html', 'terminal.html']) +
-        dropdown('Governance', [
-            li('glossary.html', 'Glossary'),
-            li('landscape.html', 'Landscape')
-        ], ['glossary.html', 'landscape.html']) +
         dropdown('More', [
             li('fingerprint.html', 'JJ\u2019s Fingerprint'),
             li('game.html', 'The Game'),
