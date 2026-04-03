@@ -40,7 +40,8 @@
         li('terminal.html', 'Terminal') +
         li('game.html', 'The Game') +
         li('journal.html', 'Journal') +
-        li('timeline.html', 'Timeline');
+        li('timeline.html', 'Timeline')
+        li('architecture.html', 'Architecture') +;
 
     /* ── Header ─────────────────────────────────────────────────── */
     w.secsHeader = function () {
