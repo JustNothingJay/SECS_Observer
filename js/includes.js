@@ -52,6 +52,7 @@
     var navItems =
         li('index.html', 'Home') +
         li('founder.html', 'Founder') +
+        li('fingerprint.html', 'JJ\u2019s Fingerprint') +
         dropdown('Framework', [
             li('architecture.html', 'Architecture'),
             li('neurotrophic.html', 'Neurotrophic OS'),
@@ -61,14 +62,13 @@
         dropdown('Research', [
             li('research.html', 'Papers'),
             li('timeline.html', 'Timeline'),
-            li('citation-audit.html', 'Citation Audit'),
-            li('terminal.html', 'Terminal')
-        ], ['research.html', 'timeline.html', 'citation-audit.html', 'terminal.html']) +
+            li('citation-audit.html', 'Citation Audit')
+        ], ['research.html', 'timeline.html', 'citation-audit.html']) +
         dropdown('More', [
-            li('fingerprint.html', 'JJ\u2019s Fingerprint'),
+            li('terminal.html', 'Terminal'),
             li('game.html', 'The Game'),
             li('journal.html', 'Journal')
-        ], ['fingerprint.html', 'game.html', 'journal.html']);
+        ], ['terminal.html', 'game.html', 'journal.html']);
 
     /* ── Header ─────────────────────────────────────────────────── */
     w.secsHeader = function () {
