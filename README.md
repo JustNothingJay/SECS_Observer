@@ -37,7 +37,7 @@ No build step. No framework. No backend.
 | JJ's Fingerprint | `fingerprint.html` | Research fingerprint |
 | GTF | `gtf.html` | Gestational Timing Framework |
 | The Game: SECS | `game.html` | Interactive substrate game |
-| Terminal | `game.html` | Interactive substrate game |
+| Terminal | `terminal.html` | Interactive substrate game |
 
 ## Architecture diagrams
 
