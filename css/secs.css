@@ -186,6 +186,15 @@ h1, h2, h3, h4, h5 {
     list-style: none;
     margin: 0;
 }
+/* Invisible bridge so hover doesn't break between trigger and dropdown */
+.nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+}
 .nav-group:hover > .nav-dropdown { display: block; }
 .nav-dropdown li { display: block !important; margin: 0 !important; }
 .nav-dropdown li a {
