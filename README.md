@@ -1,6 +1,6 @@
 # SECS Observer — secs.observer
 
-Public-facing website for the SECS (Sovereign Emergent Constraint Surface) research programme.
+Public-facing website for the SECS (Sovereign Execution & Collapse Substrate) research programme.
 
 **Live site:** [https://secs.observer](https://secs.observer)
 
