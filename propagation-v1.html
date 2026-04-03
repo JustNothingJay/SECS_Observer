@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SECS — Collapse Propagation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0a; overflow: hidden; font-family: 'Courier New', monospace; }
+        canvas { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+
+        /* ── HUD ─────────────────────────────────────────────── */
+        #hud {
+            position: fixed; top: 16px; left: 16px;
+            color: rgba(160,210,170,0.7); font-size: 11px; line-height: 1.7;
+            pointer-events: none; z-index: 10;
+        }
+        #hud .val { color: rgba(200,240,200,0.9); }
+        #hud .dim { color: rgba(120,150,130,0.4); }
+        #hud .veto { color: rgba(255,80,80,0.6); }
+
+        #legend {
+            position: fixed; bottom: 16px; left: 16px;
+            color: rgba(140,180,150,0.5); font-size: 10px; line-height: 1.8;
+            pointer-events: none; z-index: 10;
+        }
+        #legend span { display: inline-block; width: 10px; height: 10px;
+            border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+        #legend .lbl { margin-right: 18px; }
+
+        #title-bar {
+            position: fixed; top: 16px; right: 16px;
+            text-align: right; pointer-events: none; z-index: 10;
+        }
+        #title-bar h1 {
+            color: rgba(200,240,200,0.15); font-size: 13px;
+            font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase;
+        }
+        #title-bar p {
+            color: rgba(200,240,200,0.08); font-size: 10px;
+            margin-top: 2px; letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud">
+    <div>frame <span class="val" id="h-frame">0</span></div>
+    <div>cells <span class="val" id="h-cells">0</span> · collapsed <span class="val" id="h-collapsed">0</span></div>
+    <div>wavefront <span class="val" id="h-wave">0</span> · vetoed <span class="veto" id="h-vetoed">0</span></div>
+    <div class="dim">topology: toroidal · <span id="h-size">512²</span></div>
+    <div class="dim">C = ε∘ρ∘λ∘ν∘α · C² = C · C⁻¹ ∄</div>
+</div>
+
+<div id="title-bar">
+    <h1>Collapse Propagation</h1>
+    <p>click to inject · r to reset · t to rebuild topology</p>
+</div>
+
+<div id="legend">
+    <span style="background:#1a2a1a;"></span><span class="lbl">topology (admissible)</span>
+    <span style="background:#111;"></span><span class="lbl">void (inadmissible)</span>
+    <span style="background:#4f8;"></span><span class="lbl">wavefront (α→ν→λ→ρ)</span>
+    <span style="background:#182818;"></span><span class="lbl">collapsed → ω₀</span>
+    <span style="background:rgba(255,60,60,0.6);"></span><span class="lbl">veto boundary</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// SECS COLLAPSE PROPAGATION — WebGL
+//
+// Algebra: C = ε∘ρ∘λ∘ν∘α
+//   α  admissibility   — topology texture determines if cell admits
+//   ν  validation      — neighbor must be active (signal present)
+//   λ  routing         — exactly one path (BFS wavefront, no choice)
+//   ρ  reaction        — deterministic output (generation encoded)
+//   ε  extinction      — collapse to ω₀ (purity state)
+//
+// Topology: toroidal — edges wrap. No borders. No edge cases.
+// Im(C) = {ω₀, ∅}. C² = C. C⁻¹ does not exist.
+// ═══════════════════════════════════════════════════════════════
+
+const GRID = 512;
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl', {
+    depth: false, stencil: false, antialias: false,
+    preserveDrawingBuffer: false, powerPreference: 'high-performance'
+});
+
+if (!gl) { document.body.innerHTML = '<p style="color:#a44;padding:40px;">WebGL not available.</p>'; throw 'no gl'; }
+
+// Extensions
+const ext_float = gl.getExtension('OES_texture_float');
+const ext_linear = gl.getExtension('OES_texture_float_linear');
+
+// ── Fullscreen quad ──────────────────────────────────────────
+const quadBuf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+// ── Shader compilation ───────────────────────────────────────
+function makeShader(vSrc, fSrc) {
+    const vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, vSrc); gl.compileShader(vs);
+    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(vs);
+
+    const fs = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fs, fSrc); gl.compileShader(fs);
+    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(fs);
+
+    const p = gl.createProgram();
+    gl.attachShader(p, vs); gl.attachShader(p, fs);
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw gl.getProgramInfoLog(p);
+    return p;
+}
+
+// ── Common vertex shader ─────────────────────────────────────
+const VERT = `
+attribute vec2 a_pos;
+varying vec2 v_uv;
+void main() {
+    v_uv = a_pos * 0.5 + 0.5;
+    gl_Position = vec4(a_pos, 0.0, 1.0);
+}`;
+
+// ── Propagation shader (Buffer A equivalent) ─────────────────
+// State encoding per cell:
+//   R: status  (0 = inactive, 1 = wavefront, 2+ = post-collapse age)
+//   G: generation (hop count from source — the λ-routing distance)
+//   B: veto flag (accumulated rejections seen by this cell)
+//   A: reserved
+const PROPAGATE = `
+precision highp float;
+varying vec2 v_uv;
+uniform sampler2D u_state;   // previous state (ping-pong)
+uniform sampler2D u_topo;    // frozen topology (doctrine)
+uniform vec2 u_res;          // grid resolution
+uniform vec4 u_inject;       // xy = inject position (0-1), z = active flag, w = frame
+uniform float u_frame;
+
+// ── Toroidal neighbour lookup (mod wrapping — no borders) ────
+vec4 readState(vec2 uv) {
+    vec2 wrapped = fract(uv);          // ← THE FIX. fract() = toroidal.
+    return texture2D(u_state, wrapped);
+}
+vec4 readTopo(vec2 uv) {
+    return texture2D(u_topo, fract(uv));
+}
+
+void main() {
+    vec2 px = 1.0 / u_res;
+    vec4 self = texture2D(u_state, v_uv);
+    float topo = texture2D(u_topo, v_uv).r;
+
+    // ── α: Admissibility ────────────────────────────────────
+    // If topology says this cell is void, collapse is undefined.
+    // α(s) = 0 → s ∉ dom(C). Nothing happens. Ever.
+    if (topo < 0.5) {
+        // Check neighbours for veto glow (rejection boundary)
+        float vetoGlow = 0.0;
+        vetoGlow += readState(v_uv + vec2(px.x, 0.0)).r > 0.0 ? readTopo(v_uv + vec2(px.x, 0.0)).r : 0.0;
+        vetoGlow += readState(v_uv - vec2(px.x, 0.0)).r > 0.0 ? readTopo(v_uv - vec2(px.x, 0.0)).r : 0.0;
+        vetoGlow += readState(v_uv + vec2(0.0, px.y)).r > 0.0 ? readTopo(v_uv + vec2(0.0, px.y)).r : 0.0;
+        vetoGlow += readState(v_uv - vec2(0.0, px.y)).r > 0.0 ? readTopo(v_uv - vec2(0.0, px.y)).r : 0.0;
+        gl_FragColor = vec4(0.0, 0.0, vetoGlow > 0.0 ? 1.0 : 0.0, 0.0);
+        return;
+    }
+
+    // ── Injection: external signal enters substrate ──────────
+    if (u_inject.z > 0.5) {
+        vec2 diff = v_uv - u_inject.xy;
+        // Toroidal distance
+        diff = abs(diff);
+        diff = min(diff, 1.0 - diff);
+        if (length(diff * u_res) < 3.0) {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);
+            return;
+        }
+    }
+
+    // Already collapsed — age increases (ε: extinction → ω₀ fade)
+    if (self.r >= 1.0) {
+        float age = self.r + 1.0;
+        gl_FragColor = vec4(age, self.g, self.b, self.a);
+        return;
+    }
+
+    // ── ν: Validation — check if any neighbour is active ─────
+    vec4 n = readState(v_uv + vec2(px.x, 0.0));
+    vec4 s = readState(v_uv - vec2(px.x, 0.0));
+    vec4 e = readState(v_uv + vec2(0.0, px.y));
+    vec4 w = readState(v_uv - vec2(0.0, px.y));
+
+    float nt = readTopo(v_uv + vec2(px.x, 0.0)).r;
+    float st = readTopo(v_uv - vec2(px.x, 0.0)).r;
+    float et = readTopo(v_uv + vec2(0.0, px.y)).r;
+    float wt = readTopo(v_uv - vec2(0.0, px.y)).r;
+
+    // Only count neighbours that are:
+    //  (a) on topology (α-admissible)
+    //  (b) currently active (wavefront — status ≥ 1)
+    float minGen = 99999.0;
+    float hasNeighbour = 0.0;
+
+    if (nt > 0.5 && n.r >= 1.0 && n.r < 4.0) { hasNeighbour = 1.0; minGen = min(minGen, n.g); }
+    if (st > 0.5 && s.r >= 1.0 && s.r < 4.0) { hasNeighbour = 1.0; minGen = min(minGen, s.g); }
+    if (et > 0.5 && e.r >= 1.0 && e.r < 4.0) { hasNeighbour = 1.0; minGen = min(minGen, e.g); }
+    if (wt > 0.5 && w.r >= 1.0 && w.r < 4.0) { hasNeighbour = 1.0; minGen = min(minGen, w.g); }
+
+    if (hasNeighbour < 0.5) {
+        // ν fails: no active validated neighbour.
+        gl_FragColor = self;
+        return;
+    }
+
+    // ── λ: Routing — exactly one path. Generation = min + 1 ──
+    float gen = minGen + 1.0;
+
+    // ── ρ: Reaction — deterministic collapse output ──────────
+    // Status = 1 (newly active). Generation locked.
+    // C(s) = ω₀ — the cell collapses to purity.
+    gl_FragColor = vec4(1.0, gen, 0.0, 0.0);
+}
+`;
+
+// ── Render shader (Image equivalent) ─────────────────────────
+const RENDER = `
+precision highp float;
+varying vec2 v_uv;
+uniform sampler2D u_state;
+uniform sampler2D u_topo;
+uniform vec2 u_res;
+uniform float u_frame;
+
+// Golden ratio conjugate for generation → hue mapping
+// φ̄ = 1/φ = (√5-1)/2 ≈ 0.618
+// This IS the collapse attractor mapping to colour space
+vec3 genToColor(float gen) {
+    float phi_bar = 0.6180339887;
+    float hue = fract(gen * phi_bar * 0.04);
+    // HSV → RGB (hue only, full sat, variable brightness)
+    vec3 c = clamp(abs(mod(hue * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+    return mix(vec3(0.1, 0.4, 0.2), c, 0.6);
+}
+
+void main() {
+    vec4 state = texture2D(u_state, v_uv);
+    float topo = texture2D(u_topo, v_uv).r;
+    vec2 px = 1.0 / u_res;
+
+    float status = state.r;
+    float gen = state.g;
+    float veto = state.b;
+
+    // ── Void cells (α = 0, inadmissible) ────────────────────
+    if (topo < 0.5) {
+        // Veto boundary glow — rejection made visible
+        if (veto > 0.5) {
+            float pulse = 0.3 + 0.15 * sin(u_frame * 0.15);
+            gl_FragColor = vec4(pulse, 0.03, 0.02, 1.0);
+        } else {
+            gl_FragColor = vec4(0.02, 0.02, 0.02, 1.0);
+        }
+        return;
+    }
+
+    // ── Inactive but admissible — dim topology trace ─────────
+    if (status < 0.5) {
+        gl_FragColor = vec4(0.04, 0.08, 0.05, 1.0);
+        return;
+    }
+
+    // ── Wavefront (recently activated, status 1–3) ──────────
+    if (status < 4.0) {
+        float brightness = 1.0 - (status - 1.0) / 3.0;
+        brightness = brightness * brightness;
+        vec3 col = genToColor(gen);
+        // White-hot leading edge
+        col = mix(col, vec3(0.9, 1.0, 0.9), brightness * 0.7);
+        gl_FragColor = vec4(col * (0.4 + brightness * 0.6), 1.0);
+        return;
+    }
+
+    // ── Post-collapse (ε: extinction → ω₀) ──────────────────
+    // C(s) = ω₀. The cell fades to purity.
+    // Age determines fade: Im(C) = {ω₀, ∅}
+    float age = status - 1.0;
+    float fade = 1.0 / (1.0 + age * 0.008);
+    vec3 col = genToColor(gen);
+    // Fade toward ω₀ (substrate purity = very dim green)
+    vec3 omega0 = vec3(0.04, 0.08, 0.05);
+    col = mix(omega0, col * 0.35, fade);
+    gl_FragColor = vec4(col, 1.0);
+}
+`;
+
+// ── Create programs ──────────────────────────────────────────
+const progProp = makeShader(VERT, PROPAGATE);
+const progRender = makeShader(VERT, RENDER);
+
+// ── Create textures ──────────────────────────────────────────
+function createTex(data) {
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);  // ← toroidal
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);  // ← toroidal
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, data);
+    return tex;
+}
+
+function createFBO(tex) {
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    return fb;
+}
+
+// ── Topology generation (doctrine — frozen at boot) ──────────
+// Deterministic channels carved through the grid.
+// Uses domain-warped value noise to create organic vascular patterns.
+// This IS the admissibility surface: α(s) = 1 iff topo > threshold.
+function generateTopology() {
+    const data = new Float32Array(GRID * GRID * 4);
+
+    // Deterministic hash (splitmix64-inspired, matches Go dispatch kernel)
+    function hash(x, y) {
+        let h = (x * 374761393 + y * 668265263 + 1013904223) | 0;
+        h = Math.imul(h ^ (h >>> 13), 1274126177);
+        h = h ^ (h >>> 16);
+        return (h & 0x7fffffff) / 0x7fffffff;
+    }
+
+    // Value noise with smooth interpolation
+    function noise(x, y) {
+        const ix = Math.floor(x), iy = Math.floor(y);
+        const fx = x - ix, fy = y - iy;
+        // Hermite smoothing (deterministic, no randomness)
+        const sx = fx * fx * (3 - 2 * fx);
+        const sy = fy * fy * (3 - 2 * fy);
+        const n00 = hash(ix, iy), n10 = hash(ix + 1, iy);
+        const n01 = hash(ix, iy + 1), n11 = hash(ix + 1, iy + 1);
+        return n00 * (1 - sx) * (1 - sy) + n10 * sx * (1 - sy) +
+               n01 * (1 - sx) * sy + n11 * sx * sy;
+    }
+
+    // Fractal Brownian Motion — multi-scale topology
+    function fbm(x, y) {
+        let v = 0, amp = 0.5, freq = 1;
+        for (let i = 0; i < 5; i++) {
+            v += amp * noise(x * freq, y * freq);
+            amp *= 0.5; freq *= 2.1;
+        }
+        return v;
+    }
+
+    // Threshold: cells above this are admissible channels
+    const threshold = 0.38;
+
+    for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+            const nx = x / GRID * 6.0;
+            const ny = y / GRID * 6.0;
+
+            // Domain warp for organic channel structure
+            const wx = nx + 0.8 * fbm(nx + 3.2, ny + 1.3);
+            const wy = ny + 0.8 * fbm(nx + 5.4, ny + 2.7);
+            const val = fbm(wx, wy);
+
+            const admissible = val > threshold ? 1.0 : 0.0;
+            const idx = (y * GRID + x) * 4;
+            data[idx + 0] = admissible;  // R: admissibility
+            data[idx + 1] = val;         // G: raw value (for rendering depth)
+            data[idx + 2] = 0.0;
+            data[idx + 3] = 1.0;
+        }
+    }
+    return data;
+}
+
+// ── State: starts empty (ω₀ — substrate purity) ─────────────
+function emptyState() {
+    return new Float32Array(GRID * GRID * 4); // all zeros = ω₀
+}
+
+// ── Initialize textures and FBOs ─────────────────────────────
+let topoData = generateTopology();
+let topoTex = createTex(topoData);
+
+let stateA = createTex(emptyState());
+let stateB = createTex(emptyState());
+let fboA = createFBO(stateA);
+let fboB = createFBO(stateB);
+let readTex = stateA, writeTex = stateB, writeFBO = fboB;
+
+function swapState() {
+    if (readTex === stateA) {
+        readTex = stateB; writeTex = stateA; writeFBO = fboA;
+    } else {
+        readTex = stateA; writeTex = stateB; writeFBO = fboB;
+    }
+}
+
+// ── Uniform helpers ──────────────────────────────────────────
+function setUniforms(prog, uniforms) {
+    gl.useProgram(prog);
+    for (const [name, val] of Object.entries(uniforms)) {
+        const loc = gl.getUniformLocation(prog, name);
+        if (loc === null) continue;
+        if (typeof val === 'number') gl.uniform1f(loc, val);
+        else if (val.length === 2) gl.uniform2fv(loc, val);
+        else if (val.length === 4) gl.uniform4fv(loc, val);
+    }
+}
+
+function bindTexUnit(prog, name, unit, tex) {
+    gl.activeTexture(gl.TEXTURE0 + unit);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.uniform1i(gl.getUniformLocation(prog, name), unit);
+}
+
+function drawQuad(prog) {
+    const a = gl.getAttribLocation(prog, 'a_pos');
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+    gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+// ── Injection state ──────────────────────────────────────────
+let inject = [0, 0, 0, 0]; // x, y, active, frame
+let frame = 0;
+
+// ── HUD counters (approximate — real counting needs readPixels) ──
+let collapsedEstimate = 0;
+let lastInjectFrame = -1;
+
+// ── Resize ───────────────────────────────────────────────────
+function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ── Input ────────────────────────────────────────────────────
+canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = 1.0 - (e.clientY - rect.top) / rect.height;
+    inject = [x, y, 1.0, frame];
+    lastInjectFrame = frame;
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (e.buttons !== 1) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = 1.0 - (e.clientY - rect.top) / rect.height;
+    inject = [x, y, 1.0, frame];
+});
+
+canvas.addEventListener('mouseup', () => { inject[2] = 0; });
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'r' || e.key === 'R') {
+        // Reset state to ω₀ (substrate purity). Topology unchanged.
+        gl.bindTexture(gl.TEXTURE_2D, stateA);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, emptyState());
+        gl.bindTexture(gl.TEXTURE_2D, stateB);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, emptyState());
+        collapsedEstimate = 0;
+    }
+    if (e.key === 't' || e.key === 'T') {
+        // Rebuild topology (new doctrine). Rare. Like reboot.
+        topoData = generateTopology();
+        gl.bindTexture(gl.TEXTURE_2D, topoTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, topoData);
+        // Also reset state
+        gl.bindTexture(gl.TEXTURE_2D, stateA);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, emptyState());
+        gl.bindTexture(gl.TEXTURE_2D, stateB);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, emptyState());
+        collapsedEstimate = 0;
+    }
+});
+
+// ── Render loop ──────────────────────────────────────────────
+function tick() {
+    // Multiple propagation steps per frame for speed
+    const stepsPerFrame = 3;
+    for (let i = 0; i < stepsPerFrame; i++) {
+        // Pass 1: Propagation (state → state)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, writeFBO);
+        gl.viewport(0, 0, GRID, GRID);
+        gl.useProgram(progProp);
+        setUniforms(progProp, {
+            u_res: [GRID, GRID],
+            u_inject: inject,
+            u_frame: frame
+        });
+        bindTexUnit(progProp, 'u_state', 0, readTex);
+        bindTexUnit(progProp, 'u_topo', 1, topoTex);
+        drawQuad(progProp);
+        swapState();
+        // Clear injection after first sub-step
+        if (i === 0 && inject[2] > 0.5) {
+            inject = [inject[0], inject[1], 0, inject[3]];
+        }
+    }
+
+    // Pass 2: Render to screen
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.useProgram(progRender);
+    setUniforms(progRender, {
+        u_res: [GRID, GRID],
+        u_frame: frame
+    });
+    bindTexUnit(progRender, 'u_state', 0, readTex);
+    bindTexUnit(progRender, 'u_topo', 1, topoTex);
+    drawQuad(progRender);
+
+    // HUD
+    frame++;
+    if (frame % 10 === 0) {
+        document.getElementById('h-frame').textContent = frame;
+
+        // Count admissible cells from topology (once is enough but keep it simple)
+        let admissible = 0;
+        for (let i = 0; i < topoData.length; i += 4) {
+            if (topoData[i] > 0.5) admissible++;
+        }
+        document.getElementById('h-cells').textContent = admissible.toLocaleString();
+        document.getElementById('h-size').textContent = GRID + '²';
+
+        // Wavefront estimate based on frames since injection
+        if (lastInjectFrame >= 0) {
+            const elapsed = frame - lastInjectFrame;
+            const waveRadius = elapsed * stepsPerFrame;
+            // Rough circle area within topology
+            const waveCells = Math.min(Math.floor(Math.PI * waveRadius * waveRadius * 0.6), admissible);
+            document.getElementById('h-collapsed').textContent = Math.min(waveCells, admissible).toLocaleString();
+            const perimeter = Math.floor(2 * Math.PI * waveRadius * 0.6);
+            document.getElementById('h-wave').textContent = Math.max(0, Math.min(perimeter, admissible - waveCells)).toLocaleString();
+            document.getElementById('h-vetoed').textContent = Math.floor(perimeter * 0.4).toLocaleString();
+        }
+    }
+
+    requestAnimationFrame(tick);
+}
+
+tick();
+</script>
+</body>
+</html>

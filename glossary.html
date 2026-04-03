@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="Governance Glossary — A functional reference for the AI governance community. SECS terminology mapped to industry equivalents.">
+    <title>SECS — Governance Glossary</title>
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/glossary.html">
+    <meta property="og:title" content="SECS — Governance Glossary">
+    <meta property="og:description" content="A functional reference for the AI governance community. The terminology is converging. The implementations are not.">
+    <meta property="og:image" content="https://secs.observer/assets/hero-banner.png">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SECS — Governance Glossary">
+    <meta name="twitter:description" content="A functional reference for the AI governance community. The terminology is converging. The implementations are not.">
+    <meta name="twitter:image" content="https://secs.observer/assets/hero-banner.png">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css?v=2">
+    <script src="js/includes.js?v=2"></script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-667KK00S7H');
+    </script>
+
+    <style>
+        /* ── Glossary page ──────────────────────────────────────── */
+        .glossary-intro {
+            max-width: 760px;
+            margin: 0 auto 2.5rem;
+            text-align: center;
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .glossary-intro em { color: #e8e8e8; font-style: normal; }
+
+        /* ── Filter bar ─────────────────────────────────────────── */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #999;
+            padding: 0.35rem 0.85rem;
+            border-radius: 3px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .filter-btn:hover { border-color: rgba(255,255,255,0.3); color: #ccc; }
+        .filter-btn.active { background: rgba(100,200,140,0.12); border-color: rgba(100,200,140,0.4); color: #8fd4a8; }
+
+        /* ── Section blocks ─────────────────────────────────────── */
+        .glossary-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .glossary-section:last-of-type { border-bottom: none; }
+        .glossary-section h3 {
+            font-size: 1.05rem;
+            color: #e8e8e8;
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.02em;
+        }
+        .glossary-section h3 .sec-num {
+            color: #5a8a6a;
+            margin-right: 0.5rem;
+            font-weight: 400;
+        }
+        .glossary-section .sec-desc {
+            color: #777;
+            font-size: 0.85rem;
+            margin-bottom: 1.2rem;
+            max-width: 700px;
+        }
+
+        /* ── Tables ─────────────────────────────────────────────── */
+        .glossary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .glossary-table thead th {
+            text-align: left;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            color: #999;
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .glossary-table tbody td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #bbb;
+            vertical-align: top;
+            line-height: 1.55;
+        }
+        .glossary-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+        .glossary-table .term { color: #8fd4a8; font-weight: 500; white-space: nowrap; }
+        .glossary-table .similar { color: #888; font-size: 0.82rem; }
+
+
+
+        /* ── Responsive ─────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .glossary-table { font-size: 0.8rem; }
+            .glossary-table thead th, .glossary-table tbody td { padding: 0.4rem 0.5rem; }
+            .glossary-table .term { white-space: normal; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="container">
+
+        <!-- Header -->
+        <div class="section-header text-center">
+            <h2 class="animated fadeInLeft">Governance Glossary</h2>
+            <div class="section-line"></div>
+            <p class="section-subtitle animated fadeInRight">The terminology is converging. The implementations are not.</p>
+        </div>
+
+        <div class="glossary-intro animated fadeIn">
+            On LinkedIn, I see a lot of GPT-inspired posts claiming <em>"a lot of the conversation around AI governance talks about X, when they should be talking about Y"</em> —
+            where Y is a vaguely different capability that most systems actually already have.
+            This page exists to prove the opposite point: <em>the USPs people are selling are more universal than they think.</em>
+            It is structured by function through the SECS algebra, with industry equivalents mapped alongside.
+            It is not a selling tool. It is a reference for anyone working in the space.
+        </div>
+
+
+
+        <!-- ── Filter Bar ─────────────────────────────────────── -->
+        <div class="filter-bar animated fadeIn">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="admission">Admission</button>
+            <button class="filter-btn" data-filter="rejection">Rejection</button>
+            <button class="filter-btn" data-filter="processing">Processing</button>
+            <button class="filter-btn" data-filter="governance">Governance</button>
+            <button class="filter-btn" data-filter="identity">Identity</button>
+            <button class="filter-btn" data-filter="observation">Observation</button>
+            <button class="filter-btn" data-filter="adaptation">Adaptation</button>
+            <button class="filter-btn" data-filter="mutation">Mutation</button>
+            <button class="filter-btn" data-filter="enforcement">Enforcement</button>
+            <button class="filter-btn" data-filter="recovery">Recovery</button>
+            <button class="filter-btn" data-filter="adaptor">Adaptor</button>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 1 — ADMISSION
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="admission">
+            <h3><span class="sec-num">01</span>Admission — What gets in</h3>
+            <p class="sec-desc">The gate. Before anything executes, something decides whether the input is allowed to exist inside the system.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Admissibility (α)</td><td>Binary gate. Is this input admissible? Returns 1 (pass) or 0 (reject). Constitutional constraints enforced before any processing begins.</td><td class="similar">Input validation · policy check · guardrail · pre-execution filter · access control gate</td></tr>
+                    <tr><td class="term">Spark</td><td>A single input signal arriving at the system boundary. Immutable after validation. Contains endpoint, payload, and doctrine tag.</td><td class="similar">Request · prompt · event · message · API call</td></tr>
+                    <tr><td class="term">Admissible Space (𝒜)</td><td>The partition of all possible inputs that satisfy constitutional constraints. Everything outside is structurally impossible.</td><td class="similar">Allowlist · policy scope · valid input domain</td></tr>
+                    <tr><td class="term">Possibility Space (𝒫)</td><td>The unbounded set of all potential inputs. Most are not admissible.</td><td class="similar">Input space · prompt space · request universe</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 2 — REJECTION
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="rejection">
+            <h3><span class="sec-num">02</span>Rejection — What gets refused, and why</h3>
+            <p class="sec-desc">Not filtering. Structural impossibility. The system cannot process what is inadmissible — it is not a choice, it is architecture.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Veto (v₁–v₆)</td><td>Complete rejection. Six exhaustive classes partition all inadmissible inputs. A vetoed element is unmathematical within the algebra.</td><td class="similar">Deny · block · reject · policy violation · guardrail trigger</td></tr>
+                    <tr><td class="term">v₁: Axiom Violation</td><td>Input violates a foundational law of the system.</td><td class="similar">Constitutional violation · hard constraint breach</td></tr>
+                    <tr><td class="term">v₂: Drift Introduction</td><td>Input would shift the system trajectory away from its fixed point.</td><td class="similar">Drift detection · alignment deviation</td></tr>
+                    <tr><td class="term">v₃: Identity Emergence</td><td>Input contains identity content. Structurally excluded.</td><td class="similar">PII detection · identity stripping · anonymisation</td></tr>
+                    <tr><td class="term">v₄: Invariant Breach</td><td>Would cause a constitutional invariant to become false.</td><td class="similar">Invariant violation · constraint failure</td></tr>
+                    <tr><td class="term">v₅: Corruption Attempt</td><td>Targets the constitutional layer directly. Attempts to modify immutable rules.</td><td class="similar">Privilege escalation · jailbreak · prompt injection</td></tr>
+                    <tr><td class="term">v₆: Deployment Instability</td><td>Would render the system's deployment state inconsistent.</td><td class="similar">Configuration drift · deployment conflict</td></tr>
+                    <tr><td class="term">ANNIHILATE</td><td>Veto action. Input mapped to ∅. Not blocked — structurally impossible.</td><td class="similar">Hard reject · drop · discard</td></tr>
+                    <tr><td class="term">REFUSE</td><td>Explicit rejection. Message recognised but definitively inadmissible.</td><td class="similar">Deny with reason · policy rejection</td></tr>
+                    <tr><td class="term">HOLD / ESCALATE</td><td>Partial veto. Escalated to human review when uncertainty requires judgment.</td><td class="similar">Human-in-the-loop · approval workflow · escalation queue</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 3 — PROCESSING
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="processing">
+            <h3><span class="sec-num">03</span>Processing — What happens to admissible inputs</h3>
+            <p class="sec-desc">Deterministic collapse. Same input, same output, every time. No branching, no randomness, no ambiguity.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Collapse Operator (𝒞)</td><td>The fundamental computation. Five sequential irreversible stages: α→ν→λ→ρ→ε. Projection operator (𝒞² = 𝒞). No inverse exists.</td><td class="similar">Processing pipeline · execution chain · workflow engine</td></tr>
+                    <tr><td class="term">Validation (ν)</td><td>Collapse to well-formed element. Structural validity confirmed.</td><td class="similar">Schema validation · input normalisation · type checking</td></tr>
+                    <tr><td class="term">Routing (λ)</td><td>Collapse to exactly one deterministic path. No branching.</td><td class="similar">Request routing · dispatch · deterministic path selection</td></tr>
+                    <tr><td class="term">Reaction (ρ)</td><td>Deterministic output from routed state. Same input always yields same output.</td><td class="similar">Execution · computation · inference · response generation</td></tr>
+                    <tr><td class="term">Extinction (ε)</td><td>Return to purity (ω₀). Nothing persists uncommitted. Complete reset.</td><td class="similar">State cleanup · session teardown · garbage collection</td></tr>
+                    <tr><td class="term">Purity (ω₀)</td><td>The unique fixed-point state. Zero element. System returns here between every operation.</td><td class="similar">Clean state · idle · baseline · ground truth</td></tr>
+                    <tr><td class="term">Atom</td><td>Sovereign dispatch kernel. Stateless, pure, zero-allocation. O(1) dispatch.</td><td class="similar">Execution engine · runtime kernel · serverless function</td></tr>
+                    <tr><td class="term">Fast Path</td><td>Persistent execution lane. Connector → Atom → Collapse → Output. Runs continuously. Deterministic.</td><td class="similar">Hot path · critical path · main execution loop</td></tr>
+                    <tr><td class="term">Deterministic Execution</td><td>Same input + same topology → same path, same output, same latency. Verified under 96-worker stress.</td><td class="similar">Reproducibility · idempotency · deterministic inference</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 4 — GOVERNANCE
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="governance">
+            <h3><span class="sec-num">04</span>Governance — What constrains the system</h3>
+            <p class="sec-desc">Layered, constitutional, immutable at the foundation. Higher layers inherit all lower constraints.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Governance Filtration (𝒢₀–𝒢₄)</td><td>Nested constitutional layers. 𝒢₀ (constitutional, immutable) ⊆ 𝒢₁ (governance) ⊆ 𝒢₂ (substrate) ⊆ 𝒢₃ (validation) ⊆ 𝒢₄ (observability).</td><td class="similar">Policy layers · governance hierarchy · rule tiers · RBAC levels</td></tr>
+                    <tr><td class="term">Constraint Surface</td><td>Frozen layer. Defines what is admissible. Cannot be modified at runtime. Loaded from doctrine at boot.</td><td class="similar">Policy-as-code · immutable config · constitutional AI rules</td></tr>
+                    <tr><td class="term">Adaptation Surface</td><td>Mutable layer within bounds. Neurotrophic layer can adjust parameters here. Bounded by constraint surface.</td><td class="similar">Tunable parameters · adaptive policy · dynamic configuration</td></tr>
+                    <tr><td class="term">Sovereignty Invariant</td><td>No external governance. System self-governs through constitutional chain. Founder has no runtime exception.</td><td class="similar">Self-governance · autonomous policy enforcement</td></tr>
+                    <tr><td class="term">Doctrine</td><td>Canonical definition files. Define constraints, profiles, boundaries, algebra. Loaded at boot. Immutable at runtime.</td><td class="similar">Policy definitions · governance rules · configuration-as-code</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 5 — IDENTITY
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="identity">
+            <h3><span class="sec-num">05</span>Identity — What the system refuses to know</h3>
+            <p class="sec-desc">Not privacy by policy. Privacy by architecture. The system cannot distinguish one user from another because the capability does not exist.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Identity Extinction</td><td>Axiom: no worker carries any identity. Not enforced — structural. The field does not exist.</td><td class="similar">Privacy by design · anonymisation · zero-knowledge</td></tr>
+                    <tr><td class="term">Identity Set (ℐ)</td><td>All keys that could distinguish one entity from another: id, userId, sessionId, token, email, deviceId, etc. Structurally excluded.</td><td class="similar">PII fields · identity attributes · user identifiers</td></tr>
+                    <tr><td class="term">Fungibility</td><td>All workers are equivalent. Same input → same output regardless of which worker processes it.</td><td class="similar">Stateless processing · horizontal scaling · worker equivalence</td></tr>
+                    <tr><td class="term">Observation Purity</td><td>Behavioural layer is descriptive (not prescriptive), passive (zero side effects), aggregate (not individual).</td><td class="similar">Privacy-preserving analytics · aggregate telemetry</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 6 — OBSERVATION
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="observation">
+            <h3><span class="sec-num">06</span>Observation — What the system watches</h3>
+            <p class="sec-desc">Passive. Descriptive. Never prescriptive. The behavioural layer describes what happened, never what should happen next.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Behaviour (Atomic)</td><td>Single observation: timestamp, latency, error flag, payload size, work units.</td><td class="similar">Metric · event · log entry · telemetry point</td></tr>
+                    <tr><td class="term">Pattern (Composed)</td><td>Temporal sequence of 3+ behaviours revealing characteristics.</td><td class="similar">Trend · anomaly pattern · time series signal</td></tr>
+                    <tr><td class="term">Drift Detection</td><td>Behavioural deviation from expected profile. Flagged if &gt;20% magnitude. Describes current state, not prediction.</td><td class="similar">Drift monitoring · model drift · distribution shift</td></tr>
+                    <tr><td class="term">φ-Convergence</td><td>Ratio stability between predictable and unpredictable streams. Alert if divergence &gt;10%.</td><td class="similar">Balance metric · throughput ratio · system health score</td></tr>
+                    <tr><td class="term">Prediction Boundary</td><td>FORBIDDEN. Behavioural layer must not forecast future behaviour. Describes past and present only.</td><td class="similar">Observability constraint · no-prediction rule</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 7 — ADAPTATION
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="adaptation">
+            <h3><span class="sec-num">07</span>Adaptation — How the system learns without drifting</h3>
+            <p class="sec-desc">Neurotrophic. Biological model. Five additive phases. The learning layer sits above execution and observes — it never modifies the fast path directly.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Phase A: Governed Homeostasis</td><td>Observes output. Evaluates against doctrine set points. Adjusts parameters within bounds.</td><td class="similar">PID control · feedback loop · autoscaling</td></tr>
+                    <tr><td class="term">Phase B: Structural Plasticity</td><td>Grows and prunes topology nodes. Adds seeds, strengthens connections, prunes underperformers.</td><td class="similar">Topology optimisation · neural architecture search</td></tr>
+                    <tr><td class="term">Phase C: Cross-Domain Fault Repair</td><td>Astrocyte-model mediator. Detects faults across boundaries. Repairs damaged circuits before learning proceeds.</td><td class="similar">Cross-system fault detection · self-healing</td></tr>
+                    <tr><td class="term">Phase D: Temporal Learning</td><td>Learns from history. Accumulates evidence until confidence threshold met. Adjusts weights, not rules.</td><td class="similar">Reinforcement learning · evidence accumulation</td></tr>
+                    <tr><td class="term">Phase E: Meta-Learning</td><td>Learns how to learn. Adjusts learning parameters. Founder-defined reward functions only.</td><td class="similar">Meta-learning · hyperparameter tuning</td></tr>
+                    <tr><td class="term">Seed</td><td>Discrete state point in substrate topology. Governed adjacency. Movement is seed→seed→seed.</td><td class="similar">Node · state · vertex · configuration point</td></tr>
+                    <tr><td class="term">Topology</td><td>Seed graph with governed transitions. Validated at boot. Expandable through Phase B.</td><td class="similar">State graph · execution topology · service mesh</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 8 — MUTATION
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="mutation">
+            <h3><span class="sec-num">08</span>Mutation — How the system changes safely</h3>
+            <p class="sec-desc">Every change follows a constitutional chain. No mutation bypasses governance. Reversibility is mandatory.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Mutation</td><td>Any substrate state change. Must follow 5-stage chain: Intent → Validate → Plan → Simulate → Execute.</td><td class="similar">Change request · deployment · state transition</td></tr>
+                    <tr><td class="term">Additive Mutation</td><td>Add new state without modifying existing. Low risk, reversible.</td><td class="similar">Feature addition · scale-out · additive deployment</td></tr>
+                    <tr><td class="term">Subtractive Mutation</td><td>Remove obsolete state. Medium risk. Requires dependency check.</td><td class="similar">Deprecation · teardown · scale-in</td></tr>
+                    <tr><td class="term">Transformative Mutation</td><td>Modify existing state while preserving structure. High risk. Cannot alter profile boundaries.</td><td class="similar">Migration · schema change · rolling update</td></tr>
+                    <tr><td class="term">Simulation</td><td>Isolated execution of mutation before commit. No side effects. Deterministic. Validates postconditions.</td><td class="similar">Dry run · staging · canary deployment · shadow testing</td></tr>
+                    <tr><td class="term">Rollback</td><td>Deterministic reversal. All mutations must define their reverse operation. Simulated before execution.</td><td class="similar">Rollback · undo · revert · blue-green switch</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 9 — ENFORCEMENT
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="enforcement">
+            <h3><span class="sec-num">09</span>Enforcement — What protects the boundary</h3>
+            <p class="sec-desc">Physics-based. Content-blind. The perimeter enforces observable constraints — rate, volume, burst — without inspecting payloads.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Perimeter Engine</td><td>Physics-based enforcement. Protects integrity through observable constraints. Content-blind.</td><td class="similar">WAF · rate limiter · API gateway · load balancer</td></tr>
+                    <tr><td class="term">Rate Limiting</td><td>Max requests per time window per scope. Token bucket or sliding window. Different limits per profile.</td><td class="similar">Throttling · rate limiting · quota management</td></tr>
+                    <tr><td class="term">Circuit Breaker</td><td>Isolates failing adaptor. CLOSED → OPEN → HALF_OPEN. Prevents cascade failure.</td><td class="similar">Circuit breaker pattern · bulkhead · fault isolation</td></tr>
+                    <tr><td class="term">Load Shedding</td><td>System-wide capacity enforcement. When capacity exceeded, newer requests queued or dropped by priority.</td><td class="similar">Backpressure · load shedding · graceful degradation</td></tr>
+                    <tr><td class="term">Profile Compliance</td><td>Validates adaptor behaviour matches declared profile. Flags violations.</td><td class="similar">SLA monitoring · contract testing · compliance validation</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 10 — RECOVERY
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="recovery">
+            <h3><span class="sec-num">10</span>Recovery — What happens when things break</h3>
+            <p class="sec-desc">Panic is a governed state, not a failure. The system knows what to do when it breaks because the doctrine defined it before it happened.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">PANIC_STATE</td><td>Governed emergency state. All mutations except founder-approved recovery are blocked. System stabilises before resuming.</td><td class="similar">Circuit open · degraded mode · emergency stop · safe mode</td></tr>
+                    <tr><td class="term">Critical Drift</td><td>φ-divergence ≥20%. Triggers panic.</td><td class="similar">SLA breach · critical alert · threshold violation</td></tr>
+                    <tr><td class="term">Error Cluster</td><td>Error rate &gt;50% in 60s window. Triggers panic.</td><td class="similar">Error storm · failure cascade · incident trigger</td></tr>
+                    <tr><td class="term">Degradation</td><td>Latency increase &gt;50% over 5 minutes without recovery. Triggers panic.</td><td class="similar">Performance degradation · SLA degradation</td></tr>
+                    <tr><td class="term">Recovery Validation</td><td>System must prove stability before exiting panic. Not time-based — evidence-based.</td><td class="similar">Health check · readiness probe · recovery verification</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SECTION 11 — ADAPTOR
+             ═══════════════════════════════════════════════════════ -->
+        <div class="glossary-section" data-section="adaptor">
+            <h3><span class="sec-num">11</span>Adaptor — What connects the outside world</h3>
+            <p class="sec-desc">External. Certified. Independent. Adaptors are not part of the substrate — they are observed participants with declared behavioural profiles.</p>
+            <table class="glossary-table">
+                <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
+                <tbody>
+                    <tr><td class="term">Adaptor</td><td>External certified process providing behavioural telemetry. HTTP interface only. Runs independently. Not part of substrate.</td><td class="similar">Plugin · integration · connector · external service · agent</td></tr>
+                    <tr><td class="term">STABLE Profile</td><td>Low-variance, predictable behaviour. Bounded: 30–80ms latency, 0.3% error, 64–256 byte payload.</td><td class="similar">Reliable service · SLA-bound endpoint</td></tr>
+                    <tr><td class="term">VOLATILE Profile</td><td>High-variance, unpredictable behaviour. Bounded: 20–500ms (burst 800ms), 5% error, 256–2048 byte payload.</td><td class="similar">Unreliable service · best-effort endpoint</td></tr>
+                    <tr><td class="term">Certificate</td><td>Cryptographically signed manifest. Contains adaptorId, profileClass, public key. Validated at load.</td><td class="similar">API key · mTLS cert · service token · signed manifest</td></tr>
+                    <tr><td class="term">Burst Mode</td><td>VOLATILE-exclusive. 10% probability of 800ms spike. Expected and non-anomalous.</td><td class="similar">Latency spike · jitter · tail latency</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- ── Landscape link ─────────────────────────────────── -->
+        <div style="text-align:center; margin:2rem 0 1rem; padding:1.2rem; background:rgba(100,200,140,0.04); border:1px solid rgba(100,200,140,0.12); border-radius:4px;">
+            <p style="color:#aaa; font-size:0.9rem; margin:0;">Where do products sit against the SECS standard? → <a href="landscape.html" style="color:#8fd4a8; font-weight:500;">AI Governance Landscape</a></p>
+        </div>
+
+
+        <!-- ── Footer ─────────────────────────────────────────── -->
+        <div style="text-align:center; color:#555; font-size:0.78rem; padding:2rem 0 3rem; border-top:1px solid rgba(255,255,255,0.06);">
+            Version 2026-03-30 · Jay Carpenter · SECS Sovereign<br>
+            Living document. Updated as the conversation evolves.
+        </div>
+
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter();</script>
+
+    <!-- ── Filter logic ───────────────────────────────────────── -->
+    <script>
+    (function(){
+        const btns = document.querySelectorAll('.filter-btn');
+        const sections = document.querySelectorAll('.glossary-section');
+        btns.forEach(function(btn){
+            btn.addEventListener('click', function(){
+                const f = this.getAttribute('data-filter');
+                btns.forEach(function(b){ b.classList.remove('active'); });
+                this.classList.add('active');
+                sections.forEach(function(s){
+                    if (f === 'all' || s.getAttribute('data-section') === f || s.getAttribute('data-section') === 'all') {
+                        s.style.display = '';
+                    } else {
+                        s.style.display = 'none';
+                    }
+                });
+            });
+        });
+    })();
+    </script>
+
+</body>
+</html>

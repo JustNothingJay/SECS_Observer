@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="AI Governance Landscape — Where products really sit. Every claim measured against SECS functional layers.">
+    <title>SECS — AI Governance Landscape</title>
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/landscape.html">
+    <meta property="og:title" content="SECS — AI Governance Landscape">
+    <meta property="og:description" content="Where products really sit. Every claim measured against SECS functional layers. Nothing hallucinated.">
+    <meta property="og:image" content="https://secs.observer/assets/hero-banner.png">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SECS — AI Governance Landscape">
+    <meta name="twitter:description" content="Where products really sit. Every claim measured against SECS functional layers. Nothing hallucinated.">
+    <meta name="twitter:image" content="https://secs.observer/assets/hero-banner.png">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css?v=2">
+    <script src="js/includes.js?v=2"></script>
+
+    <style>
+        /* ── Landscape page ─────────────────────────────────────── */
+        .landscape-intro {
+            max-width: 760px;
+            margin: 0 auto 2.5rem;
+            text-align: center;
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .landscape-intro em { color: #e8e8e8; font-style: normal; }
+
+        /* ── Tables ─────────────────────────────────────────────── */
+        .glossary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .glossary-table thead th {
+            text-align: left;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            color: #999;
+            font-weight: 500;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .glossary-table tbody td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #bbb;
+            vertical-align: top;
+            line-height: 1.55;
+        }
+        .glossary-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+        .glossary-table .similar { color: #888; font-size: 0.82rem; }
+
+        /* ── Product classification tags ────────────────────────── */
+        .product-row td { background: rgba(100,200,140,0.03); }
+        .product-row .prod-name { color: #c9a84c; font-weight: 500; }
+        .class-tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 2px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin: 0.1rem 0.2rem 0.1rem 0;
+        }
+        /* SECS Tier tags */
+        .tier-adjacent   { background: rgba(200,160,80,0.15);  color: #c9a84c; border: 1px solid rgba(200,160,80,0.3); }
+        .tier-compatible { background: rgba(100,160,220,0.15); color: #6ca8dc; border: 1px solid rgba(100,160,220,0.3); }
+        .tier-compliant  { background: rgba(100,200,140,0.15); color: #8fd4a8; border: 1px solid rgba(100,200,140,0.3); }
+        /* Architecture type tags */
+        .arch-wrapper       { background: rgba(200,160,80,0.1);  color: #b89840; border: 1px solid rgba(200,160,80,0.2); }
+        .arch-sidecar       { background: rgba(100,160,220,0.1); color: #5a90b8; border: 1px solid rgba(100,160,220,0.2); }
+        .arch-bolt-on       { background: rgba(180,100,200,0.1); color: #9a68a8; border: 1px solid rgba(180,100,200,0.2); }
+        .arch-hot-path      { background: rgba(100,200,140,0.1); color: #6fb888; border: 1px solid rgba(100,200,140,0.2); }
+        .arch-policy-layer  { background: rgba(200,200,100,0.1); color: #a8a850; border: 1px solid rgba(200,200,100,0.2); }
+        .arch-description   { background: rgba(150,150,150,0.08); color: #888;   border: 1px solid rgba(150,150,150,0.15); }
+
+        /* ── Classification legend ──────────────────────────────── */
+        .class-legend {
+            margin: 1.5rem 0 2.5rem;
+            padding: 1rem 1.2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 4px;
+        }
+        .class-legend h4 {
+            font-size: 0.8rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.6rem;
+        }
+        .class-legend .legend-item {
+            display: inline-block;
+            margin-right: 1.5rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.82rem;
+            color: #888;
+        }
+
+        /* ── Section blocks ─────────────────────────────────────── */
+        .landscape-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .landscape-section:last-of-type { border-bottom: none; }
+        .landscape-section h3 {
+            font-size: 1.05rem;
+            color: #e8e8e8;
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.02em;
+        }
+        .landscape-section h3 .sec-num {
+            color: #5a8a6a;
+            margin-right: 0.5rem;
+            font-weight: 400;
+        }
+        .landscape-section .sec-desc {
+            color: #777;
+            font-size: 0.85rem;
+            margin-bottom: 1.2rem;
+            max-width: 700px;
+        }
+
+        /* ── Responsive ─────────────────────────────────────────── */
+        .omega { color: rgba(255,60,60,0.45); font-size: 0.6rem; vertical-align: super; margin-left: 0.25rem; font-weight: 400; }
+        @media (max-width: 768px) {
+            .glossary-table { font-size: 0.8rem; }
+            .glossary-table thead th, .glossary-table tbody td { padding: 0.4rem 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="container">
+
+        <!-- Header -->
+        <div class="section-header text-center">
+            <h2 class="animated fadeInLeft">AI Governance Landscape</h2>
+            <div class="section-line"></div>
+            <p class="section-subtitle animated fadeInRight">Where products really sit.</p>
+        </div>
+
+        <div class="landscape-intro animated fadeIn">
+            When a product appears in the AI governance conversation, it gets classified here
+            using its own public-facing identity — <em>nothing hallucinated.</em>
+            Each product is assessed against the <a href="glossary.html" style="color:#8fd4a8;">SECS functional layers</a>
+            and assigned a compatibility tier and an architecture type.
+            The table measures what is claimed, what is demonstrated, and where it sits.
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             PRODUCT TABLE
+             ═══════════════════════════════════════════════════════ -->
+        <div class="landscape-section" id="product-map">
+            <h3><span class="sec-num">▸</span>Product Comparison</h3>
+            <p class="sec-desc">
+                Assessed against the 11 SECS functional layers: Admission · Rejection · Processing · Governance ·
+                Identity · Observation · Adaptation · Mutation · Enforcement · Recovery · Adaptor.
+            </p>
+            <table class="glossary-table">
+                <thead><tr><th>Product</th><th>As Promoted</th><th>SECS Tier</th><th>Architecture</th><th>Functional Layers</th></tr></thead>
+                <tbody>
+                    <tr class="product-row">
+                        <td class="prod-name">CARE</td>
+                        <td>"Execution-boundary governance architecture for AI and autonomous decision systems"</td>
+                        <td><span class="class-tag tier-adjacent">Adjacent</span></td>
+                        <td><span class="class-tag arch-description">Description</span></td>
+                        <td class="similar">Admission · Rejection · Governance · Enforcement</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">Elora Taurus</td>
+                        <td>"A proposal-to-commit control plane exploring architectures for governing AI systems"</td>
+                        <td><span class="class-tag tier-compatible">Compatible</span></td>
+                        <td><span class="class-tag arch-hot-path">Hot-Path</span></td>
+                        <td class="similar">Admission · Rejection · Processing · Governance · Observation · Mutation · Enforcement · Recovery</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">HEILLON</td>
+                        <td>"Registra cada decisão com prova criptográfica verificável" — Integrity Infrastructure</td>
+                        <td><span class="class-tag tier-adjacent">Adjacent</span></td>
+                        <td><span class="class-tag arch-sidecar">Sidecar</span></td>
+                        <td class="similar">Governance · Observation · Enforcement</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">S.E.A.L. / mck<span class="omega">Ω</span></td>
+                        <td>"Generative IP Architecture" — claims to eliminate trade-offs and defy physics</td>
+                        <td><span class="class-tag" style="background:rgba(255,60,60,0.1);color:#c44;border:1px solid rgba(255,60,60,0.2);">Not Classified</span></td>
+                        <td><span class="class-tag" style="background:rgba(255,60,60,0.1);color:#c44;border:1px solid rgba(255,60,60,0.2);">Not Classified</span></td>
+                        <td class="similar">None</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">Prompt Security</td>
+                        <td>"GenAI Security Platform" — enterprise AI security, acquired by SentinelOne</td>
+                        <td><span class="class-tag tier-adjacent">Adjacent</span></td>
+                        <td><span class="class-tag arch-wrapper">Wrapper</span></td>
+                        <td class="similar">Admission · Rejection · Observation · Enforcement</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">ANP / Sequoia Kernel</td>
+                        <td>"Deterministic AI for Mission-Critical Systems" — protocol specs for admissibility, no runtime</td>
+                        <td><span class="class-tag tier-adjacent">Adjacent</span></td>
+                        <td><span class="class-tag arch-policy-layer">Policy Layer</span></td>
+                        <td class="similar">Admission · Rejection · Governance · Identity · Enforcement</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">Underlight Systems<span class="omega">Ω</span></td>
+                        <td>"Fail-closed, deterministic execution substrate" — trademarked concepts, consulting diagnostic, no runtime</td>
+                        <td><span class="class-tag tier-adjacent">Adjacent</span></td>
+                        <td><span class="class-tag arch-description">Description</span></td>
+                        <td class="similar">Admission · Rejection · Governance · Observation · Enforcement</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">Orocore / CFF<span class="omega">Ω</span></td>
+                        <td>"Containment-First Framework" — renamed SECS algebra variables, no formal content, no verifiable entity</td>
+                        <td><span class="class-tag" style="background:rgba(255,60,60,0.1);color:#c44;border:1px solid rgba(255,60,60,0.2);">Not Classified</span></td>
+                        <td><span class="class-tag" style="background:rgba(255,60,60,0.1);color:#c44;border:1px solid rgba(255,60,60,0.2);">Not Classified</span></td>
+                        <td class="similar">None</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">OIP</td>
+                        <td>"Organic Intelligence Protocol" — $100B license for pseudoscientific PDF, IEEE 754 behaviour misrepresented as AI vulnerability, no code, no entity</td>
+                        <td><span class="class-tag" style="background:rgba(255,60,60,0.1);color:#c44;border:1px solid rgba(255,60,60,0.2);">Not Classified</span></td>
+                        <td><span class="class-tag" style="background:rgba(255,60,60,0.1);color:#c44;border:1px solid rgba(255,60,60,0.2);">Not Classified</span></td>
+                        <td class="similar">None</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">Watts Doctrine Family / WattsProtect™</td>
+                        <td>"The Watts Doctrine Protocol" — 8 trademarked governance frameworks (WattsProtect™, WattsAudit™, WattsComply™), policy-layer architecture, trust-before-execution framing</td>
+                        <td><span class="class-tag tier-adjacent">Adjacent</span></td>
+                        <td><span class="class-tag arch-policy-layer">Policy Layer</span></td>
+                        <td class="similar">Admission · Rejection · Governance · Observation · Identity · Recovery</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">HIL-AIW / The Spark / DPRE</td>
+                        <td>"Pre-execution governance engine" — deterministic execution, DPRE loop (Detect–Plan–Recover–Evolve), running TypeScript codebase with 16 demonstrated claims</td>
+                        <td><span class="class-tag tier-compatible">Compatible</span></td>
+                        <td><span class="class-tag arch-hot-path">Hot-Path</span></td>
+                        <td class="similar">Admission · Rejection · Processing · Governance · Observation · Identity · Enforcement · Recovery</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">IGA / Authored By U<span class="omega">Ω</span></td>
+                        <td>"Six Laws of Intelligence Governance" — 40+ provisional patents on SECS-adjacent concepts (priority Jan 3, 2026), 8 named primitives never defined, zero artefacts</td>
+                        <td><span class="class-tag" style="background:rgba(255,60,60,0.1);color:#c44;border:1px solid rgba(255,60,60,0.2);">Not Classified</span></td>
+                        <td><span class="class-tag" style="background:rgba(255,60,60,0.1);color:#c44;border:1px solid rgba(255,60,60,0.2);">Not Classified</span></td>
+                        <td class="similar">None — ⚠ PATENT</td>
+                    </tr>
+                    <tr class="product-row">
+                        <td class="prod-name">A2SPA / AImodularity</td>
+                        <td>"Agent-to-Secure Payload Authorization" — live API with RSA+SHA256 cryptographic signing, nonce replay protection, $0.01/verification billing, agent permissions dashboard</td>
+                        <td><span class="class-tag tier-adjacent">Adjacent</span></td>
+                        <td><span class="class-tag arch-wrapper">Wrapper</span></td>
+                        <td class="similar">Admission · Identity · Observation</td>
+                    </tr>
+                    <!-- ─── Template row ───
+                    <tr class="product-row">
+                        <td class="prod-name">Product Name</td>
+                        <td>Their own public description verbatim</td>
+                        <td><span class="class-tag tier-adjacent">Adjacent</span></td>
+                        <td><span class="class-tag arch-wrapper">Wrapper</span></td>
+                        <td class="similar">Admission · Rejection</td>
+                    </tr>
+                    -->
+                </tbody>
+            </table>
+
+            <p style="color:#555; font-size:0.8rem; margin-top:1rem; text-align:center;">
+                All classifications are based on publicly available architecture documentation and the product's own promotional material. Corrections welcome.
+            </p>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             COMPATIBILITY TIERING
+             ═══════════════════════════════════════════════════════ -->
+        <div class="landscape-section" id="tiering">
+            <h3><span class="sec-num">▸</span>SECS Compatibility Tier</h3>
+            <p class="sec-desc">
+                Three tiers describe how a product relates to the SECS governance substrate.
+                Tier is determined by evidence, not intent.
+            </p>
+
+            <div class="class-legend">
+                <div class="legend-item"><span class="class-tag tier-adjacent">SECS Adjacent</span> Operates in a related functional space. Shares terminology or intent with one or more SECS governance layers but is architecturally independent.</div><br>
+                <div class="legend-item"><span class="class-tag tier-compatible">SECS Compatible</span> Architecturally capable of adaptor integration. Could interface with the SECS substrate as a certified external process without structural conflict.</div><br>
+                <div class="legend-item"><span class="class-tag tier-compliant">SECS Compliant *</span> Has undergone proprietary SECS compliance assessment. No product currently holds this classification.</div>
+            </div>
+
+            <!-- ── Compliance Disclaimer ─────────────────────────── -->
+            <div style="margin-top:1.5rem; padding:1rem 1.2rem; background:rgba(100,200,140,0.04); border:1px solid rgba(100,200,140,0.12); border-radius:4px;">
+                <p style="color:#8fd4a8; font-size:0.82rem; font-weight:500; margin-bottom:0.4rem;">* SECS Compliant — Compliance Alpha</p>
+                <p style="color:#888; font-size:0.8rem; line-height:1.6; margin:0;">
+                    SECS Compliant classification requires proprietary assessment using SECS interface tooling.
+                    This includes automated drift analysis, critical field mapping, guardrail conformance testing,
+                    and deep codebase audit through certified adaptor development and deployment toolchains.
+                    No product currently holds this classification. Assessment is available under NDA.
+                </p>
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             ARCHITECTURE TYPES
+             ═══════════════════════════════════════════════════════ -->
+        <div class="landscape-section" id="architecture">
+            <h3><span class="sec-num">▸</span>Architecture Type</h3>
+            <p class="sec-desc">
+                Six architecture types describe where a product sits relative to the execution path.
+                Type is determined by what the product can structurally do, not what it claims to do.
+            </p>
+
+            <div class="class-legend">
+                <div class="legend-item"><span class="class-tag arch-hot-path">Hot-Path</span> Sits on the execution path. Can refuse, halt, transform.</div><br>
+                <div class="legend-item"><span class="class-tag arch-sidecar">Sidecar</span> Observes or audits alongside execution. Cannot halt.</div><br>
+                <div class="legend-item"><span class="class-tag arch-bolt-on">Bolt-On</span> Added after build. Retrofitted governance. Not architectural.</div><br>
+                <div class="legend-item"><span class="class-tag arch-wrapper">Wrapper</span> Wraps an existing system. Intercepts at API boundary only.</div><br>
+                <div class="legend-item"><span class="class-tag arch-policy-layer">Policy Layer</span> Defines rules. Does not enforce them at runtime.</div><br>
+                <div class="legend-item"><span class="class-tag arch-description">Description</span> Describes governance. Framework, taxonomy, or position paper.</div>
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             METHODOLOGY
+             ═══════════════════════════════════════════════════════ -->
+        <div class="landscape-section" id="methodology">
+            <h3><span class="sec-num">▸</span>How Products Are Classified</h3>
+            <p class="sec-desc">
+                Every product follows the same assessment workflow. No exceptions. No favours.
+            </p>
+
+            <table class="glossary-table">
+                <thead><tr><th>Step</th><th>What Happens</th></tr></thead>
+                <tbody>
+                    <tr><td style="color:#8fd4a8; font-weight:500; white-space:nowrap;">1. Capture</td><td>Public-facing content is captured: headline, about, featured, pinned, recent activity.</td></tr>
+                    <tr><td style="color:#8fd4a8; font-weight:500; white-space:nowrap;">2. Extract</td><td>Every architectural and technical claim is listed verbatim with its source location.</td></tr>
+                    <tr><td style="color:#8fd4a8; font-weight:500; white-space:nowrap;">3. Evidence</td><td>Each claim is classified: <strong>Demonstrated</strong> (code, spec, artefact), <strong>Described intent</strong> (narrative), <strong>Meta-claim</strong> (about the project), <strong>Tagline</strong>, or <strong>Personal context</strong>.</td></tr>
+                    <tr><td style="color:#8fd4a8; font-weight:500; white-space:nowrap;">4. Flag</td><td>Claims marked: ✅ Clear, ⚠ Ambiguous, or 🔴 Unsupported.</td></tr>
+                    <tr><td style="color:#8fd4a8; font-weight:500; white-space:nowrap;">5. Classify</td><td>SECS Tier + Architecture Type + Functional Layer mapping assigned based on evidence.</td></tr>
+                    <tr><td style="color:#8fd4a8; font-weight:500; white-space:nowrap;">6. Publish</td><td>Assessment file created. Table updated. Tracker synced.</td></tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top:1.5rem; padding:1rem 1.2rem; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:4px;">
+                <p style="color:#999; font-size:0.82rem; font-weight:500; margin-bottom:0.4rem;">Evidence Types</p>
+                <table class="glossary-table" style="margin:0;">
+                    <tbody>
+                        <tr><td style="color:#8fd4a8; font-weight:500; white-space:nowrap;">Demonstrated</td><td>Public code, protocol spec, API, runtime artefact, test results, or formal model.</td></tr>
+                        <tr><td style="color:#c9a84c; font-weight:500; white-space:nowrap;">Described intent</td><td>Stated in natural language — what it aims to do. No artefact.</td></tr>
+                        <tr><td style="color:#888; font-weight:500; white-space:nowrap;">Meta-claim</td><td>Statement about the project itself — versioning, protection, scope. Not technical.</td></tr>
+                        <tr><td style="color:#666; font-weight:500; white-space:nowrap;">Tagline</td><td>Marketing or branding language. Principle or slogan. Not testable.</td></tr>
+                        <tr><td style="color:#555; font-weight:500; white-space:nowrap;">Personal context</td><td>Biographical. Informs motivation, not architecture.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             DECISION TREES
+             ═══════════════════════════════════════════════════════ -->
+        <div class="landscape-section" id="decision-trees">
+            <h3><span class="sec-num">▸</span>Decision Trees</h3>
+
+            <p class="sec-desc">Tier Decision Tree</p>
+            <pre style="color:#999; font-size:0.78rem; line-height:1.6; background:rgba(255,255,255,0.02); padding:1rem; border-radius:4px; overflow-x:auto; border:1px solid rgba(255,255,255,0.06);">
+Is there a published runtime artefact, protocol, or formal spec?
+├─ YES → Could it interface with SECS substrate without conflict?
+│        ├─ YES → Has it passed proprietary SECS compliance assessment?
+│        │        ├─ YES → <span style="color:#8fd4a8;">SECS Compliant*</span>
+│        │        └─ NO  → <span style="color:#6ca8dc;">SECS Compatible</span>
+│        └─ NO  → <span style="color:#c9a84c;">SECS Adjacent</span> (architectural conflict)
+└─ NO  → Does it operate in a related functional space?
+         ├─ YES → <span style="color:#c9a84c;">SECS Adjacent</span>
+         └─ NO  → <span style="color:#c44;">Not classified</span> (outside scope)</pre>
+
+            <p class="sec-desc" style="margin-top:1.5rem;">Architecture Decision Tree</p>
+            <pre style="color:#999; font-size:0.78rem; line-height:1.6; background:rgba(255,255,255,0.02); padding:1rem; border-radius:4px; overflow-x:auto; border:1px solid rgba(255,255,255,0.06);">
+Does the product sit on the execution path and can it halt/refuse/transform?
+├─ YES → <span style="color:#6fb888;">Hot-Path</span>
+└─ NO  → Does it observe/audit alongside execution?
+         ├─ YES → <span style="color:#5a90b8;">Sidecar</span>
+         └─ NO  → Was it retrofitted onto an existing system?
+                  ├─ YES → <span style="color:#9a68a8;">Bolt-On</span>
+                  └─ NO  → Does it intercept at an API boundary?
+                           ├─ YES → <span style="color:#b89840;">Wrapper</span>
+                           └─ NO  → Does it define rules without runtime enforcement?
+                                    ├─ YES → <span style="color:#a8a850;">Policy Layer</span>
+                                    └─ NO  → <span style="color:#888;">Description</span></pre>
+        </div>
+
+
+        <!-- ── Footer ─────────────────────────────────────────── -->
+        <div style="text-align:center; color:#555; font-size:0.78rem; padding:2rem 0 3rem; border-top:1px solid rgba(255,255,255,0.06);">
+            Version 2026-03-31 · Jay Carpenter · SECS Sovereign<br>
+            Living document. Updated as the conversation evolves.
+        </div>
+
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter();</script>
+
+</body>
+</html>
