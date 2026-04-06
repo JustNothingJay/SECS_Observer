@@ -73,7 +73,7 @@
                 if (!preview) return;
 
                 card.innerHTML = preview.html;
-                link.setAttribute('href', 'journal.html' + (preview.id ? '#' + preview.id : ''));
+                link.setAttribute('href', 'journal.html');
             })
             .catch(function () {
                 // Keep static fallback content already present in index.html.
