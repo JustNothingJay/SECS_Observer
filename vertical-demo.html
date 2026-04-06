@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="SECS vertical deep dive — governed workflow examples for robotics, healthcare, automotive, defence, cybersecurity, and other safety-critical domains.">
+    <title>SECS Vertical Demo — Governed Workflow</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/vertical-demo.html">
+    <meta property="og:title" content="SECS Vertical Demo — Governed Workflow">
+    <meta property="og:description" content="Go one layer deeper into how SECS Sovereign manages real workflows inside each demo vertical.">
+    <meta property="og:image" content="https://secs.observer/assets/hero-banner.png">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SECS Vertical Demo — Governed Workflow">
+    <meta name="twitter:description" content="Real governed workflow examples for each SECS demo vertical.">
+    <meta name="twitter:image" content="https://secs.observer/assets/hero-banner.png">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css?v=2">
+    <script src="js/includes.js?v=2"></script>
+
+    <style>
+        .vertical-demo-page {
+            padding: 20px 0 60px;
+        }
+
+        .vertical-demo-hero {
+            max-width: 920px;
+            margin: 0 auto 42px;
+            text-align: center;
+        }
+
+        .vertical-demo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(0,178,255,0.22);
+            background: rgba(0,178,255,0.08);
+            color: var(--accent-blue);
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .vertical-demo-hero h2 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            margin-bottom: 12px;
+        }
+
+        .vertical-demo-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.85;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .vertical-demo-controls {
+            display: grid;
+            gap: 16px;
+            max-width: 1040px;
+            margin: 0 auto 28px;
+            padding: 22px;
+            border-radius: 12px;
+            background: linear-gradient(180deg, rgba(21,25,32,0.95), rgba(13,16,22,0.96));
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.22);
+        }
+
+        .vertical-demo-controls-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .vertical-demo-label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            margin-bottom: 7px;
+        }
+
+        .vertical-demo-select-wrap {
+            display: none;
+        }
+
+        .vertical-demo-select {
+            min-width: 260px;
+            width: 100%;
+            max-width: 340px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: #0f131a;
+            color: var(--text-primary);
+            padding: 12px 14px;
+            font-family: var(--font-mono);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image:
+                linear-gradient(45deg, transparent 50%, var(--text-primary) 50%),
+                linear-gradient(135deg, var(--text-primary) 50%, transparent 50%);
+            background-position:
+                calc(100% - 16px) calc(50% - 3px),
+                calc(100% - 11px) calc(50% - 3px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+            padding-right: 34px;
+            color-scheme: dark;
+        }
+
+        .vertical-demo-select:focus {
+            outline: none;
+            border-color: rgba(0,178,255,0.45);
+            box-shadow: 0 0 0 2px rgba(0,178,255,0.12);
+        }
+
+        .vertical-demo-switcher {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .vertical-demo-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.73rem;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+            cursor: pointer;
+        }
+
+        .vertical-demo-pill:hover,
+        .vertical-demo-pill.active {
+            color: var(--text-primary);
+            border-color: rgba(255,94,0,0.24);
+            background: rgba(255,94,0,0.08);
+        }
+
+        .vertical-demo-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .vertical-demo-column {
+            display: grid;
+            gap: 22px;
+        }
+
+        .vertical-demo-panel {
+            background: linear-gradient(180deg, rgba(21,25,32,0.95), rgba(13,16,22,0.96));
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 16px 36px rgba(0,0,0,0.22);
+        }
+
+        .vertical-demo-panel h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            margin: 0 0 16px;
+        }
+
+        .vertical-demo-panel h3 i {
+            color: var(--accent-orange);
+        }
+
+        .vertical-demo-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(72,230,98,0.08);
+            border: 1px solid rgba(72,230,98,0.18);
+            color: var(--accent-green);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 14px;
+        }
+
+        .vertical-demo-summary {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .vertical-demo-highlight {
+            margin-top: 18px;
+            padding: 18px 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255,94,0,0.12), rgba(0,178,255,0.08));
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .vertical-demo-highlight strong {
+            display: block;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .vertical-demo-highlight p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .vertical-demo-meta {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .vertical-demo-meta-item {
+            padding: 14px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .vertical-demo-meta-item span {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+
+        .vertical-demo-meta-item strong {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .vertical-demo-workflow {
+            display: grid;
+            gap: 12px;
+        }
+
+        .vertical-demo-step {
+            display: grid;
+            grid-template-columns: 46px 1fr;
+            gap: 14px;
+            align-items: start;
+            padding: 14px 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .vertical-demo-step:first-child {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .vertical-demo-step-index {
+            width: 46px;
+            height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(0,178,255,0.08);
+            border: 1px solid rgba(0,178,255,0.18);
+            color: var(--accent-blue);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+        }
+
+        .vertical-demo-step h4 {
+            margin: 0 0 6px;
+            font-size: 0.92rem;
+        }
+
+        .vertical-demo-step p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.86rem;
+            line-height: 1.7;
+        }
+
+        .vertical-demo-gain-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .vertical-demo-gain {
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.022);
+            padding: 18px;
+        }
+
+        .vertical-demo-gain h4 {
+            margin: 0 0 8px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .vertical-demo-gain p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.84rem;
+            line-height: 1.7;
+        }
+
+        .vertical-demo-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .vertical-demo-table th,
+        .vertical-demo-table td {
+            padding: 10px 0;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            vertical-align: top;
+        }
+
+        .vertical-demo-table th {
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            padding-right: 16px;
+            width: 34%;
+        }
+
+        .vertical-demo-table td {
+            color: var(--text-secondary);
+            font-size: 0.86rem;
+            line-height: 1.65;
+        }
+
+        .vertical-demo-table td strong {
+            color: var(--text-primary);
+        }
+
+        .vertical-demo-incident {
+            display: grid;
+            gap: 10px;
+        }
+
+        .vertical-demo-incident-item {
+            display: flex;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .vertical-demo-incident-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-top: 8px;
+            background: var(--accent-orange);
+            box-shadow: 0 0 0 4px rgba(255,94,0,0.08);
+            flex-shrink: 0;
+        }
+
+        .vertical-demo-incident-item p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.86rem;
+            line-height: 1.7;
+        }
+
+        .vertical-demo-regulators,
+        .vertical-demo-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .vertical-demo-regulators span,
+        .vertical-demo-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            font-size: 0.76rem;
+        }
+
+        .vertical-demo-links a:hover {
+            color: var(--text-primary);
+            border-color: rgba(0,178,255,0.22);
+            background: rgba(0,178,255,0.08);
+        }
+
+        .vertical-demo-empty {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 1100px) {
+            .vertical-demo-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .vertical-demo-meta,
+            .vertical-demo-gain-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 767px) {
+            .vertical-demo-hero h2 {
+                font-size: 1.85rem;
+            }
+
+            .vertical-demo-select-wrap {
+                display: block;
+                width: 100%;
+            }
+
+            .vertical-demo-switcher {
+                display: none;
+            }
+
+            .vertical-demo-meta,
+            .vertical-demo-gain-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .vertical-demo-panel,
+            .vertical-demo-controls {
+                padding: 18px;
+            }
+
+            .vertical-demo-select {
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="vertical-demo-page container">
+        <section class="vertical-demo-hero animated fadeInUp">
+            <div class="vertical-demo-badge"><i class="fa-solid fa-diagram-project"></i> Vertical Deep Dive</div>
+            <h2 id="vertical-title">Governed Workflow Demo</h2>
+            <p id="vertical-subtitle" class="vertical-demo-subtitle">A reusable deep-dive surface for showing what a real SECS-controlled workflow looks like inside each vertical.</p>
+        </section>
+
+        <section class="vertical-demo-controls animated fadeInUp">
+            <div class="vertical-demo-controls-top">
+                <div class="vertical-demo-select-wrap">
+                    <span class="vertical-demo-label">Current Vertical</span>
+                    <select id="vertical-select" class="vertical-demo-select"></select>
+                </div>
+                <div class="vertical-demo-links">
+                    <a href="sovereign.html"><i class="fa-solid fa-arrow-left"></i> Back to Sovereign</a>
+                    <a href="architecture.html"><i class="fa-solid fa-sitemap"></i> See Underlying Architecture</a>
+                </div>
+            </div>
+            <div id="vertical-switcher" class="vertical-demo-switcher"></div>
+        </section>
+
+        <div class="vertical-demo-layout animated fadeInUp">
+            <div class="vertical-demo-column">
+                <section class="vertical-demo-panel">
+                    <div id="vertical-kicker" class="vertical-demo-kicker"></div>
+                    <p id="vertical-summary" class="vertical-demo-summary"></p>
+                    <div class="vertical-demo-highlight">
+                        <strong id="vertical-mission-title"></strong>
+                        <p id="vertical-mission-summary"></p>
+                    </div>
+                    <div id="vertical-meta" class="vertical-demo-meta"></div>
+                </section>
+
+                <section class="vertical-demo-panel">
+                    <h3><i class="fa-solid fa-route"></i> Governed Workflow</h3>
+                    <div id="vertical-workflow" class="vertical-demo-workflow"></div>
+                </section>
+
+                <section class="vertical-demo-panel">
+                    <h3><i class="fa-solid fa-shield-halved"></i> What SECS Changes</h3>
+                    <div id="vertical-gains" class="vertical-demo-gain-grid"></div>
+                </section>
+            </div>
+
+            <div class="vertical-demo-column">
+                <section class="vertical-demo-panel">
+                    <h3><i class="fa-solid fa-sliders"></i> Demo Constraint Surface</h3>
+                    <table id="vertical-config" class="vertical-demo-table"></table>
+                </section>
+
+                <section class="vertical-demo-panel">
+                    <h3><i class="fa-solid fa-magnifying-glass-chart"></i> Incident and Replay</h3>
+                    <div id="vertical-incident" class="vertical-demo-incident"></div>
+                </section>
+
+                <section class="vertical-demo-panel">
+                    <h3><i class="fa-solid fa-scale-balanced"></i> Certification and Governance Fit</h3>
+                    <div id="vertical-regulators" class="vertical-demo-regulators"></div>
+                </section>
+
+                <section class="vertical-demo-panel">
+                    <h3><i class="fa-solid fa-layer-group"></i> Why This Page Exists</h3>
+                    <p class="vertical-demo-empty">This layer sits between the top-level substrate page and the deeper architecture explanation. It does not compare verticals side by side. It swaps one governed workflow template across domains so each demo stays clean, inspectable, and easy to share.</p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+
+    <span class="border-top"></span>
+    <span class="border-left"></span>
+    <span class="border-right"></span>
+    <span class="border-bottom"></span>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/vertical-demo.js"></script>
+    <script>
+        $(function(){
+            $('.toggle-nav').on('click', function(e){
+                e.preventDefault();
+                $('.menu-responsive').slideToggle(200);
+            });
+        });
+    </script>
+</body>
+</html>

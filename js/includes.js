@@ -29,6 +29,10 @@
         return '<li><a href="' + href + '"' + cls + '>' + label + '</a></li>';
     }
 
+    function disabledLi(label) {
+        return '<li><a href="#" class="nav-disabled" tabindex="-1" aria-disabled="true">' + label + '</a></li>';
+    }
+
     /* Group check — is current page inside a dropdown? */
     function groupActive(pages) {
         for (var i = 0; i < pages.length; i++) {
@@ -57,13 +61,15 @@
             li('architecture.html', 'Architecture'),
             li('neurotrophic.html', 'Neurotrophic OS'),
             li('sovereign.html', 'Sovereign'),
+            li('vertical-demo.html?vertical=robotics', 'Vertical Deep Dive'),
             li('gtf.html', 'GTF')
-        ], ['architecture.html', 'neurotrophic.html', 'sovereign.html', 'gtf.html']) +
+        ], ['architecture.html', 'neurotrophic.html', 'sovereign.html', 'gtf.html', 'vertical-demo.html']) +
         dropdown('Research', [
             li('research.html', 'Papers'),
             li('timeline.html', 'Timeline'),
-            li('citation-audit.html', 'Citation Audit')
-        ], ['research.html', 'timeline.html', 'citation-audit.html']) +
+            li('citation-audit.html', 'Citation Audit'),
+            disabledLi('Governed Console')
+        ], ['research.html', 'timeline.html', 'citation-audit.html', 'governed-console.html']) +
         dropdown('More', [
             li('terminal.html', 'Terminal'),
             li('game.html', 'The Game'),

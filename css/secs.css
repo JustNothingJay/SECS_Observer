@@ -169,6 +169,15 @@ h1, h2, h3, h4, h5 {
     background: rgba(255,255,255,0.04);
 }
 
+.main-menu li a.nav-disabled,
+.main-menu li a.nav-disabled:hover {
+    color: #5f6470;
+    background: transparent;
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.78;
+}
+
 /* Dropdown groups */
 .nav-group { position: relative; }
 .nav-group-toggle { cursor: pointer; }
@@ -244,6 +253,13 @@ h1, h2, h3, h4, h5 {
 .menu-responsive .nav-dropdown li a:hover,
 .menu-responsive .nav-dropdown li a.active {
     color: var(--text-primary) !important;
+}
+
+.menu-responsive .main-menu li a.nav-disabled,
+.menu-responsive .main-menu li a.nav-disabled:hover {
+    color: #5f6470 !important;
+    background: transparent !important;
+    pointer-events: none;
 }
 
 /* ── Section Layout ────────────────────────────────────────────────── */
@@ -840,21 +856,31 @@ h1, h2, h3, h4, h5 {
     color: var(--text-primary);
 }
 .pipeline-diagram {
-    background: rgba(0,0,0,0.3);
+    background: linear-gradient(180deg, rgba(8,10,14,0.98), rgba(14,18,24,0.98));
+    border: 1px solid rgba(0,178,255,0.16);
     border-radius: 6px;
     padding: 12px 16px;
     margin-bottom: 14px;
     text-align: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 .pipeline-diagram code {
-    color: var(--accent-orange);
+    color: #eef4ff;
     font-size: 0.82rem;
     letter-spacing: 0.3px;
+    text-shadow: 0 0 10px rgba(0,178,255,0.16);
 }
 
 /* ── VERTICAL ADAPTORS ───────────────────────────────────────────── */
 .sovereign-adaptors { margin-bottom: 50px; }
-.adaptor-grid { margin-bottom: 10px; }
+.adaptor-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.adaptor-grid > [class*="col-"] {
+    display: flex;
+}
 .adaptor-card {
     background: rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.06);
@@ -863,6 +889,8 @@ h1, h2, h3, h4, h5 {
     margin-bottom: 20px;
     transition: border-color 0.2s;
     height: calc(100% - 20px);
+    display: flex;
+    flex-direction: column;
 }
 .adaptor-card:hover {
     border-color: var(--accent-orange);
@@ -909,12 +937,65 @@ h1, h2, h3, h4, h5 {
 .adaptor-params strong {
     color: var(--accent-green);
 }
+.adaptor-actions {
+    margin-top: auto;
+    padding-top: 14px;
+}
+.adaptor-demo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--accent-blue);
+}
+.adaptor-demo-link i {
+    font-size: 0.7rem;
+}
+.adaptor-demo-link:hover {
+    color: var(--accent-orange);
+}
+.adaptor-legend {
+    color: var(--text-secondary);
+    background: linear-gradient(180deg, rgba(16,19,25,0.92), rgba(11,13,18,0.92));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 12px 16px;
+    line-height: 1.8;
+}
+.adaptor-legend code {
+    background: rgba(0,178,255,0.1);
+    color: #f2f7ff;
+    border: 1px solid rgba(0,178,255,0.18);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+}
+
+.explore-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.explore-row > [class*="col-"] {
+    display: flex;
+}
 
 @media (max-width: 767px) {
     .arch-row { grid-template-columns: 1fr; }
     .hierarchy-chain { flex-direction: column; }
     .hierarchy-arrow { transform: rotate(90deg); }
     .spec-grid { grid-template-columns: 1fr; }
+    .adaptor-grid,
+    .explore-row {
+        display: block;
+    }
+    .adaptor-grid > [class*="col-"],
+    .explore-row > [class*="col-"] {
+        display: block;
+    }
 }
 
 /* ── RESEARCH PAGE ─────────────────────────────────────────────────── */
