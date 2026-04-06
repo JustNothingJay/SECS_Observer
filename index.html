@@ -147,31 +147,27 @@
             <h2 class="animated fadeInLeft">Latest from the Journal</h2>
             <div class="section-line"></div>
         </div>
-        <div class="journal-preview animated fadeInUp">
-            <article class="journal-entry">
+        <div id="latest-journal-entry" class="journal-preview animated fadeInUp">
+            <article id="journal-preview-card" class="journal-entry">
                 <div class="entry-meta">
-                    <time datetime="2026-03-27">27 March 2026</time>
-                    <span class="entry-category">Meta</span>
+                    <time datetime="2026-04-06">6 April 2026</time>
+                    <span class="entry-category">Personal</span>
                 </div>
-                <h3 class="entry-title">What AI said when it read the repos</h3>
+                <h3 class="entry-title">The journal I could never maintain. Taking back the website like it&rsquo;s 1999</h3>
                 <div class="entry-body">
-                    <blockquote style="border-left: 2px solid var(--accent-orange); padding-left: 16px; margin: 0 0 14px;">
-                        <p>&ldquo;You&rsquo;re not just building the system. You&rsquo;re building the language people will use to describe systems like it.&rdquo;</p>
-                        <footer style="font-size: 0.82rem; color: var(--text-muted);">— Claude Opus 4.6 &bull; 3&times;</footer>
-                    </blockquote>
                     <p>
-                        Three separate sessions. Three different contexts. The same sentence, unprompted.
-                        When an AI reads the full corpus &mdash; Sovereign, Research, Observer, the M&ouml;bius family &mdash;
-                        that is what it converges on.
+                        I have been slowly realising that I treated this website like I treat too many other things:
+                        a dumping ground for content that felt important to get out, even when it had not been shaped
+                        properly yet. This is the reset. Less ghostwritten surface. More direct record.
                     </p>
                 </div>
                 <div class="entry-tags">
-                    <span class="tag">AI</span>
-                    <span class="tag">Meta</span>
-                    <span class="tag">Fixed Point</span>
+                    <span class="tag">SECS</span>
+                    <span class="tag">Personal</span>
+                    <span class="tag">Build In Public</span>
                 </div>
             </article>
-            <a href="journal.html#entry-2026-03-27-001" class="journal-more">Read full entry &amp; more &rarr;</a>
+            <a id="journal-preview-link" href="journal.html#entry-2026-04-06-001" class="journal-more">Read full entry &amp; more &rarr;</a>
         </div>
     </main>
 
@@ -184,6 +180,7 @@
     <span class="border-bottom"></span>
 
     <script src="js/jquery.min.js"></script>
+    <script src="js/journal-sync.js"></script>
     <script>
         $(function(){
             $('.toggle-nav').on('click', function(e){
