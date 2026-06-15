@@ -65,15 +65,28 @@
         }
 
         .console-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.95fr);
+            display: flex;
+            flex-wrap: wrap;
             gap: 22px;
-            align-items: start;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 100%;
         }
 
         .console-column {
             display: grid;
             gap: 22px;
+            min-width: 0;
+            flex: 1 1 360px;
+            max-width: 100%;
+        }
+
+        .console-column:first-child {
+            flex: 1.55 1 520px;
+        }
+
+        .console-column:last-child {
+            flex: 0.95 1 320px;
         }
 
         .console-panel {
@@ -82,6 +95,9 @@
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 16px 36px rgba(0,0,0,0.24);
+            min-width: 0;
+            max-width: 100%;
+            overflow-wrap: anywhere;
         }
 
         .console-panel-header {
@@ -90,6 +106,7 @@
             justify-content: space-between;
             gap: 14px;
             margin-bottom: 18px;
+            min-width: 0;
         }
 
         .console-panel-title {
@@ -99,6 +116,12 @@
             font-size: 1rem;
             letter-spacing: 0.2px;
             margin: 0;
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .console-panel-header .console-status-chip {
+            flex-shrink: 0;
         }
 
         .console-panel-title i {
@@ -291,8 +314,9 @@
 
         .console-citation-browser {
             display: grid;
-            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             gap: 16px;
+            min-width: 0;
         }
 
         .console-citation-list {
@@ -300,6 +324,8 @@
             gap: 10px;
             max-height: 520px;
             overflow-y: auto;
+            overflow-x: hidden;
+            min-width: 0;
             padding-right: 6px;
         }
 
@@ -340,6 +366,8 @@
             padding: 18px;
             background: rgba(255,255,255,0.018);
             min-height: 320px;
+            min-width: 0;
+            overflow-x: auto;
         }
 
         .console-evidence-list {
@@ -466,7 +494,12 @@
         }
 
         @media (max-width: 1100px) {
-            .console-layout,
+            .console-column,
+            .console-column:first-child,
+            .console-column:last-child {
+                flex: 1 1 100%;
+            }
+
             .console-citation-browser {
                 grid-template-columns: 1fr;
             }
@@ -474,6 +507,12 @@
             .console-summary-grid,
             .console-key-value {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1101px) and (max-width: 1320px) {
+            .console-citation-browser {
+                grid-template-columns: 1fr;
             }
         }
 
