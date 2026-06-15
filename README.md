@@ -31,7 +31,7 @@ No build step. No framework. No backend.
 | System Architecture | `architecture.html` | Six progressive architecture diagrams |
 | Sovereign | `sovereign.html` | Deterministic observation substrate — specs, use cases, adaptors |
 | Neurotrophic OS | `neurotrophic.html` | Behavioural observation and predictive modelling layer |
-| Research | `research.html` | 34 papers + 3 software packages across 6 categories, all DOI-registered |
+| Research | `research.html` | 47 published works · 37 Zenodo DOIs · 4 software packages |
 | Timeline | `timeline.html` | 90-day build log with filterable milestones |
 | Journal | `journal.html` | Announcements |
 | JJ's Fingerprint | `fingerprint.html` | Research fingerprint |
@@ -56,8 +56,8 @@ Open `index.html` in a browser. No install required.
 
 ## Related repositories
 
-- [SECS_Sovereign](https://github.com/JustNothingJay/SECS_Sovereign) — Core framework, papers, and scripts
-- [SECS_Research](https://github.com/JustNothingJay/SECS_Research) — DOI-registered paper corpus (34 papers + 3 software packages)
+- [SECS_Research](https://github.com/JustNothingJay/SECS_Research) — DOI-registered paper corpus (47 published works · 37 Zenodo DOIs)
+- SECS Sovereign substrate — private repository; live gate at [terminal.html](terminal.html) (`secs-sovereign.fly.dev`)
 - [mobius-constant](https://github.com/JustNothingJay/mobius-constant) — Exact irrational arithmetic
 - [mobius-number](https://github.com/JustNothingJay/mobius-number) — IEEE 754 floating-point fix
 - [mobius-integer](https://github.com/JustNothingJay/mobius-integer) — Dual-strand integer (Rust)

@@ -350,6 +350,86 @@ h1, h2, h3, h4, h5 {
     font-weight: 500;
 }
 
+/* Home proof strip */
+.proof-strip {
+    max-width: 920px;
+    margin: 0 auto 36px;
+    padding: 0 15px;
+}
+.proof-strip-inner {
+    padding: 28px 30px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(72, 230, 98, 0.08), rgba(0, 178, 255, 0.06));
+    border: 1px solid rgba(72, 230, 98, 0.22);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+}
+.proof-strip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    margin-bottom: 12px;
+}
+.proof-strip-inner h3 {
+    font-size: 1.45rem;
+    font-weight: 400;
+    margin: 0 0 10px;
+    color: var(--text-primary);
+}
+.proof-strip-copy p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin: 0 0 20px;
+    max-width: 720px;
+}
+.proof-strip-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.proof-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.proof-cta.primary {
+    background: rgba(72, 230, 98, 0.14);
+    border: 1px solid rgba(72, 230, 98, 0.45);
+    color: var(--accent-green);
+}
+.proof-cta.primary:hover {
+    background: rgba(72, 230, 98, 0.22);
+    color: #dfffe5;
+}
+.proof-cta.secondary {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+}
+.proof-cta.secondary:hover {
+    border-color: rgba(0, 178, 255, 0.35);
+    color: var(--text-primary);
+}
+.proof-strip-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+}
+.proof-strip-note a { color: var(--accent-blue); }
+
 /* Home project cards */
 .home-projects { padding: 20px 0; }
 .project-card {
