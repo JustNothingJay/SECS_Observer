@@ -31,7 +31,7 @@ SECS Observer is a static HTML site with a shared header, shared footer, common 
 | Shared styling | `css/secs.css` | Core design language across the site |
 | Page files | `*.html` in repo root | Each public surface is a standalone page |
 | Data-backed runtime surfaces | `game.html`, `terminal.html`, `governed-console.html` | Pages that talk to a live endpoint or local runtime |
-| Deep-dive explainer surfaces | `vertical-demo.html` | Template-driven page for domain workflow examples under Programme |
+| Deep-dive explainer surfaces | `vertical-demo.html` | Template-driven page for domain workflow examples under Systems |
 | Static documentation surfaces | `index.html`, `research.html`, `architecture.html`, etc. | Public explanation and evidence pages |
 
 There is no build step and no framework runtime.
@@ -79,7 +79,7 @@ The live navigation is grouped into five top-level paths.
 | Home | `index.html` | Main entry point and overview |
 | Founder | `founder.html` | Founder identity, motivation, and context |
 | JJ’s Fingerprint | `fingerprint.html` | Personal/research fingerprint page |
-| Programme | `architecture.html`, `neurotrophic.html`, `sovereign.html`, `vertical-demo.html?vertical=robotics`, `gtf.html` | Substrate, architecture, domain programmes, and vertical deep-dive entry |
+| Systems | `architecture.html`, `neurotrophic.html`, `sovereign.html`, `vertical-demo.html?vertical=robotics`, `gtf.html` | Substrate, architecture, domain systems (including GTF), and vertical deep-dive entry |
 | Research | `research.html`, `timeline.html`, `citation-audit.html`, `Governed Console (disabled/local-only)` | Evidence and audit surfaces |
 | More | `terminal.html`, `game.html`, `journal.html` | Interactive and secondary public surfaces |
 
@@ -95,14 +95,14 @@ The live navigation is grouped into five top-level paths.
 | `founder.html` | The Founder — SECS | Founder narrative and credibility surface |
 | `fingerprint.html` | JJ's Fingerprint — SECS | Identity and pattern surface |
 
-## Programme Pages
+## Systems Pages
 
 | File | Title | Role in UI |
 |---|---|---|
 | `architecture.html` | System Architecture — SECS | High-level architecture diagrams and explanatory sequencing |
 | `neurotrophic.html` | SECS Neurotrophic OS | Behavioral/predictive layer explanation |
 | `sovereign.html` | SECS Sovereign — Deterministic Execution and Collapse Substrate | Substrate, specs, adaptors, and operating model |
-| `vertical-demo.html` | SECS Vertical Demo — Governed Workflow | Per-vertical workflow deep-dive template reachable from Programme and adaptor demo links |
+| `vertical-demo.html` | SECS Vertical Demo — Governed Workflow | Per-vertical workflow deep-dive template reachable from Systems and adaptor demo links |
 | `gtf.html` | Gestational Timing Framework — SECS | Domain-specific biology framework surface |
 
 ## Research and Audit Pages
@@ -157,9 +157,9 @@ They exist to answer:
 
 These pages are explanatory, not operational.
 
-## Programme Cluster
+## Systems Cluster
 
-The Programme dropdown groups substrate specs, system architecture, domain programmes (including GTF), and vertical deep-dives — without labelling Sovereign as a framework.
+The Systems dropdown groups substrate specs, system architecture, domain systems (including GTF), and vertical deep-dives — without labelling Sovereign as a framework.
 
 | Page | UI Job |
 |---|---|

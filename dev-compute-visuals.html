@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>SECS — Dev Compute Visuals (local)</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<style>
+:root{--bg:#0a0a0a;--panel:#0d0d0d;--border:#1a2a1a;--text:#a0d2aa;--dim:#5a8a6a;--accent:#80c0a0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Courier New',Consolas,monospace;font-size:13px;line-height:1.65;}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 60px;}
+h1{font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:400;margin-bottom:4px;}
+.sub{color:var(--dim);font-size:11px;margin-bottom:28px;}
+h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:32px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:16px 18px;margin-bottom:14px;}
+.card h3{font-size:12px;color:var(--text);margin-bottom:8px;}
+.card p,.card li{color:rgba(160,210,170,.75);font-size:12px;}
+.card ul{margin:8px 0 0 18px;}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+a.btn{display:inline-block;padding:7px 14px;border:1px solid var(--border);border-radius:2px;color:var(--text);text-decoration:none;font-size:11px;transition:all .15s;}
+a.btn:hover{background:#1a2a1a;border-color:#2a4a2a;}
+a.btn.primary{border-color:#206a40;color:#c0f0c8;}
+a.btn.warn{border-color:#6a3020;color:#e0a080;}
+table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px;}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid #111;}
+th{color:var(--dim);font-weight:400;letter-spacing:.06em;}
+td code{color:#c8e8d0;}
+.mermaid{background:#080808;border:1px solid var(--border);border-radius:3px;padding:16px;margin:12px 0;overflow-x:auto;}
+.note{font-size:10px;color:var(--dim);margin-top:8px;}
+.tag{display:inline-block;padding:2px 6px;border:1px solid var(--border);border-radius:2px;font-size:9px;margin-right:4px;color:var(--dim);}
+.diff-add{color:#80e0a0;}
+.diff-chg{color:#e0c060;}
+.diff-new{color:#80b0e0;}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--dim);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Dev Compute Visuals</h1>
+  <p class="sub">Local-only hub · WebGL propagation shaders + pipeline maps · not linked from public nav</p>
+
+  <div class="card" style="border-color:#206a40">
+    <h3><span class="tag" style="color:#80c0a0;border-color:#206a40">HUMAN TEST PHASE</span> Ready for testers</h3>
+    <p>v3 now includes: <strong>onboarding overlay</strong>, <strong>lay-term narrator</strong> (bottom caption, press N to hide), <strong>SECS repo terrain</strong> (real dependency map from <code>SECS_Sovereign</code>).</p>
+    <div class="links">
+      <a class="btn primary" href="propagation.html">Start human test — v3</a>
+      <a class="btn" href="HUMAN-TEST-PHASE.md">Facilitator protocol</a>
+    </div>
+    <p class="note">Give testers no SECS lecture. Let them explore. Capture quotes in <code>human-test-feedback/</code>.</p>
+  </div>
+
+  <h2>Live shaders — open in browser</h2>
+  <div class="card">
+    <h3>SECS Collapse Propagation (browser FGPU)</h3>
+    <p>Full-window WebGL cellular automata. Topology texture = frozen doctrine (hard-drive distribution). State texture = collapse wavefront. Dual shader ping-pong each frame.</p>
+    <div class="links">
+      <a class="btn" href="propagation-v1.html">v1 — algebra core</a>
+      <a class="btn" href="propagation-v2.html">v2 — phases + healing</a>
+      <a class="btn primary" href="propagation.html">v3 — interactive panel</a>
+    </div>
+    <p class="note">Inspired by <a href="https://greenforest.io/cellular-automata-2019/cartilage3.html" style="color:var(--dim)">greenforest cartilage</a> · <a href="https://www.shadertoy.com/view/WsByDy" style="color:var(--dim)">Shadertoy WsByDy</a></p>
+  </div>
+
+  <h2>GPU pipeline (what runs each frame)</h2>
+  <div class="mermaid">
+flowchart TB
+  subgraph Host["Browser host JS"]
+    UI[Panel / mouse / keyboard]
+    Loop[requestAnimationFrame]
+    CPU[Phase logic · damage presets · metrics]
+  end
+  subgraph Tex["Float textures"]
+    TOPO[(u_topo — doctrine / damage / heal)]
+    S0[(u_state ping)]
+    S1[(u_state pong)]
+  end
+  subgraph GPU["WebGL shaders"]
+    P[PROPAGATE — α ν λ ρ algebra step]
+    R[RENDER — bands · veto · shutdown wave]
+  end
+  UI --> CPU --> Loop
+  Loop --> P
+  TOPO --> P
+  S0 --> P
+  P --> S1
+  S1 --> R
+  TOPO --> R
+  R --> CANVAS[Full-window canvas]
+  </div>
+
+  <h2>State encoding (per texel)</h2>
+  <div class="card">
+    <table>
+      <tr><th>Channel</th><th>State texture</th><th>Topology texture (v3)</th></tr>
+      <tr><td><code>R</code></td><td>status — 0 inactive, 1+ collapse age</td><td>current admissible (live topology)</td></tr>
+      <tr><td><code>G</code></td><td>generation — hop count from origin (λ-routing)</td><td>noise seed / FBM input</td></tr>
+      <tr><td><code>B</code></td><td>veto flag — rejection boundary</td><td>heal marker</td></tr>
+      <tr><td><code>A</code></td><td>reserved</td><td><span class="diff-new">original admissible</span> — heal wave uses this</td></tr>
+    </table>
+  </div>
+
+  <h2>Version diff — v1 → v2 → v3</h2>
+  <div class="card">
+    <table>
+      <tr><th>Feature</th><th>v1</th><th>v2</th><th>v3</th></tr>
+      <tr><td>Lines of code</td><td>~560</td><td>~640</td><td>~760</td></tr>
+      <tr><td>Layout</td><td>Canvas only + HUD</td><td>Canvas + HUD</td><td><span class="diff-new">Canvas + 260px config panel</span></td></tr>
+      <tr><td>Collapse algebra in shader</td><td class="diff-add">α ν λ ρ annotated in GLSL</td><td>Same core, refactored to string arrays</td><td>+ heal admissibility via topo.A</td></tr>
+      <tr><td>Topology</td><td>FBM noise → admissible mask</td><td>Seeded FBM + <span class="diff-chg">healGen in topo.B</span></td><td><span class="diff-new">topo.A = original doctrine</span> — damage erodes R, heal restores from A</td></tr>
+      <tr><td>Veto boundaries</td><td>Binary on void cells</td><td>Decay 0.97/frame on void</td><td>Same + stress meter driven by veto count</td></tr>
+      <tr><td>Render palette</td><td>φ̄ golden-ratio hue mapping</td><td><span class="diff-chg">Three green bands</span> + heal tint + origin pulse</td><td>+ damage red tint + shutdown grey wave</td></tr>
+      <tr><td>CPU phases</td><td>Click to inject only</td><td><span class="diff-chg">A homeostasis → B plasticity → C consolidation → D shutdown</span></td><td>User-driven modes instead of auto phase machine</td></tr>
+      <tr><td>Interaction</td><td>Click = inject signal</td><td>Click + auto phase transitions</td><td><span class="diff-new">D/H/O modes · brush · presets · beacon/pulse/single · sliders</span></td></tr>
+      <tr><td>Propagation modes</td><td>Single injection</td><td>Origin beacon pulse in render</td><td>Beacon perpetual emit + pulse + single in shader</td></tr>
+      <tr><td>Healing</td><td>—</td><td><code>healTopologyPass()</code> on CPU</td><td>GPU heal mode + plasticity slider + topology restore from A</td></tr>
+      <tr><td>Metrics HUD</td><td>frame · cells · collapsed</td><td>+ phase name · healed count</td><td>Panel: coverage · damaged · healed · est. time · stress bar</td></tr>
+    </table>
+    <p class="note" style="margin-top:12px"><strong>v1 → v2 (+226 LOC):</strong> Adds neurotrophic-style phase machine, topology healing on CPU, three-shade render bands, seeded topology, veto decay.<br>
+    <strong>v2 → v3 (+803 LOC):</strong> Replaces auto phases with full interactive dev panel; splits doctrine (topo.A) from live damage (topo.R); adds stress/shutdown/damage presets — the "dev tool" version.</p>
+  </div>
+
+  <h2>How to use Mermaid (free)</h2>
+  <div class="card">
+    <p><strong>Mermaid costs $0.</strong> Open-source (MIT). No account required for basic use.</p>
+    <ul>
+      <li><strong>This page</strong> — diagrams render via CDN below (works offline after first load if cached).</li>
+      <li><strong><a href="https://mermaid.live" style="color:var(--dim)">mermaid.live</a></strong> — paste code, export PNG/SVG (free).</li>
+      <li><strong>GitHub / GitLab</strong> — fenced <code>```mermaid</code> blocks in markdown render automatically.</li>
+      <li><strong>VS Code / Cursor</strong> — install "Mermaid" extension (free); preview in editor.</li>
+      <li><strong>Notion, Obsidian</strong> — native or plugin support.</li>
+    </ul>
+    <p style="margin-top:10px">Example — copy into mermaid.live:</p>
+    <pre style="background:#080808;border:1px solid var(--border);padding:10px;font-size:10px;overflow-x:auto;margin-top:6px;">flowchart LR
+  Damage[Damage brush] --> TopoR[topo.R erodes]
+  Heal[Heal mode] --> TopoA[read topo.A doctrine]
+  TopoA --> Restore[Restore admissibility]
+  Restore --> Wave[Collapse wave propagates]</pre>
+    <p class="note">Mermaid Cloud paid tiers exist for team features — you do not need them.</p>
+  </div>
+
+  <h2>D:\ dev mirror</h2>
+  <div class="card">
+    <p>Copies of these files also live at <code>D:\SECS-dev-visuals\</code> for work away from the public site repo. Open <code>dev-compute-visuals.html</code> from either location.</p>
+  </div>
+
+  <footer>SECS Observer · dev-compute-visuals.html · local / noindex · restored 2026-06-09</footer>
+</div>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: {
+    primaryColor: '#1a2a1a', primaryTextColor: '#a0d2aa', lineColor: '#5a8a6a',
+    secondaryColor: '#0d0d0d', tertiaryColor: '#111'
+  }});
+</script>
+</body>
+</html>

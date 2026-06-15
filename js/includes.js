@@ -57,7 +57,7 @@
         li('index.html', 'Home') +
         li('founder.html', 'Founder') +
         li('fingerprint.html', 'JJ\u2019s Fingerprint') +
-        dropdown('Programme', [
+        dropdown('Systems', [
             li('architecture.html', 'Architecture'),
             li('neurotrophic.html', 'Neurotrophic OS'),
             li('sovereign.html', 'Sovereign'),

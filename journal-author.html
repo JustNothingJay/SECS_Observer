@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="Private author helper for SECS journal entry creation.">
+    <title>Journal Author Helper — SECS</title>
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css?v=2">
+    <script src="js/includes.js?v=6"></script>
+
+    <style>
+        .author-helper-page { padding: 20px 0 60px; }
+        .author-helper-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .author-helper-grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .author-helper-grid .full { grid-column: 1 / -1; }
+        .author-helper-label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .author-helper-input,
+        .author-helper-select,
+        .author-helper-textarea {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: #0f131a;
+            color: var(--text-primary);
+            padding: 10px 12px;
+            font-family: var(--font-body);
+        }
+        .author-helper-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image:
+                linear-gradient(45deg, transparent 50%, var(--text-primary) 50%),
+                linear-gradient(135deg, var(--text-primary) 50%, transparent 50%);
+            background-position:
+                calc(100% - 16px) calc(50% - 3px),
+                calc(100% - 11px) calc(50% - 3px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+            padding-right: 32px;
+            color-scheme: dark;
+        }
+        .author-helper-input:focus,
+        .author-helper-select:focus,
+        .author-helper-textarea:focus {
+            outline: none;
+            border-color: rgba(0,178,255,0.45);
+            box-shadow: 0 0 0 2px rgba(0,178,255,0.12);
+        }
+        .author-helper-textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        .author-helper-hint {
+            margin-top: 6px;
+            color: var(--text-muted);
+            font-size: 0.76rem;
+            line-height: 1.5;
+        }
+        .author-required {
+            color: var(--accent-orange);
+            margin-left: 4px;
+        }
+        .author-helper-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .author-btn {
+            border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-primary);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.84rem;
+        }
+        .author-btn.primary {
+            border-color: rgba(0,178,255,0.28);
+            background: rgba(0,178,255,0.12);
+        }
+        .author-helper-note {
+            margin-top: 16px;
+            color: var(--text-secondary);
+            font-size: 0.86rem;
+            line-height: 1.7;
+        }
+        .author-helper-output {
+            margin-top: 20px;
+        }
+        .author-helper-output textarea {
+            min-height: 320px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+        }
+        .author-tags-builder {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 8px;
+        }
+        .author-tag-list {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 32px;
+        }
+        .author-tag-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            padding: 6px 10px;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            line-height: 1;
+        }
+        .author-tag-chip button {
+            border: 0;
+            background: transparent;
+            color: var(--text-muted);
+            padding: 0;
+            line-height: 1;
+            font-size: 0.85rem;
+        }
+        .author-tag-chip button:hover {
+            color: var(--accent-orange);
+        }
+        .author-helper-status {
+            margin-top: 12px;
+            color: #ffad9f;
+            font-size: 0.82rem;
+            min-height: 20px;
+        }
+        .author-helper-status.ok {
+            color: var(--accent-green);
+        }
+        @media (max-width: 767px) {
+            .author-helper-grid { grid-template-columns: 1fr; }
+            .author-helper-wrap { padding: 18px; }
+            .author-tags-builder { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="author-helper-page container">
+        <div class="section-header text-center">
+            <h2 class="animated fadeInLeft">Journal Author Helper</h2>
+            <div class="section-line"></div>
+            <p class="section-subtitle animated fadeInRight">Private helper page. Not linked in navigation.</p>
+        </div>
+
+        <section class="author-helper-wrap animated fadeInUp">
+            <div class="author-helper-grid">
+                <div>
+                    <label class="author-helper-label" for="entry-date">Date<span class="author-required">*</span></label>
+                    <input id="entry-date" class="author-helper-input" type="date" required>
+                    <div class="author-helper-hint">Used in both the visible date and the canonical entry id.</div>
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-category">Category<span class="author-required">*</span></label>
+                    <select id="entry-category" class="author-helper-select" required></select>
+                    <div class="author-helper-hint">Pulled from existing journal categories for consistency.</div>
+                </div>
+                <div class="full">
+                    <label class="author-helper-label" for="entry-title">Title<span class="author-required">*</span></label>
+                    <input id="entry-title" class="author-helper-input" type="text" placeholder="Clear entry title" required>
+                </div>
+                <div class="full">
+                    <label class="author-helper-label" for="entry-body">Body<span class="author-required">*</span></label>
+                    <textarea id="entry-body" class="author-helper-textarea" placeholder="Write paragraphs separated by a blank line.&#10;&#10;Paragraph one...&#10;&#10;Paragraph two..." required></textarea>
+                    <div class="author-helper-hint">Use a blank line between paragraphs. Output is wrapped in valid &lt;p&gt; tags automatically.</div>
+                </div>
+                <div class="full">
+                    <label class="author-helper-label" for="entry-quote">Quote block (optional)</label>
+                    <textarea id="entry-quote" class="author-helper-textarea" style="min-height:96px;" placeholder="Optional pull quote text"></textarea>
+                    <div class="author-helper-hint">If provided, this is generated as a styled blockquote before the selected image placement point.</div>
+                </div>
+                <div class="full">
+                    <label class="author-helper-label" for="entry-image-url">Image URL (optional)</label>
+                    <input id="entry-image-url" class="author-helper-input" type="url" placeholder="https://...">
+                    <div class="author-helper-hint">Use externally hosted images you are allowed to reference.</div>
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-image-alt">Image alt text</label>
+                    <input id="entry-image-alt" class="author-helper-input" type="text" placeholder="Short accessibility description">
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-image-caption">Image caption (optional)</label>
+                    <input id="entry-image-caption" class="author-helper-input" type="text" placeholder="Optional caption shown under image">
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-image-source">Source URL (optional)</label>
+                    <input id="entry-image-source" class="author-helper-input" type="url" placeholder="https://source-page-or-host">
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-image-placement">Image placement</label>
+                    <select id="entry-image-placement" class="author-helper-select">
+                        <option value="under_title">Under title</option>
+                        <option value="below_quote">Below quote</option>
+                        <option value="below_paragraph">Below paragraph #</option>
+                        <option value="bottom" selected>Bottom of entry body</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-image-paragraph">Paragraph number</label>
+                    <input id="entry-image-paragraph" class="author-helper-input" type="number" min="1" step="1" value="1">
+                    <div class="author-helper-hint">Used only when placement is set to below paragraph #.</div>
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-image-align">Image alignment</label>
+                    <select id="entry-image-align" class="author-helper-select">
+                        <option value="left">Left</option>
+                        <option value="center" selected>Center</option>
+                        <option value="right">Right</option>
+                    </select>
+                </div>
+                <div style="display:flex; align-items:end;">
+                    <label style="display:flex; align-items:center; gap:8px; margin:0; color:var(--text-secondary); font-size:0.84rem;">
+                        <input id="entry-image-disclaimer" type="checkbox" checked>
+                        Include external image source disclaimer
+                    </label>
+                </div>
+                <div class="full">
+                    <label class="author-helper-label" for="entry-tag-input">Tags<span class="author-required">*</span></label>
+                    <div class="author-tags-builder">
+                        <input id="entry-tag-input" class="author-helper-input" type="text" placeholder="Type a tag and click Add" list="tag-suggestions">
+                        <button id="add-tag" class="author-btn" type="button"><i class="fa-solid fa-plus"></i> Add Tag</button>
+                    </div>
+                    <datalist id="tag-suggestions"></datalist>
+                    <div id="entry-tag-list" class="author-tag-list"></div>
+                    <div class="author-helper-hint">Based on existing tag vocabulary. Add at least one tag (three+ recommended).</div>
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-linkedin">LinkedIn source URL (optional)</label>
+                    <input id="entry-linkedin" class="author-helper-input" type="url" placeholder="https://www.linkedin.com/...">
+                </div>
+                <div>
+                    <label class="author-helper-label" for="entry-slug">Entry id suffix<span class="author-required">*</span></label>
+                    <input id="entry-slug" class="author-helper-input" type="text" placeholder="001" required>
+                    <div class="author-helper-hint">Generates id like <span class="console-mono">entry-2026-04-06-001</span>.</div>
+                </div>
+            </div>
+
+            <div class="author-helper-actions">
+                <button id="build-entry" class="author-btn primary" type="button"><i class="fa-solid fa-hammer"></i> Build Entry Block</button>
+                <button id="copy-entry" class="author-btn" type="button"><i class="fa-solid fa-copy"></i> Copy Output</button>
+            </div>
+            <div id="author-status" class="author-helper-status"></div>
+
+            <p class="author-helper-note">
+                Workflow: build entry here, copy output, paste as the first <span class="console-mono">&lt;article class=&quot;journal-entry&quot;&gt;</span> block in <span class="console-mono">journal.html</span>. The homepage latest-journal section now auto-syncs from the first journal entry, so no second edit is required.
+            </p>
+
+            <div class="author-helper-output">
+                <label class="author-helper-label" for="entry-output">Generated HTML</label>
+                <textarea id="entry-output" class="author-helper-textarea" readonly></textarea>
+            </div>
+        </section>
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+
+    <span class="border-top"></span>
+    <span class="border-left"></span>
+    <span class="border-right"></span>
+    <span class="border-bottom"></span>
+
+    <script src="js/jquery.min.js"></script>
+    <script>
+        var CATEGORY_OPTIONS = [
+            'Biology','Collapse Algebra','Engineering','For JJ','Mathematics','MedTech','Meta','Meta-Theory','Metrology','Neurotrophic OS','Personal','Physics','Research','Sovereign'
+        ];
+
+        var TAG_OPTIONS = [
+            'Age Regression','AI','AI Governance','Banach','Banach Fixed Point','Biology','Biophysics','Brain Mapping','Build In Public','Claude Opus 4.6','CODATA','Collapse','Collapse Algebra','Computing','Constitutional Governance','Contraction','Deterministic AI','Developmental','DOHaD','Eigenvalue Tower','Fetal Monitoring','Fine Structure Constant','Fixed Point','For JJ','For Shanah','G&ouml;del','Gestational','Hebbian','IEEE 754','Irrational Constants','Klein Bottle','M&ouml;bius Family','M&ouml;bius Strip','Mathematics','MedTech','Meta','Meta-Theory','Metrology','Myelination','Neuroscience','Neurotrophic OS','NIRS','Nuclear Physics','Observability','Open Science','Open Source','Oxygen','Parity Violation','Particle Physics','Perinatal','Perinatal Health','Periodic Table','Personal','Physics','Pi Day','Python','R-007','Research','SECS','STDP','Structural Analysis','Structural Plasticity','Technetium','Topology','v2','Weak Force','Zenodo'
+        ];
+
+        var selectedTags = [];
+
+        function esc(s) {
+            return String(s || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function htmlDecode(s) {
+            var div = document.createElement('div');
+            div.innerHTML = s;
+            return div.textContent || div.innerText || '';
+        }
+
+        function setStatus(message, ok) {
+            var status = document.getElementById('author-status');
+            status.textContent = message || '';
+            status.className = 'author-helper-status' + (ok ? ' ok' : '');
+        }
+
+        function renderCategoryOptions() {
+            var select = document.getElementById('entry-category');
+            select.innerHTML = CATEGORY_OPTIONS.map(function (c) {
+                return '<option value="' + esc(c) + '">' + esc(c) + '</option>';
+            }).join('');
+            select.value = 'Research';
+        }
+
+        function renderTagSuggestions() {
+            var list = document.getElementById('tag-suggestions');
+            list.innerHTML = TAG_OPTIONS.map(function (t) {
+                return '<option value="' + esc(htmlDecode(t)) + '"></option>';
+            }).join('');
+        }
+
+        function renderTagChips() {
+            var wrap = document.getElementById('entry-tag-list');
+            wrap.innerHTML = selectedTags.map(function (tag, idx) {
+                return '<span class="author-tag-chip">' + esc(tag) +
+                    '<button type="button" data-remove-tag="' + idx + '" aria-label="Remove tag">&times;</button></span>';
+            }).join('');
+        }
+
+        function addTag(value) {
+            var tag = (value || '').trim();
+            if (!tag) return;
+            if (selectedTags.indexOf(tag) !== -1) return;
+            selectedTags.push(tag);
+            renderTagChips();
+            setStatus('', false);
+        }
+
+        function bindTagHandlers() {
+            var tagInput = document.getElementById('entry-tag-input');
+            document.getElementById('add-tag').addEventListener('click', function () {
+                addTag(tagInput.value);
+                tagInput.value = '';
+                tagInput.focus();
+            });
+            tagInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addTag(tagInput.value);
+                    tagInput.value = '';
+                }
+            });
+            document.getElementById('entry-tag-list').addEventListener('click', function (event) {
+                var btn = event.target.closest('[data-remove-tag]');
+                if (!btn) return;
+                var idx = Number(btn.getAttribute('data-remove-tag'));
+                if (isNaN(idx)) return;
+                selectedTags.splice(idx, 1);
+                renderTagChips();
+            });
+        }
+
+        function prettyDate(isoDate) {
+            var d = new Date(isoDate + 'T00:00:00');
+            if (isNaN(d.getTime())) return isoDate;
+            var day = d.getDate();
+            var month = d.toLocaleString('default', { month: 'long' });
+            var year = d.getFullYear();
+            return day + ' ' + month + ' ' + year;
+        }
+
+        function buildQuoteBlock(quoteText) {
+            if (!quoteText) return '';
+            return [
+                '                    <blockquote style="border-left: 2px solid var(--accent-orange); padding-left: 16px; margin: 0 0 14px;">',
+                '                        <p>' + esc(quoteText) + '</p>',
+                '                    </blockquote>'
+            ].join('\n');
+        }
+
+        function buildImageBlock(imageUrl, imageAlt, imageCaption, imageSource, imageAlign, includeDisclaimer) {
+            if (!imageUrl) return '';
+            var sourceHref = imageSource || imageUrl;
+            var align = imageAlign || 'center';
+            var captionText = imageCaption || 'External image reference.';
+            var figCaption = '';
+            if (includeDisclaimer) {
+                figCaption = '                        <figcaption style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">' +
+                    esc(captionText) + ' Source: <a href="' + esc(sourceHref) + '" target="_blank" rel="noopener noreferrer">' + esc(sourceHref) + '</a>' +
+                    '</figcaption>';
+            } else if (imageCaption) {
+                figCaption = '                        <figcaption style="margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">' + esc(imageCaption) + '</figcaption>';
+            }
+
+            return [
+                '                    <figure style="margin: 0 0 16px; text-align: ' + esc(align) + ';">',
+                '                        <img src="' + esc(imageUrl) + '" alt="' + esc(imageAlt) + '" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-subtle);">',
+                figCaption,
+                '                    </figure>'
+            ].filter(Boolean).join('\n');
+        }
+
+        function buildEntry() {
+            var date = document.getElementById('entry-date').value.trim();
+            var category = document.getElementById('entry-category').value.trim();
+            var title = document.getElementById('entry-title').value.trim();
+            var body = document.getElementById('entry-body').value.trim();
+            var quote = document.getElementById('entry-quote').value.trim();
+            var imageUrl = document.getElementById('entry-image-url').value.trim();
+            var imageAlt = document.getElementById('entry-image-alt').value.trim();
+            var imageCaption = document.getElementById('entry-image-caption').value.trim();
+            var imageSource = document.getElementById('entry-image-source').value.trim();
+            var imagePlacement = document.getElementById('entry-image-placement').value;
+            var imageParagraph = Number(document.getElementById('entry-image-paragraph').value || '1');
+            var imageAlign = document.getElementById('entry-image-align').value;
+            var includeImageDisclaimer = document.getElementById('entry-image-disclaimer').checked;
+            var linkedin = document.getElementById('entry-linkedin').value.trim();
+            var slug = document.getElementById('entry-slug').value.trim();
+
+            if (!date || !category || !title || !body || !slug) {
+                setStatus('Date, category, title, body, and id suffix are required.', false);
+                document.getElementById('entry-output').value = '';
+                return;
+            }
+
+            if (!/^\d{3}$/.test(slug)) {
+                setStatus('Entry id suffix must be 3 digits, e.g. 001.', false);
+                document.getElementById('entry-output').value = '';
+                return;
+            }
+
+            if (!selectedTags.length) {
+                setStatus('Add at least one tag to match existing entry structure.', false);
+                document.getElementById('entry-output').value = '';
+                return;
+            }
+
+            if (imageUrl && !imageAlt) {
+                setStatus('Alt text is required when an image URL is provided.', false);
+                document.getElementById('entry-output').value = '';
+                return;
+            }
+
+            if (imageUrl && imagePlacement === 'below_quote' && !quote) {
+                setStatus('Below quote placement requires a quote block.', false);
+                document.getElementById('entry-output').value = '';
+                return;
+            }
+
+            var entryId = 'entry-' + date + '-' + slug;
+            var paragraphBlocks = body.split(/\n\s*\n/).map(function (p) {
+                return '                    <p>' + esc(p.trim()) + '</p>';
+            });
+
+            if (imageUrl && imagePlacement === 'below_paragraph' && (isNaN(imageParagraph) || imageParagraph < 1 || imageParagraph > paragraphBlocks.length)) {
+                setStatus('Paragraph number for image placement must be between 1 and ' + paragraphBlocks.length + '.', false);
+                document.getElementById('entry-output').value = '';
+                return;
+            }
+
+            var imageBlock = buildImageBlock(imageUrl, imageAlt, imageCaption, imageSource, imageAlign, includeImageDisclaimer);
+            var quoteBlock = buildQuoteBlock(quote);
+            var bodyBlocks = [];
+
+            if (imageBlock && imagePlacement === 'under_title') {
+                bodyBlocks.push(imageBlock);
+            }
+
+            if (quoteBlock) {
+                bodyBlocks.push(quoteBlock);
+            }
+
+            if (imageBlock && imagePlacement === 'below_quote') {
+                bodyBlocks.push(imageBlock);
+            }
+
+            paragraphBlocks.forEach(function (paragraph, idx) {
+                bodyBlocks.push(paragraph);
+                if (imageBlock && imagePlacement === 'below_paragraph' && (idx + 1) === imageParagraph) {
+                    bodyBlocks.push(imageBlock);
+                }
+            });
+
+            if (imageBlock && imagePlacement === 'bottom') {
+                bodyBlocks.push(imageBlock);
+            }
+
+            var bodyHtml = bodyBlocks.join('\n\n');
+
+            var tagHtml = selectedTags
+                .map(function (tag) { return '                    <span class="tag">' + esc(tag) + '</span>'; })
+                .join('\n');
+
+            var linkedInHtml = linkedin
+                ? '\n                <a href="' + esc(linkedin) + '" target="_blank" rel="noopener noreferrer" class="entry-source">\n' +
+                  '                    <i class="fa-brands fa-linkedin"></i> Originally posted on LinkedIn\n' +
+                  '                </a>'
+                : '';
+
+            var output = [
+                '            <article class="journal-entry animated fadeInUp" id="' + esc(entryId) + '">',
+                '                <div class="entry-meta">',
+                '                    <time datetime="' + esc(date) + '">' + esc(prettyDate(date)) + '</time>',
+                '                    <span class="entry-category">' + esc(category) + '</span>',
+                '                </div>',
+                '                <h3 class="entry-title">' + esc(title) + '</h3>',
+                '                <div class="entry-body">',
+                bodyHtml,
+                '                </div>',
+                tagHtml ? '                <div class="entry-tags">\n' + tagHtml + '\n                </div>' : '',
+                linkedInHtml,
+                '            </article>'
+            ].filter(Boolean).join('\n');
+
+            document.getElementById('entry-output').value = output;
+            setStatus('Entry block generated. Paste it as the first article in journal.html.', true);
+        }
+
+        document.getElementById('build-entry').addEventListener('click', buildEntry);
+        document.getElementById('copy-entry').addEventListener('click', function () {
+            var out = document.getElementById('entry-output');
+            if (!out.value) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(out.value).then(function () {
+                    setStatus('Copied generated entry HTML to clipboard.', true);
+                }).catch(function () {
+                    out.select();
+                    document.execCommand('copy');
+                    setStatus('Copied generated entry HTML to clipboard.', true);
+                });
+                return;
+            }
+            out.select();
+            document.execCommand('copy');
+            setStatus('Copied generated entry HTML to clipboard.', true);
+        });
+
+        document.getElementById('entry-date').value = new Date().toISOString().slice(0, 10);
+        document.getElementById('entry-slug').value = '001';
+        renderCategoryOptions();
+        renderTagSuggestions();
+        bindTagHandlers();
+        addTag('SECS');
+        addTag('Research');
+
+        $(function(){
+            $('.toggle-nav').on('click', function(e){
+                e.preventDefault();
+                $('.menu-responsive').slideToggle(200);
+            });
+        });
+    </script>
+</body>
+</html>

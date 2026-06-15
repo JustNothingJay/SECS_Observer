@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SECS — Collapse Propagation v2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0a; overflow: hidden; font-family: 'Courier New', monospace; }
+        canvas { display: block; width: 100vw; height: 100vh; cursor: crosshair; }
+
+        #hud {
+            position: fixed; top: 16px; left: 16px;
+            color: rgba(160,210,170,0.7); font-size: 11px; line-height: 1.7;
+            pointer-events: none; z-index: 10;
+        }
+        #hud .val { color: rgba(200,240,200,0.9); }
+        #hud .dim { color: rgba(120,150,130,0.4); }
+        #hud .veto { color: rgba(255,80,80,0.6); }
+        #hud .heal { color: rgba(200,170,80,0.8); }
+        #hud .phase { color: rgba(140,200,160,0.9); font-weight: bold; }
+
+        #legend {
+            position: fixed; bottom: 16px; left: 16px;
+            color: rgba(140,180,150,0.5); font-size: 10px; line-height: 1.8;
+            pointer-events: none; z-index: 10;
+        }
+        #legend span { display: inline-block; width: 10px; height: 10px;
+            border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+        #legend .lbl { margin-right: 18px; }
+
+        #title-bar {
+            position: fixed; top: 16px; right: 16px;
+            text-align: right; pointer-events: none; z-index: 10;
+        }
+        #title-bar h1 {
+            color: rgba(200,240,200,0.15); font-size: 13px;
+            font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase;
+        }
+        #title-bar p {
+            color: rgba(200,240,200,0.08); font-size: 10px;
+            margin-top: 2px; letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud">
+    <div>frame <span class="val" id="h-frame">0</span></div>
+    <div>admissible <span class="val" id="h-cells">0</span> · collapsed <span class="val" id="h-collapsed">&mdash;</span></div>
+    <div>healed <span class="heal" id="h-healed">0</span> · vetoed <span class="veto" id="h-vetoed">&mdash;</span></div>
+    <div class="dim">topology: toroidal · <span id="h-size">512&sup2;</span></div>
+    <div class="dim">C = &#949;&#8728;&#961;&#8728;&#955;&#8728;&#957;&#8728;&#945; · C&sup2; = C · C&#8315;&sup1; &#8708;</div>
+    <div style="margin-top:4px;">neurotrophic: <span class="phase" id="h-phase">dormant</span></div>
+    <div class="dim" id="h-phase-desc"></div>
+</div>
+
+<div id="title-bar">
+    <h1>Collapse Propagation</h1>
+    <p>click to inject · r to reset · t to rebuild topology</p>
+</div>
+
+<div id="legend">
+    <span style="background:#1a2a1a;"></span><span class="lbl">admissible</span>
+    <span style="background:#111;"></span><span class="lbl">void</span>
+    <span style="background:#8fd4a8;"></span><span class="lbl">band 1</span>
+    <span style="background:#5a8a6a;"></span><span class="lbl">band 2</span>
+    <span style="background:#2d4d3a;"></span><span class="lbl">band 3</span>
+    <span style="background:rgba(255,60,60,0.5);"></span><span class="lbl">veto</span>
+    <span style="background:rgba(200,170,80,0.5);"></span><span class="lbl">healed</span>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   SECS COLLAPSE PROPAGATION v2
+   C = e.r.l.v.a  ·  C2 = C  ·  C-1 does not exist  ·  Im(C) = {w0, empty}
+
+   v2: Toroidal return to w0. Three-shade bands. Neurotrophic
+       healing: dead zones repair phase by phase (A-B-C-D-E).
+       Signal goes out, wraps, returns, converges to purity.
+   ═══════════════════════════════════════════════════════════════ */
+
+var GRID = 512;
+var canvas = document.getElementById('c');
+var gl = canvas.getContext('webgl', {
+    depth: false, stencil: false, antialias: false,
+    preserveDrawingBuffer: false, powerPreference: 'high-performance'
+});
+if (!gl) { document.body.innerHTML = '<p style="color:#a44;padding:40px;">WebGL not available.</p>'; throw 'no gl'; }
+
+gl.getExtension('OES_texture_float');
+gl.getExtension('OES_texture_float_linear');
+
+/* -- Fullscreen quad ----------------------------------------- */
+var quadBuf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+function makeShader(vSrc, fSrc) {
+    var vs = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vs, vSrc); gl.compileShader(vs);
+    if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) { console.error('VS:', gl.getShaderInfoLog(vs)); throw gl.getShaderInfoLog(vs); }
+    var fs = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fs, fSrc); gl.compileShader(fs);
+    if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) { console.error('FS:', gl.getShaderInfoLog(fs)); throw gl.getShaderInfoLog(fs); }
+    var p = gl.createProgram();
+    gl.attachShader(p, vs); gl.attachShader(p, fs);
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) { console.error('Link:', gl.getProgramInfoLog(p)); throw gl.getProgramInfoLog(p); }
+    return p;
+}
+
+var VERT = [
+    'attribute vec2 a_pos;',
+    'varying vec2 v_uv;',
+    'void main() {',
+    '    v_uv = a_pos * 0.5 + 0.5;',
+    '    gl_Position = vec4(a_pos, 0.0, 1.0);',
+    '}'
+].join('\n');
+
+/* ═══════════════════════════════════════════════════════════════
+   PROPAGATION SHADER
+   State: R=status(0=w0, 1+=active age), G=generation, B=veto, A=healed
+   ═══════════════════════════════════════════════════════════════ */
+var PROPAGATE = [
+    'precision highp float;',
+    'varying vec2 v_uv;',
+    'uniform sampler2D u_state;',
+    'uniform sampler2D u_topo;',
+    'uniform vec2 u_res;',
+    'uniform vec4 u_inject;',
+    'uniform float u_frame;',
+    '',
+    'vec4 readS(vec2 uv) { return texture2D(u_state, fract(uv)); }',
+    'float readT(vec2 uv) { return texture2D(u_topo, fract(uv)).r; }',
+    '',
+    'void main() {',
+    '    vec2 px = 1.0 / u_res;',
+    '    vec4 self = texture2D(u_state, v_uv);',
+    '    float topo = texture2D(u_topo, v_uv).r;',
+    '',
+    '    /* -- a: Admissibility -- void cells cannot collapse -- */',
+    '    if (topo < 0.5) {',
+    '        float vGlow = 0.0;',
+    '        vec4 sN = readS(v_uv + vec2(0.0, px.y));',
+    '        vec4 sS = readS(v_uv - vec2(0.0, px.y));',
+    '        vec4 sE = readS(v_uv + vec2(px.x, 0.0));',
+    '        vec4 sW = readS(v_uv - vec2(px.x, 0.0));',
+    '        if (readT(v_uv + vec2(0.0, px.y))  > 0.5 && sN.r >= 1.0 && sN.r < 12.0) vGlow += 1.0;',
+    '        if (readT(v_uv - vec2(0.0, px.y))  > 0.5 && sS.r >= 1.0 && sS.r < 12.0) vGlow += 1.0;',
+    '        if (readT(v_uv + vec2(px.x, 0.0))  > 0.5 && sE.r >= 1.0 && sE.r < 12.0) vGlow += 1.0;',
+    '        if (readT(v_uv - vec2(px.x, 0.0))  > 0.5 && sW.r >= 1.0 && sW.r < 12.0) vGlow += 1.0;',
+    '        float prevVeto = self.b;',
+    '        float newVeto = max(prevVeto * 0.97, vGlow > 0.0 ? 1.0 : 0.0);',
+    '        gl_FragColor = vec4(0.0, 0.0, newVeto, 0.0);',
+    '        return;',
+    '    }',
+    '',
+    '    /* -- Injection -- */',
+    '    if (u_inject.z > 0.5) {',
+    '        vec2 diff = abs(v_uv - u_inject.xy);',
+    '        diff = min(diff, 1.0 - diff);',
+    '        if (length(diff * u_res) < 3.0) {',
+    '            gl_FragColor = vec4(1.0, 0.0, 0.0, self.a);',
+    '            return;',
+    '        }',
+    '    }',
+    '',
+    '    /* -- Already collapsed: age toward w0 -- */',
+    '    if (self.r >= 1.0) {',
+    '        gl_FragColor = vec4(self.r + 1.0, self.g, self.b, self.a);',
+    '        return;',
+    '    }',
+    '',
+    '    /* -- v: Validation -- check neighbours for active signal -- */',
+    '    vec2 offsets[4];',
+    '    offsets[0] = vec2(px.x, 0.0);',
+    '    offsets[1] = vec2(-px.x, 0.0);',
+    '    offsets[2] = vec2(0.0, px.y);',
+    '    offsets[3] = vec2(0.0, -px.y);',
+    '',
+    '    float minGen = 99999.0;',
+    '    float found = 0.0;',
+    '    for (int i = 0; i < 4; i++) {',
+    '        vec2 nuv = v_uv + offsets[i];',
+    '        float nt = readT(nuv);',
+    '        vec4 ns = readS(nuv);',
+    '        if (nt > 0.5 && ns.r >= 1.0 && ns.r < 10.0) {',
+    '            found = 1.0;',
+    '            minGen = min(minGen, ns.g);',
+    '        }',
+    '    }',
+    '',
+    '    if (found < 0.5) {',
+    '        gl_FragColor = self;',
+    '        return;',
+    '    }',
+    '',
+    '    /* -- l + r: Route and react -- generation locked -- */',
+    '    gl_FragColor = vec4(1.0, minGen + 1.0, 0.0, self.a);',
+    '}'
+].join('\n');
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER SHADER — Three-shade bands, veto glow, healed cells
+   ═══════════════════════════════════════════════════════════════ */
+var RENDER = [
+    'precision highp float;',
+    'varying vec2 v_uv;',
+    'uniform sampler2D u_state;',
+    'uniform sampler2D u_topo;',
+    'uniform vec2 u_res;',
+    'uniform float u_frame;',
+    'uniform vec2 u_origin;',
+    'uniform float u_hasOrigin;',
+    '',
+    '/* Three shades of green -- the SECS palette */',
+    '/* Band 0: light sage   #8fd4a8 */',
+    '/* Band 1: mid green    #5a8a6a */',
+    '/* Band 2: deep forest  #2d4d3a */',
+    'vec3 bandColor(float gen) {',
+    '    float band = mod(gen, 3.0);',
+    '    if (band < 1.0) return vec3(0.561, 0.831, 0.659);',
+    '    if (band < 2.0) return vec3(0.353, 0.541, 0.416);',
+    '    return vec3(0.176, 0.302, 0.227);',
+    '}',
+    '',
+    'void main() {',
+    '    vec4 state = texture2D(u_state, v_uv);',
+    '    vec4 topoV = texture2D(u_topo, v_uv);',
+    '    float topo = topoV.r;',
+    '    float healGen = topoV.b;',
+    '    float status = state.r;',
+    '    float gen = state.g;',
+    '    float veto = state.b;',
+    '',
+    '    /* w0 purity colour -- everything converges here */',
+    '    vec3 omega0 = vec3(0.035, 0.065, 0.045);',
+    '',
+    '    /* -- Void (a = 0) -- */',
+    '    if (topo < 0.5) {',
+    '        if (veto > 0.05) {',
+    '            float v = veto * 0.4;',
+    '            gl_FragColor = vec4(v, 0.02 * veto, 0.01, 1.0);',
+    '        } else {',
+    '            gl_FragColor = vec4(0.018, 0.018, 0.018, 1.0);',
+    '        }',
+    '        return;',
+    '    }',
+    '',
+    '    /* -- Inactive admissible -- dim topology trace -- */',
+    '    if (status < 0.5) {',
+    '        vec3 base = omega0 * 1.2;',
+    '        if (healGen > 0.5) {',
+    '            base = vec3(0.06, 0.05, 0.03);',
+    '        }',
+    '        gl_FragColor = vec4(base, 1.0);',
+    '        return;',
+    '    }',
+    '',
+    '    /* -- Active cells -- three-shade bands -- */',
+    '    vec3 col = bandColor(gen);',
+    '    float age = status - 1.0;',
+    '',
+    '    /* Wavefront (age 0-8): bright leading edge */',
+    '    if (age < 8.0) {',
+    '        float bright = 1.0 - age / 8.0;',
+    '        bright = bright * bright;',
+    '        col = mix(col, vec3(0.92, 1.0, 0.94), bright * 0.65);',
+    '        col *= 0.5 + bright * 0.5;',
+    '        if (healGen > 0.5) {',
+    '            col = mix(col, vec3(0.8, 0.65, 0.3), 0.25 * bright);',
+    '        }',
+    '        gl_FragColor = vec4(col, 1.0);',
+    '        return;',
+    '    }',
+    '',
+    '    /* -- Post-collapse: fade to w0 -- */',
+    '    float fade = 1.0 / (1.0 + age * 0.006);',
+    '    col = mix(omega0, col * 0.3, fade);',
+    '',
+    '    if (healGen > 0.5) {',
+    '        vec3 healOmega = vec3(0.05, 0.045, 0.035);',
+    '        col = mix(healOmega, col, 0.7 + 0.3 * fade);',
+    '    }',
+    '',
+    '    gl_FragColor = vec4(col, 1.0);',
+    '',
+    '    /* -- Origin beacon -- */',
+    '    if (u_hasOrigin > 0.5) {',
+    '        vec2 diff = abs(v_uv - u_origin);',
+    '        diff = min(diff, 1.0 - diff);',
+    '        float d = length(diff * u_res);',
+    '        if (d < 5.0) {',
+    '            float pulse = 0.15 + 0.1 * sin(u_frame * 0.03);',
+    '            float ring = smoothstep(5.0, 3.5, d) * smoothstep(1.0, 2.5, d);',
+    '            gl_FragColor.rgb += vec3(pulse, pulse * 1.2, pulse * 0.8) * ring;',
+    '        }',
+    '    }',
+    '}'
+].join('\n');
+
+/* -- Compile programs ---------------------------------------- */
+var progProp = makeShader(VERT, PROPAGATE);
+var progRender = makeShader(VERT, RENDER);
+
+/* -- Textures & FBOs ----------------------------------------- */
+function createTex(data) {
+    var tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, data);
+    return tex;
+}
+
+function createFBO(tex) {
+    var fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    return fb;
+}
+
+/* -- Topology generation (doctrine -- frozen at boot) -------- */
+function generateTopology(seed) {
+    var data = new Float32Array(GRID * GRID * 4);
+    var S = seed || 0;
+
+    function hash(x, y) {
+        var h = (x * 374761393 + y * 668265263 + 1013904223 + S * 291731) | 0;
+        h = Math.imul(h ^ (h >>> 13), 1274126177);
+        h = h ^ (h >>> 16);
+        return (h & 0x7fffffff) / 0x7fffffff;
+    }
+
+    function noise(x, y) {
+        var ix = Math.floor(x), iy = Math.floor(y);
+        var fx = x - ix, fy = y - iy;
+        var sx = fx * fx * (3 - 2 * fx);
+        var sy = fy * fy * (3 - 2 * fy);
+        var n00 = hash(ix, iy), n10 = hash(ix + 1, iy);
+        var n01 = hash(ix, iy + 1), n11 = hash(ix + 1, iy + 1);
+        return n00*(1-sx)*(1-sy) + n10*sx*(1-sy) + n01*(1-sx)*sy + n11*sx*sy;
+    }
+
+    function fbm(x, y) {
+        var v = 0, amp = 0.5, freq = 1;
+        for (var i = 0; i < 5; i++) { v += amp * noise(x*freq, y*freq); amp *= 0.5; freq *= 2.1; }
+        return v;
+    }
+
+    var threshold = 0.38;
+    for (var y = 0; y < GRID; y++) {
+        for (var x = 0; x < GRID; x++) {
+            var nx = x / GRID * 6.0, ny = y / GRID * 6.0;
+            var wx = nx + 0.8 * fbm(nx + 3.2, ny + 1.3);
+            var wy = ny + 0.8 * fbm(nx + 5.4, ny + 2.7);
+            var val = fbm(wx, wy);
+            var idx = (y * GRID + x) * 4;
+            data[idx + 0] = val > threshold ? 1.0 : 0.0;
+            data[idx + 1] = val;
+            data[idx + 2] = 0.0;
+            data[idx + 3] = 1.0;
+        }
+    }
+    return data;
+}
+
+function emptyState() { return new Float32Array(GRID * GRID * 4); }
+
+/* -- Initialize ---------------------------------------------- */
+var topoSeed = 0;
+var topoData = generateTopology(topoSeed);
+var topoTex = createTex(topoData);
+
+var stateA = createTex(emptyState());
+var stateB = createTex(emptyState());
+var fboA = createFBO(stateA);
+var fboB = createFBO(stateB);
+var readTex = stateA, writeTex = stateB, writeFBO = fboB;
+
+function swapState() {
+    if (readTex === stateA) { readTex = stateB; writeTex = stateA; writeFBO = fboA; }
+    else { readTex = stateA; writeTex = stateB; writeFBO = fboB; }
+}
+
+function setUniforms(prog, uniforms) {
+    gl.useProgram(prog);
+    for (var name in uniforms) {
+        if (!uniforms.hasOwnProperty(name)) continue;
+        var val = uniforms[name];
+        var loc = gl.getUniformLocation(prog, name);
+        if (loc === null) continue;
+        if (typeof val === 'number') gl.uniform1f(loc, val);
+        else if (val.length === 2) gl.uniform2fv(loc, val);
+        else if (val.length === 4) gl.uniform4fv(loc, val);
+    }
+}
+
+function bindTexUnit(prog, name, unit, tex) {
+    gl.activeTexture(gl.TEXTURE0 + unit);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.uniform1i(gl.getUniformLocation(prog, name), unit);
+}
+
+function drawQuad(prog) {
+    var a = gl.getAttribLocation(prog, 'a_pos');
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+    gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(a);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NEUROTROPHIC HEALING -- Slow path
+
+   Phase A: Homeostasis        -- observe veto boundaries, no changes
+   Phase B: Structural Plast   -- identify candidate dead zones
+   Phase C: Fault Repair       -- heal cells with >=3 admissible neighbours
+   Phase D: Temporal Learning   -- heal cells with >=2 admissible neighbours
+   Phase E: Meta-Integrate     -- heal cells with >=1 admissible neighbour
+
+   Each phase lasts ~3 seconds (180 frames at 60fps).
+   Healing only starts after wavefront has had time to propagate.
+   ═══════════════════════════════════════════════════════════════ */
+var PHASE_FRAMES = 180;
+var HEAL_INTERVAL = 30;
+
+var phaseNames = ['dormant', 'A \u00B7 homeostasis', 'B \u00B7 structural plasticity',
+    'C \u00B7 fault repair', 'D \u00B7 temporal learning', 'E \u00B7 meta-integrate', 'equilibrium'];
+var phaseDescs = ['',
+    'observing veto boundaries',
+    'identifying candidate dead zones',
+    'healing narrow gaps (\u22653 neighbours)',
+    'expanding repair (\u22652 neighbours)',
+    'full integration (\u22651 neighbour)',
+    'all healable zones patched'];
+var phaseThresholds = [0, 0, 0, 3, 2, 1, 0];
+
+var currentPhase = 0;
+var phaseStartFrame = 0;
+var totalHealed = 0;
+var lastHealFrame = 0;
+
+var admissibleCount = 0;
+for (var ci = 0; ci < topoData.length; ci += 4) { if (topoData[ci] > 0.5) admissibleCount++; }
+
+function healTopologyPass(threshold) {
+    var marks = [];
+    for (var y = 0; y < GRID; y++) {
+        for (var x = 0; x < GRID; x++) {
+            var idx = (y * GRID + x) * 4;
+            if (topoData[idx] > 0.5) continue;
+
+            var count = 0;
+            var nx = (x + 1) % GRID, px_ = (x - 1 + GRID) % GRID;
+            var ny = (y + 1) % GRID, py = (y - 1 + GRID) % GRID;
+            if (topoData[(y * GRID + nx) * 4] > 0.5) count++;
+            if (topoData[(y * GRID + px_) * 4] > 0.5) count++;
+            if (topoData[(ny * GRID + x) * 4] > 0.5) count++;
+            if (topoData[(py * GRID + x) * 4] > 0.5) count++;
+
+            if (count >= threshold) marks.push(idx);
+        }
+    }
+
+    for (var m = 0; m < marks.length; m++) {
+        topoData[marks[m] + 0] = 1.0;
+        topoData[marks[m] + 2] = currentPhase;
+    }
+
+    if (marks.length > 0) {
+        totalHealed += marks.length;
+        admissibleCount += marks.length;
+        gl.bindTexture(gl.TEXTURE_2D, topoTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, topoData);
+    }
+
+    return marks.length;
+}
+
+function updatePhase(f) {
+    if (currentPhase === 0 || currentPhase >= 6) return;
+
+    var elapsed = f - phaseStartFrame;
+    if (elapsed >= PHASE_FRAMES) {
+        if (currentPhase < 5) {
+            currentPhase++;
+            phaseStartFrame = f;
+        } else {
+            currentPhase = 6;
+        }
+    }
+
+    if (currentPhase >= 3 && currentPhase <= 5) {
+        if (f - lastHealFrame >= HEAL_INTERVAL) {
+            healTopologyPass(phaseThresholds[currentPhase]);
+            lastHealFrame = f;
+        }
+    }
+}
+
+/* -- State --------------------------------------------------- */
+var inject = [0, 0, 0, 0];
+var origin = [0, 0];
+var hasOrigin = 0;
+var frame = 0;
+var lastInjectFrame = -1;
+
+/* -- Resize -------------------------------------------------- */
+function resize() {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+}
+window.addEventListener('resize', resize);
+resize();
+
+/* -- Input --------------------------------------------------- */
+canvas.addEventListener('mousedown', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width;
+    var y = 1.0 - (e.clientY - rect.top) / rect.height;
+    inject = [x, y, 1.0, frame];
+    origin = [x, y];
+    hasOrigin = 1;
+    lastInjectFrame = frame;
+    currentPhase = 1;
+    phaseStartFrame = frame;
+    totalHealed = 0;
+});
+
+canvas.addEventListener('mousemove', function(e) {
+    if (e.buttons !== 1) return;
+    var rect = canvas.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width;
+    var y = 1.0 - (e.clientY - rect.top) / rect.height;
+    inject = [x, y, 1.0, frame];
+});
+
+canvas.addEventListener('mouseup', function() { inject[2] = 0; });
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'r' || e.key === 'R') {
+        gl.bindTexture(gl.TEXTURE_2D, stateA);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, emptyState());
+        gl.bindTexture(gl.TEXTURE_2D, stateB);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, emptyState());
+        currentPhase = 0; hasOrigin = 0; totalHealed = 0; lastInjectFrame = -1;
+    }
+    if (e.key === 't' || e.key === 'T') {
+        topoSeed++;
+        topoData = generateTopology(topoSeed);
+        admissibleCount = 0;
+        for (var ti = 0; ti < topoData.length; ti += 4) { if (topoData[ti] > 0.5) admissibleCount++; }
+        gl.bindTexture(gl.TEXTURE_2D, topoTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, topoData);
+        gl.bindTexture(gl.TEXTURE_2D, stateA);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, emptyState());
+        gl.bindTexture(gl.TEXTURE_2D, stateB);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, GRID, GRID, 0, gl.RGBA, gl.FLOAT, emptyState());
+        currentPhase = 0; hasOrigin = 0; totalHealed = 0; lastInjectFrame = -1;
+    }
+});
+
+/* -- Render loop --------------------------------------------- */
+var STEPS_PER_FRAME = 3;
+
+function tick() {
+    var i;
+    for (i = 0; i < STEPS_PER_FRAME; i++) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, writeFBO);
+        gl.viewport(0, 0, GRID, GRID);
+        gl.useProgram(progProp);
+        setUniforms(progProp, {
+            u_res: [GRID, GRID],
+            u_inject: inject,
+            u_frame: frame
+        });
+        bindTexUnit(progProp, 'u_state', 0, readTex);
+        bindTexUnit(progProp, 'u_topo', 1, topoTex);
+        drawQuad(progProp);
+        swapState();
+        if (i === 0 && inject[2] > 0.5) inject = [inject[0], inject[1], 0, inject[3]];
+    }
+
+    updatePhase(frame);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.useProgram(progRender);
+    setUniforms(progRender, {
+        u_res: [GRID, GRID],
+        u_frame: frame,
+        u_origin: origin,
+        u_hasOrigin: hasOrigin
+    });
+    bindTexUnit(progRender, 'u_state', 0, readTex);
+    bindTexUnit(progRender, 'u_topo', 1, topoTex);
+    drawQuad(progRender);
+
+    frame++;
+    if (frame % 15 === 0) {
+        document.getElementById('h-frame').textContent = frame;
+        document.getElementById('h-cells').textContent = admissibleCount.toLocaleString();
+        document.getElementById('h-size').textContent = GRID + '\u00B2';
+        document.getElementById('h-healed').textContent = totalHealed.toLocaleString();
+
+        if (lastInjectFrame >= 0) {
+            var elapsed = (frame - lastInjectFrame) * STEPS_PER_FRAME;
+            var maxDist = GRID * 0.72;
+            var coverage = Math.min(elapsed / maxDist, 1.0);
+            var collapsed = Math.floor(admissibleCount * coverage);
+            document.getElementById('h-collapsed').textContent = collapsed.toLocaleString();
+
+            if (coverage < 1.0) {
+                var vetoEdge = Math.floor(collapsed * 0.05);
+                document.getElementById('h-vetoed').textContent = vetoEdge.toLocaleString();
+            } else {
+                document.getElementById('h-collapsed').textContent = admissibleCount.toLocaleString();
+                document.getElementById('h-vetoed').textContent = '0 (complete)';
+            }
+        }
+
+        var pi = Math.min(currentPhase, 6);
+        document.getElementById('h-phase').textContent = phaseNames[pi];
+        document.getElementById('h-phase-desc').textContent = phaseDescs[pi];
+    }
+
+    requestAnimationFrame(tick);
+}
+
+tick();
+</script>
+</body>
+</html>
