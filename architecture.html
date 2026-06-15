@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/secs.css?v=2">
-    <script src="js/includes.js?v=2"></script>
+    <script src="js/includes.js?v=4"></script>
 
     <style>
         /* ── Architecture Page ─────────────────────────────────── */
@@ -61,26 +61,65 @@
             color: var(--text-light);
         }
 
-        /* Architecture diagram images */
-        .arch-img-stack {
+        /* Mermaid diagrams */
+        .arch-diagram {
             margin: 24px 0;
         }
-        .arch-img-stack img {
-            display: block;
-            width: 100%;
-            max-width: 720px;
-            margin: 0 auto;
-            border-radius: 6px;
+        .arch-diagram .mermaid {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
         }
-        .arch-img-single {
-            margin: 24px 0;
+        .arch-diagram-caption {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-align: center;
         }
-        .arch-img-single img {
-            display: block;
-            width: 100%;
-            max-width: 720px;
-            margin: 0 auto;
+
+        /* Hover tips — pipeline steps and adaptor rows */
+        .arch-step[data-tip],
+        .arch-table tbody tr[data-tip] {
+            position: relative;
+            cursor: help;
+        }
+        .arch-step[data-tip]::after,
+        .arch-table tbody tr[data-tip]::after {
+            content: attr(data-tip);
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 10px);
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 280px;
+            padding: 10px 12px;
+            background: var(--bg-card);
+            border: 1px solid rgba(0,178,255,0.25);
             border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            line-height: 1.45;
+            color: var(--text-secondary);
+            text-align: left;
+            white-space: normal;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s, visibility 0.15s;
+            z-index: 20;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+        .arch-table tbody tr[data-tip]::after {
+            bottom: auto;
+            top: calc(100% + 6px);
+        }
+        .arch-step[data-tip]:hover::after,
+        .arch-table tbody tr[data-tip]:hover::after {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* Phase cards */
@@ -500,7 +539,8 @@
             .arch-steps { flex-direction: column; }
             .arch-step-arrow { transform: rotate(90deg); }
             .arch-cockpit-row, .arch-adaptor-row { flex-direction: column; }
-            .arch-img-stack img, .arch-img-single img { max-width: 100%; }
+            .arch-step[data-tip]::after,
+            .arch-table tbody tr[data-tip]::after { display: none; }
             .arch-gov-chain { flex-direction: column; gap: 4px; }
             .proof-panel { padding: 20px 16px; }
         }
@@ -548,14 +588,76 @@
                 <div class="arch-section animated fadeInUp">
                     <h3><i class="fa-solid fa-layer-group"></i> System Layers</h3>
                     <p>
-                        Every signal travels one path, top to bottom. No branches. No ambiguity.
+                        Every signal travels one path, top to bottom. External sources hit a physics-only perimeter;
+                        the Go Atom kernel dispatches; the TypeScript runtime runs the collapse chain; governance and
+                        topology bound what may change; the neurotrophic slow path observes without blocking.
                     </p>
 
-                    <div class="arch-img-stack">
-                        <img src="assets/arch/arch-01-external-world.png" alt="External World — real-time data, simulation inputs, human decisions">
-                        <img src="assets/arch/arch-02-connector-atom.png" alt="Connector ingress boundary and Atom sovereign dispatch kernel">
-                        <img src="assets/arch/arch-03-collapse-pipeline.png" alt="Collapse Pipeline — five sequential irreversible transformations">
-                        <img src="assets/arch/arch-04-governance-topology.png" alt="Governance Filtration and Topology seed graph">
+                    <div class="arch-diagram">
+                        <pre class="mermaid">
+flowchart TB
+    EXT["External World"] --> PERIM["Perimeter / Connector"]
+    PERIM --> ATOM["Atom kernel — Go"]
+    ATOM --> PIPE["Collapse pipeline α ν λ ρ ε"]
+    PIPE --> GOV["Governance G₀…G₄ + topology"]
+    GOV --> NEURO["Neurotrophic slow path A–E"]
+    NEURO -.->|"bounded feedback"| PIPE
+    PIPE --> ADP["Adaptors STABLE / VOLATILE"]
+    ADP --> EXT
+
+    classDef layer fill:#141820,stroke:#00B2FF,color:#e0e2e8
+    class EXT,PERIM,ATOM,PIPE,GOV,NEURO,ADP layer
+                        </pre>
+                        <p class="arch-diagram-caption">Combined stack — same traversal as <a href="sovereign.html">Sovereign emit chain</a></p>
+                    </div>
+
+                    <div class="arch-diagram">
+                        <pre class="mermaid">
+flowchart TB
+    subgraph EXT["External World"]
+        RT["Real-time streams"]
+        SIM["Simulation / test"]
+        HUM["Human overrides"]
+        DOM["Domain systems"]
+    end
+    subgraph BOUNDARY["Ingress — physics only"]
+        PERIM["Perimeter Engine"]
+    end
+    RT --> PERIM
+    SIM --> PERIM
+    HUM --> PERIM
+    DOM --> PERIM
+    PERIM -->|"admissible sparks"| CONN["Connector / Atom"]
+
+    classDef ext fill:#161920,stroke:#00B2FF,color:#e0e2e8
+    classDef gate fill:#1a2418,stroke:#48e662,color:#dfffe5
+    class EXT ext
+    class BOUNDARY,PERIM gate
+                        </pre>
+                    </div>
+
+                    <div class="arch-diagram">
+                        <pre class="mermaid">
+flowchart LR
+    subgraph INGRESS["Connector"]
+        CONN["Connector Atom"]
+        IDBAN["13 forbidden fields stripped"]
+    end
+    subgraph ATOM["Atom kernel — Go"]
+        BOOT["Load doctrine"]
+        DISP["Dispatch · 7.05 ns/op"]
+    end
+    subgraph RUNTIME["Substrate — TypeScript"]
+        SUB["Spark · Accept · Route · React · Extinguish · Emit"]
+    end
+    CONN --> IDBAN --> BOOT --> DISP --> SUB
+
+    classDef go fill:#1a1f14,stroke:#48e662,color:#e0e2e8
+    classDef ts fill:#141820,stroke:#00B2FF,color:#e0e2e8
+    class ATOM,BOOT,DISP go
+    class RUNTIME,SUB ts
+                        </pre>
+                        <p class="arch-diagram-caption">Identity-free ingress — 13 constitutional fields never enter the substrate</p>
                     </div>
                 </div>
 
@@ -563,32 +665,49 @@
                 <div class="arch-section animated fadeInUp">
                     <h3><i class="fa-solid fa-arrows-turn-to-dots"></i> Collapse Pipeline</h3>
                     <p>
-                        Five sequential, irreversible transformations. Each signal enters the pipeline once
-                        and exits as either a resolved output or a veto. No branching. No partial pass.
+                        Spark through Emit — the same emit chain as <a href="sovereign.html">Sovereign</a>.
+                        Greek operators (&alpha;&nu;&lambda;&rho;&epsilon;) name the irreversible transforms inside Accept&ndash;Extinguish.
+                        Each signal traverses once and exits as resolved output, governance proof, or structural veto.
                     </p>
 
-                    <div class="arch-steps">
-                        <div class="arch-step"><strong>&alpha;</strong><span class="step-label">Admissibility</span></div>
-                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-                        <div class="arch-step"><strong>&nu;</strong><span class="step-label">Validation</span></div>
-                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-                        <div class="arch-step"><strong>&lambda;</strong><span class="step-label">Routing</span></div>
-                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-                        <div class="arch-step"><strong>&rho;</strong><span class="step-label">Reaction</span></div>
-                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
-                        <div class="arch-step"><strong>&epsilon;</strong><span class="step-label">Extinction</span></div>
+                    <div class="arch-diagram">
+                        <pre class="mermaid">
+flowchart LR
+    SPARK["Spark in"] --> ALPHA["α Admissibility"]
+    ALPHA -->|pass| NU["ν Validation"]
+    ALPHA -->|veto| V1["VETO"]
+    NU --> LAM["λ Routing"]
+    LAM --> RHO["ρ Reaction"]
+    RHO --> EPS["ε Extinction"]
+    EPS --> EMIT["Emit proof"]
+
+    classDef pipe fill:#121820,stroke:#00B2FF,color:#e0e2e8
+    classDef veto fill:#2a1212,stroke:#FF5E00,color:#ffd8c8
+    class SPARK,ALPHA,NU,LAM,RHO,EPS,EMIT pipe
+    class V1 veto
+                        </pre>
                     </div>
 
-                    <div class="arch-flow-item"><span class="flow-num">&alpha;</span> Is this signal admissible? Binary gate, no partial pass.</div>
-                    <div class="arch-flow-item"><span class="flow-num">&nu;</span> Collapse possibility to well-formed element.</div>
-                    <div class="arch-flow-item"><span class="flow-num">&lambda;</span> Collapse to exactly one reaction path. No branching.</div>
-                    <div class="arch-flow-item"><span class="flow-num">&rho;</span> Deterministic reaction. Same input &rarr; same output.</div>
-                    <div class="arch-flow-item"><span class="flow-num">&epsilon;</span> Extinguish to purity (&omega;&#8320;). Nothing persists uncommitted.</div>
+                    <div class="arch-steps">
+                        <div class="arch-step" data-tip="Ingress envelope — real-time, simulation, or adaptor HTTP surface"><strong>Spark</strong><span class="step-label">Ingress</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step" data-tip="Binary gate — constitutional α₀ and adaptor αᵥ must both pass; no partial admission"><strong>&alpha;</strong><span class="step-label">Admissibility</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step" data-tip="Collapse to a well-formed element — malformed structure is structurally impossible"><strong>&nu;</strong><span class="step-label">Validation</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step" data-tip="Exactly one reaction path — branching is vetoed, not queued"><strong>&lambda;</strong><span class="step-label">Routing</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step" data-tip="Deterministic reaction — same admissible input always yields the same output"><strong>&rho;</strong><span class="step-label">Reaction</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step" data-tip="Return substrate to ω₀ purity — nothing persists uncommitted across the boundary"><strong>&epsilon;</strong><span class="step-label">Extinction</span></div>
+                        <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="arch-step" data-tip="HMAC-signed governance proof — replayable audit artifact for regulators and operators"><strong>Emit</strong><span class="step-label">Proof</span></div>
+                    </div>
 
                     <p style="margin-top: 20px;">
-                        <strong>C&sup2; = C</strong> &mdash; Collapse is a projection. Applying it twice changes nothing.<br>
-                        <strong>C&sup1;&#8315; &nexist;</strong> &mdash; Collapse is irreversible.<br>
-                        Six veto classes can reject at any stage. Vetoed signals are <strong>structurally impossible</strong>, not filtered.
+                        <strong>C&sup2; = C</strong> &mdash; collapse is a projection.<br>
+                        <strong>C&sup1;&#8315; &nexist;</strong> &mdash; irreversible at every stage.<br>
+                        Vetoed signals are <strong>structurally impossible</strong>, not filtered or retried.
                     </p>
                 </div>
 
@@ -610,6 +729,31 @@
                         <span class="arch-gov-layer">G&#8323;</span>
                         <span class="arch-gov-subset">&sube;</span>
                         <span class="arch-gov-layer">G&#8324;</span>
+                    </div>
+
+                    <div class="arch-diagram">
+                        <pre class="mermaid">
+flowchart TB
+    subgraph GOV["Governance filtration G₀ ⊆ G₁ ⊆ G₂ ⊆ G₃ ⊆ G₄"]
+        G0["G₀ Principles"] --> G1["G₁ Algebra"] --> G2["G₂ Axioms"] --> G3["G₃ Surface"] --> G4["G₄ Envelopes"]
+    end
+    subgraph SURFACES["Runtime surfaces"]
+        FROZEN["Constraint surface — FROZEN"]
+        MUTABLE["Adaptation surface — MUTABLE"]
+    end
+    subgraph TOPO["Topology seed graph"]
+        S1["Seed A"] <-->|"governed adjacency"| S2
+        S2 <-->|"governed adjacency"| S3["Seed C"]
+    end
+    G4 --> FROZEN
+    FROZEN -.->|"bounds"| MUTABLE
+    FROZEN --> TOPO
+
+    classDef gov fill:#1f1814,stroke:#FF5E00,color:#e0e2e8
+    classDef topo fill:#141820,stroke:#00B2FF,color:#e0e2e8
+    class GOV,G0,G1,G2,G3,G4,FROZEN gov
+    class MUTABLE,TOPO,S1,S2,S3 topo
+                        </pre>
                     </div>
 
                     <div class="arch-adaptor-row">
@@ -641,8 +785,25 @@
                         but the fast path continues running unchanged through every adaptation cycle.
                     </p>
 
-                    <div class="arch-img-single">
-                        <img src="assets/arch/arch-05-neurotrophic-layer.png" alt="Neurotrophic Layer — fast path and slow path with Phases A through E">
+                    <div class="arch-diagram">
+                        <pre class="mermaid">
+flowchart TB
+    subgraph FAST["Fast path — collapse pipeline"]
+        FP["α → ν → λ → ρ → ε — unchanged during adaptation"]
+    end
+    subgraph SLOW["Slow path — neurotrophic layer"]
+        A["Phase A Homeostasis"] --> B["Phase B Plasticity"] --> C["Phase C Fault repair"]
+        C --> D["Phase D Temporal learning"] --> E["Phase E Meta-learning"]
+    end
+    FP -->|"observe metrics"| A
+    E -->|"bounded feedback"| MUTABLE["Adaptation surface"]
+    MUTABLE -.->|"never blocks"| FP
+
+    classDef fast fill:#121820,stroke:#00B2FF,color:#e0e2e8
+    classDef slow fill:#1a2418,stroke:#48e662,color:#e0e2e8
+    class FAST,FP fast
+    class SLOW,A,B,C,D,E,MUTABLE slow
+                        </pre>
                     </div>
 
                     <div class="arch-phases">
@@ -677,8 +838,32 @@
                         HTTP boundary only. The substrate never changes &mdash; only the adaptor configuration surface changes.
                     </p>
 
-                    <div class="arch-img-single">
-                        <img src="assets/arch/arch-06-adaptor-architecture.png" alt="Adaptor Architecture — Burn Orchestrator, STABLE and VOLATILE registries">
+                    <div class="arch-diagram">
+                        <pre class="mermaid">
+flowchart TB
+    subgraph VERTICALS["Industry verticals"]
+        HC["Healthcare"] & FT["Fintech"] & DF["Defence"] & EN["Energy"]
+    end
+    subgraph ADAPTORS["Certified adaptors — external"]
+        STREG["STABLE · 30–80 ms"]
+        VLREG["VOLATILE · 20–500 ms"]
+    end
+    subgraph CORE["Substrate — unchanged"]
+        BURN["Burn Orchestrator"] --> PIPE["Collapse + governance"] --> COCK["Dual-lane cockpit"]
+    end
+    HC & FT & DF & EN -->|"HTTP only"| STREG
+    HC & FT & DF & EN -->|"HTTP only"| VLREG
+    STREG --> BURN
+    VLREG --> BURN
+
+    classDef ext fill:#161920,stroke:#8b8f9a,color:#e0e2e8
+    classDef stable fill:#121820,stroke:#00B2FF,color:#e0e2e8
+    classDef volatile fill:#1f1814,stroke:#FF5E00,color:#e0e2e8
+    class VERTICALS,HC,FT,DF,EN ext
+    class STREG,BURN,PIPE,COCK stable
+    class VLREG volatile
+                        </pre>
+                        <p class="arch-diagram-caption">Same substrate — different constraint surface per vertical. Try a workflow in <a href="vertical-demo.html?vertical=healthcare">Vertical Deep Dive</a>.</p>
                     </div>
 
                     <div class="arch-adaptor-row">
@@ -714,20 +899,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr data-proof="fintech"><td><strong>Fintech</strong></td><td>MiFID II, SOX</td><td>Proven</td></tr>
-                                <tr data-proof="healthcare"><td><strong>Healthcare</strong></td><td>HIPAA, FDA 21 CFR Part 11</td><td>Proven</td></tr>
-                                <tr data-proof="defence"><td><strong>Defence</strong></td><td>NATO STANAG 4586, MIL-STD-882E</td><td>Proven</td></tr>
-                                <tr data-proof="insurance"><td><strong>Insurance</strong></td><td>Solvency II, IDD</td><td>Proven</td></tr>
-                                <tr data-proof="legal"><td><strong>Legal</strong></td><td>EU AI Act (Art. 14), ECHR Art. 6</td><td>Adaptor-ready</td></tr>
-                                <tr data-proof="energy"><td><strong>Energy</strong></td><td>NERC CIP, IEC 62443</td><td>Proven</td></tr>
-                                <tr data-proof="automotive"><td><strong>Automotive</strong></td><td>ISO 26262, SOTIF (ISO 21448)</td><td>Proven</td></tr>
-                                <tr data-proof="cybersecurity"><td><strong>Cybersecurity</strong></td><td>NIST CSF 2.0, SOC 2 Type II</td><td>Proven</td></tr>
-                                <tr data-proof="supplychain"><td><strong>Supply Chain</strong></td><td>EU CSRD, CSDDD, Basel III</td><td>Proven</td></tr>
-                                <tr data-proof="edtech"><td><strong>EdTech</strong></td><td>FERPA, COPPA, EU GDPR (Art. 22)</td><td>Adaptor-ready</td></tr>
-                                <tr data-proof="governedai"><td><strong>Governed AI</strong></td><td>No standard (substrate layer)</td><td>Proven</td></tr>
+                                <tr data-proof="fintech" data-tip="Example: AAPL BUY 500 @ 187.42 — α₀ ∧ αᵥ gate; userId and accountId blocked"><td><strong>Fintech</strong></td><td>MiFID II, SOX</td><td>Proven</td></tr>
+                                <tr data-proof="healthcare" data-tip="Example: MRI follow-up evt — PHI stripped; flat maxDepth:1 audit trail"><td><strong>Healthcare</strong></td><td>HIPAA, FDA 21 CFR Part 11</td><td>Proven</td></tr>
+                                <tr data-proof="defence" data-tip="Example: HOSTILE classification — human override required or unconditional veto"><td><strong>Defence</strong></td><td>NATO STANAG 4586, MIL-STD-882E</td><td>Proven</td></tr>
+                                <tr data-proof="insurance" data-tip="Example: AUTO claim $12,500 — jurisdiction + complianceFlag mandatory"><td><strong>Insurance</strong></td><td>Solvency II, IDD</td><td>Proven</td></tr>
+                                <tr data-proof="legal" data-tip="Example: criminal case HIGH severity — transparencyFlag + humanReview required"><td><strong>Legal</strong></td><td>EU AI Act (Art. 14), ECHR Art. 6</td><td>Adaptor-ready</td></tr>
+                                <tr data-proof="energy" data-tip="Example: ELEVATED grid load — safetyMargin must stay positive or hold"><td><strong>Energy</strong></td><td>NERC CIP, IEC 62443</td><td>Proven</td></tr>
+                                <tr data-proof="automotive" data-tip="Example: ASIL_D path plan — UNKNOWN_UNSAFE without emergency braking = veto"><td><strong>Automotive</strong></td><td>ISO 26262, SOTIF (ISO 21448)</td><td>Proven</td></tr>
+                                <tr data-proof="cybersecurity" data-tip="Example: LATERAL_MOVEMENT alert — CRITICAL cannot escalate to LOG only"><td><strong>Cybersecurity</strong></td><td>NIST CSF 2.0, SOC 2 Type II</td><td>Proven</td></tr>
+                                <tr data-proof="supplychain" data-tip="Example: TIER_2 ESG risk — sanctionsCheck BLOCKED is unconditional reject"><td><strong>Supply Chain</strong></td><td>EU CSRD, CSDDD, Basel III</td><td>Proven</td></tr>
+                                <tr data-proof="edtech" data-tip="Example: Grade 6–8 adaptive path — K–5 requires COPPA complianceFlag"><td><strong>EdTech</strong></td><td>FERPA, COPPA, EU GDPR (Art. 22)</td><td>Adaptor-ready</td></tr>
+                                <tr data-proof="governedai" data-tip="Example: agent file delete — full envelope chain replayable; kill switch revokes adaptor"><td><strong>Governed AI</strong></td><td>No standard (substrate layer)</td><td>Proven</td></tr>
                             </tbody>
                         </table>
-                        <p class="arch-table-note"><i class="fa-solid fa-hand-pointer" style="color: var(--accent-blue); margin-right: 6px;"></i>Click any row to see how &ldquo;Proven&rdquo; is defined for that vertical.</p>
+                        <p class="arch-table-note"><i class="fa-solid fa-hand-pointer" style="color: var(--accent-blue); margin-right: 6px;"></i>Hover for an example event; click any row for the full proof definition.</p>
                     </div>
                 </div>
 
@@ -835,24 +1020,21 @@
                     </div>
                 </div>
 
-                <!-- ── EXECUTION SUMMARY ── -->
+                <!-- ── END-TO-END PATH ── -->
                 <div class="arch-section animated fadeInUp">
-                    <h3><i class="fa-solid fa-route"></i> Execution Summary</h3>
+                    <h3><i class="fa-solid fa-route"></i> End-to-End Path</h3>
                     <p>
-                        Signal to resolution. One path.
+                        Ingress through adaptation — one traversal. Collapse operators are detailed above; this is the full cycle including kernel dispatch and slow-path feedback.
                     </p>
 
-                    <div class="arch-flow-item"><span class="flow-num">1</span> Signal arrives</div>
-                    <div class="arch-flow-item"><span class="flow-num">2</span> Connector validates (ingress boundary)</div>
-                    <div class="arch-flow-item"><span class="flow-num">3</span> Atom dispatches (O(1) Instamap lookup)</div>
-                    <div class="arch-flow-item"><span class="flow-num">4</span> Collapse pipeline executes (&alpha; &rarr; &nu; &rarr; &lambda; &rarr; &rho; &rarr; &epsilon;)</div>
-                    <div class="arch-flow-item"><span class="flow-num">5</span> Admissible? &mdash; No &rarr; VETOED (structurally impossible)</div>
-                    <div class="arch-flow-item"><span class="flow-num">6</span> Deterministic reaction produces output</div>
-                    <div class="arch-flow-item"><span class="flow-num">7</span> Extinction returns substrate to purity (&omega;&#8320;)</div>
-                    <div class="arch-flow-item"><span class="flow-num">8</span> Telemetry emitted to neurotrophic layer (read-only)</div>
-                    <div class="arch-flow-item"><span class="flow-num">9</span> Neurotrophic layer accumulates, learns, adapts (slow path)</div>
-                    <div class="arch-flow-item"><span class="flow-num">10</span> Prediction confidence threshold met &rarr; adaptation surface mutates</div>
-                    <div class="arch-flow-item"><span class="flow-num">11</span> Fast path continues. It doesn&rsquo;t know anything changed.</div>
+                    <div class="arch-flow-item"><span class="flow-num">1</span> Signal arrives at perimeter (rate, volume, burst)</div>
+                    <div class="arch-flow-item"><span class="flow-num">2</span> Connector strips 13 forbidden identity fields</div>
+                    <div class="arch-flow-item"><span class="flow-num">3</span> Atom dispatches via Instamap (O(1), zero alloc)</div>
+                    <div class="arch-flow-item"><span class="flow-num">4</span> Spark &rarr; Emit collapse chain runs (or structural veto)</div>
+                    <div class="arch-flow-item"><span class="flow-num">5</span> Governance proof emitted — HMAC-signed, replayable</div>
+                    <div class="arch-flow-item"><span class="flow-num">6</span> Telemetry read by neurotrophic layer (never blocks fast path)</div>
+                    <div class="arch-flow-item"><span class="flow-num">7</span> Phases A&ndash;E adjust adaptation surface within frozen bounds</div>
+                    <div class="arch-flow-item"><span class="flow-num">8</span> Fast path continues unchanged — substrate purity restored each cycle</div>
                 </div>
 
                 <!-- ── CLOSING ── -->
@@ -909,7 +1091,7 @@
                     'maxDepth: 1 (flat metadata) satisfies CFR Part 11 audit simplicity requirement',
                     'anomalyThreshold: 3 (3\u00D7 tighter than default) for early clinical anomaly detection'
                 ],
-                proven: 'HIPAA PHI fields are blocked by constitutional predicate in addition to the standard 14-field identity block. FDA audit simplicity enforced by maxDepth:1 (flat). No patient identity enters the governance layer. Certificate explicitly lists hipaa-phi-guard and fda-audit-trail as irrevocable invariants.',
+                proven: 'HIPAA PHI fields are blocked by constitutional predicate in addition to the standard 13-field identity block. FDA audit simplicity enforced by maxDepth:1 (flat). No patient identity enters the governance layer. Certificate explicitly lists hipaa-phi-guard and fda-audit-trail as irrevocable invariants.',
                 closure: 'HMAC-signed governance trail. Replayed 5+ years later produces identical output. anomalyThreshold 3 and severeDriftMagnitude 0.5 prevent drifting models from affecting clinical decisions. vetoFreqThreshold 2 triggers immediate escalation \u2014 patient outcomes are non-negotiable.'
             },
             defence: {
@@ -1087,6 +1269,23 @@
             });
         }
     })();
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#161920',
+                primaryTextColor: '#e0e2e8',
+                primaryBorderColor: '#00B2FF',
+                lineColor: '#8b8f9a',
+                secondaryColor: '#111318',
+                tertiaryColor: '#0a0b0d',
+                fontFamily: 'Inter, sans-serif'
+            },
+            flowchart: { curve: 'basis', padding: 16 }
+        });
     </script>
 </body>
 </html>

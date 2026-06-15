@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="SECS Governed Console — one interface for snapshot state, stage gates, anonymous request logs, falsification challenges, and citation-backed audit pull.">
+    <title>SECS Governed Console</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/governed-console.html">
+    <meta property="og:title" content="SECS Governed Console">
+    <meta property="og:description" content="One interface for governed answers, audit pull, anonymous request logs, and public falsification challenges.">
+    <meta property="og:image" content="https://secs.observer/assets/hero-banner.png">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SECS Governed Console">
+    <meta name="twitter:description" content="Snapshot, gates, request ledger, falsification register, and citation evidence from one interface.">
+    <meta name="twitter:image" content="https://secs.observer/assets/hero-banner.png">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css?v=2">
+    <script src="js/includes.js?v=4"></script>
+
+    <style>
+        .console-page {
+            padding: 20px 0 60px;
+        }
+
+        .console-hero {
+            padding: 30px 0 40px;
+            text-align: center;
+        }
+
+        .console-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(0,178,255,0.22);
+            background: rgba(0,178,255,0.08);
+            color: var(--accent-blue);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 22px;
+        }
+
+        .console-hero h2 {
+            font-size: 2.25rem;
+            font-weight: 300;
+            margin-bottom: 14px;
+        }
+
+        .console-subtitle {
+            max-width: 760px;
+            margin: 0 auto;
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.85;
+        }
+
+        .console-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.95fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .console-column {
+            display: grid;
+            gap: 22px;
+        }
+
+        .console-panel {
+            background: linear-gradient(180deg, rgba(22,25,32,0.96), rgba(13,15,20,0.96));
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 16px 36px rgba(0,0,0,0.24);
+        }
+
+        .console-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .console-panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            letter-spacing: 0.2px;
+            margin: 0;
+        }
+
+        .console-panel-title i {
+            color: var(--accent-orange);
+        }
+
+        .console-status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 11px;
+            border-radius: 999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .console-status-chip.pass,
+        .console-status-chip.released,
+        .console-status-chip.completed,
+        .console-status-chip.corrected {
+            color: var(--accent-green);
+            border-color: rgba(72,230,98,0.24);
+            background: rgba(72,230,98,0.08);
+        }
+
+        .console-status-chip.audit_only,
+        .console-status-chip.logged,
+        .console-status-chip.acknowledged,
+        .console-status-chip.planned,
+        .console-status-chip.in_progress {
+            color: #f0a030;
+            border-color: rgba(240,160,48,0.24);
+            background: rgba(240,160,48,0.08);
+        }
+
+        .console-status-chip.blocked,
+        .console-status-chip.failed,
+        .console-status-chip.substantiated {
+            color: #ff7b6b;
+            border-color: rgba(255,123,107,0.24);
+            background: rgba(255,123,107,0.08);
+        }
+
+        .console-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .console-stat-card {
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.025);
+        }
+
+        .console-stat-label {
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .console-stat-value {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            line-height: 1.1;
+        }
+
+        .console-stat-meta {
+            margin-top: 10px;
+            color: var(--text-secondary);
+            font-size: 0.84rem;
+        }
+
+        .console-key-value {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .console-kv-item {
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 12px;
+        }
+
+        .console-kv-label {
+            display: block;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+
+        .console-kv-value {
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .console-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .console-list-item {
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 16px;
+            background: rgba(255,255,255,0.018);
+        }
+
+        .console-list-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+
+        .console-list-title {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .console-list-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            margin-top: 6px;
+            line-height: 1.6;
+        }
+
+        .console-inline-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .console-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-secondary);
+            font-size: 0.74rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            font-family: var(--font-mono);
+        }
+
+        .console-gate-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .console-gate-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: center;
+            border-radius: 10px;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .console-gate-name {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .console-gate-detail {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 4px;
+            font-family: var(--font-mono);
+        }
+
+        .console-citation-browser {
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: 16px;
+        }
+
+        .console-citation-list {
+            display: grid;
+            gap: 10px;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .console-citation-button {
+            width: 100%;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.02);
+            color: var(--text-primary);
+            padding: 14px;
+            border-radius: 10px;
+            text-align: left;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .console-citation-button:hover,
+        .console-citation-button.active {
+            border-color: rgba(0,178,255,0.22);
+            transform: translateY(-1px);
+        }
+
+        .console-citation-button strong {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .console-citation-button span {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            line-height: 1.55;
+        }
+
+        .console-citation-detail {
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 18px;
+            background: rgba(255,255,255,0.018);
+            min-height: 320px;
+        }
+
+        .console-evidence-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .console-evidence-item {
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 10px;
+        }
+
+        .console-evidence-item:first-child {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .console-evidence-item code,
+        .console-mono {
+            font-family: var(--font-mono);
+            color: var(--text-primary);
+            background: transparent;
+            padding: 0;
+        }
+
+        .console-empty,
+        .console-loading,
+        .console-error {
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px dashed var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .console-error {
+            color: #ff9c90;
+            border-color: rgba(255,123,107,0.24);
+            background: rgba(255,123,107,0.06);
+        }
+
+        .console-lifecycle {
+            display: grid;
+            gap: 12px;
+        }
+
+        .console-query-input,
+        .console-intent-select {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: #0f131a;
+            color: var(--text-primary);
+            padding: 12px 14px;
+            font-family: var(--font-mono);
+            line-height: 1.6;
+        }
+
+        .console-query-input {
+            resize: vertical;
+        }
+
+        .console-query-input:focus,
+        .console-intent-select:focus {
+            outline: none;
+            border-color: rgba(0,178,255,0.45);
+            box-shadow: 0 0 0 2px rgba(0,178,255,0.12);
+        }
+
+        .console-intent-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image:
+                linear-gradient(45deg, transparent 50%, var(--text-primary) 50%),
+                linear-gradient(135deg, var(--text-primary) 50%, transparent 50%);
+            background-position:
+                calc(100% - 16px) calc(50% - 3px),
+                calc(100% - 11px) calc(50% - 3px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+            padding-right: 34px;
+            color-scheme: dark;
+        }
+
+        .console-intent-select option {
+            background: #0f131a;
+            color: var(--text-primary);
+        }
+
+        .console-step {
+            display: grid;
+            grid-template-columns: 38px 1fr;
+            gap: 14px;
+            align-items: start;
+        }
+
+        .console-step-index {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid rgba(255,94,0,0.24);
+            color: var(--accent-orange);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            background: rgba(255,94,0,0.06);
+        }
+
+        .console-step h4 {
+            margin: 0 0 6px;
+            font-size: 0.92rem;
+        }
+
+        .console-step p {
+            margin: 0;
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        @media (max-width: 1100px) {
+            .console-layout,
+            .console-citation-browser {
+                grid-template-columns: 1fr;
+            }
+
+            .console-summary-grid,
+            .console-key-value {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 767px) {
+            .console-hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .console-summary-grid,
+            .console-key-value {
+                grid-template-columns: 1fr;
+            }
+
+            .console-panel {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="console-page container">
+        <section class="console-hero animated fadeInUp">
+            <div class="console-badge"><i class="fa-solid fa-shield-halved"></i> Governed Console</div>
+            <h2>One Interface for Answer, Audit, Request, and Challenge</h2>
+            <p class="console-subtitle">
+                This console is the first operator surface over the governed artifacts. It pulls the active snapshot,
+                stage-gate state, anonymous request ledger, public falsification register, and citation evidence into one place,
+                so the eventual answer interface does not split release and audit into separate tools.
+            </p>
+        </section>
+
+        <div id="console-root" class="console-layout animated fadeInUp">
+            <div class="console-column">
+                <section class="console-panel">
+                    <div class="console-panel-header">
+                        <h3 class="console-panel-title"><i class="fa-solid fa-terminal"></i> Governed Query</h3>
+                        <span id="query-status" class="console-status-chip">read only</span>
+                    </div>
+                    <div style="display:grid; gap:14px;">
+                        <label style="display:grid; gap:8px;">
+                            <span class="console-kv-label">Query</span>
+                            <textarea id="query-input" class="console-query-input" rows="4">What does the active governed corpus say about the current audit surface?</textarea>
+                        </label>
+                        <div class="console-key-value" style="margin-top:0;">
+                            <label class="console-kv-item" style="border-top:0; padding-top:0;">
+                                <span class="console-kv-label">Intent</span>
+                                <select id="intent-select" class="console-intent-select">
+                                    <option value="summary">summary</option>
+                                    <option value="fact_check">fact_check</option>
+                                    <option value="comparison">comparison</option>
+                                    <option value="theory_test">theory_test</option>
+                                    <option value="other">other</option>
+                                </select>
+                            </label>
+                            <div class="console-kv-item" style="border-top:0; padding-top:0; display:flex; align-items:end;">
+                                <button id="query-submit" class="console-citation-button" style="margin:0; background:linear-gradient(90deg, rgba(255,94,0,0.18), rgba(0,178,255,0.18));">
+                                    <strong>Run Governed Query</strong>
+                                    <span>Create request log entry, sealed trace, and same-surface audit pull.</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="console-panel">
+                    <div class="console-panel-header">
+                        <h3 class="console-panel-title"><i class="fa-solid fa-file-shield"></i> Query Result</h3>
+                        <span id="result-status" class="console-status-chip">waiting</span>
+                    </div>
+                    <div id="query-result" class="console-empty">Start the local governed runtime server to submit queries from this page. The read-only audit surface works without it, but atomic request logging and trace sealing require the server path.</div>
+                </section>
+
+                <section class="console-panel">
+                    <div class="console-panel-header">
+                        <h3 class="console-panel-title"><i class="fa-solid fa-chart-column"></i> Active Snapshot</h3>
+                        <span id="snapshot-status" class="console-status-chip">loading</span>
+                    </div>
+                    <div id="summary-grid" class="console-summary-grid">
+                        <div class="console-loading">Loading governed artifacts...</div>
+                    </div>
+                    <div id="snapshot-meta" class="console-key-value" style="margin-top:16px;"></div>
+                </section>
+
+                <section class="console-panel">
+                    <div class="console-panel-header">
+                        <h3 class="console-panel-title"><i class="fa-solid fa-route"></i> Gate State</h3>
+                        <span id="gate-track" class="console-status-chip">track</span>
+                    </div>
+                    <div id="gate-grid" class="console-gate-grid"></div>
+                </section>
+
+                <section class="console-panel">
+                    <div class="console-panel-header">
+                        <h3 class="console-panel-title"><i class="fa-solid fa-diagram-project"></i> Citation Evidence</h3>
+                        <span id="citation-total" class="console-status-chip">0 citations</span>
+                    </div>
+                    <div class="console-citation-browser">
+                        <div id="citation-list" class="console-citation-list"></div>
+                        <div id="citation-detail" class="console-citation-detail"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="console-column">
+                <section class="console-panel">
+                    <div class="console-panel-header">
+                        <h3 class="console-panel-title"><i class="fa-solid fa-fingerprint"></i> Anonymous Request Ledger</h3>
+                        <span id="request-total" class="console-status-chip">0 entries</span>
+                    </div>
+                    <div id="request-list" class="console-list"></div>
+                </section>
+
+                <section class="console-panel">
+                    <div class="console-panel-header">
+                        <h3 class="console-panel-title"><i class="fa-solid fa-triangle-exclamation"></i> Public Falsification Challenges</h3>
+                        <span id="challenge-total" class="console-status-chip">0 challenges</span>
+                    </div>
+                    <div id="challenge-list" class="console-list"></div>
+                </section>
+
+                <section class="console-panel">
+                    <div class="console-panel-header">
+                        <h3 class="console-panel-title"><i class="fa-solid fa-layer-group"></i> Unified Request Lifecycle</h3>
+                        <span id="issue-total" class="console-status-chip">0 open issues</span>
+                    </div>
+                    <div class="console-lifecycle">
+                        <div class="console-step">
+                            <div class="console-step-index">01</div>
+                            <div>
+                                <h4>Anonymous request entry is created</h4>
+                                <p>Every interaction must create a separate identity-free request record keyed by request ID and snapshot ID.</p>
+                            </div>
+                        </div>
+                        <div class="console-step">
+                            <div class="console-step-index">02</div>
+                            <div>
+                                <h4>Trace and evidence bind to active snapshot</h4>
+                                <p>The same interaction must resolve through chunks, citations, and gate outputs tied to one active snapshot.</p>
+                            </div>
+                        </div>
+                        <div class="console-step">
+                            <div class="console-step-index">03</div>
+                            <div>
+                                <h4>Audit pull remains on the same surface</h4>
+                                <p>Answer release, source drilldown, governance refs, and replay state remain inspectable without switching tools.</p>
+                            </div>
+                        </div>
+                        <div class="console-step">
+                            <div class="console-step-index">04</div>
+                            <div>
+                                <h4>Challenges become actionable tightening work</h4>
+                                <p>Public falsification records stay replayable and, once acknowledged, become due action paths to tighten the research.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+
+    <span class="border-top"></span>
+    <span class="border-left"></span>
+    <span class="border-right"></span>
+    <span class="border-bottom"></span>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/governed-console.js"></script>
+    <script>
+        $(function(){
+            $('.toggle-nav').on('click', function(e){
+                e.preventDefault();
+                $('.menu-responsive').slideToggle(200);
+            });
+        });
+    </script>
+</body>
+</html>

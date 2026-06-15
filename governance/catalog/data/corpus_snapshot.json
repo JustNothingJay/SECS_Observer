@@ -1,0 +1,18 @@
+{
+  "snapshot_id": "snapshot-20260406-050332",
+  "as_of_utc": "2026-04-06T05:03:32.828958+00:00",
+  "source_repos": [
+    "C:\\SECS_Research\\papers",
+    "C:\\SECS_Sovereign",
+    "C:\\SECS_Observer"
+  ],
+  "counts": {
+    "doi_total": 13,
+    "paper_total": 121,
+    "citation_total": 69,
+    "external_citation_total": 56,
+    "internal_reference_total": 13
+  },
+  "profile_version": "0.1.0",
+  "hash": "8ab8b10906640852aedd8335e0cec5b7da9107d3640aa1e90e7cf346a84defe9"
+}

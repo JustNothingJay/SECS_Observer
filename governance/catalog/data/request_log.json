@@ -1,0 +1,337 @@
+{
+  "version": "0.1.0",
+  "entries": [
+    {
+      "request_id": "req-20260406T051059-5e4ec50ee4",
+      "logged_utc": "2026-04-06T05:10:59.280893+00:00",
+      "request_hash": "5e4ec50ee4fabd69f890bc3b0a1fd00ca98f195a06e1718a300a55643a0fbc8d",
+      "normalized_query_hash": "5e4ec50ee4fabd69f890bc3b0a1fd00ca98f195a06e1718a300a55643a0fbc8d",
+      "intent_type": "other",
+      "request_mode": "interactive_query",
+      "snapshot_id": "snapshot-20260406-050332",
+      "trace_id": null,
+      "release_status": "audit_only",
+      "catalog_refs": {
+        "paper_ids": [],
+        "chunk_ids": [],
+        "citation_ids": []
+      },
+      "governance_refs": {
+        "gate_ids": [
+          "G4"
+        ],
+        "rule_ids": [
+          "GR-030",
+          "GR-031"
+        ]
+      },
+      "identity_free": true
+    },
+    {
+      "request_id": "req-20260406T053312-8d1d0872f7",
+      "logged_utc": "2026-04-06T05:33:12.158864+00:00",
+      "request_hash": "8d1d0872f73283f6f9cab6b2ef087b8eb738abd7a52bba836428277edf3ae2dd",
+      "normalized_query_hash": "1205540673597fce17a6b75c50a7eeda82c2fc87039c29ef8966476505590dca",
+      "intent_type": "summary",
+      "request_mode": "interactive_query",
+      "snapshot_id": "snapshot-20260406-050332",
+      "trace_id": "trace-20260406T053312-8d1d0872f7",
+      "release_status": "released",
+      "catalog_refs": {
+        "paper_ids": [
+          "research__autism-regression-myelination-opc-intervention-timing-d435d3a791",
+          "paper__the-story__what-ai-found-when-it-read-the-repos-89591ff8d7",
+          "paper__token-economics__three-modes-of-intelligence-spend-22bbd1a414",
+          "paper__where-you-exist-inside-yourself__v2-7fbea1d7f3",
+          "paper__where-you-exist-inside-yourself__v2-ea2370569d",
+          "research__autism-regression-myelination-opc-intervention-timing-d435d3a791"
+        ],
+        "chunk_ids": [
+          "chunk-8e83485c186f",
+          "chunk-f303cc307e63",
+          "chunk-d8719e258f7d",
+          "chunk-9f9e30339a71",
+          "chunk-da92da864549",
+          "chunk-76960afb9cdf"
+        ],
+        "citation_ids": [
+          "cit-335221e2043e",
+          "cit-c1efb98a8f8e",
+          "cit-69fc6ab8879f",
+          "cit-f7120287fd70"
+        ]
+      },
+      "governance_refs": {
+        "gate_ids": [
+          "G1",
+          "G2",
+          "G3",
+          "G4"
+        ],
+        "rule_ids": [
+          "GR-018",
+          "GR-022",
+          "GR-029",
+          "GR-030",
+          "GR-032"
+        ]
+      },
+      "identity_free": true
+    },
+    {
+      "request_id": "req-20260406T054223-2c687139aa",
+      "logged_utc": "2026-04-06T05:42:23.666089+00:00",
+      "request_hash": "2c687139aab0f6ff89875e22cb6f70e8b97ff4c213ced2425d351138bde98c20",
+      "normalized_query_hash": "66edcec1771c6b108ff1a55f6a86508df6f51fd234a1395804500cd7321977f5",
+      "intent_type": "summary",
+      "request_mode": "interactive_query",
+      "snapshot_id": "snapshot-20260406-050332",
+      "trace_id": "trace-20260406T054223-2c687139aa",
+      "release_status": "released",
+      "catalog_refs": {
+        "paper_ids": [
+          "research__hippocampus-white-matter-asd-myelination-f5aaf2ea28",
+          "paper__weak-force-transmutation__klein-bottle-nuclear-waste-9042649a2c",
+          "paper__weak-force-transmutation__klein-bottle-nuclear-waste-b3117afd8d",
+          "paper__weak-force-transmutation__klein-bottle-nuclear-waste__full-backup-2026-03-15-33ec25df41",
+          "paper__collapse-algebra__formal-foundations-1516d2e349",
+          "paper__collapse-algebra__formal-foundations-79e744fd63"
+        ],
+        "chunk_ids": [
+          "chunk-8ae32d9cda0a",
+          "chunk-4252049c5dd7",
+          "chunk-d9e799458f12",
+          "chunk-323c830838d0",
+          "chunk-69adfbbe237b",
+          "chunk-bd72b37dd432"
+        ],
+        "citation_ids": [
+          "cit-335221e2043e",
+          "cit-14e3063d7404",
+          "cit-c1efb98a8f8e",
+          "cit-e636a7fcf02c",
+          "cit-80bb84ed2b8a",
+          "cit-be340deda9a3",
+          "cit-29523912558d",
+          "cit-a7fbfbb93699"
+        ]
+      },
+      "governance_refs": {
+        "gate_ids": [
+          "G1",
+          "G2",
+          "G3",
+          "G4"
+        ],
+        "rule_ids": [
+          "GR-018",
+          "GR-022",
+          "GR-029",
+          "GR-030",
+          "GR-032"
+        ]
+      },
+      "identity_free": true
+    },
+    {
+      "request_id": "req-20260406T061207-086df82b44",
+      "logged_utc": "2026-04-06T06:12:07.389075+00:00",
+      "request_hash": "086df82b44235ce45aa3e6e09fd44a8584f321b092c873cc4706ccf4bd403583",
+      "normalized_query_hash": "d1750dd1828a2534d6ebe243853aa7340ecbf6d1e57cca8330360fc2c35137de",
+      "intent_type": "fact_check",
+      "request_mode": "interactive_query",
+      "snapshot_id": "snapshot-20260406-050332",
+      "trace_id": "trace-20260406T061207-086df82b44",
+      "release_status": "released",
+      "catalog_refs": {
+        "paper_ids": [
+          "paper__identity-to-instrument__algebraic-alpha-as-metrological-reference-2bec9b09b0",
+          "paper__identity-to-instrument__algebraic-alpha-as-metrological-reference-5009bb3787",
+          "paper__algebraic-units__one-measurement-derives-them-all-fc65b55d1e",
+          "r-007-structural-age-regression-37c1c12538",
+          "paper__existence-as-fixed-point__meta-theory-8a67cb4dd9",
+          "paper__existence-as-fixed-point__meta-theory-a666a00ba6"
+        ],
+        "chunk_ids": [
+          "chunk-aa9611a50d0e",
+          "chunk-8b3f42837e6a",
+          "chunk-13f318109ffa",
+          "chunk-4ebf7830fca6",
+          "chunk-6a37e639cac0",
+          "chunk-bbab9891601f"
+        ],
+        "citation_ids": [
+          "cit-335221e2043e",
+          "cit-14e3063d7404",
+          "cit-e636a7fcf02c",
+          "cit-be340deda9a3",
+          "cit-ac442dda6449",
+          "cit-42074aad87f1",
+          "cit-8af718e18cd3",
+          "cit-131a16c1eeec"
+        ]
+      },
+      "governance_refs": {
+        "gate_ids": [
+          "G1",
+          "G2",
+          "G3",
+          "G4"
+        ],
+        "rule_ids": [
+          "GR-018",
+          "GR-022",
+          "GR-029",
+          "GR-030",
+          "GR-032"
+        ]
+      },
+      "identity_free": true
+    },
+    {
+      "request_id": "req-20260406T061358-f620ed231b",
+      "logged_utc": "2026-04-06T06:13:58.253682+00:00",
+      "request_hash": "f620ed231b113e9344498be5f3587e638ebcdd626e88d9f8391373e27b18b8e4",
+      "normalized_query_hash": "aca75f1581e6a56fc083078a04e81c8a747c8f456dc4e5a120660170f565f8c3",
+      "intent_type": "summary",
+      "request_mode": "interactive_query",
+      "snapshot_id": "snapshot-20260406-050332",
+      "trace_id": "trace-20260406T061358-f620ed231b",
+      "release_status": "released",
+      "catalog_refs": {
+        "paper_ids": [
+          "research__gestational-impact-zones-oxygen-demand-alignment-5ec9982f99",
+          "paper__oxygen-fixed-point__wind-blood-constraint-surface-6a3a7b076b",
+          "paper__oxygen-fixed-point__wind-blood-constraint-surface-eea3665ab7",
+          "paper__le-chatelier-banach__oxygen-fixed-point-cross-scale-3d3d5d6548",
+          "paper__le-chatelier-banach__oxygen-fixed-point-cross-scale-c52738afdb"
+        ],
+        "chunk_ids": [
+          "chunk-d98744529469",
+          "chunk-7a3f2cec0601",
+          "chunk-f4579c9e8122",
+          "chunk-18eaaf6f39f8",
+          "chunk-661ba2b78b9b",
+          "chunk-7ac9af634c78"
+        ],
+        "citation_ids": [
+          "cit-335221e2043e",
+          "cit-14e3063d7404",
+          "cit-c1efb98a8f8e",
+          "cit-e636a7fcf02c",
+          "cit-80bb84ed2b8a",
+          "cit-0b84524d2fc6",
+          "cit-2c228270dabb"
+        ]
+      },
+      "governance_refs": {
+        "gate_ids": [
+          "G1",
+          "G2",
+          "G3",
+          "G4"
+        ],
+        "rule_ids": [
+          "GR-018",
+          "GR-022",
+          "GR-029",
+          "GR-030",
+          "GR-032"
+        ]
+      },
+      "identity_free": true
+    },
+    {
+      "request_id": "req-20260406T061600-96d295aba5",
+      "logged_utc": "2026-04-06T06:16:00.687967+00:00",
+      "request_hash": "96d295aba5d2a87fa79abd7eec6664a03b24056b58caa3f679e6eb1f1fe83156",
+      "normalized_query_hash": "96d295aba5d2a87fa79abd7eec6664a03b24056b58caa3f679e6eb1f1fe83156",
+      "intent_type": "fact_check",
+      "request_mode": "interactive_query",
+      "snapshot_id": "snapshot-20260406-050332",
+      "trace_id": "trace-20260406T061600-96d295aba5",
+      "release_status": "released",
+      "catalog_refs": {
+        "paper_ids": [
+          "research__five-area-deep-dive-asd-white-matter-desaturation-d4e4d88bd9",
+          "research__sensory-memory-feeding-interventions-asd-report-eba16471aa",
+          "research__hippocampus-white-matter-asd-myelination-f5aaf2ea28",
+          "research__perinatal-hypoxia-preeclampsia-autism-8d145846e5"
+        ],
+        "chunk_ids": [
+          "chunk-75ddc19f40e7",
+          "chunk-95bb097c501b",
+          "chunk-0a7c38366553",
+          "chunk-14ca5b054379",
+          "chunk-c62c7b30de1c",
+          "chunk-baa0e82ea1c3"
+        ],
+        "citation_ids": []
+      },
+      "governance_refs": {
+        "gate_ids": [
+          "G1",
+          "G2",
+          "G3",
+          "G4"
+        ],
+        "rule_ids": [
+          "GR-018",
+          "GR-022",
+          "GR-029",
+          "GR-030",
+          "GR-032"
+        ]
+      },
+      "identity_free": true
+    },
+    {
+      "request_id": "req-20260406T062806-e3122a987e",
+      "logged_utc": "2026-04-06T06:28:06.156474+00:00",
+      "request_hash": "e3122a987e00bcb128435d4b55238fc3b80e5088181ca10cfc7aac58c9e860f6",
+      "normalized_query_hash": "debff5a817305bae5af5d62859e636259c4aa17e3940d32cadf443d787fdda52",
+      "intent_type": "summary",
+      "request_mode": "interactive_query",
+      "snapshot_id": "snapshot-20260406-050332",
+      "trace_id": "trace-20260406T062806-e3122a987e",
+      "release_status": "released",
+      "catalog_refs": {
+        "paper_ids": [
+          "paper__mobius-strip__fixed-point-of-existence-6e85754f77",
+          "paper__mobius-strip__fixed-point-of-existence-9cfc9ec79e"
+        ],
+        "chunk_ids": [
+          "chunk-d0e3b2482383",
+          "chunk-c17e0b3a268d",
+          "chunk-0bc85974e7e0",
+          "chunk-99977ba4c1a9",
+          "chunk-4122ab371ba5",
+          "chunk-c846f64b9e10"
+        ],
+        "citation_ids": [
+          "cit-335221e2043e",
+          "cit-14e3063d7404",
+          "cit-80bb84ed2b8a",
+          "cit-c6b4455e02de",
+          "cit-2c228270dabb"
+        ]
+      },
+      "governance_refs": {
+        "gate_ids": [
+          "G1",
+          "G2",
+          "G3",
+          "G4"
+        ],
+        "rule_ids": [
+          "GR-018",
+          "GR-022",
+          "GR-029",
+          "GR-030",
+          "GR-032"
+        ]
+      },
+      "identity_free": true
+    }
+  ]
+}

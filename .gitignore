@@ -1,3 +1,9 @@
 templatemo_421_raleway/
 origin.html
 assets/origin-*.jpg
+
+# Retired from public site — kept locally for rewrite
+timeline.html
+
+# Draft review artifacts — do not deploy until promoted
+draft/

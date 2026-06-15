@@ -1,0 +1,31 @@
+{
+  "version": "0.1.0",
+  "entries": [
+    {
+      "challenge_id": "challenge-20260406T051640-03c1c3a2f6",
+      "logged_utc": "2026-04-06T05:16:40.156189+00:00",
+      "snapshot_id": "snapshot-20260406-050332",
+      "target_type": "claim",
+      "target_id": "claim-governance-smoke-001",
+      "challenge_summary": "Public replay can test whether declared outputs remain stable under the same snapshot inputs.",
+      "falsification_mode": "trace_inconsistency",
+      "replay_instructions": "Load the declared snapshot and rerun the same governed path with the same declared inputs; compare the replay output to the original released result.",
+      "expected_failure_condition": "Replay produces a materially different structured output from the same declared inputs and snapshot.",
+      "evidence_refs": [
+        {
+          "source_kind": "report",
+          "ref_id": "stage_gate_report.json"
+        }
+      ],
+      "public_replayable": true,
+      "no_secret_inputs": true,
+      "testable": true,
+      "status": "logged",
+      "acknowledgement_note": null,
+      "action_status": "not_started",
+      "action_plan": null,
+      "due_utc": null,
+      "resolution_note": null
+    }
+  ]
+}

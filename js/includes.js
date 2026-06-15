@@ -66,10 +66,9 @@
         ], ['architecture.html', 'neurotrophic.html', 'sovereign.html', 'gtf.html', 'vertical-demo.html']) +
         dropdown('Research', [
             li('research.html', 'Papers'),
-            li('timeline.html', 'Timeline'),
             li('citation-audit.html', 'Citation Audit'),
-            disabledLi('Governed Console')
-        ], ['research.html', 'timeline.html', 'citation-audit.html', 'governed-console.html']) +
+            li('governed-console.html', 'Governed Console')
+        ], ['research.html', 'citation-audit.html', 'governed-console.html']) +
         dropdown('More', [
             li('terminal.html', 'Terminal'),
             li('game.html', 'The Game'),

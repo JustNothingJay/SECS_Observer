@@ -30,9 +30,6 @@
     <loc>https://secs.observer/journal.html</loc>
   </url>
   <url>
-    <loc>https://secs.observer/timeline.html</loc>
-  </url>
-  <url>
     <loc>https://secs.observer/game.html</loc>
   </url>
   <url>
@@ -43,5 +40,8 @@
   </url>
   <url>
     <loc>https://secs.observer/citation-audit.html</loc>
+  </url>
+  <url>
+    <loc>https://secs.observer/governed-console.html</loc>
   </url>
 </urlset>

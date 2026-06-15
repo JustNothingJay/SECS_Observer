@@ -28,11 +28,13 @@ No build step. No framework. No backend.
 |------|------|-------------|
 | Home | `index.html` | Overview, card links to main sections |
 | Founder | `founder.html` | Jay Carpenter — background and motivation |
-| System Architecture | `architecture.html` | Six progressive architecture diagrams |
+| System Architecture | `architecture.html` | Mermaid layer diagrams, collapse pipeline, adaptors |
+| Governed Console | `governed-console.html` | Snapshot, stage gates, request ledger, falsification register |
+| Citation Audit | `citation-audit.html` | Two-pass reference verification report |
 | Sovereign | `sovereign.html` | Deterministic observation substrate — specs, use cases, adaptors |
 | Neurotrophic OS | `neurotrophic.html` | Behavioural observation and predictive modelling layer |
 | Research | `research.html` | 47 published works · 37 Zenodo DOIs · 4 software packages |
-| Timeline | `timeline.html` | 90-day build log with filterable milestones |
+
 | Journal | `journal.html` | Announcements |
 | JJ's Fingerprint | `fingerprint.html` | Research fingerprint |
 | GTF | `gtf.html` | Gestational Timing Framework |
@@ -41,14 +43,8 @@ No build step. No framework. No backend.
 
 ## Architecture diagrams
 
-Six PNGs in `assets/arch/` trace the system from external signals through to adaptor deployment:
-
-1. External World
-2. Connector Atom
-3. Collapse Pipeline
-4. Governance Topology
-5. Neurotrophic Layer
-6. Adaptor Architecture
+`architecture.html` renders six Mermaid flowcharts (external world through adaptor deployment).
+Legacy PNGs remain in `assets/arch/` for reference.
 
 ## Local development
 
