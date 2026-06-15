@@ -263,7 +263,36 @@
         return '';
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    /* ── Site navigation (all pages) ──────────────────────────── */
+    function initSiteNavigation() {
+        if (w.__secsNavInit) return;
+        w.__secsNavInit = true;
+
+        document.addEventListener('click', function (e) {
+            var toggle = e.target.closest('.toggle-nav');
+            if (toggle) {
+                e.preventDefault();
+                var menu = document.querySelector('.menu-responsive');
+                if (menu) menu.classList.toggle('menu-open');
+                return;
+            }
+
+            var groupToggle = e.target.closest('.menu-responsive .nav-group-toggle');
+            if (groupToggle) {
+                e.preventDefault();
+                var group = groupToggle.closest('.nav-group');
+                if (group) group.classList.toggle('open');
+                return;
+            }
+
+            var desktopGroupToggle = e.target.closest('.main-navigation:not(.menu-responsive) .nav-group-toggle');
+            if (desktopGroupToggle) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    function initResearchPage() {
         var cards = document.querySelectorAll('.paper-card');
         if (!cards.length) return;
 
@@ -359,36 +388,11 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') close();
         });
+    }
 
-        // Mobile nav toggle (replaces per-page jQuery handler)
-        document.addEventListener('click', function (e) {
-            var toggle = e.target.closest('.toggle-nav');
-            if (!toggle) return;
-            e.preventDefault();
-            var menu = document.querySelector('.menu-responsive');
-            if (menu) {
-                menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-            }
-        });
-
-        // Mobile dropdown group toggles
-        document.addEventListener('click', function (e) {
-            var groupToggle = e.target.closest('.menu-responsive .nav-group-toggle');
-            if (!groupToggle) return;
-            e.preventDefault();
-            var group = groupToggle.closest('.nav-group');
-            if (group) {
-                group.classList.toggle('open');
-            }
-        });
-
-        // Desktop: prevent group toggle links from navigating
-        document.addEventListener('click', function (e) {
-            var groupToggle = e.target.closest('.main-navigation:not(.menu-responsive) .nav-group-toggle');
-            if (groupToggle) {
-                e.preventDefault();
-            }
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+        initSiteNavigation();
+        initResearchPage();
     });
 
 })(window);

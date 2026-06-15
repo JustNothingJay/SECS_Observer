@@ -233,6 +233,9 @@ h1, h2, h3, h4, h5 {
     display: none;
     padding: 20px 0;
 }
+.menu-responsive.menu-open {
+    display: block;
+}
 .menu-responsive .main-menu li { display: block; margin: 0; }
 .menu-responsive .main-menu li a { padding: 12px 0; }
 .menu-responsive .nav-dropdown {
