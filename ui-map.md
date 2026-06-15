@@ -81,7 +81,7 @@ The live navigation is grouped into five top-level paths.
 | JJ’s Fingerprint | `fingerprint.html` | Personal/research fingerprint page |
 | Systems | `architecture.html`, `neurotrophic.html`, `sovereign.html`, `vertical-demo.html?vertical=robotics`, `gtf.html` | Substrate, architecture, domain systems (including GTF), and vertical deep-dive entry |
 | Research | `research.html`, `timeline.html`, `citation-audit.html`, `Governed Console (disabled/local-only)` | Evidence and audit surfaces |
-| More | `terminal.html`, `game.html`, `journal.html` | Interactive and secondary public surfaces |
+| More | `terminal.html`, `game.html`, `journal.html`, `glossary.html` | Interactive, reference, and secondary public surfaces |
 
 ---
 
@@ -195,6 +195,7 @@ The More dropdown is the experiential branch.
 | `terminal.html` | Structured, guided interaction with the live gate |
 | `game.html` | Less guided, challenge-oriented interaction with the same gate |
 | `journal.html` | Public updates and narrative continuity |
+| `glossary.html` | Functional reference — SECS terms mapped to industry equivalents across eleven layers |
 
 ---
 

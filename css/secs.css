@@ -1576,6 +1576,120 @@ h1, h2, h3, h4, h5 {
     .neuro-compare-divider { width: 100%; height: 1px; }
 }
 
+/* ── GLOSSARY PAGE ─────────────────────────────────────────────────── */
+.glossary-page { padding: 20px 0 60px; }
+.glossary-page .section-heading,
+.glossary-section h3 {
+    text-align: center;
+}
+.glossary-intro {
+    max-width: 720px;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+.glossary-intro em { color: var(--text-primary); font-style: normal; }
+.glossary-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+.glossary-filter-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    padding: 0.35rem 0.85rem;
+    border-radius: 3px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.glossary-filter-btn:hover {
+    border-color: rgba(255,255,255,0.3);
+    color: var(--text-secondary);
+}
+.glossary-filter-btn.active {
+    background: rgba(72,230,98,0.1);
+    border-color: rgba(72,230,98,0.35);
+    color: var(--accent-green);
+}
+.glossary-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.glossary-section:last-of-type { border-bottom: none; }
+.glossary-section h3 {
+    font-size: 1.05rem;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.02em;
+}
+.glossary-section h3 .sec-num {
+    color: var(--accent-green);
+    margin-right: 0.5rem;
+    font-weight: 400;
+}
+.glossary-section .sec-desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.2rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+.glossary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+.glossary-table thead th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.glossary-table tbody td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+    vertical-align: top;
+    line-height: 1.55;
+}
+.glossary-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+.glossary-table .term {
+    color: var(--accent-green);
+    font-weight: 500;
+    white-space: nowrap;
+}
+.glossary-table .similar {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+.glossary-note {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    padding: 1.5rem 0 0;
+}
+@media (max-width: 768px) {
+    .glossary-table { font-size: 0.8rem; }
+    .glossary-table thead th,
+    .glossary-table tbody td { padding: 0.4rem 0.5rem; }
+    .glossary-table .term { white-space: normal; }
+}
+
 /* ── RETRO COUNTER ──────────────────────────────────────────────────── */
 .retro-counter {
     margin-top: 16px;

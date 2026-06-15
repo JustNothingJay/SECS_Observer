@@ -72,8 +72,9 @@
         dropdown('More', [
             li('terminal.html', 'Terminal'),
             li('game.html', 'The Game'),
-            li('journal.html', 'Journal')
-        ], ['terminal.html', 'game.html', 'journal.html']);
+            li('journal.html', 'Journal'),
+            li('glossary.html', 'Glossary')
+        ], ['terminal.html', 'game.html', 'journal.html', 'glossary.html']);
 
     /* ── Header ─────────────────────────────────────────────────── */
     w.secsHeader = function () {
