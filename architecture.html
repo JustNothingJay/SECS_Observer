@@ -723,7 +723,7 @@ flowchart LR
 flowchart LR
     SPARK["Spark in"] --> ALPHA["α Admissibility"]
     ALPHA -->|pass| NU["ν Validation"]
-    ALPHA -->|veto| V1["VETO"]
+    ALPHA -->|veto| V1["v₁…v₆ partition"]
     NU --> LAM["λ Routing"]
     LAM --> RHO["ρ Reaction"]
     RHO --> EPS["ε Extinction"]
@@ -758,6 +758,22 @@ flowchart LR
                         <strong>C&sup1;&#8315; &nexist;</strong> &mdash; irreversible at every stage.<br>
                         Vetoed signals are <strong>structurally impossible</strong>, not filtered or retried.
                     </p>
+
+                    <h4 style="margin-top: 28px; font-size: 1rem; color: var(--text-primary); text-align: center;">Exhaustive Veto Partition</h4>
+                    <p style="text-align: center; color: var(--text-secondary); font-size: 0.9rem; max-width: 720px; margin: 0 auto 20px;">
+                        Per the <a href="research.html#collapse-algebra">Collapse Algebra</a> and Governance Veto Matrix:
+                        six classes partition every inadmissible input. No unclassified failures. Severity lattice
+                        v&#8325; &succ; v&#8321; &succ; v&#8324; &succ; v&#8323; &succ; v&#8322; &succ; v&#8326;.
+                        Full definitions on the <a href="glossary.html">Glossary</a>.
+                    </p>
+                    <table class="spec-table" style="max-width: 900px; margin: 0 auto;">
+                        <tr><td>v&#8321;</td><td>Axiom Violation &mdash; foundational law breach; collapse domain restriction</td></tr>
+                        <tr><td>v&#8322;</td><td>Drift Introduction &mdash; would shift trajectory away from the fixed point &phi;&#773;</td></tr>
+                        <tr><td>v&#8323;</td><td>Identity Emergence &mdash; payload carries identity content (&pi; &cap; &#8469; &ne; &empty;)</td></tr>
+                        <tr><td>v&#8324;</td><td>Invariant Breach &mdash; would falsify a constitutional invariant</td></tr>
+                        <tr><td>v&#8325;</td><td>Corruption Attempt &mdash; targets the constitutional layer directly</td></tr>
+                        <tr><td>v&#8326;</td><td>Deployment Instability &mdash; would render deployment state inconsistent</td></tr>
+                    </table>
                 </div>
 
                 <!-- ── GOVERNANCE ── -->
@@ -765,7 +781,9 @@ flowchart LR
                     <h3><i class="fa-solid fa-shield-halved"></i> Governance Filtration</h3>
                     <p>
                         Constitutional layers. Each inherits constraints from below. Doctrine loaded at boot, immutable at runtime.
-                        No runtime self-modification of governance rules.
+                        No runtime self-modification of governance rules. G&#8320;&ndash;G&#8324; here follows the SECS hierarchy
+                        (Principles &rarr; Algebra &rarr; SAC Axioms &rarr; Surface &rarr; Envelopes); the six veto classes above
+                        are the exhaustive partition at the admissibility gate, not a four-way summary.
                     </p>
 
                     <div class="arch-gov-chain">

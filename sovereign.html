@@ -106,7 +106,8 @@
                         <h4>Constitutional Governance</h4>
                         <p>Governance filtration G&#8320;&ndash;G&#8324; loads at boot and is immutable at runtime.
                         The frozen constraint surface defines admissibility; the adaptation surface may move
-                        only within those bounds.</p>
+                        only within those bounds. Inadmissible inputs partition into <strong>six exhaustive veto classes</strong>
+                        (v&#8321;&ndash;v&#8326;) &mdash; structural impossibility, not policy rejection.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -177,6 +178,60 @@
                 Each layer inherits the constraints below. G&#8320;&ndash;G&#8323; doctrine is frozen after boot;
                 G&#8324; envelopes bound what the adaptation surface may tune &mdash; never what is admissible.
             </p>
+        </section>
+
+        <section class="sovereign-veto animated fadeInUp">
+            <h3 class="section-heading">Exhaustive Veto Partition</h3>
+            <p class="hierarchy-note" style="margin-bottom: 24px;">
+                From the Collapse Algebra paper: every inadmissible spark belongs to exactly one of six veto classes.
+                Veto is domain restriction &mdash; the collapse operator is undefined, not merely declined.
+                Mapped in production to the Governance Veto Matrix. See also
+                <a href="architecture.html">Architecture</a> and <a href="glossary.html">Glossary</a>.
+            </p>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="arch-block">
+                        <span class="arch-label">v&#8321;</span>
+                        <span class="arch-tech">Axiom Violation</span>
+                        <p>Foundational law breach. Input is not in the axiomatic possibility space.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="arch-block">
+                        <span class="arch-label">v&#8322;</span>
+                        <span class="arch-tech">Drift Introduction</span>
+                        <p>Would shift the system trajectory away from the collapsed fixed point.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="arch-block">
+                        <span class="arch-label">v&#8323;</span>
+                        <span class="arch-tech">Identity Emergence</span>
+                        <p>Payload carries identity content. Structurally excluded at ingress.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="arch-block">
+                        <span class="arch-label">v&#8324;</span>
+                        <span class="arch-tech">Invariant Breach</span>
+                        <p>Would cause a constitutional invariant to become false.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="arch-block">
+                        <span class="arch-label">v&#8325;</span>
+                        <span class="arch-tech">Corruption Attempt</span>
+                        <p>Targets the constitutional layer &mdash; privilege escalation, jailbreak, doctrine tampering.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="arch-block">
+                        <span class="arch-label">v&#8326;</span>
+                        <span class="arch-tech">Deployment Instability</span>
+                        <p>Would render deployment state inconsistent. Blocked before live commit.</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Tech Specs -->
