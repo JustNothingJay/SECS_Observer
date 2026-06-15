@@ -1344,11 +1344,9 @@ h1, h2, h3, h4, h5 {
 }
 
 /* ── NEUROTROPHIC PAGE ─────────────────────────────────────────────── */
-.neuro-banner {
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 40px;
+.neurotrophic-page { padding: 20px 0 60px; }
+.neurotrophic-page .section-heading {
+    text-align: center;
 }
 .neuro-intro {
     max-width: 720px;

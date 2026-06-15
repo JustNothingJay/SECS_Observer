@@ -22,17 +22,15 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="css/animate.css">
-    <link rel="stylesheet" href="css/secs.css?v=2">
-    <script src="js/includes.js?v=4"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-667KK00S7H');</script>
+    <link rel="stylesheet" href="css/secs.css?v=3">
+    <script src="js/includes.js?v=5"></script>
 </head>
 <body>
 
     <div id="site-header"></div>
     <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
 
-    <main class="container page-content">
+    <main class="neurotrophic-page container">
 
         <div class="section-header text-center">
             <h2 class="animated fadeInLeft">SECS Neurotrophic OS</h2>
@@ -40,52 +38,20 @@
             <p class="section-subtitle animated fadeInRight">Adaptive intelligence. Biologically inspired. Substrate governed.</p>
         </div>
 
-        <div class="hero-banner neuro-banner animated fadeIn">
-            <img src="assets/hero-banner.png" alt="The fixed point of existence — SECS Neurotrophic OS">
-        </div>
-
         <div class="neuro-intro animated fadeInUp">
             <p class="lead">
-                The Neurotrophic OS is a research-grade intelligence layer that runs on top of the
-                SECS Sovereign substrate. It provides behavioural observation, predictive modelling,
-                and neurotrophic pattern detection — capabilities that are distinct from the
-                deterministic governance of Sovereign itself.
+                The slow-path intelligence layer: behavioural observation, predictive modelling, and governed
+                adaptation (Phases A&ndash;E) on top of the <a href="sovereign.html">Sovereign</a> substrate.
+                Distinct from constitutional collapse &mdash; it watches fast-path output and never blocks it.
             </p>
             <p>
-                Where Sovereign enforces constitutional law — deterministic, identity-free,
-                replayable — the Neurotrophic OS adds adaptive, biologically-inspired capabilities:
-                learning from observed patterns, forecasting system behaviour, and detecting
-                drift before it becomes failure.
+                Where Sovereign enforces deterministic, identity-free, replayable governance on every emit chain,
+                the Neurotrophic OS adds adaptive capability: pattern detection, trajectory forecasting, and
+                bounded plasticity within the frozen constraint surface. System diagrams and the fast/slow split
+                live on <a href="architecture.html">Architecture</a>.
             </p>
         </div>
 
-        <!-- Separation of concerns -->
-        <section class="neuro-distinction animated fadeInUp">
-            <h3 class="section-heading">Two Systems, One Substrate</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="principle-card neuro-card">
-                        <div class="principle-icon"><i class="fa fa-server"></i></div>
-                        <h4>SECS Sovereign</h4>
-                        <p>The base substrate. Deterministic execution for high-risk systems —
-                        medical, aviation, robotics, defence. No neurotrophic capability required.
-                        Constitutional governance. Zero drift.</p>
-                        <a href="sovereign.html" class="card-cta">Sovereign &rarr;</a>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="principle-card neuro-card neuro-highlight">
-                        <div class="principle-icon"><i class="fa fa-lightbulb-o"></i></div>
-                        <h4>Neurotrophic OS</h4>
-                        <p>The intelligence layer. Behavioural observation, predictive modelling,
-                        anomaly detection, and adaptive pattern recognition. Runs on Sovereign
-                        but is a separate system in its own right.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Capabilities (placeholder for user content) -->
         <section class="neuro-capabilities animated fadeInUp">
             <h3 class="section-heading">Capabilities</h3>
             <div class="row">
@@ -102,7 +68,7 @@
                         <span class="arch-label">Predictive Layer</span>
                         <span class="arch-tech">Forecasting</span>
                         <p>Forecasts the future. Probabilistic modelling, trend extrapolation,
-                        and early warning signals — structurally separated from observation.</p>
+                        and early warning signals &mdash; structurally separated from observation.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -114,23 +80,20 @@
                     </div>
                 </div>
             </div>
+        </section>
 
-        </div>
-
-        <!-- What it actually does -->
         <section class="neuro-detail animated fadeInUp">
             <h3 class="section-heading">What the Neurotrophic OS Does</h3>
             <p class="neuro-body">
-                The Neurotrophic OS is a <strong>deterministic behavioural operating system</strong>.
-                It watches how systems behave under real conditions — classifying traffic as
-                <code>STABLE</code> or <code>VOLATILE</code>, forecasting trajectory with mandatory
-                uncertainty quantification, and simulating every proposed mutation in an isolated
-                sandbox before it touches the substrate.
+                A <strong>deterministic behavioural operating system</strong> that watches how systems behave under
+                real conditions &mdash; classifying traffic as <code>STABLE</code> or <code>VOLATILE</code>,
+                forecasting trajectory with mandatory uncertainty quantification, and validating proposed mutations
+                in isolation before they reach live state.
             </p>
             <p class="neuro-body">
                 Nothing is a black box. Every prediction carries a confidence score and an explanation.
                 Every adaptation operation carries a provenance token proving it was authorised.
-                Observation is pure — it cannot alter what it observes. Prediction is separated from
+                Observation is pure &mdash; it cannot alter what it observes. Prediction is separated from
                 observation by constitutional law, not convention.
             </p>
 
@@ -144,8 +107,8 @@
                     <ul>
                         <li>Passive, side-effect-free pattern detection</li>
                         <li>Anomaly classification and profile drift monitoring</li>
-                        <li>Classifies adaptor traffic as STABLE (30–80 ms, 0.3 % error) or VOLATILE (20–500 ms, 5 % error, burst to 800 ms)</li>
-                        <li>Feeds observable metadata downstream — never controls, never predicts</li>
+                        <li>Classifies adaptor traffic as STABLE (30&ndash;80 ms, 0.3 % error) or VOLATILE (20&ndash;500 ms, 5 % error, burst to 800 ms)</li>
+                        <li>Feeds observable metadata downstream &mdash; never controls, never predicts</li>
                     </ul>
                 </div>
                 <div class="neuro-lane">
@@ -157,29 +120,26 @@
                     <ul>
                         <li>Consumes observations from the Behavioural Lane (read-only)</li>
                         <li>Trajectory forecasts, confidence scores, risk flags</li>
-                        <li>Mandatory uncertainty quantification — no unqualified predictions</li>
-                        <li>Tracks φ-convergence (golden-ratio stability of STABLE : VOLATILE throughput)</li>
+                        <li>Mandatory uncertainty quantification &mdash; no unqualified predictions</li>
+                        <li>Tracks &phi;-convergence (golden-ratio stability of STABLE : VOLATILE throughput)</li>
                     </ul>
                 </div>
             </div>
 
             <p class="neuro-body" style="margin-top: 30px;">
-                Before any mutation reaches live state, the <strong>Simulation Engine</strong> snapshots
-                the current state, applies the mutation in full isolation, validates postconditions,
-                detects drift amplification, and returns pass or fail. No network calls. No file writes
-                to production. No adaptor invocations. If simulation fails, execution is blocked.
+                Proposed mutations pass through isolated simulation before touching production &mdash; no network
+                calls, no file writes, no adaptor invocations. Fail closed. Full gate sequence on
+                <a href="architecture.html">Architecture</a>.
             </p>
         </section>
 
-        <!-- Biological foundation -->
         <section class="neuro-biology animated fadeInUp">
             <h3 class="section-heading">Biological Foundations</h3>
             <p class="neuro-body">
-                The system doesn't borrow biology as metaphor — it implements the same structural
-                patterns that biology uses to maintain boundaries under pressure. Growth, pruning,
-                plasticity, homeostasis, metabolism. The frog prefix (<code>frog__</code>) in the
-                SECS codebase marks every module in this layer, because the frog is the organism
-                whose existence is inseparable from its boundary.
+                Biology here is structure, not metaphor: growth, pruning, plasticity, homeostasis, metabolism.
+                The frog prefix (<code>frog__</code>) marks every module in this layer &mdash; the organism whose
+                existence is inseparable from its boundary. Phases A&ndash;E are diagrammed on
+                <a href="architecture.html">Architecture</a>.
             </p>
 
             <div class="row">
@@ -228,34 +188,32 @@
             <div class="row" style="margin-top: 20px;">
                 <div class="col-md-6">
                     <div class="arch-block">
-                        <span class="arch-label">Mutation Metabolism</span>
-                        <span class="arch-tech">Decomposition</span>
-                        <p>The system doesn't just admit or reject mutations. It <em>metabolises</em>
-                        them — decomposing each mutation into structural contribution (novel valid paths)
-                        and entropy payload (disorder). The structural part is absorbed. The entropy is
-                        discarded. Filtering becomes digestion.</p>
+                        <span class="arch-label">Osmotic Boundary</span>
+                        <span class="arch-tech">Selective Permeability</span>
+                        <p>The admissibility function is realised as a working membrane &mdash; admits what the
+                        system needs, expels what it produces. Identical architecture from the cell membrane
+                        (aquaporin channels) to the planetary atmosphere (O&#8322; at 20.946 %). Computation
+                        as gradient resolution across selective boundaries.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="arch-block">
-                        <span class="arch-label">Osmotic Boundary</span>
-                        <span class="arch-tech">Selective Permeability</span>
-                        <p>The admissibility function is realised as a working membrane — admits what the
-                        system needs, expels what it produces. Identical architecture from the cell membrane
-                        (aquaporin channels) to the planetary atmosphere (O₂ at 20.946 %). Computation
-                        as gradient resolution across selective boundaries.</p>
+                        <span class="arch-label">Phase E</span>
+                        <span class="arch-tech">Integration</span>
+                        <p>Cross-phase integration closes the slow-path loop: telemetry from the fast path
+                        feeds homeostasis and plasticity; bounded changes return only through governed channels.
+                        The fast path continues unchanged through every adaptation cycle.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Who it's for -->
         <section class="neuro-audience animated fadeInUp">
-            <h3 class="section-heading">Who It's For</h3>
+            <h3 class="section-heading">Who It&rsquo;s For</h3>
             <p class="neuro-body">
                 Engineering teams building systems that need <strong>deterministic behaviour under
                 unpredictable conditions</strong>. Where identity-free, governance-backed, observable
-                intelligence is required — and where "it usually works" is not acceptable.
+                intelligence is required &mdash; and where &ldquo;it usually works&rdquo; is not acceptable.
             </p>
             <div class="neuro-audience-grid">
                 <div class="neuro-audience-item">
@@ -285,11 +243,11 @@
             </div>
         </section>
 
-        <!-- Sovereign vs Neurotrophic -->
         <section class="neuro-vs animated fadeInUp">
             <h3 class="section-heading">Sovereign vs. Neurotrophic OS</h3>
             <p class="neuro-body">
-                These are two systems, not two names for the same thing. The distinction matters.
+                Two systems, one substrate. Sovereign is not a framework &mdash; it is the fast-path execution
+                environment. The Neurotrophic OS is the slow-path intelligence layer that observes without blocking.
             </p>
 
             <div class="neuro-comparison">
@@ -297,8 +255,8 @@
                     <h4><i class="fa fa-server"></i> Sovereign</h4>
                     <p class="neuro-compare-tagline">The bone.</p>
                     <ul>
-                        <li>Deterministic substrate — sealed, stateless execution</li>
-                        <li>Constitutional governance — identity-free, replayable</li>
+                        <li>Deterministic substrate &mdash; sealed, stateless execution</li>
+                        <li>Constitutional governance &mdash; identity-free, replayable</li>
                         <li>Zero allocations at runtime, zero mutable state</li>
                         <li>Pre-composed, immutable pipelines (O(1) dispatch)</li>
                         <li>The physics: rate limiting, spike detection, circuit breaking</li>
@@ -311,25 +269,24 @@
                     <h4><i class="fa fa-brain"></i> Neurotrophic OS</h4>
                     <p class="neuro-compare-tagline">The nervous system growing through it.</p>
                     <ul>
-                        <li>Adaptive intelligence layer — observation, prediction, simulation</li>
+                        <li>Adaptive intelligence layer &mdash; observation, prediction, simulation</li>
                         <li>Governed adaptation bounded by frozen constraint surfaces</li>
-                        <li>Proof-carrying — every operation carries provenance</li>
-                        <li>Constitutionally independent — zero inbound imports from core</li>
+                        <li>Proof-carrying &mdash; every operation carries provenance</li>
+                        <li>Constitutionally independent &mdash; zero inbound imports from core</li>
                         <li>The biology: growth, pruning, plasticity, homeostasis, metabolism</li>
-                        <li>Sits on the slow path — never on the hot execution path</li>
+                        <li>Sits on the slow path &mdash; never on the hot execution path</li>
                     </ul>
                 </div>
             </div>
 
             <p class="neuro-body neuro-body-closing">
                 Sovereign can run without the Neurotrophic OS. Medical, aviation, robotics,
-                and defence deployments may use the deterministic substrate alone — no adaptive
+                and defence deployments may use the deterministic substrate alone &mdash; no adaptive
                 capability required. The Neurotrophic OS adds intelligence to the substrate
                 without compromising its constitutional guarantees.
             </p>
         </section>
 
-        <!-- The frog -->
         <section class="neuro-frog animated fadeInUp">
             <h3 class="section-heading">Why the Frog</h3>
             <p class="neuro-body">
@@ -339,20 +296,54 @@
             <p class="neuro-body">
                 The frog breathes through its skin, drinks through its skin, thermoregulates through
                 its skin, and dies when its skin fails. It is the only vertebrate whose existence
-                is inseparable from its boundary. Aquaporins — the molecular selectivity filters
-                that govern osmosis — were discovered using frog cells (<em>Xenopus laevis</em>).
+                is inseparable from its boundary. Aquaporins &mdash; the molecular selectivity filters
+                that govern osmosis &mdash; were discovered using frog cells (<em>Xenopus laevis</em>).
                 The first membrane pore study (1966) was on frog skin.
             </p>
             <p class="neuro-body">
                 Frogs are leading environmental indicators. Their permeable skin makes them the
-                first to detect contamination — population entropy signals collapse 16 years before
+                first to detect contamination &mdash; population entropy signals collapse 16 years before
                 die-offs. Metamorphosis is a complete constitutional reset: the old boundary is
                 dismantled and a new one constructed. During transition the system is maximally
                 vulnerable.
             </p>
             <p class="neuro-body neuro-body-doctrine">
-                "The frog doesn't just tell us what's happening at the border. The frog IS the border."
+                &ldquo;The frog doesn&rsquo;t just tell us what&rsquo;s happening at the border. The frog IS the border.&rdquo;
             </p>
+        </section>
+
+        <section class="neuro-related animated fadeInUp" style="margin-top: 50px;">
+            <h3 class="section-heading">Related Surfaces</h3>
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <a href="architecture.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa-solid fa-sitemap"></i></div>
+                        <h4>System Architecture</h4>
+                        <p>Fast/slow path diagrams, Phases A&ndash;E, adaptor proof modals.</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="sovereign.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa fa-server"></i></div>
+                        <h4>Sovereign</h4>
+                        <p>Fast-path substrate spec &mdash; emit chain, governance, perimeter physics.</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="governed-console.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa fa-shield-halved"></i></div>
+                        <h4>Governed Console</h4>
+                        <p>Snapshot, stage gates, request ledger, and citation evidence.</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="gtf.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa fa-dna"></i></div>
+                        <h4>GTF</h4>
+                        <p>Gestational Timing Framework &mdash; biological research programme.</p>
+                    </a>
+                </div>
+            </div>
         </section>
 
     </main>
