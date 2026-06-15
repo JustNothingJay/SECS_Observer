@@ -24,15 +24,6 @@
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/secs.css?v=2">
     <script src="js/includes.js?v=4"></script>
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-667KK00S7H');
-    </script>
 </head>
 <body>
 
@@ -54,16 +45,21 @@
 
         <div class="sovereign-intro animated fadeInUp">
             <p class="lead">
-                A deterministic observation substrate that enforces governed execution,
-                identity-free operation, and constitutional governance across all runtime state transitions.
-                Designed for high-risk systems: medical, aviation, robotics, defence.
+                The fast-path runtime: deterministic collapse, identity-free ingress, and constitutional
+                governance on every state transition. Built for high-risk systems &mdash; medical, aviation,
+                robotics, defence &mdash; where replayable proof matters more than best-effort filtering.
             </p>
             <p>
                 SECS Sovereign is not a framework. It is a self-governing execution environment where
-                observation, mutation, simulation, and enforcement follow formal constitutional doctrine.
-                Seeds receive and dispatch messages through governed adjacency paths.
-                Every mutation is validated against a constitutional hierarchy of principles, algebra,
-                axioms, and surface envelopes. Nothing bypasses the substrate.
+                signals traverse one irreversible emit chain, exit as governance proof or structural veto,
+                and return the substrate to purity before the next cycle. Adaptors connect over HTTP;
+                the core substrate does not change per vertical.
+            </p>
+            <p>
+                This page is the <strong>substrate specification</strong>. System diagrams and adaptor proofs
+                live on <a href="architecture.html">Architecture</a>. Governed adaptation (Phases A&ndash;E)
+                lives on <a href="neurotrophic.html">Neurotrophic OS</a> &mdash; a separate layer that observes
+                Sovereign output but never blocks the fast path.
             </p>
         </div>
 
@@ -78,6 +74,9 @@
                 <div class="proof-strip-actions">
                     <a href="terminal.html" class="proof-cta primary">
                         <i class="fa fa-play"></i> Open Sovereign Terminal
+                    </a>
+                    <a href="vertical-demo.html?vertical=healthcare" class="proof-cta secondary">
+                        <i class="fa-solid fa-diagram-project"></i> Vertical workflow
                     </a>
                 </div>
             </div>
@@ -99,16 +98,20 @@
                     <div class="principle-card">
                         <div class="principle-icon"><i class="fa fa-eye-slash"></i></div>
                         <h4>Identity-Free</h4>
-                        <p>Zero PII. No user IDs, sessions, cookies, IP addresses, or fingerprints
-                        ever enter the substrate. The 13-field canonical identity set is always forbidden.</p>
+                        <p>Zero PII. Thirteen constitutional fields &mdash;
+                        <code>id</code>, <code>userId</code>, <code>accountId</code>, <code>sessionId</code>,
+                        <code>token</code>, <code>email</code>, <code>deviceId</code>, and aliases &mdash;
+                        are stripped at ingress. Cookies, IP addresses, and fingerprints never enter the substrate.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="principle-card">
                         <div class="principle-icon"><i class="fa fa-balance-scale"></i></div>
                         <h4>Constitutional Governance</h4>
-                        <p>Every code change passes through a Mutation Engine → Development Orchestrator →
-                        Simulation → Execution Gate pipeline. No shortcut exists.</p>
+                        <p>Governance filtration G&#8320;&ndash;G&#8324; loads at boot and is immutable at runtime.
+                        The frozen constraint surface defines admissibility; the adaptation surface may move
+                        only within those bounds. Development changes still pass through Mutation Engine &rarr;
+                        Simulation &rarr; Execution Gate before they can alter doctrine.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -122,43 +125,41 @@
             </div>
         </section>
 
-        <!-- Architecture -->
+        <!-- Runtime stack -->
         <section class="sovereign-architecture animated fadeInUp">
-            <h3 class="section-heading">Architecture</h3>
+            <h3 class="section-heading">Runtime Stack</h3>
+            <p class="hierarchy-note" style="margin-bottom: 24px;">
+                Sovereign owns ingress through emit. For Mermaid layer diagrams, collapse operators, and per-vertical proof modals,
+                see <a href="architecture.html">System Architecture</a>.
+            </p>
 
             <div class="arch-row">
                 <div class="arch-block">
+                    <span class="arch-label">Perimeter Engine</span>
+                    <span class="arch-tech">Ingress</span>
+                    <p>Rate, volume, burst &mdash; physics-only enforcement before any signal becomes a Spark.
+                    No content inspection. No identity fields admitted.</p>
+                </div>
+
+                <div class="arch-block">
                     <span class="arch-label">Atom</span>
                     <span class="arch-tech">Go</span>
-                    <p>Core bootstrap kernel. Loads doctrine, validates, activates seeds, dispatches messages.
-                    Atom does not compute, route, orchestrate, or interpret. Atom governs movement, state, and boundaries.</p>
+                    <p>Bootstrap kernel. Loads doctrine, validates, activates seeds, dispatches messages.
+                    Atom governs movement and boundaries &mdash; it does not compute, route, or interpret payload content.</p>
                 </div>
 
                 <div class="arch-block">
                     <span class="arch-label">Substrate Runtime</span>
                     <span class="arch-tech">TypeScript</span>
-                    <p>Metrics API, burn orchestrator, adaptor management, dashboard. The primary application layer.</p>
+                    <p>Collapse pipeline, burn orchestrator, adaptor boundary, dual-lane cockpit.
+                    Spark &rarr; Accept &rarr; Route &rarr; React &rarr; Extinguish &rarr; Emit on every cycle.</p>
                 </div>
 
                 <div class="arch-block">
-                    <span class="arch-label">Dual-Lane Cockpit</span>
-                    <span class="arch-tech">STABLE / VOLATILE</span>
-                    <p>Two completely independent dashboards sharing only layout geometry.
-                    Zero cross-contamination between deterministic and elastic lanes.</p>
-                </div>
-
-                <div class="arch-block">
-                    <span class="arch-label">Perimeter Engine</span>
-                    <span class="arch-tech">TypeScript</span>
-                    <p>Rate limiter, spike detector, circuit breaker, load shedder.
-                    Physics-only enforcement at the boundary.</p>
-                </div>
-
-                <div class="arch-block">
-                    <span class="arch-label">100-Rule Guardrail Suite</span>
-                    <span class="arch-tech">Enforcement</span>
-                    <p>Detects AI-generated drift patterns: identity leaks, non-determinism,
-                    governance hollowing, test quality degradation.</p>
+                    <span class="arch-label">Certified Adaptors</span>
+                    <span class="arch-tech">External</span>
+                    <p>Industry verticals connect over HTTP only. Same substrate; different constraint surface per adaptor.
+                    STABLE and VOLATILE profiles share zero state.</p>
                 </div>
             </div>
         </section>
@@ -167,21 +168,19 @@
         <section class="sovereign-hierarchy animated fadeInUp">
             <h3 class="section-heading">Constitutional Hierarchy</h3>
             <div class="hierarchy-chain">
-                <span class="hierarchy-node">Principles</span>
+                <span class="hierarchy-node">G&#8320; Principles</span>
                 <span class="hierarchy-arrow"><i class="fa fa-long-arrow-right"></i></span>
-                <span class="hierarchy-node">Algebra</span>
+                <span class="hierarchy-node">G&#8321; Algebra</span>
                 <span class="hierarchy-arrow"><i class="fa fa-long-arrow-right"></i></span>
-                <span class="hierarchy-node">Axioms</span>
+                <span class="hierarchy-node">G&#8322; Axioms</span>
                 <span class="hierarchy-arrow"><i class="fa fa-long-arrow-right"></i></span>
-                <span class="hierarchy-node">Surface</span>
+                <span class="hierarchy-node">G&#8323; Surface</span>
                 <span class="hierarchy-arrow"><i class="fa fa-long-arrow-right"></i></span>
-                <span class="hierarchy-node">Envelopes</span>
-                <span class="hierarchy-arrow"><i class="fa fa-long-arrow-right"></i></span>
-                <span class="hierarchy-node">Parameters</span>
+                <span class="hierarchy-node">G&#8324; Envelopes</span>
             </div>
             <p class="hierarchy-note">
-                64 constitutional declarations across 10 philosopher translations.
-                Messages are sovereign citizens — immutable, uninspected, dispatched immediately.
+                64 constitutional declarations across 10 philosopher translations, loaded at boot.
+                Constraint surface is frozen; adaptation surface is mutable only inside those bounds.
             </p>
         </section>
 
@@ -205,13 +204,13 @@
                 <div class="spec-block">
                     <h4><i class="fa fa-route"></i> Execution Pipeline</h4>
                     <div class="pipeline-diagram">
-                        <code>Spark in &rarr; Accept &rarr; Route &rarr; React &rarr; Extinguish &rarr; Emit &rarr; Governance proof out</code>
+                        <code>Spark &rarr; Accept (&alpha;) &rarr; Route (&lambda;) &rarr; React (&rho;) &rarr; Extinguish (&epsilon;) &rarr; Emit</code>
                     </div>
                     <ul class="spec-list">
-                        <li><strong>Proof tokens</strong> &mdash; cryptographic evidence of what happened</li>
-                        <li><strong>HMAC-SHA256 governance signatures</strong> &mdash; tamper-evident audit trail</li>
-                        <li><strong>Deterministic replay</strong> &mdash; SubstrateClock + seeded PRNG, no wall-clock</li>
-                        <li><strong>Identity-free processing</strong> &mdash; 13 forbidden identity fields enforced at the gate</li>
+                        <li><strong>Governance proof</strong> &mdash; HMAC-signed certificate; replayable for audit, raw signal not persisted</li>
+                        <li><strong>Deterministic replay</strong> &mdash; SubstrateClock + seeded PRNG, no wall-clock dependency</li>
+                        <li><strong>Structural veto</strong> &mdash; inadmissible signals are impossible, not queued or retried</li>
+                        <li><strong>Identity-free processing</strong> &mdash; 13 forbidden fields stripped before Accept</li>
                     </ul>
                 </div>
 
@@ -227,13 +226,16 @@
                 </div>
 
                 <div class="spec-block">
-                    <h4><i class="fa fa-leaf"></i> Neurotrophic Adaptation (v1.5)</h4>
+                    <h4><i class="fa fa-leaf"></i> Neurotrophic Layer</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; margin-bottom: 14px;">
+                        Phases A&ndash;E observe fast-path output and adjust the adaptation surface within frozen bounds.
+                        They do not run on Sovereign by default &mdash; that is the <a href="neurotrophic.html">Neurotrophic OS</a> product layer.
+                    </p>
                     <ul class="spec-list">
-                        <li><strong>Hebbian + STDP learning</strong> &mdash; temporal correlation rules bounded by immutable envelopes</li>
-                        <li><strong>Homeostatic control</strong> &mdash; thermodynamic sensing &rarr; set-point correction</li>
-                        <li><strong>Structural plasticity</strong> &mdash; governed topology growth, pruning, and reinforcement</li>
-                        <li><strong>Cross-domain bridging</strong> &mdash; bidirectional event bridge between adaptation and colony</li>
-                        <li><strong>~12,850 adaptation cycles</strong> &mdash; 36/36 targeted tests, zero violations</li>
+                        <li><strong>Phase A</strong> &mdash; homeostasis: rate, latency, error, throughput</li>
+                        <li><strong>Phase B</strong> &mdash; structural plasticity within constraint surface</li>
+                        <li><strong>Phase C</strong> &mdash; cross-domain fault repair before learning resumes</li>
+                        <li><strong>Phases D&ndash;E</strong> &mdash; temporal and meta-learning; Founder-defined rewards only</li>
                     </ul>
                 </div>
 
@@ -265,8 +267,9 @@
         <section class="sovereign-adaptors animated fadeInUp">
             <h3 class="section-heading">Vertical Adaptors</h3>
             <p class="section-subtitle" style="text-align:center; margin-bottom: 30px;">
-                Ten industry demos. Same substrate. Zero code changes to the core.<br>
-                Each licensee configures their own constraint surface &mdash; you can tighten, never loosen.
+                Eleven vertical surfaces. Same substrate. Zero core changes.<br>
+                Each adaptor tightens its own constraint surface &mdash; never loosens constitutional bounds.
+                <strong>Proven</strong> means architecturally compatible with cited regulation, not third-party certified.
             </p>
 
             <div class="row adaptor-grid">
@@ -426,6 +429,23 @@
 
                 <div class="col-md-4 col-sm-6">
                     <div class="adaptor-card">
+                        <div class="adaptor-icon"><i class="fa fa-robot"></i></div>
+                        <h4>Governed AI</h4>
+                        <p class="adaptor-reg">Enterprise guardrails &middot; drift governance</p>
+                        <p>Agent deletes a file or drifts outside its envelope. Operator asks: <em>can you replay the full authority chain and revoke the adaptor instantly?</em></p>
+                        <div class="adaptor-params">
+                            <span>Anomaly: <strong>3</strong></span>
+                            <span>Drift: <strong>0.5</strong></span>
+                            <span>Veto: <strong>2</strong></span>
+                        </div>
+                        <div class="adaptor-actions">
+                            <a href="architecture.html" class="adaptor-demo-link">View proof on Architecture <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="adaptor-card">
                         <div class="adaptor-icon"><i class="fa fa-truck"></i></div>
                         <h4>Supply Chain</h4>
                         <p class="adaptor-reg">EU CSRD &middot; CSDDD &middot; Basel III</p>
@@ -453,50 +473,34 @@
 
         <!-- Links -->
         <section class="sovereign-links animated fadeInUp">
-            <h3 class="section-heading">Explore</h3>
+            <h3 class="section-heading">Related Surfaces</h3>
             <div class="row">
                 <div class="col-md-3 col-sm-6">
-                    <a href="research.html" class="project-tile">
-                        <div class="tile-icon"><i class="fa fa-book"></i></div>
-                        <h4>Research</h4>
-                        <p>The algebra that governs the substrate. 81 published documents.</p>
+                    <a href="architecture.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa-solid fa-sitemap"></i></div>
+                        <h4>System Architecture</h4>
+                        <p>Mermaid diagrams, collapse operators, adaptor proof modals.</p>
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <a href="neurotrophic.html" class="project-tile">
                         <div class="tile-icon"><i class="fa fa-leaf"></i></div>
                         <h4>Neurotrophic OS</h4>
-                        <p>The adaptive intelligence layer that learns within constitutional bounds.</p>
+                        <p>Slow-path adaptation &mdash; behavioural, predictive, and biological layers.</p>
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6">
-                    <a href="https://github.com/JustNothingJay/mobius-number" target="_blank" rel="noopener noreferrer" class="project-tile">
-                        <div class="tile-icon"><i class="fa-brands fa-python"></i></div>
-                        <h4>M&ouml;biusNumber</h4>
-                        <p>Fixes IEEE 754 floating point. Dual-strand: float64 + exact rational. <code>pip install mobius-number</code></p>
+                    <a href="governed-console.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa fa-shield-halved"></i></div>
+                        <h4>Governed Console</h4>
+                        <p>Snapshot, stage gates, request ledger, and citation evidence.</p>
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6">
-                    <a href="https://github.com/JustNothingJay/mobius-integer" target="_blank" rel="noopener noreferrer" class="project-tile">
-                        <div class="tile-icon"><i class="fa-brands fa-rust"></i></div>
-                        <h4>M&ouml;biusInteger</h4>
-                        <p>Fixes integer overflow. Dual-strand: i64 + BigInt. Silent corruption detected, not ignored.</p>
-                    </a>
-                </div>
-            </div>
-            <div class="row explore-row" style="margin-top: 10px;">
-                <div class="col-md-3 col-sm-6">
-                    <a href="https://github.com/JustNothingJay/mobius-constant" target="_blank" rel="noopener noreferrer" class="project-tile">
-                        <div class="tile-icon"><i class="fa-brands fa-python"></i></div>
-                        <h4>M&ouml;biusConstant</h4>
-                        <p>Fixes irrational arithmetic. Dual-strand: float64 + verified digits. <code>pip install mobius-constant</code></p>
-                    </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <a href="https://github.com/JustNothingJay/mobius-units" target="_blank" rel="noopener noreferrer" class="project-tile">
-                        <div class="tile-icon"><i class="fa fa-code-fork"></i></div>
-                        <h4>M&ouml;biusUnits</h4>
-                        <p>Fixes unit consistency. Exact dimensional structure for constants, conversions, and derived quantities.</p>
+                    <a href="research.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa fa-book"></i></div>
+                        <h4>Research</h4>
+                        <p>47 published works &middot; 37 Zenodo DOIs &middot; open access corpus.</p>
                     </a>
                 </div>
             </div>
