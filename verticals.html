@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="css/animate.css">
-    <link rel="stylesheet" href="css/secs.css?v=6">
+    <link rel="stylesheet" href="css/secs.css?v=7">
     <script src="js/includes.js?v=9"></script>
 </head>
 <body>
@@ -110,6 +110,91 @@
             </div>
         </section>
 
+        <section class="verticals-chunk animated fadeInUp" id="adaptor-architecture">
+            <h3><i class="fa-solid fa-plug"></i> Adaptor architecture &mdash; external connections</h3>
+            <p class="chunk-desc">
+                Adaptors are <strong>external certified processes</strong>. Not part of the substrate.
+                HTTP boundary only. The substrate never changes &mdash; only the adaptor configuration surface changes.
+            </p>
+
+            <div class="arch-diagram">
+                <pre class="mermaid">
+flowchart TB
+    subgraph VERTICALS["Industry verticals"]
+        HC["Healthcare"] & FT["Fintech"] & DF["Defence"] & EN["Energy"]
+    end
+    subgraph ADAPTORS["Certified adaptors — external"]
+        STREG["STABLE · 30–80 ms"]
+        VLREG["VOLATILE · 20–500 ms"]
+    end
+    subgraph CORE["Substrate — unchanged"]
+        BURN["Burn Orchestrator"] --> PIPE["Collapse + governance"] --> COCK["Dual-lane cockpit"]
+    end
+    HC & FT & DF & EN -->|"HTTP only"| STREG
+    HC & FT & DF & EN -->|"HTTP only"| VLREG
+    STREG --> BURN
+    VLREG --> BURN
+
+    classDef ext fill:#161920,stroke:#8b8f9a,color:#e0e2e8
+    classDef stable fill:#121820,stroke:#00B2FF,color:#e0e2e8
+    classDef volatile fill:#1f1814,stroke:#FF5E00,color:#e0e2e8
+    class VERTICALS,HC,FT,DF,EN ext
+    class STREG,BURN,PIPE,COCK stable
+    class VLREG volatile
+                </pre>
+                <p class="arch-diagram-caption">Same substrate &mdash; different constraint surface per vertical. Open a <a href="vertical-demo.html?vertical=healthcare">Workflow Demo</a> to walk through one domain.</p>
+            </div>
+
+            <div class="arch-adaptor-row">
+                <div class="arch-adaptor-card stable-card">
+                    <h4>Stable profile</h4>
+                    <ul>
+                        <li><strong>30&ndash;80 ms</strong> latency</li>
+                        <li><strong>0.3%</strong> error rate</li>
+                        <li>Predictable &mdash; deterministic behaviour</li>
+                    </ul>
+                </div>
+                <div class="arch-adaptor-card volatile-card">
+                    <h4>Volatile profile</h4>
+                    <ul>
+                        <li><strong>20&ndash;500 ms</strong> latency</li>
+                        <li><strong>5%</strong> error rate</li>
+                        <li>Unpredictable &mdash; real-world variance</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="chunk-desc" style="margin-top: 8px;">
+                Same substrate. Same collapse pipeline. Same governance. Different constraint surface per vertical.
+            </p>
+
+            <div class="table-responsive" style="margin-top: 24px;">
+                <table class="table arch-table">
+                    <thead>
+                        <tr>
+                            <th>Vertical</th>
+                            <th>Regulation</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-proof="fintech" data-tip="Example: AAPL BUY 500 @ 187.42 — α₀ ∧ αᵥ gate; userId and accountId blocked"><td><strong>Fintech</strong></td><td>MiFID II, SOX</td><td>Proven</td></tr>
+                        <tr data-proof="healthcare" data-tip="Example: MRI follow-up evt — PHI stripped; flat maxDepth:1 audit trail"><td><strong>Healthcare</strong></td><td>HIPAA, FDA 21 CFR Part 11</td><td>Proven</td></tr>
+                        <tr data-proof="defence" data-tip="Example: HOSTILE classification — human override required or unconditional veto"><td><strong>Defence</strong></td><td>NATO STANAG 4586, MIL-STD-882E</td><td>Proven</td></tr>
+                        <tr data-proof="insurance" data-tip="Example: AUTO claim $12,500 — jurisdiction + complianceFlag mandatory"><td><strong>Insurance</strong></td><td>Solvency II, IDD</td><td>Proven</td></tr>
+                        <tr data-proof="legal" data-tip="Example: criminal case HIGH severity — transparencyFlag + humanReview required"><td><strong>Legal</strong></td><td>EU AI Act (Art. 14), ECHR Art. 6</td><td>Adaptor-ready</td></tr>
+                        <tr data-proof="energy" data-tip="Example: ELEVATED grid load — safetyMargin must stay positive or hold"><td><strong>Energy</strong></td><td>NERC CIP, IEC 62443</td><td>Proven</td></tr>
+                        <tr data-proof="automotive" data-tip="Example: ASIL_D path plan — UNKNOWN_UNSAFE without emergency braking = veto"><td><strong>Automotive</strong></td><td>ISO 26262, SOTIF (ISO 21448)</td><td>Proven</td></tr>
+                        <tr data-proof="cybersecurity" data-tip="Example: LATERAL_MOVEMENT alert — CRITICAL cannot escalate to LOG only"><td><strong>Cybersecurity</strong></td><td>NIST CSF 2.0, SOC 2 Type II</td><td>Proven</td></tr>
+                        <tr data-proof="supplychain" data-tip="Example: TIER_2 ESG risk — sanctionsCheck BLOCKED is unconditional reject"><td><strong>Supply Chain</strong></td><td>EU CSRD, CSDDD, Basel III</td><td>Proven</td></tr>
+                        <tr data-proof="edtech" data-tip="Example: Grade 6–8 adaptive path — K–5 requires COPPA complianceFlag"><td><strong>EdTech</strong></td><td>FERPA, COPPA, EU GDPR (Art. 22)</td><td>Adaptor-ready</td></tr>
+                        <tr data-proof="governedai" data-tip="Example: agent file delete — full envelope chain replayable; kill switch revokes adaptor"><td><strong>Governed AI</strong></td><td>No standard (substrate layer)</td><td>Proven</td></tr>
+                    </tbody>
+                </table>
+                <p class="arch-table-note"><i class="fa-solid fa-hand-pointer" style="color: var(--accent-blue); margin-right: 6px;"></i><strong>Proven</strong> means architecturally compatible with the cited compliance requirements &mdash; not third-party certified. Hover for an example event; click any row for the full proof definition.</p>
+            </div>
+        </section>
+
         <section class="verticals-chunk animated fadeInUp">
             <h3>Shared envelopes, different values</h3>
             <p class="chunk-desc">
@@ -159,7 +244,7 @@
             </table>
             <p class="chunk-desc" style="margin-top: 16px;">
                 Full parameter tables per vertical are on each <a href="vertical-demo.html?vertical=robotics">Workflow Demo</a>
-                and in Architecture proof modals.
+                and in the <a href="#adaptor-architecture">compliance proof table</a> above.
             </p>
         </section>
 
@@ -305,7 +390,7 @@
                     <a href="architecture.html" class="project-tile">
                         <div class="tile-icon"><i class="fa-solid fa-sitemap"></i></div>
                         <h4>Architecture</h4>
-                        <p>Adaptor diagram, proof modals, constraint vs adaptation surfaces.</p>
+                        <p>Collapse pipeline, governance filtration, neurotrophic phases.</p>
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-6">
@@ -330,6 +415,31 @@
     <div id="site-footer"></div>
     <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
 
+    <div class="proof-overlay" id="proofOverlay">
+        <div class="proof-panel" id="proofPanel">
+            <button class="proof-panel-close" id="proofClose" type="button">&times;</button>
+            <div id="proofContent"></div>
+        </div>
+    </div>
+
     <span class="border-top"></span><span class="border-left"></span><span class="border-right"></span><span class="border-bottom"></span>
+    <script src="js/vertical-proofs.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#161920',
+                primaryTextColor: '#e0e2e8',
+                primaryBorderColor: '#00B2FF',
+                lineColor: '#8b8f9a',
+                secondaryColor: '#111318',
+                tertiaryColor: '#0a0b0d',
+                fontFamily: 'Inter, sans-serif'
+            },
+            flowchart: { curve: 'basis', padding: 16 }
+        });
+    </script>
 </body>
 </html>
