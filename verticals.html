@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="SECS Vertical Surfaces — how adaptor configuration works. Same substrate, different constraint surfaces per industry vertical.">
+    <title>Vertical Surfaces — SECS</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/verticals.html">
+    <meta property="og:title" content="Vertical Surfaces — SECS">
+    <meta property="og:description" content="Same substrate. Different constraint surfaces. How vertical adaptors configure envelopes, predicates, and domain rules.">
+    <meta property="og:image" content="https://secs.observer/assets/hero-banner.png">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Vertical Surfaces — SECS">
+    <meta name="twitter:description" content="Same substrate. Different constraint surfaces. How vertical adaptors configure envelopes, predicates, and domain rules.">
+    <meta name="twitter:image" content="https://secs.observer/assets/hero-banner.png">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/secs.css?v=6">
+    <script src="js/includes.js?v=9"></script>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="verticals-page container">
+
+        <div class="section-header text-center">
+            <h2 class="animated fadeInLeft">Vertical Surfaces</h2>
+            <div class="section-line"></div>
+            <p class="section-subtitle animated fadeInRight">Same substrate. Different constraint surfaces.</p>
+        </div>
+
+        <div class="verticals-intro animated fadeInUp">
+            <p>
+                The SECS core never forks per industry. Each vertical is a <strong>certified adaptor</strong>
+                with its own constraint surface &mdash; envelope values, domain predicates, and identity bans
+                loaded at boot. Operators may label knobs differently in runbooks; the substrate always resolves
+                the same constitutional fields.
+            </p>
+            <p style="margin-top: 1rem;">
+                This page explains <em>what</em> gets configured and <em>how</em> completion works.
+                For a governed workflow walkthrough inside one domain, open a
+                <a href="vertical-demo.html?vertical=healthcare">Workflow Demo</a>.
+            </p>
+        </div>
+
+        <section class="verticals-chunk animated fadeInUp">
+            <h3>One substrate, many surfaces</h3>
+            <p class="chunk-desc">
+                Think of the substrate as the physics engine: collapse pipeline, six veto classes, identity extinction,
+                governance proof. Verticals only change the <strong>adaptor configuration</strong> &mdash; never the emit chain.
+            </p>
+            <div class="verticals-mapping">
+                <p><strong>Example (same knob, different vertical labels and values):</strong></p>
+                <p>
+                    The substrate exposes <code>severeDriftMagnitude</code> (a bounded envelope in G&#8324;).
+                    Healthcare operators may call it <em>&ldquo;clinical drift tolerance&rdquo;</em> and set it to <strong>0.5</strong>.
+                    Fintech may call it <em>&ldquo;model surface stability&rdquo;</em> and set it to <strong>0.7</strong>.
+                    Automotive may call it <em>&ldquo;ASIL drift bound&rdquo;</em> and set it to <strong>0.2</strong>.
+                </p>
+                <p style="margin-top: 12px;">
+                    All three map to the same substrate field. The adaptor certificate names the vertical;
+                    doctrine validates the values against constitutional bounds before the system boots.
+                    A vertical cannot loosen G&#8320;&ndash;G&#8323; &mdash; it may only tighten within the frozen constraint surface.
+                </p>
+            </div>
+        </section>
+
+        <section class="verticals-chunk animated fadeInUp">
+            <h3>Three configuration layers</h3>
+            <p class="chunk-desc">Digestible split: what is frozen, what is tuned per vertical, what is domain-specific.</p>
+            <div class="verticals-layer-grid">
+                <div class="verticals-layer-card frozen">
+                    <h4><i class="fa fa-lock"></i> Frozen (substrate)</h4>
+                    <p>Loaded once at boot. Immutable at runtime.</p>
+                    <ul>
+                        <li>Emit chain: Spark &rarr; &alpha; &rarr; &nu; &rarr; &lambda; &rarr; &rho; &rarr; &epsilon; &rarr; Emit</li>
+                        <li>Six exhaustive veto classes (v&#8321;&ndash;v&#8326;)</li>
+                        <li>Thirteen identity fields stripped at ingress</li>
+                        <li>G&#8320;&ndash;G&#8323; constitutional doctrine</li>
+                    </ul>
+                </div>
+                <div class="verticals-layer-card envelope">
+                    <h4><i class="fa fa-sliders"></i> Envelope (per vertical)</h4>
+                    <p>G&#8324; adaptation bounds. Tighter than defaults; never looser.</p>
+                    <ul>
+                        <li><code>anomalyThreshold</code> &mdash; sensitivity to anomaly spikes</li>
+                        <li><code>severeDriftMagnitude</code> &mdash; max behavioural drift before hold</li>
+                        <li><code>vetoFreqThreshold</code> &mdash; vetoes before escalation</li>
+                        <li>Substrate V1 defaults: <strong>10 / 0.9 / 5</strong> (lower = tighter)</li>
+                    </ul>
+                </div>
+                <div class="verticals-layer-card domain">
+                    <h4><i class="fa fa-certificate"></i> Domain (per vertical)</h4>
+                    <p>Custom predicates and field bans in the adaptor certificate.</p>
+                    <ul>
+                        <li>Regulatory predicates (e.g. HIPAA PHI guard, ASIL level)</li>
+                        <li>Mandatory metadata (jurisdiction, compliance flags)</li>
+                        <li>Vertical-only surfaces (e.g. <code>jointLimitSurface</code> for robotics)</li>
+                        <li>STABLE / VOLATILE behavioural profile class</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="verticals-chunk animated fadeInUp">
+            <h3>Shared envelopes, different values</h3>
+            <p class="chunk-desc">
+                Every vertical uses the same three envelope parameters. Values differ by risk posture.
+                Domain predicates are additional &mdash; not substitutes for the shared substrate fields.
+            </p>
+            <table class="verticals-compare-table">
+                <thead>
+                    <tr>
+                        <th>Substrate field</th>
+                        <th>Healthcare</th>
+                        <th>Fintech</th>
+                        <th>Defence</th>
+                        <th>Automotive</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="param">anomalyThreshold</td>
+                        <td>3</td>
+                        <td>5</td>
+                        <td>2</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td class="param">severeDriftMagnitude</td>
+                        <td>0.5</td>
+                        <td>0.7</td>
+                        <td>0.3</td>
+                        <td>0.2</td>
+                    </tr>
+                    <tr>
+                        <td class="param">vetoFreqThreshold</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td class="param">domain predicate</td>
+                        <td><code>hipaa-phi-guard</code></td>
+                        <td>MiFID audit trail</td>
+                        <td>HOSTILE &rarr; human override</td>
+                        <td>ASIL + SOTIF guard</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="chunk-desc" style="margin-top: 16px;">
+                Full parameter tables per vertical are on each <a href="vertical-demo.html?vertical=robotics">Workflow Demo</a>
+                and in Architecture proof modals.
+            </p>
+        </section>
+
+        <section class="verticals-chunk animated fadeInUp">
+            <h3>How configuration completes</h3>
+            <p class="chunk-desc">No runtime self-service loosening. Configuration is a boot-time constitutional act.</p>
+            <div class="verticals-steps">
+                <div class="verticals-step">
+                    <div class="verticals-step-num">1</div>
+                    <div class="verticals-step-body">
+                        <h4>Doctrine manifest</h4>
+                        <p>Vertical rules are authored as doctrine: envelope values, custom predicates, forbidden fields, and regulator references. Must inherit G&#8320;&ndash;G&#8323; constraints.</p>
+                    </div>
+                </div>
+                <div class="verticals-step">
+                    <div class="verticals-step-num">2</div>
+                    <div class="verticals-step-body">
+                        <h4>Adaptor certificate</h4>
+                        <p>Signed manifest binds <code>adaptorId</code>, profile class (STABLE or VOLATILE), public key, and the vertical constraint surface. Validated before load.</p>
+                    </div>
+                </div>
+                <div class="verticals-step">
+                    <div class="verticals-step-num">3</div>
+                    <div class="verticals-step-body">
+                        <h4>Boot validation</h4>
+                        <p>Atom loads doctrine and certificates. If validation fails, the substrate halts &mdash; no partial admission. Two-gate admissibility: constitutional &alpha;&#8320; and adaptor-specific &alpha;&#752;</p>
+                    </div>
+                </div>
+                <div class="verticals-step">
+                    <div class="verticals-step-num">4</div>
+                    <div class="verticals-step-body">
+                        <h4>Runtime boundary</h4>
+                        <p>Envelope tuning within bounds may move on the adaptation surface (neurotrophic slow path). Constraint surface and predicates do not change without a new ratified deployment.</p>
+                    </div>
+                </div>
+                <div class="verticals-step">
+                    <div class="verticals-step-num">5</div>
+                    <div class="verticals-step-body">
+                        <h4>Proof on every cycle</h4>
+                        <p>Each emit produces an HMAC-signed governance certificate. Regulators replay decisions years later with identical output &mdash; configuration is evidenced, not asserted.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="verticals-chunk animated fadeInUp">
+            <h3>What you cannot configure</h3>
+            <p class="chunk-desc">These are structural, not policy toggles.</p>
+            <div class="row" style="max-width: 900px; margin: 0 auto;">
+                <div class="col-md-6">
+                    <div class="arch-block">
+                        <span class="arch-label">Never</span>
+                        <span class="arch-tech">Substrate</span>
+                        <p>Collapse operator sequence, veto irreversibility, identity set, or constitutional axioms at runtime.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="arch-block">
+                        <span class="arch-label">Never</span>
+                        <span class="arch-tech">Vertical</span>
+                        <p>Loosen envelope below substrate minimums, bypass custom predicates, or admit identity fields through an adaptor override.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="verticals-chunk animated fadeInUp">
+            <h3>Vertical index</h3>
+            <p class="chunk-desc">Eleven adaptor surfaces. Select one for a full governed workflow demo.</p>
+            <div class="verticals-index-grid">
+                <a href="vertical-demo.html?vertical=healthcare" class="verticals-index-card">
+                    <h4><i class="fa fa-heartbeat"></i> Healthcare</h4>
+                    <p>HIPAA &middot; FDA 21 CFR Part 11</p>
+                    <span class="verticals-index-params">3 / 0.5 / 2</span>
+                </a>
+                <a href="vertical-demo.html?vertical=fintech" class="verticals-index-card">
+                    <h4><i class="fa fa-line-chart"></i> Fintech</h4>
+                    <p>MiFID II &middot; SOX</p>
+                    <span class="verticals-index-params">5 / 0.7 / 3</span>
+                </a>
+                <a href="vertical-demo.html?vertical=defence" class="verticals-index-card">
+                    <h4><i class="fa fa-fighter-jet"></i> Defence</h4>
+                    <p>NATO STANAG 4586 &middot; MIL-STD-882E</p>
+                    <span class="verticals-index-params">2 / 0.3 / 1</span>
+                </a>
+                <a href="vertical-demo.html?vertical=energy" class="verticals-index-card">
+                    <h4><i class="fa fa-bolt"></i> Energy</h4>
+                    <p>NERC CIP &middot; IEC 62443</p>
+                    <span class="verticals-index-params">2 / 0.3 / 1</span>
+                </a>
+                <a href="vertical-demo.html?vertical=automotive" class="verticals-index-card">
+                    <h4><i class="fa fa-car"></i> Automotive</h4>
+                    <p>ISO 26262 &middot; SOTIF</p>
+                    <span class="verticals-index-params">2 / 0.2 / 1</span>
+                </a>
+                <a href="vertical-demo.html?vertical=cybersecurity" class="verticals-index-card">
+                    <h4><i class="fa fa-shield"></i> Cybersecurity</h4>
+                    <p>NIST CSF 2.0 &middot; SOC 2</p>
+                    <span class="verticals-index-params">3 / 0.5 / 2</span>
+                </a>
+                <a href="vertical-demo.html?vertical=robotics" class="verticals-index-card">
+                    <h4><i class="fa-solid fa-robot"></i> Robotics</h4>
+                    <p>ISO 10218 &middot; IEC 61508</p>
+                    <span class="verticals-index-params">2 / 0.2 / 1</span>
+                </a>
+                <a href="vertical-demo.html?vertical=edtech" class="verticals-index-card">
+                    <h4><i class="fa fa-graduation-cap"></i> EdTech</h4>
+                    <p>FERPA &middot; COPPA</p>
+                    <span class="verticals-index-params">4 / 0.6 / 3</span>
+                </a>
+                <a href="vertical-demo.html?vertical=insurance" class="verticals-index-card">
+                    <h4><i class="fa fa-umbrella"></i> Insurance</h4>
+                    <p>Solvency II &middot; IDD</p>
+                    <span class="verticals-index-params">4 / 0.6 / 3</span>
+                </a>
+                <a href="vertical-demo.html?vertical=legal" class="verticals-index-card">
+                    <h4><i class="fa fa-gavel"></i> Legal</h4>
+                    <p>EU AI Act &middot; ECHR Art. 6</p>
+                    <span class="verticals-index-params">3 / 0.4 / 2</span>
+                </a>
+                <a href="vertical-demo.html?vertical=supply-chain" class="verticals-index-card">
+                    <h4><i class="fa fa-truck"></i> Supply Chain</h4>
+                    <p>EU CSRD &middot; CSDDD</p>
+                    <span class="verticals-index-params">5 / 0.6 / 3</span>
+                </a>
+            </div>
+            <p class="chunk-desc" style="margin-top: 16px;">
+                Index values are <code>anomalyThreshold / severeDriftMagnitude / vetoFreqThreshold</code>.
+            </p>
+        </section>
+
+        <section class="animated fadeInUp" style="margin-top: 40px;">
+            <h3 class="section-heading">Related Surfaces</h3>
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <a href="sovereign.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa fa-server"></i></div>
+                        <h4>Sovereign</h4>
+                        <p>Adaptor cards, envelope legend, substrate spec.</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="architecture.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa-solid fa-sitemap"></i></div>
+                        <h4>Architecture</h4>
+                        <p>Adaptor diagram, proof modals, constraint vs adaptation surfaces.</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="vertical-demo.html?vertical=healthcare" class="project-tile">
+                        <div class="tile-icon"><i class="fa-solid fa-diagram-project"></i></div>
+                        <h4>Workflow Demos</h4>
+                        <p>Per-vertical governed workflow walkthroughs.</p>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="terminal.html" class="project-tile">
+                        <div class="tile-icon"><i class="fa fa-terminal"></i></div>
+                        <h4>Sovereign Terminal</h4>
+                        <p>Submit real envelopes to the live constitutional gates.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+
+    <span class="border-top"></span><span class="border-left"></span><span class="border-right"></span><span class="border-bottom"></span>
+</body>
+</html>

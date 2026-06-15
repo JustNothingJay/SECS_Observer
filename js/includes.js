@@ -61,9 +61,10 @@
             li('architecture.html', 'Architecture'),
             li('neurotrophic.html', 'Neurotrophic OS'),
             li('sovereign.html', 'Sovereign'),
-            li('vertical-demo.html?vertical=robotics', 'Vertical Deep Dive'),
+            li('verticals.html', 'Vertical Surfaces'),
+            li('vertical-demo.html?vertical=robotics', 'Workflow Demos'),
             li('gtf.html', 'GTF')
-        ], ['architecture.html', 'neurotrophic.html', 'sovereign.html', 'gtf.html', 'vertical-demo.html']) +
+        ], ['architecture.html', 'neurotrophic.html', 'sovereign.html', 'verticals.html', 'gtf.html', 'vertical-demo.html']) +
         dropdown('Research', [
             li('research.html', 'Papers'),
             li('citation-audit.html', 'Citation Audit'),
