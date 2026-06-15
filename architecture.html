@@ -117,9 +117,50 @@
             top: calc(100% + 6px);
         }
         .arch-step[data-tip]:hover::after,
-        .arch-table tbody tr[data-tip]:hover::after {
+        .arch-table tbody tr[data-tip]:hover::after,
+        .arch-inline-tip[data-tip]:hover::after {
             opacity: 1;
             visibility: visible;
+        }
+
+        .arch-inline-tip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dashed rgba(0,178,255,0.35);
+            color: var(--accent-blue);
+        }
+
+        .arch-inline-tip[data-tip]::after {
+            content: attr(data-tip);
+            position: absolute;
+            left: 0;
+            bottom: calc(100% + 8px);
+            width: max-content;
+            max-width: 320px;
+            padding: 10px 12px;
+            background: var(--bg-card);
+            border: 1px solid rgba(0,178,255,0.25);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            line-height: 1.45;
+            color: var(--text-secondary);
+            text-align: left;
+            white-space: normal;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s, visibility 0.15s;
+            z-index: 20;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+
+        .arch-micro-note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 12px;
+            line-height: 1.6;
         }
 
         /* Phase cards */
@@ -540,7 +581,8 @@
             .arch-step-arrow { transform: rotate(90deg); }
             .arch-cockpit-row, .arch-adaptor-row { flex-direction: column; }
             .arch-step[data-tip]::after,
-            .arch-table tbody tr[data-tip]::after { display: none; }
+            .arch-table tbody tr[data-tip]::after,
+            .arch-inline-tip[data-tip]::after { display: none; }
             .arch-gov-chain { flex-direction: column; gap: 4px; }
             .proof-panel { padding: 20px 16px; }
         }
@@ -576,6 +618,8 @@
                         A deterministic, identity-free substrate that processes signals through a governed collapse pipeline.
                         Every input either resolves to a unique fixed point or is vetoed.
                         Nothing persists uncommitted. Nothing executes ungoverned.
+                        The design targets predictable behaviour under adversarial or high-variance conditions &mdash;
+                        replayable decisions, not best-effort filtering.
                     </p>
                     <p class="arch-core-statement">
                         The system operates as a <strong>Neurotrophic OS</strong> &mdash; a substrate that maintains its own vitality,
@@ -608,7 +652,7 @@ flowchart TB
     classDef layer fill:#141820,stroke:#00B2FF,color:#e0e2e8
     class EXT,PERIM,ATOM,PIPE,GOV,NEURO,ADP layer
                         </pre>
-                        <p class="arch-diagram-caption">Combined stack — same traversal as <a href="sovereign.html">Sovereign emit chain</a></p>
+                        <p class="arch-diagram-caption">Combined stack &mdash; the same irreversible traversal used by the <a href="sovereign.html">Sovereign runtime</a></p>
                     </div>
 
                     <div class="arch-diagram">
@@ -657,7 +701,11 @@ flowchart LR
     class ATOM,BOOT,DISP go
     class RUNTIME,SUB ts
                         </pre>
-                        <p class="arch-diagram-caption">Identity-free ingress — 13 constitutional fields never enter the substrate</p>
+                        <p class="arch-diagram-caption">
+                            Identity-free ingress &mdash;
+                            <span class="arch-inline-tip" data-tip="Stripped at gate: id, userId, user_id, accountId, account_id, sessionId, token, fingerprint, email, phone, name, username, deviceId">13 constitutional fields</span>
+                            never enter the substrate (<a href="sovereign.html">spec</a>)
+                        </p>
                     </div>
                 </div>
 
@@ -703,6 +751,7 @@ flowchart LR
                         <span class="arch-step-arrow"><i class="fa-solid fa-arrow-right"></i></span>
                         <div class="arch-step" data-tip="HMAC-signed governance proof — replayable audit artifact for regulators and operators"><strong>Emit</strong><span class="step-label">Proof</span></div>
                     </div>
+                    <p class="arch-micro-note">Diagram above is the canonical path; hover each step for operator-level detail.</p>
 
                     <p style="margin-top: 20px;">
                         <strong>C&sup2; = C</strong> &mdash; collapse is a projection.<br>
@@ -774,6 +823,10 @@ flowchart TB
                             </ul>
                         </div>
                     </div>
+                    <p class="arch-micro-note">
+                        Example: <strong>FROZEN</strong> &mdash; HOSTILE classifications require human override before release.
+                        <strong>MUTABLE</strong> &mdash; <code>anomalyThreshold</code> may be tuned within adaptor bounds, not bypassed.
+                    </p>
                 </div>
 
                 <!-- ── NEUROTROPHIC LAYER ── -->
@@ -817,7 +870,7 @@ flowchart TB
                         </div>
                         <div class="arch-phase-card">
                             <h4><i class="fa-solid fa-screwdriver-wrench"></i>&ensp;Phase C &mdash; Cross-Domain Fault Repair</h4>
-                            <p>Astrocyte-model mediator. Detects faults across domain boundaries. Propagates bridge signals. Repairs damaged circuits before learning proceeds. Learning on damaged circuits produces drift &mdash; Phase C closes that gap.</p>
+                            <p>Astrocyte-model mediator. Detects faults across domain boundaries. Propagates bridge signals. Repairs damaged circuits before learning proceeds. Learning on damaged circuits produces drift &mdash; Phase C closes that gap. If an adaptor begins emitting malformed envelopes, Phase C isolates the bridge and repairs it before temporal learning resumes.</p>
                         </div>
                         <div class="arch-phase-card">
                             <h4><i class="fa-solid fa-clock-rotate-left"></i>&ensp;Phase D &mdash; Temporal Learning</h4>
@@ -912,7 +965,7 @@ flowchart TB
                                 <tr data-proof="governedai" data-tip="Example: agent file delete — full envelope chain replayable; kill switch revokes adaptor"><td><strong>Governed AI</strong></td><td>No standard (substrate layer)</td><td>Proven</td></tr>
                             </tbody>
                         </table>
-                        <p class="arch-table-note"><i class="fa-solid fa-hand-pointer" style="color: var(--accent-blue); margin-right: 6px;"></i>Hover for an example event; click any row for the full proof definition.</p>
+                        <p class="arch-table-note"><i class="fa-solid fa-hand-pointer" style="color: var(--accent-blue); margin-right: 6px;"></i><strong>Proven</strong> means architecturally compatible with the cited compliance requirements &mdash; not third-party certified. Hover for an example event; click any row for the full proof definition.</p>
                     </div>
                 </div>
 
@@ -921,6 +974,7 @@ flowchart TB
                     <h3><i class="fa-solid fa-gauge-high"></i> Observability &mdash; Dual-Lane Cockpit</h3>
                     <p>
                         Two independent cockpits. Same KPI set. Different data sources. Zero shared state.
+                        <strong>Stable</strong> lane is for governed production traffic; <strong>Volatile</strong> lane is for exploratory or high-variance environments where wider timing surfaces are intentional.
                     </p>
 
                     <div class="arch-cockpit-row">
@@ -1031,7 +1085,7 @@ flowchart TB
                     <div class="arch-flow-item"><span class="flow-num">2</span> Connector strips 13 forbidden identity fields</div>
                     <div class="arch-flow-item"><span class="flow-num">3</span> Atom dispatches via Instamap (O(1), zero alloc)</div>
                     <div class="arch-flow-item"><span class="flow-num">4</span> Spark &rarr; Emit collapse chain runs (or structural veto)</div>
-                    <div class="arch-flow-item"><span class="flow-num">5</span> Governance proof emitted — HMAC-signed, replayable</div>
+                    <div class="arch-flow-item"><span class="flow-num">5</span> Governance proof emitted &mdash; HMAC-signed certificate replayable for audit; the raw signal is not persisted</div>
                     <div class="arch-flow-item"><span class="flow-num">6</span> Telemetry read by neurotrophic layer (never blocks fast path)</div>
                     <div class="arch-flow-item"><span class="flow-num">7</span> Phases A&ndash;E adjust adaptation surface within frozen bounds</div>
                     <div class="arch-flow-item"><span class="flow-num">8</span> Fast path continues unchanged — substrate purity restored each cycle</div>
