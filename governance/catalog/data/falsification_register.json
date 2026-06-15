@@ -20,12 +20,12 @@
       "public_replayable": true,
       "no_secret_inputs": true,
       "testable": true,
-      "status": "logged",
-      "acknowledgement_note": null,
-      "action_status": "not_started",
+      "status": "rejected_with_reason",
+      "acknowledgement_note": "Governance smoke test replayed under declared snapshot inputs; structured output remained stable.",
+      "action_status": "waived_with_rationale",
       "action_plan": null,
       "due_utc": null,
-      "resolution_note": null
+      "resolution_note": "Smoke test challenge. Replay of stage_gate_report.json and governed query traces under snapshot-20260406-050332 produced no material trace inconsistency — challenge rejected."
     }
   ]
 }

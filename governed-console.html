@@ -170,6 +170,84 @@
             background: rgba(255,123,107,0.08);
         }
 
+        .console-status-chip.rejected_with_reason {
+            color: var(--text-secondary);
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+        }
+
+        /* Compact status in ledger / challenge rows */
+        .console-list-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.35px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.03);
+            line-height: 1.2;
+        }
+
+        .console-list-chip.released,
+        .console-list-chip.completed,
+        .console-list-chip.corrected {
+            color: var(--accent-green);
+            border-color: rgba(72,230,98,0.22);
+            background: rgba(72,230,98,0.07);
+        }
+
+        .console-list-chip.audit_only,
+        .console-list-chip.logged,
+        .console-list-chip.acknowledged,
+        .console-list-chip.planned,
+        .console-list-chip.in_progress,
+        .console-list-chip.not_started {
+            color: #f0a030;
+            border-color: rgba(240,160,48,0.22);
+            background: rgba(240,160,48,0.07);
+        }
+
+        .console-list-chip.blocked,
+        .console-list-chip.substantiated,
+        .console-list-chip.failed {
+            color: #ff7b6b;
+            border-color: rgba(255,123,107,0.22);
+            background: rgba(255,123,107,0.07);
+        }
+
+        .console-list-chip.rejected_with_reason,
+        .console-list-chip.waived_with_rationale {
+            color: var(--text-muted);
+            border-color: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.025);
+        }
+
+        .console-panel-note {
+            margin: 0 0 16px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,178,255,0.14);
+            background: rgba(0,178,255,0.05);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.65;
+        }
+
+        .console-panel-note code {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            color: var(--accent-blue);
+            background: transparent;
+            padding: 0;
+        }
+
         .console-summary-grid {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -317,15 +395,19 @@
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             gap: 16px;
             min-width: 0;
+            align-items: stretch;
+            max-height: 520px;
         }
 
         .console-citation-list {
             display: grid;
             gap: 10px;
+            align-content: start;
             max-height: 520px;
             overflow-y: auto;
             overflow-x: hidden;
             min-width: 0;
+            min-height: 0;
             padding-right: 6px;
         }
 
@@ -365,9 +447,11 @@
             border-radius: 10px;
             padding: 18px;
             background: rgba(255,255,255,0.018);
-            min-height: 320px;
             min-width: 0;
+            min-height: 0;
+            max-height: 520px;
             overflow-x: auto;
+            overflow-y: auto;
         }
 
         .console-evidence-list {
@@ -634,6 +718,11 @@
                         <h3 class="console-panel-title"><i class="fa-solid fa-triangle-exclamation"></i> Public Falsification Challenges</h3>
                         <span id="challenge-total" class="console-status-chip">0 challenges</span>
                     </div>
+                    <p class="console-panel-note">
+                        <strong>Open challenge?</strong> Replay using the entry&rsquo;s <code>replay_instructions</code> against the declared snapshot.
+                        If replay fails the challenge, set status to <code>substantiated</code> with an action plan.
+                        If replay holds, resolve with <code>falsification_resolver.py</code> (local repo only — not wired to the live static site yet).
+                    </p>
                     <div id="challenge-list" class="console-list"></div>
                 </section>
 

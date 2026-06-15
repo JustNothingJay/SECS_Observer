@@ -97,7 +97,11 @@
         setChip($('snapshot-status'), counts.paper_total + ' papers · ' + counts.citation_total + ' citations', 'pass');
         setChip($('gate-track'), stageReport.track || 'unknown', stageReport.pass ? 'pass' : 'failed');
         setChip($('request-total'), String((requestLog.entries || []).length) + ' entries', 'audit_only');
-        setChip($('challenge-total'), String((falsification.entries || []).length) + ' challenges', (falsification.entries || []).length ? 'logged' : 'pass');
+        var challengeEntries = falsification.entries || [];
+        var openChallenges = challengeEntries.filter(function (entry) {
+            return entry.status === 'logged' || entry.status === 'acknowledged' || entry.status === 'substantiated';
+        }).length;
+        setChip($('challenge-total'), String(challengeEntries.length) + ' challenges', openChallenges ? 'logged' : 'pass');
         setChip($('citation-total'), String((state.citations || []).length) + ' citations', 'pass');
         setChip($('issue-total'), String((resolution.issues || []).length) + ' open issues', (resolution.issues || []).length ? 'blocked' : 'pass');
     }
@@ -148,9 +152,9 @@
                         '<h4 class="console-list-title">' + escapeHtml(entry.request_id) + '</h4>' +
                         '<div class="console-list-subtitle">snapshot ' + escapeHtml(entry.snapshot_id) + ' · ' + escapeHtml(formatDate(entry.logged_utc)) + '</div>' +
                     '</div>' +
-                    '<span class="console-status-chip ' + escapeHtml(entry.release_status) + '">' + escapeHtml(entry.release_status) + '</span>' +
                 '</div>' +
                 '<div class="console-inline-meta">' +
+                    listChip(entry.release_status) +
                     pill('intent ' + entry.intent_type) +
                     pill('mode ' + entry.request_mode) +
                     pill('hash ' + shortHash(entry.request_hash, 14)) +
@@ -167,29 +171,58 @@
             return;
         }
         $('challenge-list').innerHTML = entries.slice(0, 6).map(function (entry) {
-            var actionLine = entry.action_plan ? escapeHtml(entry.action_plan) : 'Awaiting acknowledgement and research-tightening action.';
+            var footer = '';
+            if (entry.resolution_note) {
+                footer = '<div class="console-list-subtitle" style="margin-top:12px;"><strong>Resolution:</strong> ' + escapeHtml(entry.resolution_note) + '</div>';
+            } else if (entry.action_plan) {
+                footer = '<div class="console-list-subtitle" style="margin-top:12px;"><strong>Action plan:</strong> ' + escapeHtml(entry.action_plan) + '</div>';
+            } else if (entry.status === 'logged') {
+                footer = '<div class="console-list-subtitle" style="margin-top:12px;">Awaiting replay review — run instructions, then resolve via <span class="console-mono">falsification_resolver.py</span>.</div>';
+            }
             return '<div class="console-list-item">' +
                 '<div class="console-list-head">' +
                     '<div>' +
                         '<h4 class="console-list-title">' + escapeHtml(entry.challenge_summary) + '</h4>' +
                         '<div class="console-list-subtitle">' + escapeHtml(entry.challenge_id) + ' · target ' + escapeHtml(entry.target_type) + ' / ' + escapeHtml(entry.target_id) + '</div>' +
                     '</div>' +
-                    '<span class="console-status-chip ' + escapeHtml(entry.status) + '">' + escapeHtml(entry.status) + '</span>' +
                 '</div>' +
                 '<div class="console-list-subtitle">' + escapeHtml(entry.expected_failure_condition) + '</div>' +
                 '<div class="console-inline-meta">' +
+                    listChip(entry.status) +
+                    listChip(entry.action_status, formatStatusLabel(entry.action_status)) +
                     pill(entry.falsification_mode) +
                     pill(entry.public_replayable ? 'public replay' : 'private') +
                     pill(entry.testable ? 'testable' : 'untestable') +
-                    pill('action ' + entry.action_status) +
                 '</div>' +
-                '<div class="console-list-subtitle" style="margin-top:12px;">' + actionLine + '</div>' +
+                footer +
             '</div>';
         }).join('');
     }
 
     function pill(text) {
         return '<span class="console-pill">' + escapeHtml(text) + '</span>';
+    }
+
+    function formatStatusLabel(status) {
+        var labels = {
+            audit_only: 'audit',
+            released: 'released',
+            logged: 'open',
+            acknowledged: 'ack',
+            substantiated: 'substantiated',
+            rejected_with_reason: 'rejected',
+            corrected: 'corrected',
+            not_started: 'pending',
+            planned: 'planned',
+            in_progress: 'active',
+            completed: 'done',
+            waived_with_rationale: 'waived'
+        };
+        return labels[status] || String(status).replace(/_/g, ' ');
+    }
+
+    function listChip(status, label) {
+        return '<span class="console-list-chip ' + escapeHtml(status) + '">' + escapeHtml(label || formatStatusLabel(status)) + '</span>';
     }
 
     function renderCitations(citationCatalog) {
@@ -246,9 +279,9 @@
                 '<h4 class="console-list-title">' + escapeHtml(citation.title) + '</h4>' +
                 '<div class="console-list-subtitle">' + escapeHtml(citation.citation_id) + (citation.doi ? ' · ' + escapeHtml(citation.doi) : '') + '</div>' +
             '</div>' +
-            '<span class="console-status-chip ' + escapeHtml(citation.status) + '">' + escapeHtml(citation.status) + '</span>' +
         '</div>' +
         '<div class="console-inline-meta">' +
+            listChip(citation.status) +
             pill('origin ' + citation.origin) +
             pill('cited by ' + (citation.cited_by || []).length) +
             pill('refs ' + (citation.evidence_refs || []).length) +
