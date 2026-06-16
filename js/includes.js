@@ -114,7 +114,9 @@
 
         if (isHome) {
             f += '<div class="row"><div class="col-md-12"><div class="retro-counter">' +
+                '<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer" title="Thanks for visiting">' +
                 '<img src="https://hits.sh/secs.observer.svg?style=flat&label=visits&color=333&labelColor=0a0b0d" alt="Page views" class="counter-badge">' +
+                '</a>' +
                 '<p class="counter-note">Page loads, not unique visitors. No cookies. No identity tracking. No fingerprinting. Just a number.</p>' +
                 '<p class="jay-status">Is this thing even on? &mdash; Jay</p>' +
                 '</div></div></div>';

@@ -883,11 +883,14 @@ h1, h2, h3, h4, h5 {
     margin: 0 auto;
 }
 
+.sovereign-veto { margin-bottom: 50px; }
+
 /* Sovereign links */
 .sovereign-links { margin-bottom: 40px; }
 
 /* ── TECH SPECS ──────────────────────────────────────────────────── */
-.sovereign-specs { margin-bottom: 50px; }
+.sovereign-specs { margin-top: 0; margin-bottom: 50px; }
+.sovereign-specs .section-heading { margin-top: 0; }
 .spec-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2108,8 +2111,13 @@ h1, h2, h3, h4, h5 {
     height: 18px;
     opacity: 0.5;
     transition: opacity 0.3s;
+    display: block;
 }
-.counter-badge:hover { opacity: 0.8; }
+a:has(.counter-badge) {
+    display: inline-block;
+    line-height: 0;
+}
+a:has(.counter-badge):hover .counter-badge { opacity: 0.8; }
 .counter-note {
     font-size: 0.62rem;
     color: rgba(255,255,255,0.18);
