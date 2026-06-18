@@ -18,6 +18,14 @@
     <loc>https://secs.observer/neurotrophic.html</loc>
   </url>
   <url>
+    <loc>https://secs.observer/neurotrophic-proof.html</loc>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://secs.observer/timeline.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://secs.observer/sovereign.html</loc>
   </url>
   <url>

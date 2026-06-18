@@ -60,16 +60,18 @@
         dropdown('Systems', [
             li('architecture.html', 'Architecture'),
             li('neurotrophic.html', 'Neurotrophic OS'),
+            li('neurotrophic-proof.html', 'Neurotrophic Proof'),
             li('sovereign.html', 'Sovereign'),
             li('verticals.html', 'Vertical Surfaces'),
             li('vertical-demo.html?vertical=robotics', 'Workflow Demos'),
             li('gtf.html', 'GTF')
-        ], ['architecture.html', 'neurotrophic.html', 'sovereign.html', 'verticals.html', 'gtf.html', 'vertical-demo.html']) +
+        ], ['architecture.html', 'neurotrophic.html', 'neurotrophic-proof.html', 'sovereign.html', 'verticals.html', 'gtf.html', 'vertical-demo.html']) +
         dropdown('Research', [
             li('research.html', 'Papers'),
+            li('timeline.html', 'Timeline'),
             li('citation-audit.html', 'Citation Audit'),
             li('governed-console.html', 'Governed Console')
-        ], ['research.html', 'citation-audit.html', 'governed-console.html']) +
+        ], ['research.html', 'timeline.html', 'citation-audit.html', 'governed-console.html']) +
         dropdown('More', [
             li('terminal.html', 'Terminal'),
             li('game.html', 'The Game'),
