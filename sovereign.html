@@ -282,9 +282,13 @@
                         <tr><td>Stable stream</td><td>4.0 RPS governed target, maintained over 60-minute burns</td></tr>
                         <tr><td>Volatile stream</td><td>~1,031 RPS sustained (physics-limited, no throttling)</td></tr>
                         <tr><td>60-min burn</td><td>46,682 requests &middot; 99.95% success &middot; zero drift</td></tr>
-                        <tr><td>24hr burn</td><td>Zero errors &middot; stable ~380 ms latency under mixed load</td></tr>
+                        <tr><td>24hr burn</td><td>Remote API poll campaign (Feb 2026) &mdash; ~93% success at peak cycle &middot; ~380 ms baseline latency</td></tr>
+                        <tr><td>6h robotic soak</td><td>979,169 envelopes &middot; 99.77% adaptor success &middot; ~291 ms mean latency (R-LIVE-004, Jun 2026)</td></tr>
                         <tr><td>Mode separation</td><td>Zero cross-contamination between STABLE / VOLATILE lanes</td></tr>
                     </table>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; margin-top: 12px; margin-bottom: 0;">
+                        The substrate records timing, RPS, and governance purity &mdash; not business message content. Long-running workflow proof uses an append-only <strong>envelope sidecar</strong> (<code>envelopes.jsonl</code>) outside the hot path.
+                    </p>
                 </div>
 
                 <div class="spec-block">
