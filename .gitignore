@@ -4,3 +4,10 @@ assets/origin-*.jpg
 
 # Draft review artifacts — do not deploy until promoted
 draft/
+
+# Local-only JJ GTF workspace — do not deploy
+jj-gtf.html
+css/jj-gtf.css
+data/jj-gtf-milestones.js
+js/jj-gtf.js
+js/jj-gtf-memories.js
