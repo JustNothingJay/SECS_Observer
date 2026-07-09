@@ -92,7 +92,7 @@ input[type=range]::-moz-range-thumb{
 
 /* Overlays — center on canvas (exclude panel) */
 #warn-overlay{
-  position:fixed;top:50%;left:calc((100% - min(380px,34vw)) / 2);
+  position:fixed;top:50%;left:calc((100% - min(400px,36vw)) / 2);
   transform:translate(-50%,-50%);
   color:#ff5050;font-size:15px;letter-spacing:0.08em;pointer-events:none;
   text-align:center;z-index:20;opacity:0;transition:opacity .3s;
@@ -106,9 +106,9 @@ input[type=range]::-moz-range-thumb{
 #hud .d{color:rgba(120,150,130,0.4);}
 
 #narrator{
-  position:fixed;left:calc((100% - min(380px,34vw)) / 2);bottom:20px;
+  position:fixed;left:calc((100% - min(400px,36vw)) / 2);bottom:20px;
   transform:translateX(-50%);
-  max-width:min(540px, calc(100vw - min(380px,34vw) - 48px));
+  max-width:min(540px, calc(100vw - min(400px,36vw) - 48px));
   padding:12px 16px;background:rgba(8,12,8,0.88);
   border:1px solid rgba(90,138,106,0.4);border-radius:4px;
   font-size:13px;line-height:1.5;color:rgba(220,240,225,0.95);
@@ -143,11 +143,72 @@ input[type=range]::-moz-range-thumb{
 }
 #onboard-box button:hover{background:#2a4a3a;}
 #terrain-badge{
-  position:fixed;top:14px;left:calc((100% - min(380px,34vw)) / 2);
+  position:fixed;top:14px;left:calc((100% - min(400px,36vw)) / 2);
   transform:translateX(-50%);
   font-size:11px;letter-spacing:.12em;text-transform:uppercase;
   color:rgba(150,190,160,0.55);z-index:12;pointer-events:none;
 }
+
+/* Canvas legend — cell states (not game juice) */
+#legend{
+  position:fixed;left:14px;bottom:14px;z-index:12;
+  max-width:min(280px, calc(100vw - min(400px,36vw) - 32px));
+  padding:10px 12px;background:rgba(8,12,8,0.86);
+  border:1px solid rgba(40,64,48,0.7);border-radius:4px;
+  font-size:11px;line-height:1.45;color:rgba(170,200,180,0.85);
+  pointer-events:none;backdrop-filter:blur(3px);
+}
+#legend .legend-title{
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(130,170,145,0.7);margin-bottom:6px;
+}
+#legend .legend-row{display:flex;align-items:center;gap:8px;margin:3px 0;}
+#legend .swatch{
+  width:12px;height:12px;border-radius:2px;flex:0 0 12px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+#legend .sw-adm{background:#1a3a28;}
+#legend .sw-dmg{background:#4a1810;}
+#legend .sw-void{background:#111;}
+#legend .sw-wave{background:#8fd4a8;}
+#legend .sw-veto{background:#3a1010;}
+#legend .legend-note{
+  margin-top:7px;padding-top:6px;border-top:1px solid rgba(40,64,48,0.55);
+  font-size:10px;color:rgba(120,155,135,0.65);line-height:1.4;
+}
+
+/* Panel: doctrine ↔ screen */
+.doctrine-map{font-size:11px;line-height:1.5;color:var(--ink-mute);}
+.doctrine-map .dm-head{
+  color:var(--ink-dim);font-size:12px;margin-bottom:8px;line-height:1.45;
+}
+.doctrine-map .dm-row{
+  display:grid;grid-template-columns:2.1rem 1fr;gap:6px 8px;
+  margin:5px 0;align-items:start;
+}
+.doctrine-map .dm-op{
+  color:#90d0b0;font-weight:600;letter-spacing:.04em;
+}
+.doctrine-map .dm-foot{
+  margin-top:8px;font-size:10px;color:var(--ink-mute);line-height:1.45;
+}
+
+#onboard-box{max-width:560px;}
+#onboard-box .op-table{
+  width:100%;border-collapse:collapse;margin:10px 0 14px;font-size:12px;
+}
+#onboard-box .op-table th{
+  text-align:left;color:#6a9a7a;font-weight:500;font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;padding:4px 6px 6px 0;
+  border-bottom:1px solid #1a2a1e;
+}
+#onboard-box .op-table td{
+  padding:5px 8px 5px 0;vertical-align:top;color:#b0d4bc;
+  border-bottom:1px solid #121a14;
+}
+#onboard-box .op-table td:first-child{color:#90d0b0;font-weight:600;white-space:nowrap;width:3.2rem;}
+#onboard-box .op-table td:last-child{color:#7a9a84;font-size:11px;}
+
 @media (max-width:900px){
   :root{ --panel-w: min(340px, 40vw); --panel-min: 280px; }
   #panel{font-size:12px;padding:12px 14px;}
@@ -165,6 +226,7 @@ input[type=range]::-moz-range-thumb{
   #narrator{bottom:48vh;transform:translateX(-50%);max-width:calc(100vw - 24px);}
   #terrain-badge{transform:translateX(-50%);}
   #warn-overlay{transform:translate(-50%,-50%);}
+  #legend{bottom:auto;top:48px;max-width:calc(100vw - 28px);}
 }
 </style>
 <script src="data/secs-topology.js"></script>
@@ -180,6 +242,19 @@ input[type=range]::-moz-range-thumb{
       <button id="btn-topo-secs" class="btn btn-sm" onclick="setTerrain('secs')">SECS repo</button>
     </div>
     <div class="metric" style="margin-top:6px"><span class="metric-label">Doctrine</span><span class="metric-val" id="m-terrain">noise</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">What maps to C</div>
+    <div class="doctrine-map">
+      <div class="dm-head">C = ε ∘ ρ ∘ λ ∘ ν ∘ α &nbsp;·&nbsp; C² = C &nbsp;·&nbsp; C⁻¹ ∄</div>
+      <div class="dm-row"><span class="dm-op">ε</span><span>envelope — stress, input-block, shutdown</span></div>
+      <div class="dm-row"><span class="dm-op">ρ</span><span>reduce — collapse wave (one path, no split)</span></div>
+      <div class="dm-row"><span class="dm-op">λ</span><span>lambda / doctrine — green = admissible map</span></div>
+      <div class="dm-row"><span class="dm-op">ν</span><span>veto — red edge glow, isolated cells</span></div>
+      <div class="dm-row"><span class="dm-op">α</span><span>accept / heal — recovery on original A</span></div>
+      <div class="dm-foot">Paint is easy to copy. These operators are the SECS substrate — not skin.</div>
+    </div>
   </div>
 
   <div class="section">
@@ -256,6 +331,15 @@ input[type=range]::-moz-range-thumb{
   <div>frame <span class="v" id="h-frame">0</span></div>
   <div class="d">C = &#949;&#8728;&#961;&#8728;&#955;&#8728;&#957;&#8728;&#945; &middot; C&sup2;=C &middot; C&#8315;&sup1; &#8708;</div>
 </div>
+<div id="legend" aria-hidden="true">
+  <div class="legend-title">Cell doctrine</div>
+  <div class="legend-row"><span class="swatch sw-adm"></span><span>Admissible — may carry signal (current R)</span></div>
+  <div class="legend-row"><span class="swatch sw-dmg"></span><span>Damaged — was doctrine, now scratched</span></div>
+  <div class="legend-row"><span class="swatch sw-void"></span><span>Void — never admissible (no original A)</span></div>
+  <div class="legend-row"><span class="swatch sw-wave"></span><span>Wave — collapse hop bands from origin</span></div>
+  <div class="legend-row"><span class="swatch sw-veto"></span><span>Veto glow — rejected at a boundary</span></div>
+  <div class="legend-note">Heal walks original A, not current R — recovery can cross damage the fast path cannot.</div>
+</div>
 <div id="warn-overlay">&#9888; INPUT BLOCKED &mdash; SYSTEM UNDER STRESS</div>
 <div id="narrator" role="status" aria-live="polite">
   <span id="narrator-main">This grid is a governed substrate — green areas can carry signals; dark gaps cannot.</span>
@@ -263,13 +347,23 @@ input[type=range]::-moz-range-thumb{
 </div>
 <div id="onboard">
   <div id="onboard-box">
-    <h2>Collapse propagation — 60 second intro</h2>
-    <p>You are looking at a <strong>governed substrate</strong>: a map of where signals are allowed to travel. This is a live GPU simulation, not a recording.</p>
+    <h2>Collapse propagation — what you are seeing</h2>
+    <p>Live GPU sim of a <strong>governed substrate</strong>: where collapse is allowed, not a wallpaper. The paint is easy; the operators are the point.</p>
+    <table class="op-table">
+      <thead><tr><th>Op</th><th>On screen</th><th>SECS meaning</th></tr></thead>
+      <tbody>
+        <tr><td>ε</td><td>Stress bar · input-block · shutdown sweep</td><td>Envelope under load</td></tr>
+        <tr><td>ρ</td><td>Green hop bands from your beacon</td><td>Reduce / collapse wave</td></tr>
+        <tr><td>λ</td><td>Green land vs black void</td><td>Doctrine / admissibility map</td></tr>
+        <tr><td>ν</td><td>Red edge glow · isolated cells</td><td>Veto at the boundary</td></tr>
+        <tr><td>α</td><td>Heal mode · gold repaired cells</td><td>Accept / neurotrophic restore</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:#8ab89a;margin-bottom:8px;">C = ε ∘ ρ ∘ λ ∘ ν ∘ α &nbsp;·&nbsp; idempotent (C²=C) &nbsp;·&nbsp; no inverse</p>
     <ol>
-      <li><strong>Green</strong> = allowed paths. <strong>Black</strong> = blocked void.</li>
-      <li>Press <strong>D</strong> and paint — you scratch holes in the map (damage).</li>
-      <li>Press <strong>H</strong> and click — a recovery wave spreads from that point (heal).</li>
-      <li>Read the caption at the bottom — it explains what you see in plain language.</li>
+      <li><strong>D</strong> damage — erode current admissibility (R).</li>
+      <li><strong>H</strong> heal — wave uses original doctrine (A), not just live land.</li>
+      <li>Legend (bottom-left) names each cell state. Caption (bottom) narrates live.</li>
     </ol>
     <p style="font-size:11px;color:#5a8a6a">Optional: <strong>SECS repo</strong> thickens the real Sovereign dependency graph into playable corridors.</p>
     <button type="button" onclick="dismissOnboard()">Begin — I will explore</button>
@@ -788,11 +882,11 @@ var paused=false, narratorVisible=true, lastNarratorKey='';
 
 function dismissOnboard(){
   document.getElementById('onboard').classList.add('hidden');
-  try{localStorage.setItem('secs-propagation-onboard-v1','1');}catch(e){}
+  try{localStorage.setItem('secs-propagation-onboard-v2','1');}catch(e){}
 }
 
 function maybeShowOnboard(){
-  try{if(localStorage.getItem('secs-propagation-onboard-v1')){
+  try{if(localStorage.getItem('secs-propagation-onboard-v2')){
     document.getElementById('onboard').classList.add('hidden');return;
   }}catch(e){}
 }
