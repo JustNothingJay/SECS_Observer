@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="Equation (C): α⁻¹ + Sα = 4π³ + π² + π. Conjectural zero-parameter constraint on low-energy fine-structure constant. Definitions, scale, frozen residuals, ansatz scan. secs.observer.">
+    <title>Equation (C) — α and π · SECS</title>
+
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://secs.observer/equation.html">
+    <meta property="og:title" content="Equation (C) — α⁻¹ + Sα = 4π³ + π² + π">
+    <meta property="og:description" content="Low-energy fine-structure constant from π and a combinatorial series S. Conjectural. Falsifiable. Not a QED derivation.">
+    <meta property="og:image" content="https://secs.observer/assets/og-default.jpg">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Equation (C) — α and π">
+    <meta name="twitter:description" content="α⁻¹ + Sα = 4π³ + π² + π. Low-energy α only. Conjectural constraint.">
+    <meta name="twitter:image" content="https://secs.observer/assets/og-default.jpg">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="canonical" href="https://secs.observer/equation.html">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/secs.css?v=13">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script src="js/includes.js?v=12"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
+    <style>
+        .eq-page { max-width: 46rem; margin: 0 auto; padding-bottom: 3.5rem; }
+        .eq-hero {
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.4rem 1.35rem 1.2rem;
+            margin: 1.25rem 0 1.25rem;
+        }
+        .eq-kicker {
+            margin: 0 0 0.45rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .eq-hero h1 {
+            margin: 0 0 0.55rem;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.45rem;
+            font-weight: 600;
+            line-height: 1.28;
+            color: var(--text-primary);
+        }
+        .eq-hero .lede {
+            margin: 0 0 0.85rem;
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            line-height: 1.5;
+        }
+        .eq-badges { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+        .eq-badge {
+            font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.5rem;
+            border-radius: 999px; background: rgba(0,178,255,0.12); color: var(--accent-blue);
+        }
+        .eq-badge.warn { background: rgba(255,94,0,0.12); color: #ffb087; }
+        .eq-badge.ok { background: rgba(72,230,98,0.1); color: var(--accent-green); }
+        .eq-toc {
+            display: flex; flex-wrap: wrap; gap: 0.3rem 0.75rem;
+            margin: 0 0 1.35rem; padding: 0.55rem 0.75rem;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            background: var(--bg-card);
+        }
+        .eq-toc a { color: var(--accent-blue); font-weight: 600; }
+        .eq-page h2 {
+            margin: 1.85rem 0 0.55rem;
+            padding-bottom: 0.28rem;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.12rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid rgba(0,178,255,0.45);
+        }
+        .eq-page h3 {
+            margin: 1.05rem 0 0.4rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .eq-page p, .eq-page li { line-height: 1.58; color: var(--text-primary); }
+        .eq-page p { margin: 0.5rem 0; }
+        .eq-block {
+            background: #fff !important;
+            color: #111827 !important;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 0.95rem 0.75rem;
+            margin: 0.9rem 0;
+            text-align: center;
+            overflow-x: auto;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.28);
+        }
+        .eq-block.primary { border: 2px solid #00B2FF; }
+        .eq-label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #0b3d91 !important;
+        }
+        .eq-block .katex, .eq-block .katex * { color: #111827 !important; }
+        .eq-block .katex .frac-line,
+        .eq-block .katex .overline .overline-line,
+        .eq-block .katex .underline .underline-line {
+            border-bottom-color: #111827 !important;
+        }
+        .eq-page p .katex, .eq-page li .katex, .eq-page td .katex,
+        .eq-page h1 .katex, .eq-page h2 .katex, .eq-page h3 .katex { color: inherit; }
+        .eq-page p .katex *, .eq-page li .katex *, .eq-page td .katex * { color: inherit !important; }
+        .eq-page table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.7rem 0 1rem;
+            font-size: 0.84rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .eq-page th {
+            text-align: left;
+            padding: 0.42rem 0.5rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #f3f4f6;
+            background: #0d1219;
+        }
+        .eq-page td {
+            padding: 0.42rem 0.5rem;
+            vertical-align: top;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+        .eq-page tr:nth-child(even) td { background: rgba(255,255,255,0.025); }
+        .eq-page tr.hl td {
+            background: rgba(0,178,255,0.1);
+            font-weight: 600;
+            color: #f3f4f6;
+        }
+        .box {
+            margin: 0.75rem 0;
+            padding: 0.7rem 0.85rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            font-size: 0.92rem;
+            color: var(--text-primary);
+        }
+        .box .t {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+        }
+        .box.muted-box { color: var(--text-secondary); }
+        .eq-note { font-size: 0.86rem; color: var(--text-secondary) !important; }
+        pre.eq-code {
+            margin: 0.75rem 0;
+            padding: 0.85rem 0.95rem;
+            border-radius: 10px;
+            background: #0d1219;
+            color: #e8eef5;
+            overflow-x: auto;
+            font-size: 0.78rem;
+            line-height: 1.45;
+        }
+        code.hash {
+            font-size: 0.72rem;
+            word-break: break-all;
+            color: var(--accent-green);
+        }
+        .eq-footer-meta {
+            margin-top: 2rem;
+            padding-top: 0.9rem;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .katex-display { margin: 0.3rem 0; }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="container eq-page">
+
+        <header class="eq-hero">
+            <p class="eq-kicker">secs.observer · standing note</p>
+            <h1>Equation (C)</h1>
+            <p class="lede">
+                A conjectural zero-parameter relation between the conventional low-energy fine-structure constant
+                and $\pi$, through a factorial series $S$. Written to the standard I want on this site:
+                define the objects, show the number, show the residuals, state what is not claimed, leave a kill condition.
+            </p>
+            <div class="eq-badges">
+                <span class="eq-badge warn">Conjecture</span>
+                <span class="eq-badge ok">Low-energy $\alpha$ only</span>
+                <span class="eq-badge mid">Not derived from QED</span>
+                <span class="eq-badge">Freeze 2026-07-10</span>
+            </div>
+        </header>
+
+        <nav class="eq-toc" aria-label="Sections">
+            <a href="#what">What this is</a>
+            <a href="#eq">Equation</a>
+            <a href="#scale">Scale</a>
+            <a href="#S">Series $S$</a>
+            <a href="#value">Value</a>
+            <a href="#residuals">Residuals</a>
+            <a href="#independence">Independence</a>
+            <a href="#ansatz">Ansatz scan</a>
+            <a href="#claims">Claims</a>
+            <a href="#kill">Kill condition</a>
+            <a href="#reproduce">Reproduce</a>
+            <a href="#refs">References</a>
+        </nav>
+
+        <h2 id="what">1. What this is</h2>
+        <p>
+            This page is the home for Equation (C) on secs.observer. It is not a submission package and not a recap of
+            earlier exploratory essays. Those essays exist; they are not used here as authority.
+        </p>
+        <p>
+            The open problem in the background is ordinary: low-energy $\alpha$ is measured to high precision and is not
+            fixed by the Standard Model as a pure geometric number. Equation (C) is one closed candidate relation.
+            It may be wrong. It is written so that wrong is checkable.
+        </p>
+
+        <h2 id="eq">2. Equation (C)</h2>
+        <table>
+            <thead><tr><th>Symbol</th><th>Definition used here</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>$\alpha$</td>
+                    <td>
+                        Fine-structure constant in the conventional low-energy sense
+                        ($q^{2}\to 0$, Thomson limit): the quantity whose inverse sits near $137.036$
+                        in CODATA and atomic determinations.
+                    </td>
+                </tr>
+                <tr>
+                    <td>$\pi$</td>
+                    <td>Circle constant (pure number).</td>
+                </tr>
+                <tr>
+                    <td>$S$</td>
+                    <td>
+                        $S=\displaystyle\sum_{n=1}^{\infty}\frac{(2n-1)!!}{(4n)!}$
+                        with $(2n-1)!!=1\cdot 3\cdot\ldots\cdot(2n-1)$.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="eq-block primary">
+            <span class="eq-label">Equation (C)</span>
+            $$
+            \alpha^{-1} + S\,\alpha \;=\; 4\pi^{3} + \pi^{2} + \pi
+            $$
+        </div>
+
+        <p>Set $K=4\pi^{3}+\pi^{2}+\pi$. Multiply (C) by $\alpha$:</p>
+        <div class="eq-block">
+            $$
+            S\alpha^{2} - K\alpha + 1 \;=\; 0
+            $$
+        </div>
+        <p>The root with $\alpha\in(0,1)$ is</p>
+        <div class="eq-block">
+            $$
+            \alpha \;=\; \frac{K-\sqrt{K^{2}-4S}}{2S}\,.
+            $$
+        </div>
+        <p class="eq-note">
+            For $K&gt;2\sqrt{S}&gt;0$ that root is unique. That is ordinary algebra. It only means: once the form is fixed,
+            $\alpha$ is a function of $\pi$ alone. The content of this note is whether that function matches physical
+            low-energy $\alpha$ — open, tested below, not assumed.
+        </p>
+
+        <h2 id="scale">3. Scale</h2>
+        <div class="box">
+            <span class="t">Scope</span>
+            Equation (C) is a candidate for low-energy $\alpha$ only.
+            It is not a claim about $\alpha(M_Z)$, GUT-scale couplings, or scale-independent $\alpha$.
+            Both sides of (C) are dimensionless; unit conventions do not enter.
+            No renormalization-group model is attached here.
+        </div>
+
+        <h2 id="S">4. Series $S$</h2>
+        <p>
+            $S$ is fixed combinatorics. Equivalent form (same numerical series):
+        </p>
+        <div class="eq-block">
+            $$
+            S \;=\; \sum_{n=1}^{\infty}\frac{(2n)!}{2^{n}\,n!\,(4n)!}
+            \;=\; \sum_{n=1}^{\infty}\frac{(2n)!}{n!\,(4n)!}\left(\frac12\right)^{n}
+            $$
+        </div>
+        <p>
+            Leading terms: $S=\frac{1}{24}+\frac{3}{40320}+\cdots$.
+            Two-term truncation is exactly rational ($\frac{1}{24}+\frac{3}{40320}=\frac{187}{4480}$).
+            The full series converges in a handful of terms at working precision.
+        </p>
+        <p>
+            Automatic closed-form search against a small basis $\{\pi,e,\log 2,\sqrt{2}\}$ did not return a simple
+            identity for full $S$. That does not make $S$ a free real knob — the coefficients are fixed integers
+            in a standard factorial series. A physical reading of $S$ is not given here. If one appears later,
+            it belongs on this page only when it is real.
+        </p>
+
+        <h2 id="value">5. Numerical value</h2>
+        <p>Evaluation at 80 decimal places (mpmath), full $S$:</p>
+        <table>
+            <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+            <tbody>
+                <tr><td>$S$</td><td>$0.04174110274872575001435\ldots$</td></tr>
+                <tr><td>$K(\pi)$</td><td>$137.03630377587843255920\ldots$</td></tr>
+                <tr class="hl"><td>$\alpha^{-1}_{\mathrm{alg}}$</td><td>$137.03599917633524964627\ldots$</td></tr>
+            </tbody>
+        </table>
+        <p>
+            Frozen residual ledger hash
+            (<code>equation-c/canonical_ledger.txt</code>, table <code>alpha_inv_low_energy_v2026-07-10</code>):
+        </p>
+        <p><code class="hash">SHA-256 9f31bfed7989da097fc20bfe221119a5f325a8429605972907e9d6daacda8df9</code></p>
+
+        <h2 id="residuals">6. Residuals against laboratory low-energy $\alpha$</h2>
+        <p>
+            $\Delta=\alpha^{-1}_{\mathrm{alg}}-\alpha^{-1}_{\mathrm{meas}}$.
+            Positive $\Delta$: algebraic value larger than the measured central value.
+            $\sigma$ uses the source uncertainty only.
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Source</th><th>Class</th><th>$\alpha^{-1}$</th>
+                    <th>ppb</th><th>$|\Delta|/\sigma$</th><th>DOI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CODATA 2022</td><td>adjustment</td>
+                    <td>$137.035999177(21)$</td>
+                    <td>−0.0049</td><td>0.03</td>
+                    <td><a href="https://doi.org/10.1103/RevModPhys.97.025002" target="_blank" rel="noopener">link</a></td>
+                </tr>
+                <tr>
+                    <td>Fan et al. (2023)</td><td>g2_extraction</td>
+                    <td>$137.035999166(33)$</td>
+                    <td>+0.075</td><td>0.31</td>
+                    <td><a href="https://doi.org/10.1103/PhysRevLett.130.071801" target="_blank" rel="noopener">link</a></td>
+                </tr>
+                <tr>
+                    <td>Morel et al. (2020)</td><td>atom_recoil</td>
+                    <td>$137.035999206(11)$</td>
+                    <td>−0.216</td><td>2.70</td>
+                    <td><a href="https://doi.org/10.1038/s41586-020-2964-7" target="_blank" rel="noopener">link</a></td>
+                </tr>
+                <tr>
+                    <td>CODATA 2018</td><td>adjustment</td>
+                    <td>$137.035999084(21)$</td>
+                    <td>+0.674</td><td>4.40</td>
+                    <td><a href="https://doi.org/10.1103/RevModPhys.93.025010" target="_blank" rel="noopener">link</a></td>
+                </tr>
+                <tr>
+                    <td>Parker et al. (2018)</td><td>atom_recoil</td>
+                    <td>$137.035999046(27)$</td>
+                    <td>+0.951</td><td>4.83</td>
+                    <td><a href="https://doi.org/10.1126/science.aap7706" target="_blank" rel="noopener">link</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="eq-note">
+            Closer to CODATA 2022 than to CODATA 2018. That is one update cycle, not a proof.
+            Rb–Cs recoil still disagree with each other; (C) does not remove that tension.
+        </p>
+
+        <h2 id="independence">7. Independence</h2>
+        <p>
+            Atom-recoil determinations are the primary independence class on this page.
+            $g{-}2$ extractions of $\alpha$ invert QED from $a_e$; they are reported, not treated as independent confirmation of $a_e$.
+        </p>
+        <table>
+            <thead><tr><th>Class</th><th>Residual range of (C)</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>Atom recoil</td>
+                    <td>Morel −0.22&nbsp;ppb (2.7$\sigma$) … Parker +0.95&nbsp;ppb (4.8$\sigma$)</td>
+                </tr>
+                <tr>
+                    <td>$g{-}2\to\alpha$ (Fan 2023)</td>
+                    <td>+0.075&nbsp;ppb (0.31$\sigma$) — secondary</td>
+                </tr>
+                <tr>
+                    <td>CODATA adjustments</td>
+                    <td>2022 −0.0049&nbsp;ppb; 2018 +0.67&nbsp;ppb</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>
+            Working headline for recoil alone: (C) sits between Morel and Parker at sub-ppb to ~1&nbsp;ppb.
+            Do not quote only the friendliest residual.
+        </p>
+
+        <h2 id="ansatz">8. Ansatz neighbourhood</h2>
+        <p>
+            Numerology risk is real. Response: declare a family, count near-hits, report the sample.
+        </p>
+        <p>
+            Family form:
+            $\alpha^{-1}+S_{\mathrm{var}}\alpha=a\pi^{3}+b\pi^{2}+c\pi+d$
+            (and an expanded cubic/quartic + broader combinatorial $S$ variants).
+            Integer coefficients in bounded ranges. Ranking anchor: CODATA 2022 $\alpha^{-1}$ (scoring only).
+        </p>
+        <table>
+            <thead><tr><th>Sample</th><th>Result</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>Primary cubic box (~8.7k)</td>
+                    <td>2 candidates within 1&nbsp;ppb of CODATA 2022 — both geometric side $4\pi^{3}+\pi^{2}+\pi$ under full or two-term $S$</td>
+                </tr>
+                <tr>
+                    <td>Expanded combined (~32.2k)</td>
+                    <td>6 candidates within 1&nbsp;ppb (0.0187% of sample); all share that same geometric skeleton</td>
+                </tr>
+                <tr>
+                    <td>Unrelated polynomials in the same boxes</td>
+                    <td>Typically $\sim 10^{5}$&nbsp;ppb off</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>
+            Two-term $S$ can sit slightly closer to CODATA 2022 than full $S$. That is truncation, not a second theory.
+            Full $S$ is the definition used for $\alpha^{-1}_{\mathrm{alg}}$ above.
+        </p>
+        <p class="eq-note">
+            Sampling claim only: among the pre-specified candidates, near-hits are rare and cluster on (C)’s geometry.
+            Not a probability over all formulas that could ever be written.
+        </p>
+
+        <h2 id="claims">9. What is claimed / not claimed</h2>
+        <table>
+            <thead><tr><th>Claimed</th><th>Not claimed</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>(C) defines a unique low-energy $\alpha(\pi)$ once $S$ is fixed</td>
+                    <td>Derivation from QED or any dynamical model</td>
+                </tr>
+                <tr>
+                    <td>$\alpha^{-1}_{\mathrm{alg}}=137.035999176335\ldots$ as computed</td>
+                    <td>Scale-independent $\alpha$, $\alpha(M_Z)$, GUT couplings</td>
+                </tr>
+                <tr>
+                    <td>Residuals as tabulated; ledger hash as integrity check</td>
+                    <td>Resolution of Rb–Cs tension</td>
+                </tr>
+                <tr>
+                    <td>Sample-restricted rarity under the declared ansatz families</td>
+                    <td>Universal uniqueness among all real expressions</td>
+                </tr>
+                <tr>
+                    <td>Falsifiability by future low-energy $\alpha$ metrology</td>
+                    <td>Hierarchy problem, biology, collapse-operator narratives</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>
+            Category: mathematical form + empirical comparison.
+            An elegant identity is not automatically a physical law. This page does not treat it as one.
+        </p>
+
+        <h2 id="kill">10. Kill condition</h2>
+        <div class="box">
+            <span class="t">Failure mode</span>
+            If a future low-energy $\alpha^{-1}$ determination — especially independent atom-recoil or electrical routes —
+            with uncertainty much smaller than $|\alpha^{-1}_{\mathrm{alg}}-\alpha^{-1}_{\mathrm{meas}}|$
+            and stable across methods, disagrees with $\alpha^{-1}_{\mathrm{alg}}$ at high significance, Equation (C) fails.
+            No residual silence is confirmation.
+        </div>
+
+        <h2 id="reproduce">11. Reproduce</h2>
+        <p>Public pack: <a href="equation-c/README.md"><code>equation-c/</code></a></p>
+        <pre class="eq-code">cd equation-c
+pip install mpmath
+python reproduce_C.py</pre>
+        <p>
+            Recomputes $S$, $\alpha^{-1}_{\mathrm{alg}}$, residuals, and checks the frozen ledger hash.
+            JSON dumps of the evaluation and ansatz scans sit in the same folder.
+        </p>
+
+        <h2 id="refs">12. Data references</h2>
+        <ol>
+            <li>Parker, R. H. et al. (2018). Cs-133 atom recoil. <em>Science</em>. <a href="https://doi.org/10.1126/science.aap7706" target="_blank" rel="noopener">10.1126/science.aap7706</a></li>
+            <li>Morel, L. et al. (2020). Rb-87 atom recoil. <em>Nature</em>. <a href="https://doi.org/10.1038/s41586-020-2964-7" target="_blank" rel="noopener">10.1038/s41586-020-2964-7</a></li>
+            <li>Fan, X. et al. (2023). Electron magnetic moment; $\alpha$ via QED inversion. <em>Phys. Rev. Lett.</em> <a href="https://doi.org/10.1103/PhysRevLett.130.071801" target="_blank" rel="noopener">10.1103/PhysRevLett.130.071801</a></li>
+            <li>CODATA 2018 and CODATA 2022 recommended values of $\alpha$.</li>
+        </ol>
+
+        <div class="eq-footer-meta">
+            <p>
+                <strong>Home:</strong> <code>https://secs.observer/equation.html</code> ·
+                <strong>Reproduction:</strong> <code>equation-c/</code> ·
+                <strong>Ledger freeze:</strong> 2026-07-10
+            </p>
+            <p>
+                Standing note. If the claim set changes, the version date and hash change with it.
+            </p>
+        </div>
+
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter();</script>
+</body>
+</html>

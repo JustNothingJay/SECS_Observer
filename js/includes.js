@@ -67,11 +67,12 @@
             li('gtf.html', 'GTF')
         ], ['architecture.html', 'neurotrophic.html', 'neurotrophic-proof.html', 'sovereign.html', 'verticals.html', 'gtf.html', 'vertical-demo.html']) +
         dropdown('Research', [
+            li('equation.html', 'Equation (C)'),
             li('research.html', 'Papers'),
             li('timeline.html', 'Timeline'),
             li('citation-audit.html', 'Citation Audit'),
             li('governed-console.html', 'Governed Console')
-        ], ['research.html', 'timeline.html', 'citation-audit.html', 'governed-console.html']) +
+        ], ['equation.html', 'research.html', 'timeline.html', 'citation-audit.html', 'governed-console.html']) +
         dropdown('More', [
             li('terminal.html', 'Terminal'),
             li('game.html', 'The Game'),

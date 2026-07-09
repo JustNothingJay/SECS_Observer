@@ -1,0 +1,74 @@
+{
+  "table_id": "alpha_inv_low_energy_v2026-07-10",
+  "quantity": "alpha^{-1}",
+  "scale": "low-energy / Thomson limit (q^2 -> 0), not alpha(M_Z)",
+  "notes": [
+    "Central values and 1-sigma uncertainties as commonly quoted for comparison tables.",
+    "Update this file only when adopting a new experimental or CODATA release; then re-run 01_frozen_evaluation.py.",
+    "independence: atom_recoil and quantum_hall are preferred for independence arguments; g2_extraction is QED-inverted from a_e."
+  ],
+  "sources": [
+    {
+      "id": "parker_2018",
+      "label": "Parker et al. (2018)",
+      "method": "Cs-133 atom recoil",
+      "independence": "atom_recoil",
+      "alpha_inv": "137.035999046",
+      "unc": "0.000000027",
+      "doi": "10.1126/science.aap7706",
+      "cite": "Parker RH et al., Science 360, 191 (2018)"
+    },
+    {
+      "id": "morel_2020",
+      "label": "Morel et al. (2020)",
+      "method": "Rb-87 atom recoil",
+      "independence": "atom_recoil",
+      "alpha_inv": "137.035999206",
+      "unc": "0.000000011",
+      "doi": "10.1038/s41586-020-2964-7",
+      "cite": "Morel L et al., Nature 588, 61 (2020)"
+    },
+    {
+      "id": "fan_2023",
+      "label": "Fan et al. (2023)",
+      "method": "electron g-2 -> alpha via QED inversion",
+      "independence": "g2_extraction",
+      "alpha_inv": "137.035999166",
+      "unc": "0.000000033",
+      "doi": "10.1103/PhysRevLett.130.071801",
+      "cite": "Fan X et al., Phys. Rev. Lett. 130, 071801 (2023)",
+      "caveat": "alpha extracted from a_e; not an independent prediction of a_e"
+    },
+    {
+      "id": "codata_2018",
+      "label": "CODATA 2018",
+      "method": "adjusted average",
+      "independence": "adjustment",
+      "alpha_inv": "137.035999084",
+      "unc": "0.000000021",
+      "doi": "10.1103/RevModPhys.93.025010",
+      "cite": "Tiesinga E et al., Rev. Mod. Phys. 93, 025010 (2021) [CODATA 2018]"
+    },
+    {
+      "id": "codata_2022",
+      "label": "CODATA 2022",
+      "method": "adjusted average",
+      "independence": "adjustment",
+      "alpha_inv": "137.035999177",
+      "unc": "0.000000021",
+      "doi": "10.1103/RevModPhys.97.025002",
+      "cite": "Mohr PJ et al. / CODATA 2022 recommended values (alpha^{-1})"
+    },
+    {
+      "id": "yu_2025_qh_indicative",
+      "label": "Quantum Hall path (CODATA-linked scale)",
+      "method": "quantum Hall / SI electrical (indicative via CODATA 2022 alpha)",
+      "independence": "quantum_hall",
+      "alpha_inv": "137.035999177",
+      "unc": "0.000000021",
+      "doi": "10.1103/RevModPhys.97.025002",
+      "cite": "CODATA 2022 alpha as electrical-metrology anchored adjustment (not a single free-standing QH-only paper value)",
+      "caveat": "Standalone modern QH-only alpha often enters CODATA; use as independence class marker, not a third atom-recoil"
+    }
+  ]
+}

@@ -1,0 +1,364 @@
+{
+  "run": {
+    "script": "05_ansatz_expanded_stats.py",
+    "utc": "2026-07-09T14:31:00.959849+00:00",
+    "dps": 40,
+    "scoring_anchor": "CODATA 2022 alpha^{-1}"
+  },
+  "families": {
+    "A_cubic_core_S": {
+      "n": 17768,
+      "stats": {
+        "n_valid": 17768,
+        "within_0_1_ppb": 2,
+        "within_1_ppb": 2,
+        "within_10_ppb": 3,
+        "within_100_ppb": 3,
+        "fraction_within_1_ppb": 0.00011256190904997749,
+        "fraction_within_0_1_ppb": 0.00011256190904997749
+      }
+    },
+    "B_cubic_broad_S": {
+      "n": 6448,
+      "stats": {
+        "n_valid": 6448,
+        "within_0_1_ppb": 2,
+        "within_1_ppb": 2,
+        "within_10_ppb": 5,
+        "within_100_ppb": 5,
+        "fraction_within_1_ppb": 0.00031017369727047146,
+        "fraction_within_0_1_ppb": 0.00031017369727047146
+      }
+    },
+    "C_quartic_core_S": {
+      "n": 7960,
+      "stats": {
+        "n_valid": 7960,
+        "within_0_1_ppb": 2,
+        "within_1_ppb": 2,
+        "within_10_ppb": 3,
+        "within_100_ppb": 3,
+        "fraction_within_1_ppb": 0.0002512562814070352,
+        "fraction_within_0_1_ppb": 0.0002512562814070352
+      }
+    }
+  },
+  "combined": {
+    "n_valid": 32176,
+    "stats": {
+      "n_valid": 32176,
+      "within_0_1_ppb": 6,
+      "within_1_ppb": 6,
+      "within_10_ppb": 11,
+      "within_100_ppb": 11,
+      "fraction_within_1_ppb": 0.00018647439085032322,
+      "fraction_within_0_1_ppb": 0.00018647439085032322
+    },
+    "equation_C_rank": 4,
+    "equation_C": {
+      "family": "cubic_core_S",
+      "S": "S_C_full",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.03599917633525",
+      "ppb_codata22": 0.004850917698437394,
+      "is_C": true
+    },
+    "unique_coeff_tuples_within_1_ppb": 2,
+    "fraction_within_1_ppb": 0.00018647439085032322,
+    "fraction_within_0_1_ppb": 0.00018647439085032322,
+    "rarity_statement": "Within the declared combined sample of 32176 valid candidates, only 6 (0.0186%) land within 1 ppb of CODATA 2022, and 6 (0.0186%) within 0.1 ppb. Equation (C) rank = 4."
+  },
+  "top_20": [
+    {
+      "family": "cubic_core_S",
+      "S": "S_C_two",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035999176563804",
+      "ppb_codata22": 0.003183073352055224,
+      "is_C": false
+    },
+    {
+      "family": "cubic_broad_S",
+      "S": "S_C_two",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035999176563804",
+      "ppb_codata22": 0.003183073352055224,
+      "is_C": false
+    },
+    {
+      "family": "quartic_core_S",
+      "S": "S_C_two",
+      "coeffs": [
+        0,
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "0\u03c0\u2074+4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035999176563804",
+      "ppb_codata22": 0.003183073352055224,
+      "is_C": false
+    },
+    {
+      "family": "cubic_core_S",
+      "S": "S_C_full",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.03599917633525",
+      "ppb_codata22": 0.004850917698437394,
+      "is_C": true
+    },
+    {
+      "family": "cubic_broad_S",
+      "S": "S_C_full",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.03599917633525",
+      "ppb_codata22": 0.004850917698437394,
+      "is_C": true
+    },
+    {
+      "family": "quartic_core_S",
+      "S": "S_C_full",
+      "coeffs": [
+        0,
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "0\u03c0\u2074+4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.03599917633525",
+      "ppb_codata22": 0.004850917698437394,
+      "is_C": true
+    },
+    {
+      "family": "cubic_broad_S",
+      "S": "S_alt_B",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035999357458718",
+      "ppb_codata22": 1.3168708849201967,
+      "is_C": false
+    },
+    {
+      "family": "cubic_broad_S",
+      "S": "S_alt_D",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035999538521226",
+      "ppb_codata22": 2.638147849190708,
+      "is_C": false
+    },
+    {
+      "family": "cubic_core_S",
+      "S": "S_C_one",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035999719522789",
+      "ppb_codata22": 3.958980066754609,
+      "is_C": false
+    },
+    {
+      "family": "cubic_broad_S",
+      "S": "S_C_one",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035999719522789",
+      "ppb_codata22": 3.958980066754609,
+      "is_C": false
+    },
+    {
+      "family": "quartic_core_S",
+      "S": "S_C_one",
+      "coeffs": [
+        0,
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "0\u03c0\u2074+4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035999719522789",
+      "ppb_codata22": 3.958980066754609,
+      "is_C": false
+    },
+    {
+      "family": "cubic_broad_S",
+      "S": "S_alt_C",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.036242958682307",
+      "ppb_codata22": 1778.9608845171995,
+      "is_C": false
+    },
+    {
+      "family": "cubic_core_S",
+      "S": "S_zero",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.036303775878433",
+      "ppb_codata22": 2222.7654066223117,
+      "is_C": false
+    },
+    {
+      "family": "cubic_broad_S",
+      "S": "S_zero",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.036303775878433",
+      "ppb_codata22": 2222.7654066223117,
+      "is_C": false
+    },
+    {
+      "family": "quartic_core_S",
+      "S": "S_zero",
+      "coeffs": [
+        0,
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "0\u03c0\u2074+4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.036303775878433",
+      "ppb_codata22": 2222.7654066223117,
+      "is_C": false
+    },
+    {
+      "family": "cubic_broad_S",
+      "S": "S_alt_A",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "poly": "4\u03c0\u00b3+1\u03c0\u00b2+1\u03c0+0",
+      "alpha_inv": "137.035694575590343",
+      "ppb_codata22": 2222.7838778594805,
+      "is_C": false
+    },
+    {
+      "family": "cubic_core_S",
+      "S": "S_zero",
+      "coeffs": [
+        5,
+        -1,
+        -1,
+        -5
+      ],
+      "poly": "5\u03c0\u00b3+-1\u03c0\u00b2+-1\u03c0+-5",
+      "alpha_inv": "137.020186346819949",
+      "ppb_codata22": 115391.79686373236,
+      "is_C": false
+    },
+    {
+      "family": "cubic_core_S",
+      "S": "S_C_one",
+      "coeffs": [
+        5,
+        -1,
+        -1,
+        -5
+      ],
+      "poly": "5\u03c0\u00b3+-1\u03c0\u00b2+-1\u03c0+-5",
+      "alpha_inv": "137.019882254698565",
+      "ppb_codata22": 117610.86428550952,
+      "is_C": false
+    },
+    {
+      "family": "cubic_core_S",
+      "S": "S_C_full",
+      "coeffs": [
+        3,
+        3,
+        3,
+        5
+      ],
+      "poly": "3\u03c0\u00b3+3\u03c0\u00b2+3\u03c0+5",
+      "alpha_inv": "137.052116641214942",
+      "ppb_codata22": 117614.81881942437,
+      "is_C": false
+    },
+    {
+      "family": "cubic_core_S",
+      "S": "S_C_two",
+      "coeffs": [
+        3,
+        3,
+        3,
+        5
+      ],
+      "poly": "3\u03c0\u00b3+3\u03c0\u00b2+3\u03c0+5",
+      "alpha_inv": "137.052116641443469",
+      "ppb_codata22": 117614.82048707257,
+      "is_C": false
+    }
+  ],
+  "interpretation": "Expanded scan finds more near-hits or demotes (C); exclusivity is weaker \u2014 treat carefully."
+}

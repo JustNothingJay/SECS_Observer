@@ -1,0 +1,154 @@
+{
+  "run": {
+    "script": "01_frozen_evaluation.py",
+    "utc": "2026-07-09T14:16:54.675916+00:00",
+    "mpmath_dps": 80,
+    "n_terms_requested": 40,
+    "n_terms_used": 14,
+    "python": "3.14.3"
+  },
+  "equation_C": {
+    "form": "alpha^{-1} + S*alpha = 4*pi^3 + pi^2 + pi",
+    "S_full": "0.04174110274872575001435365309267593578546",
+    "S_two_term": "0.04174107142857142857142857142857142857143",
+    "K": "137.0363037758784325592023946515612348284",
+    "alpha_inv_alg": "137.0359991763352496462692386336770706667",
+    "alpha_inv_alg_two_term_S": "137.035999176563804362747429640934874774",
+    "scale_statement": "Candidate for conventional low-energy alpha (Thomson limit), not alpha(M_Z)."
+  },
+  "experimental_table_id": "alpha_inv_low_energy_v2026-07-10",
+  "residuals": [
+    {
+      "source_id": "parker_2018",
+      "label": "Parker et al. (2018)",
+      "method": "Cs-133 atom recoil",
+      "independence": "atom_recoil",
+      "alpha_inv_meas": "137.035999046",
+      "unc": "0.000000027",
+      "doi": "10.1126/science.aap7706",
+      "cite": "Parker RH et al., Science 360, 191 (2018)",
+      "delta": "1.30335249646269e-7",
+      "delta_ppb": "0.951102",
+      "abs_sigma": "4.8272",
+      "caveat": null
+    },
+    {
+      "source_id": "morel_2020",
+      "label": "Morel et al. (2020)",
+      "method": "Rb-87 atom recoil",
+      "independence": "atom_recoil",
+      "alpha_inv_meas": "137.035999206",
+      "unc": "0.000000011",
+      "doi": "10.1038/s41586-020-2964-7",
+      "cite": "Morel L et al., Nature 588, 61 (2020)",
+      "delta": "-2.96647503537308e-8",
+      "delta_ppb": "-0.216474",
+      "abs_sigma": "2.6968",
+      "caveat": null
+    },
+    {
+      "source_id": "fan_2023",
+      "label": "Fan et al. (2023)",
+      "method": "electron g-2 -> alpha via QED inversion",
+      "independence": "g2_extraction",
+      "alpha_inv_meas": "137.035999166",
+      "unc": "0.000000033",
+      "doi": "10.1103/PhysRevLett.130.071801",
+      "cite": "Fan X et al., Phys. Rev. Lett. 130, 071801 (2023)",
+      "delta": "1.03352496462692e-8",
+      "delta_ppb": "0.075420",
+      "abs_sigma": "0.3132",
+      "caveat": "alpha extracted from a_e; not an independent prediction of a_e"
+    },
+    {
+      "source_id": "codata_2018",
+      "label": "CODATA 2018",
+      "method": "adjusted average",
+      "independence": "adjustment",
+      "alpha_inv_meas": "137.035999084",
+      "unc": "0.000000021",
+      "doi": "10.1103/RevModPhys.93.025010",
+      "cite": "Tiesinga E et al., Rev. Mod. Phys. 93, 025010 (2021) [CODATA 2018]",
+      "delta": "9.23352496462692e-8",
+      "delta_ppb": "0.673803",
+      "abs_sigma": "4.3969",
+      "caveat": null
+    },
+    {
+      "source_id": "codata_2022",
+      "label": "CODATA 2022",
+      "method": "adjusted average",
+      "independence": "adjustment",
+      "alpha_inv_meas": "137.035999177",
+      "unc": "0.000000021",
+      "doi": "10.1103/RevModPhys.97.025002",
+      "cite": "Mohr PJ et al. / CODATA 2022 recommended values (alpha^{-1})",
+      "delta": "-6.64750353730761e-10",
+      "delta_ppb": "-0.004851",
+      "abs_sigma": "0.0317",
+      "caveat": null
+    },
+    {
+      "source_id": "yu_2025_qh_indicative",
+      "label": "Quantum Hall path (CODATA-linked scale)",
+      "method": "quantum Hall / SI electrical (indicative via CODATA 2022 alpha)",
+      "independence": "quantum_hall",
+      "alpha_inv_meas": "137.035999177",
+      "unc": "0.000000021",
+      "doi": "10.1103/RevModPhys.97.025002",
+      "cite": "CODATA 2022 alpha as electrical-metrology anchored adjustment (not a single free-standing QH-only paper value)",
+      "delta": "-6.64750353730761e-10",
+      "delta_ppb": "-0.004851",
+      "abs_sigma": "0.0317",
+      "caveat": "Standalone modern QH-only alpha often enters CODATA; use as independence class marker, not a third atom-recoil"
+    }
+  ],
+  "integrity": {
+    "sha256_canonical_ledger": "9f31bfed7989da097fc20bfe221119a5f325a8429605972907e9d6daacda8df9",
+    "canonical_ledger_path": "results/01_canonical_ledger.txt"
+  },
+  "series_terms_head": [
+    {
+      "n": 1,
+      "term": "0.04166666666666666666666667",
+      "partial_S": "0.0416666666666666666666666666667"
+    },
+    {
+      "n": 2,
+      "term": "0.00007440476190476190476190476",
+      "partial_S": "0.0417410714285714285714285714286"
+    },
+    {
+      "n": 3,
+      "term": "3.131513548180214846881514e-8",
+      "partial_S": "0.0417411027437069103735770402437"
+    },
+    {
+      "n": 4,
+      "term": "5.018451199006754562310118e-12",
+      "partial_S": "0.041741102748725361572583794806"
+    },
+    {
+      "n": 5,
+      "term": "3.884250154029995791261701e-16",
+      "partial_S": "0.0417411027487257499975991978056"
+    }
+  ],
+  "series_terms_tail": [
+    {
+      "n": 12,
+      "term": "2.547416573503506998361675e-50",
+      "partial_S": "0.0417411027487257500143536530927"
+    },
+    {
+      "n": 13,
+      "term": "9.80167672262561562456396e-56",
+      "partial_S": "0.0417411027487257500143536530927"
+    },
+    {
+      "n": 14,
+      "term": "3.002228841774569843348432e-61",
+      "partial_S": "0.0417411027487257500143536530927"
+    }
+  ]
+}

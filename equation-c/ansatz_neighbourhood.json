@@ -1,0 +1,449 @@
+{
+  "run": {
+    "script": "02_ansatz_neighbourhood.py",
+    "utc": "2026-07-09T14:16:57.367149+00:00",
+    "dps": 50,
+    "family": "alpha^{-1} + S_var*alpha = a*pi^3+b*pi^2+c*pi+d",
+    "coeff_ranges": {
+      "a": "0..6",
+      "b": "-2..4",
+      "c": "-2..4",
+      "d": "-5..5"
+    },
+    "S_variants": [
+      "S_full",
+      "S_two_term",
+      "S_one_term_1_24",
+      "S_zero"
+    ],
+    "scoring_anchor": "CODATA 2022 alpha^{-1} (scoring only; not a free parameter)"
+  },
+  "summary": {
+    "n_candidates_evaluated": 8701,
+    "equation_C_rank_vs_codata2022": 2,
+    "equation_C": {
+      "S_variant": "S_full",
+      "poly": "4*pi^3 + 1*pi^2 + 1*pi + 0",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "is_equation_C": true,
+      "alpha_inv": "137.03599917633524965",
+      "ppb_vs_codata2022": 0.004850917698437394,
+      "ppb_vs_fan": 0.07541996051526231,
+      "ppb_vs_recoil_mid": 0.3673140632191667,
+      "abs_delta_codata": "6.64750353731e-10"
+    },
+    "within_0_1_ppb": 2,
+    "within_1_ppb": 2,
+    "within_10_ppb": 3,
+    "within_100_ppb": 3,
+    "top10_distinct_coeff_tuples": 3,
+    "interpretation": "Equation (C) is among the best few integer/combinatorial forms in this controlled family; exclusivity is moderate-to-strong within the scanned box (not a global proof of uniqueness)."
+  },
+  "top_25": [
+    {
+      "S_variant": "S_two_term",
+      "poly": "4*pi^3 + 1*pi^2 + 1*pi + 0",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.03599917656380436",
+      "ppb_vs_codata2022": 0.003183073352055224,
+      "ppb_vs_fan": 0.07708780486177835,
+      "ppb_vs_recoil_mid": 0.3689819075661696,
+      "abs_delta_codata": "4.36195637253e-10"
+    },
+    {
+      "S_variant": "S_full",
+      "poly": "4*pi^3 + 1*pi^2 + 1*pi + 0",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "is_equation_C": true,
+      "alpha_inv": "137.03599917633524965",
+      "ppb_vs_codata2022": 0.004850917698437394,
+      "ppb_vs_fan": 0.07541996051526231,
+      "ppb_vs_recoil_mid": 0.3673140632191667,
+      "abs_delta_codata": "6.64750353731e-10"
+    },
+    {
+      "S_variant": "S_one_term_1_24",
+      "poly": "4*pi^3 + 1*pi^2 + 1*pi + 0",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.03599971952278917",
+      "ppb_vs_codata2022": 3.958980066754609,
+      "ppb_vs_fan": 4.039250945286488,
+      "ppb_vs_recoil_mid": 4.331145049147412,
+      "abs_delta_codata": "5.4252278917e-7"
+    },
+    {
+      "S_variant": "S_zero",
+      "poly": "4*pi^3 + 1*pi^2 + 1*pi + 0",
+      "coeffs": [
+        4,
+        1,
+        1,
+        0
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.03630377587843256",
+      "ppb_vs_codata2022": 2222.7654066223117,
+      "ppb_vs_fan": 2222.8456776789494,
+      "ppb_vs_recoil_mid": 2223.1375724304667,
+      "abs_delta_codata": "0.000304598878433"
+    },
+    {
+      "S_variant": "S_zero",
+      "poly": "5*pi^3 + -1*pi^2 + -1*pi + -5",
+      "coeffs": [
+        5,
+        -1,
+        -1,
+        -5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.02018634681994902",
+      "ppb_vs_codata2022": 115391.79686373236,
+      "ppb_vs_fan": 115391.71660211675,
+      "ppb_vs_recoil_mid": 115391.42474169623,
+      "abs_delta_codata": "0.0158128301801"
+    },
+    {
+      "S_variant": "S_one_term_1_24",
+      "poly": "5*pi^3 + -1*pi^2 + -1*pi + -5",
+      "coeffs": [
+        5,
+        -1,
+        -1,
+        -5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.01988225469856466",
+      "ppb_vs_codata2022": 117610.86428550952,
+      "ppb_vs_fan": 117610.78402407203,
+      "ppb_vs_recoil_mid": 117610.49216429924,
+      "abs_delta_codata": "0.0161169223014"
+    },
+    {
+      "S_variant": "S_full",
+      "poly": "3*pi^3 + 3*pi^2 + 3*pi + 5",
+      "coeffs": [
+        3,
+        3,
+        3,
+        5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.05211664121494164",
+      "ppb_vs_codata2022": 117614.81881942437,
+      "ppb_vs_fan": 117614.89909974363,
+      "ppb_vs_recoil_mid": 117615.1910281774,
+      "abs_delta_codata": "0.0161174642149"
+    },
+    {
+      "S_variant": "S_two_term",
+      "poly": "3*pi^3 + 3*pi^2 + 3*pi + 5",
+      "coeffs": [
+        3,
+        3,
+        3,
+        5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.05211664144346948",
+      "ppb_vs_codata2022": 117614.82048707257,
+      "ppb_vs_fan": 117614.90076739184,
+      "ppb_vs_recoil_mid": 117615.19269582561,
+      "abs_delta_codata": "0.0161174644435"
+    },
+    {
+      "S_variant": "S_two_term",
+      "poly": "5*pi^3 + -1*pi^2 + -1*pi + -5",
+      "coeffs": [
+        5,
+        -1,
+        -1,
+        -5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.01988171167571203",
+      "ppb_vs_codata2022": 117614.82691471562,
+      "ppb_vs_fan": 117614.74665327846,
+      "ppb_vs_recoil_mid": 117614.45479350683,
+      "abs_delta_codata": "0.0161174653243"
+    },
+    {
+      "S_variant": "S_full",
+      "poly": "5*pi^3 + -1*pi^2 + -1*pi + -5",
+      "coeffs": [
+        5,
+        -1,
+        -1,
+        -5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.01988171144713043",
+      "ppb_vs_codata2022": 117614.82858275616,
+      "ppb_vs_fan": 117614.748321319,
+      "ppb_vs_recoil_mid": 117614.45646154736,
+      "abs_delta_codata": "0.0161174655529"
+    },
+    {
+      "S_variant": "S_one_term_1_24",
+      "poly": "3*pi^3 + 3*pi^2 + 3*pi + 5",
+      "coeffs": [
+        3,
+        3,
+        3,
+        5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.05211718433860149",
+      "ppb_vs_codata2022": 117618.7821842563,
+      "ppb_vs_fan": 117618.86246457587,
+      "ppb_vs_recoil_mid": 117619.15439301082,
+      "abs_delta_codata": "0.0161180073386"
+    },
+    {
+      "S_variant": "S_zero",
+      "poly": "3*pi^3 + 3*pi^2 + 3*pi + 5",
+      "coeffs": [
+        3,
+        3,
+        3,
+        5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.0524212049369161",
+      "ppb_vs_codata2022": 119837.32767697699,
+      "ppb_vs_fan": 119837.40795747466,
+      "ppb_vs_recoil_mid": 119837.69988655717,
+      "abs_delta_codata": "0.0164220279369"
+    },
+    {
+      "S_variant": "S_zero",
+      "poly": "3*pi^3 + 4*pi^2 + 3*pi + -5",
+      "coeffs": [
+        3,
+        4,
+        3,
+        -5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "136.92202560602627472",
+      "ppb_vs_codata2022": 831705.3304111238,
+      "ppb_vs_fan": 831705.2502070074,
+      "ppb_vs_recoil_mid": 831704.9585556745,
+      "abs_delta_codata": "0.113973570974"
+    },
+    {
+      "S_variant": "S_one_term_1_24",
+      "poly": "3*pi^3 + 4*pi^2 + 3*pi + -5",
+      "coeffs": [
+        3,
+        4,
+        3,
+        -5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "136.9217212958973024",
+      "ppb_vs_codata2022": 833925.9887111321,
+      "ppb_vs_fan": 833925.9085071938,
+      "ppb_vs_recoil_mid": 833925.6168565092,
+      "abs_delta_codata": "0.114277881103"
+    },
+    {
+      "S_variant": "S_full",
+      "poly": "5*pi^3 + -2*pi^2 + -1*pi + 5",
+      "coeffs": [
+        5,
+        -2,
+        -1,
+        5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.15027759999043472",
+      "ppb_vs_codata2022": 833929.943057,
+      "ppb_vs_fan": 833930.0233948187,
+      "ppb_vs_recoil_mid": 833930.3155323406,
+      "abs_delta_codata": "0.11427842299"
+    },
+    {
+      "S_variant": "S_two_term",
+      "poly": "5*pi^3 + -2*pi^2 + -1*pi + 5",
+      "coeffs": [
+        5,
+        -2,
+        -1,
+        5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.150277600218799",
+      "ppb_vs_codata2022": 833929.9447234548,
+      "ppb_vs_fan": 833930.0250612732,
+      "ppb_vs_recoil_mid": 833930.3171987952,
+      "abs_delta_codata": "0.114278423219"
+    },
+    {
+      "S_variant": "S_two_term",
+      "poly": "3*pi^3 + 4*pi^2 + 3*pi + -5",
+      "coeffs": [
+        3,
+        4,
+        3,
+        -5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "136.92172075248514791",
+      "ppb_vs_codata2022": 833929.9541812111,
+      "ppb_vs_fan": 833929.8739772732,
+      "ppb_vs_recoil_mid": 833929.5823265897,
+      "abs_delta_codata": "0.114278424515"
+    },
+    {
+      "S_variant": "S_full",
+      "poly": "3*pi^3 + 4*pi^2 + 3*pi + -5",
+      "coeffs": [
+        3,
+        4,
+        3,
+        -5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "136.92172075225640243",
+      "ppb_vs_codata2022": 833929.9558504475,
+      "ppb_vs_fan": 833929.8756465096,
+      "ppb_vs_recoil_mid": 833929.5839958261,
+      "abs_delta_codata": "0.114278424744"
+    },
+    {
+      "S_variant": "S_one_term_1_24",
+      "poly": "5*pi^3 + -2*pi^2 + -1*pi + 5",
+      "coeffs": [
+        5,
+        -2,
+        -1,
+        5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.15027814272536932",
+      "ppb_vs_codata2022": 833933.9035851669,
+      "ppb_vs_fan": 833933.9839229857,
+      "ppb_vs_recoil_mid": 833934.2760605088,
+      "abs_delta_codata": "0.114278965725"
+    },
+    {
+      "S_variant": "S_zero",
+      "poly": "5*pi^3 + -2*pi^2 + -1*pi + 5",
+      "coeffs": [
+        5,
+        -2,
+        -1,
+        5
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.1505819457305904",
+      "ppb_vs_codata2022": 836150.8612243684,
+      "ppb_vs_fan": 836150.9415623653,
+      "ppb_vs_recoil_mid": 836151.2337005355,
+      "abs_delta_codata": "0.114582768731"
+    },
+    {
+      "S_variant": "S_zero",
+      "poly": "4*pi^3 + 1*pi^2 + 0*pi + 3",
+      "coeffs": [
+        4,
+        1,
+        0,
+        3
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "136.89471112228863932",
+      "ppb_vs_codata2022": 1031028.7483573465,
+      "ppb_vs_fan": 1031028.6681692299,
+      "ppb_vs_recoil_mid": 1031028.3765760784,
+      "abs_delta_codata": "0.141288054711"
+    },
+    {
+      "S_variant": "S_one_term_1_24",
+      "poly": "4*pi^3 + 1*pi^2 + 0*pi + 3",
+      "coeffs": [
+        4,
+        1,
+        0,
+        3
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "136.89440675144065924",
+      "ppb_vs_codata2022": 1033249.8497453617,
+      "ppb_vs_fan": 1033249.7695574234,
+      "ppb_vs_recoil_mid": 1033249.4779649202,
+      "abs_delta_codata": "0.141592425559"
+    },
+    {
+      "S_variant": "S_full",
+      "poly": "4*pi^3 + 1*pi^2 + 2*pi + -3",
+      "coeffs": [
+        4,
+        1,
+        2,
+        -3
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.17759214432882192",
+      "ppb_vs_codata2022": 1033253.8032282743,
+      "ppb_vs_fan": 1033253.8835820927,
+      "ppb_vs_recoil_mid": 1033254.1757777961,
+      "abs_delta_codata": "0.141592967329"
+    },
+    {
+      "S_variant": "S_two_term",
+      "poly": "4*pi^3 + 1*pi^2 + 2*pi + -3",
+      "coeffs": [
+        4,
+        1,
+        2,
+        -3
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "137.17759214455714072",
+      "ppb_vs_codata2022": 1033253.8048943972,
+      "ppb_vs_fan": 1033253.8852482155,
+      "ppb_vs_recoil_mid": 1033254.1774439189,
+      "abs_delta_codata": "0.141592967557"
+    },
+    {
+      "S_variant": "S_two_term",
+      "poly": "4*pi^3 + 1*pi^2 + 0*pi + 3",
+      "coeffs": [
+        4,
+        1,
+        0,
+        3
+      ],
+      "is_equation_C": false,
+      "alpha_inv": "136.89440620792007722",
+      "ppb_vs_codata2022": 1033253.8160066747,
+      "ppb_vs_fan": 1033253.7358187366,
+      "ppb_vs_recoil_mid": 1033253.4442262347,
+      "abs_delta_codata": "0.14159296908"
+    }
+  ]
+}
