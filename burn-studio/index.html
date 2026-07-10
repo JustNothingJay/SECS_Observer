@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>SECS Burn Studio (isolated)</title>
+  <meta name="description" content="Isolated laboratory: deterministic burn log, scrub, recompute, WebGL projection of fast and slow path. Not public nav.">
+  <link rel="stylesheet" href="css/burn-studio.css">
+</head>
+<body>
+  <div id="app">
+    <header class="top">
+      <div>
+        <h1>Burn Studio</h1>
+        <p class="sub">
+          Artifacts are truth · GPU is projection · same seed + log ⇒ same hash.
+          Fast path collapses sparks; slow path only observes.
+        </p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="badge iso">isolated · not in public nav</span>
+        <span class="badge" id="status-badge">idle</span>
+      </div>
+    </header>
+
+    <div id="stage">
+      <canvas id="c"></canvas>
+      <div id="hud">
+        <div>seq <span class="v" id="seq-label">—</span> · t <span class="v" id="t-label">—</span></div>
+        <div>state <span class="v" id="hash-label" style="font-size:10px">—</span></div>
+      </div>
+    </div>
+
+    <aside id="side">
+      <div class="side-scroll">
+        <div class="section">
+          <div class="section-title">Burn controls</div>
+          <div class="btn-row" style="margin-bottom:8px">
+            <label class="metric" style="flex:1">Seed
+              <input id="inp-seed" type="number" value="1397050963" style="width:100%;margin-top:4px;background:#121a14;border:1px solid #24382c;color:#c8e6d0;padding:4px 6px;font-family:inherit;font-size:12px;border-radius:4px">
+            </label>
+          </div>
+          <div class="btn-row" style="margin-bottom:8px">
+            <label style="flex:1;color:#5a7a64;font-size:11px">Grid
+              <select id="inp-grid" style="width:100%;margin-top:4px;background:#121a14;border:1px solid #24382c;color:#c8e6d0;padding:4px;font-family:inherit">
+                <option value="64">64</option>
+                <option value="128" selected>128</option>
+                <option value="256">256</option>
+              </select>
+            </label>
+            <label style="flex:1;color:#5a7a64;font-size:11px">Sparks
+              <input id="inp-sparks" type="number" value="180" min="10" max="2000" style="width:100%;margin-top:4px;background:#121a14;border:1px solid #24382c;color:#c8e6d0;padding:4px 6px;font-family:inherit;font-size:12px;border-radius:4px">
+            </label>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn primary" id="btn-gen">Generate burn</button>
+            <button type="button" class="btn" id="btn-live">Live burn</button>
+            <button type="button" class="btn" id="btn-play">Replay</button>
+            <button type="button" class="btn" id="btn-pause">Pause</button>
+          </div>
+          <div class="btn-row" style="margin-top:8px">
+            <button type="button" class="btn" id="btn-export">Export artifact</button>
+            <button type="button" class="btn" id="btn-verify">Verify integrity</button>
+            <label class="btn" style="cursor:pointer;display:inline-block">
+              Import
+              <input type="file" id="file-import" accept="application/json,.json" hidden>
+            </label>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Fast path metrics</div>
+          <div class="metric"><span class="lbl">Sparks</span><span class="val" id="m-sparks">—</span></div>
+          <div class="metric"><span class="lbl">Passed (α)</span><span class="val pass" id="m-pass">—</span></div>
+          <div class="metric"><span class="lbl">Vetoed</span><span class="val fail" id="m-veto">—</span></div>
+          <div class="metric"><span class="lbl">Active cells</span><span class="val" id="m-active">—</span></div>
+          <div class="metric"><span class="lbl">Panic</span><span class="val" id="m-panic">—</span></div>
+          <div class="metric"><span class="lbl">Events</span><span class="val" id="m-events">—</span></div>
+          <div class="metric"><span class="lbl">Seed / grid</span><span class="val"><span id="m-seed">—</span> / <span id="m-grid">—</span></span></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Slow path (observe only)</div>
+          <div class="slow-path">
+            <div class="phases">
+              <div class="ph" data-phase="A">A</div>
+              <div class="ph" data-phase="B">B</div>
+              <div class="ph" data-phase="C">C</div>
+              <div class="ph" data-phase="D">D</div>
+              <div class="ph" data-phase="E">E</div>
+            </div>
+            <div class="metric"><span class="lbl">φ-ratio (pass/veto stream)</span><span class="val" id="m-phi">—</span></div>
+            <div class="phi-bar"><i id="phi-fill"></i></div>
+            <div class="metric" style="margin-top:6px"><span class="lbl">Stress</span><span class="val warn" id="m-stress">—</span></div>
+            <p class="doctrine-note" style="margin-top:8px">
+              Slow ticks never rewrite fast-path history. They only sample.
+            </p>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Integrity</div>
+          <div class="metric"><span class="lbl">Chain tip</span></div>
+          <div class="hash" id="m-chain">—</div>
+          <p class="doctrine-note" style="margin-top:8px">
+            <strong>Verify</strong> re-folds the entire log, checks snapshot hashes and seek≡fold.
+            Corrupt packs hard-fail.
+          </p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Studio log</div>
+          <div class="log-box" id="log"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Doctrine</div>
+          <p class="doctrine-note">
+            Isolated laboratory. See <code>DOCTRINE.md</code>.
+            Not connected to public nav. Sparks are identity-free digests.
+            Replay = recompute from artifacts — not a video.
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <div id="timeline">
+      <div class="tl-head">
+        <span>Timeline scrub · fold from snapshot · recompute forward</span>
+        <span>drag to any seq</span>
+      </div>
+      <input type="range" id="scrub" min="0" max="0" value="0" step="1">
+    </div>
+  </div>
+
+  <script src="js/hash.js"></script>
+  <script src="js/rng.js"></script>
+  <script src="js/schema.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/recorder.js"></script>
+  <script src="js/synthetic-burn.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
