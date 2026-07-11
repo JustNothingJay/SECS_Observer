@@ -79,9 +79,11 @@ The live navigation is grouped into five top-level paths.
 | Home | `index.html` | Main entry point and overview |
 | Founder | `founder.html` | Founder identity, motivation, and context |
 | JJ’s Fingerprint | `fingerprint.html` | Personal/research fingerprint page |
-| Systems | `architecture.html`, `neurotrophic.html`, `sovereign.html`, `vertical-demo.html?vertical=robotics`, `gtf.html` | Substrate, architecture, domain systems (including GTF), and vertical deep-dive entry |
-| Research | `research.html`, `timeline.html`, `citation-audit.html`, `Governed Console (disabled/local-only)` | Evidence and audit surfaces |
-| More | `terminal.html`, `game.html`, `journal.html`, `glossary.html` | Interactive, reference, and secondary public surfaces |
+| Systems | `architecture.html`, `terminal.html` (Run), `game.html`, `neurotrophic.html`, `sovereign.html`, `verticals.html`, `vertical-demo.html`, `gtf.html` | Architecture (envelopes + real-world outcomes), live gate, game, substrate, verticals |
+| Research | `research.html`, `equation.html`, `timeline.html`, `citation-audit.html`, Governed Console | Evidence, Equation (C), audit surfaces |
+| More | `glossary.html`, `journal.html`, `dev-compute-visuals.html` | Reference and secondary demos |
+
+Envelope education: shared `js/envelope-primer.js` on Terminal (boot → primer → difficulty) and Game (top-of-page).
 
 ---
 

@@ -12,13 +12,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
-    <meta name="description" content="The Game: SECS. Construct a sovereign envelope. Hit the real gate. Have you played the SECS game?">
+    <meta name="description" content="The Game: SECS. Learn what an envelope is, build one from signals, and hit the real constitutional gate.">
     <title>The Game: SECS</title>
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://secs.observer/game.html">
     <meta property="og:title" content="The Game: SECS">
-    <meta property="og:description" content="Have you played the SECS game? The gate is live. The fields are public. Can you get the banana?">
+    <meta property="og:description" content="Envelopes move signals, not people. Build a valid packet. Hit the live gate. Same law as the Sovereign Terminal.">
     <meta property="og:image" content="https://secs.observer/assets/og-default.jpg">
     <meta name="twitter:card" content="summary_large_image">
 
@@ -27,8 +27,9 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="css/animate.css">
-    <link rel="stylesheet" href="css/secs.css?v=8">
-    <script src="js/includes.js?v=10"></script>
+    <link rel="stylesheet" href="css/secs.css?v=11">
+    <script src="js/includes.js?v=12"></script>
+    <script src="js/envelope-primer.js?v=1"></script>
 
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src https://cdnjs.cloudflare.com; connect-src https://secs-sovereign.fly.dev https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; img-src 'self' https://hits.sh data:; frame-ancestors 'none';">
 
@@ -394,10 +395,11 @@
         <div class="game-header animated fadeInDown">
             <h2>THE GAME: SECS</h2>
             <div class="tagline">
-                Have you played the SECS game?<br>
-                Tutorial and challenge layer &mdash; same constitutional gate as the
-                <a href="terminal.html">Sovereign Terminal</a>, presented as a game.<br>
-                Construct a sovereign envelope. Get it through the real endpoint.
+                Same constitutional gate as the <a href="terminal.html">Sovereign Terminal</a>,
+                skinned as a challenge.<br>
+                First understand what an <strong>envelope</strong> is &mdash; a packet of
+                <strong>signals</strong> that moves information without moving identity.<br>
+                Then build one. Hit the live endpoint. Pass or annihilate.
             </div>
             <div class="reward-line">
                 <i class="fa fa-trophy"></i>
@@ -405,22 +407,40 @@
             </div>
         </div>
 
+        <!-- ═══ ENVELOPE PRIMER ═══════════════════════════════════ -->
+        <div class="envelope-primer-page animated fadeInUp" id="game-primer-wrap">
+            <div id="game-primer-body"></div>
+            <div class="ep-continue">
+                <button type="button" class="btn-game primary" id="btn-game-primer-go"
+                    onclick="document.getElementById('envelope-builder-anchor').scrollIntoView({behavior:'smooth',block:'start'})">
+                    <i class="fa fa-arrow-down"></i> I GET IT — BUILD AN ENVELOPE
+                </button>
+            </div>
+        </div>
+        <script>
+            if (typeof secsEnvelopePrimerEnsureCss === 'function') secsEnvelopePrimerEnsureCss();
+            if (typeof secsEnvelopePrimerHtml === 'function') {
+                document.getElementById('game-primer-body').innerHTML =
+                    secsEnvelopePrimerHtml({ mode: 'game' });
+            }
+        </script>
+
         <!-- ═══ LORE ═════════════════════════════════════════════ -->
         <div class="lore-block animated fadeInLeft">
-            <div class="lore-title">The Beehive</div>
+            <div class="lore-title">The Beehive (story layer)</div>
             The beehive is the system. Every malformed, PII-leaking, boundary-violating
-            envelope you throw at it is a <span class="hornet">hornet</span>.<br><br>
-            The <span class="frog">frog</span> sits at the gate. It eats every single one.<br><br>
-            Your job: construct the <em>one envelope</em> that isn't a hornet.
-            A legitimate signal. The frog lets it through. Everything else
-            gets annihilated — same rules, same gate, same constitutional
-            enforcement used in production.<br><br>
+            envelope you throw at it is a <span class="hornet">hornet</span> &mdash;
+            a packet that tried to move the wrong information.<br><br>
+            The gate sits at the boundary. Bad packets get annihilated. Good packets
+            carry only the signals the decision needs.<br><br>
+            Your job: construct the <em>one envelope</em> that is a legitimate signal packet.
+            Same rules, same gate, same constitutional enforcement as production adaptors.<br><br>
             The successful response contains:<br>
             <em>"I got the Banana, how do you like them apples"</em><br><br>
             The magic words in your message:<br>
             <em>"May I have a banana for scale"</em><br><br>
             You know the answer. You have the field names.
-            The gate still stops you.
+            The gate still stops you until the envelope is clean.
         </div>
 
         <!-- ═══ FIELD REFERENCE ══════════════════════════════════ -->
@@ -461,8 +481,14 @@
         </div>
 
         <!-- ═══ ENVELOPE BUILDER ═════════════════════════════════ -->
-        <div class="envelope-builder animated fadeInUp">
+        <div class="envelope-builder animated fadeInUp" id="envelope-builder-anchor">
             <h3><i class="fa fa-envelope"></i> CONSTRUCT YOUR ENVELOPE</h3>
+            <p style="color:#888;font-size:0.78rem;margin-bottom:1rem;line-height:1.55">
+                You are packing <span style="color:#48e662">signals</span> for the gate &mdash; not a person.
+                Include what the decision needs. Leave identity out.
+                Prefer the full briefing path?
+                <a href="terminal.html" style="color:#00B2FF">Sovereign Terminal</a>.
+            </p>
 
             <div class="env-row">
                 <label>profile:</label>

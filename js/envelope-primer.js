@@ -1,0 +1,107 @@
+/**
+ * Shared envelope education — lay + advanced.
+ * Used by terminal, game, and any gate surface.
+ */
+(function (w) {
+  'use strict';
+
+  /**
+   * Returns HTML string for the primer body (no outer chrome).
+   * @param {{ mode: 'terminal'|'game'|'page', compact?: boolean }} opts
+   */
+  w.secsEnvelopePrimerHtml = function (opts) {
+    opts = opts || {};
+    var mode = opts.mode || 'page';
+    var compact = !!opts.compact;
+    var id = 'ep-' + mode;
+
+    return (
+      '<div class="envelope-primer" id="' + id + '">' +
+      '<div class="ep-lay">' +
+      '<h3 class="ep-h">What is an envelope?</h3>' +
+      '<p class="ep-p"><strong>Plain language:</strong> An envelope is a sealed packet of <em>signals</em> — ' +
+      'the facts the machine is allowed to act on — without the <em>identity</em> of who is involved.</p>' +
+      '<p class="ep-p">In ordinary life you already use envelopes: a form that says “room 12 needs two porters at 06:00,” ' +
+      'not “John Smith’s Medicare number.” A warehouse radio call that says “aisle B is blocked,” not “driver licence #…” ' +
+      'A robot cell that reports “joint torque exceeded limit,” not “operator Jane Doe.”</p>' +
+      '<p class="ep-p"><strong>Why SECS cares:</strong> the substrate admits or annihilates the packet. ' +
+      'If identity sneaks in, the constitutional gate kills it. If the signal is incomplete or wrong for that sector, ' +
+      'it fails. Same rule every time — no soft middle.</p>' +
+      '</div>' +
+
+      '<div class="ep-flow">' +
+      '<div class="ep-flow-title">From the world to action</div>' +
+      '<ol class="ep-steps">' +
+      '<li><strong>Something happens</strong> — a sensor, a shift request, a clinical alert, a market risk flag.</li>' +
+      '<li><strong>A person or system packages signals</strong> — only what the decision needs; identity stays local if required.</li>' +
+      '<li><strong>The envelope hits the gate</strong> — α: admissible or not. No partial credit.</li>' +
+      '<li><strong>If admitted, collapse runs</strong> — validate → route → react → extinguish → proof. Then purity again.</li>' +
+      '<li><strong>Action or refusal returns</strong> — the outside world does something (or is blocked).</li>' +
+      '</ol>' +
+      '</div>' +
+
+      '<div class="ep-example">' +
+      '<div class="ep-flow-title">Robotics soak example</div>' +
+      '<p class="ep-p">A manufacturing cell runs for hours under load (a “soak”). The arm, PLC, and safety PLC produce continuous signals: ' +
+      'torque, temperature, cycle count, fault codes. Those are <em>not</em> the same as “who is logged into the HMI.”</p>' +
+      '<p class="ep-p"><strong>Envelope contents (signals):</strong> cellId, cycleCount, peakTorqueNm, overTemp, eStopLatched, windowStart, windowEnd.</p>' +
+      '<p class="ep-p"><strong>Stays out of the envelope (identity / local):</strong> operator badge, badge photo, personal phone, free-text notes with names.</p>' +
+      '<p class="ep-p"><strong>What the gate does:</strong> if the packet is well-formed and doctrine-aligned, the substrate can emit a governed decision ' +
+      '(e.g. “continue soak” / “hold cell” / “require human override”). If identity leaks or required signals are missing, the packet is annihilated — ' +
+      'the robot does not get a half-approved command.</p>' +
+      '<p class="ep-p"><strong>Where the envelope is created:</strong> usually at the <em>adaptor</em> — software sitting next to the real system ' +
+      '(robot controller, warehouse WMS, clinic device gateway). The adaptor reads sensors and business events, strips forbidden fields, ' +
+      'and signs a certificate binding that vertical’s rules. Humans may fill a UI; the machine still only sees the envelope.</p>' +
+      '</div>' +
+
+      '<details class="ep-advanced">' +
+      '<summary>Advanced — computing &amp; protocol view</summary>' +
+      '<div class="ep-adv-body">' +
+      '<p>In distributed systems, an <em>envelope</em> is metadata + payload that travels across a boundary. ' +
+      'HTTP requests, message-bus events, and gRPC calls are envelopes. SECS hardens that idea:</p>' +
+      '<ul>' +
+      '<li><strong>Payload</strong> = allowed signals only (allowlist).</li>' +
+      '<li><strong>Forbidden set</strong> = identity keys (userId, email, sessionId, …) — structural exclusion, not “privacy policy.”</li>' +
+      '<li><strong>Doctrine / adaptor certificate</strong> = which signals and predicates this vertical may use.</li>' +
+      '<li><strong>α₀ / αⱼ</strong> = constitutional gate then sector gate; fail closed.</li>' +
+      '<li><strong>C = ε∘ρ∘λ∘ν∘α</strong> = single-cycle collapse to purity or ∅; emit signed proof for audit.</li>' +
+      '</ul>' +
+      '<p>In computing terms: the envelope is the unit of <em>signal-to-action transfer</em> across a trust boundary. ' +
+      'Inside SECS it never carries a subject identifier; outside, your org may still know who is responsible. ' +
+      'The machine only ever acts on the signal packet.</p>' +
+      '<p>Replay: same envelope + same doctrine ⇒ same path. That is determinism, not best-effort logging.</p>' +
+      '</div>' +
+      '</details>' +
+
+      (compact
+        ? ''
+        : '<p class="ep-foot">When you continue, you will choose a profile and build an envelope. ' +
+          'That is the same act a robotics adaptor does every soak cycle — packaging the world for the gate.</p>') +
+      '</div>'
+    );
+  };
+
+  /** Inject primer CSS once */
+  w.secsEnvelopePrimerEnsureCss = function () {
+    if (w.document.getElementById('secs-envelope-primer-css')) return;
+    var s = w.document.createElement('style');
+    s.id = 'secs-envelope-primer-css';
+    s.textContent =
+      '.envelope-primer{max-width:40rem;margin:0 auto;font-size:0.88rem;line-height:1.65;color:#c8cdd6}' +
+      '.envelope-primer .ep-h{font-size:1rem;color:#48e662;margin:0 0 0.75rem;font-weight:600;letter-spacing:0.04em}' +
+      '.envelope-primer .ep-p{margin:0 0 0.75rem;color:#b0b6c0}' +
+      '.envelope-primer .ep-p strong{color:#e0e4ec}' +
+      '.envelope-primer .ep-flow,.envelope-primer .ep-example{margin:1.1rem 0;padding:0.9rem 1rem;background:rgba(0,0,0,0.25);border:1px solid rgba(72,230,98,0.15);border-radius:6px}' +
+      '.envelope-primer .ep-flow-title{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#48e662;margin-bottom:0.55rem}' +
+      '.envelope-primer .ep-steps{margin:0;padding-left:1.2rem;color:#b0b6c0}' +
+      '.envelope-primer .ep-steps li{margin-bottom:0.45rem}' +
+      '.envelope-primer .ep-advanced{margin:1rem 0;border:1px solid rgba(0,178,255,0.25);border-radius:6px;padding:0.5rem 0.85rem;background:rgba(0,30,50,0.2)}' +
+      '.envelope-primer .ep-advanced summary{cursor:pointer;color:#00B2FF;font-size:0.82rem;font-weight:600}' +
+      '.envelope-primer .ep-adv-body{margin-top:0.65rem;font-size:0.8rem;color:#9aa3b0}' +
+      '.envelope-primer .ep-adv-body ul{margin:0.4rem 0 0.6rem 1.1rem}' +
+      '.envelope-primer .ep-foot{margin-top:1rem;font-size:0.8rem;color:#8b8f9a}' +
+      '.envelope-primer-page{padding:1.25rem 1.5rem;margin:1rem auto 1.5rem;max-width:900px;background:#0c1014;border:1px solid rgba(72,230,98,0.2);border-radius:8px}' +
+      '.envelope-primer-page .ep-continue{margin-top:1rem;text-align:center}';
+    w.document.head.appendChild(s);
+  };
+})(typeof window !== 'undefined' ? window : this);

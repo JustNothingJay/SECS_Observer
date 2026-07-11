@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/secs.css?v=8">
-    <script src="js/includes.js?v=10"></script>
+    <script src="js/includes.js?v=12"></script>
 </head>
 <body>
 
@@ -77,6 +77,8 @@
             <table class="glossary-table">
                 <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
                 <tbody>
+                    <tr><td class="term">Envelope</td><td>A sealed packet of <em>signals</em> that crosses the trust boundary into SECS. Carries the facts the decision needs; must not carry identity. Created by an adaptor (or human UI that still emits only signals). The unit of signal-to-action transfer.</td><td class="similar">Message envelope &middot; event payload &middot; HTTP body + headers &middot; sealed form</td></tr>
+                    <tr><td class="term">Signal</td><td>A fact the machine may act on: torque, room need, risk flag, window times &mdash; not &ldquo;who is this person.&rdquo; Signals travel inside envelopes; identity stays local to the organisation.</td><td class="similar">Telemetry field &middot; business event attribute &middot; sensor reading</td></tr>
                     <tr><td class="term">Admissibility (&alpha;)</td><td>Binary gate. Is this input admissible? Returns pass or reject. Constitutional constraints enforced before any processing begins.</td><td class="similar">Input validation &middot; policy check &middot; guardrail &middot; pre-execution filter &middot; access control gate</td></tr>
                     <tr><td class="term">Spark</td><td>A single input signal arriving at the system boundary. Immutable after validation. Contains endpoint, payload, and doctrine tag.</td><td class="similar">Request &middot; prompt &middot; event &middot; message &middot; API call</td></tr>
                     <tr><td class="term">Admissible Space</td><td>The partition of all possible inputs that satisfy constitutional constraints. Everything outside is structurally impossible.</td><td class="similar">Allowlist &middot; policy scope &middot; valid input domain</td></tr>
@@ -174,7 +176,7 @@
             <table class="glossary-table">
                 <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
                 <tbody>
-                    <tr><td class="term">Phase A: Governed Homeostasis</td><td>Observes output. Evaluates against doctrine set points. Adjusts parameters within bounds.</td><td class="similar">PID control &middot; feedback loop &middot; autoscaling</td></tr>
+                    <tr><td class="term">Phase A: Governed Homeostasis</td><td>Keeps the decision machine in a healthy operating band (rate, latency, error, throughput) against doctrine set points. Adjusts parameters within constitutional bounds without rewriting the law. Real-world win: spikes and noisy soaks do not silently change gate behaviour.</td><td class="similar">PID control &middot; feedback loop &middot; autoscaling &middot; biological homeostasis</td></tr>
                     <tr><td class="term">Phase B: Structural Plasticity</td><td>Grows and prunes topology nodes. Adds seeds, strengthens connections, prunes underperformers.</td><td class="similar">Topology optimisation &middot; neural architecture search</td></tr>
                     <tr><td class="term">Phase C: Cross-Domain Fault Repair</td><td>Astrocyte-model mediator. Detects faults across boundaries. Repairs damaged circuits before learning proceeds.</td><td class="similar">Cross-system fault detection &middot; self-healing</td></tr>
                     <tr><td class="term">Phase D: Temporal Learning</td><td>Learns from history. Accumulates evidence until confidence threshold met. Adjusts weights, not rules.</td><td class="similar">Reinforcement learning &middot; evidence accumulation</td></tr>
@@ -237,7 +239,7 @@
             <table class="glossary-table">
                 <thead><tr><th>SECS Term</th><th>Description</th><th>Industry Equivalent</th></tr></thead>
                 <tbody>
-                    <tr><td class="term">Adaptor</td><td>External certified process providing behavioural telemetry. HTTP interface only. Runs independently. Not part of substrate.</td><td class="similar">Plugin &middot; integration &middot; connector &middot; external service &middot; agent</td></tr>
+                    <tr><td class="term">Adaptor</td><td>External certified process that sits next to the real system (robot cell, WMS, clinic gateway, roster). Reads sensors and events, strips identity, packages allowlisted signals into envelopes, often signs a doctrine certificate. HTTP interface only. Not part of the substrate.</td><td class="similar">Plugin &middot; integration &middot; connector &middot; external service &middot; agent</td></tr>
                     <tr><td class="term">STABLE Profile</td><td>Low-variance, predictable behaviour. Bounded: 30&ndash;80&nbsp;ms latency, 0.3% error, 64&ndash;256 byte payload.</td><td class="similar">Reliable service &middot; SLA-bound endpoint</td></tr>
                     <tr><td class="term">VOLATILE Profile</td><td>High-variance, unpredictable behaviour. Bounded: 20&ndash;500&nbsp;ms (burst 800&nbsp;ms), 5% error, 256&ndash;2048 byte payload.</td><td class="similar">Unreliable service &middot; best-effort endpoint</td></tr>
                     <tr><td class="term">Certificate</td><td>Cryptographically signed manifest. Contains adaptorId, profileClass, public key. Validated at load.</td><td class="similar">API key &middot; mTLS cert &middot; service token &middot; signed manifest</td></tr>

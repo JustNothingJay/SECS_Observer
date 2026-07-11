@@ -59,13 +59,15 @@
         li('fingerprint.html', 'JJ\u2019s Fingerprint') +
         dropdown('Systems', [
             li('architecture.html', 'Architecture'),
+            li('terminal.html', 'Run (Terminal)'),
+            li('game.html', 'The Game'),
             li('neurotrophic.html', 'Neurotrophic OS'),
             li('neurotrophic-proof.html', 'Neurotrophic Proof'),
             li('sovereign.html', 'Sovereign'),
             li('verticals.html', 'Vertical Surfaces'),
             li('vertical-demo.html?vertical=robotics', 'Workflow Demos'),
             li('gtf.html', 'GTF')
-        ], ['architecture.html', 'neurotrophic.html', 'neurotrophic-proof.html', 'sovereign.html', 'verticals.html', 'gtf.html', 'vertical-demo.html']) +
+        ], ['architecture.html', 'terminal.html', 'game.html', 'neurotrophic.html', 'neurotrophic-proof.html', 'sovereign.html', 'verticals.html', 'gtf.html', 'vertical-demo.html']) +
         dropdown('Research', [
             li('equation.html', 'Equation (C)'),
             li('research.html', 'Papers'),
@@ -74,11 +76,10 @@
             li('governed-console.html', 'Governed Console')
         ], ['equation.html', 'research.html', 'timeline.html', 'citation-audit.html', 'governed-console.html']) +
         dropdown('More', [
-            li('terminal.html', 'Terminal'),
-            li('game.html', 'The Game'),
+            li('glossary.html', 'Glossary'),
             li('journal.html', 'Journal'),
-            li('glossary.html', 'Glossary')
-        ], ['terminal.html', 'game.html', 'journal.html', 'glossary.html']);
+            li('dev-compute-visuals.html', 'Compute demos')
+        ], ['glossary.html', 'journal.html', 'dev-compute-visuals.html']);
 
     /* ── Header ─────────────────────────────────────────────────── */
     w.secsHeader = function () {
