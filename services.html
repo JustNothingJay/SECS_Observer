@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="Jay Carpenter — IT & operations consultant. Operational excellence, innovation, AI capability judged against real ops, and safeguards so machines do not get a soft middle.">
+    <title>Work with Jay — SECS</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/services.html">
+    <meta property="og:title" content="Work with Jay — SECS">
+    <meta property="og:description" content="Contract IT & operations. Operational excellence and innovation. AI judged against the floor — with constitutional safeguards.">
+    <meta property="og:image" content="https://secs.observer/assets/og-default.jpg">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Work with Jay — SECS">
+    <meta name="twitter:description" content="IT & operations consultant. Ops excellence, innovation, AI capability vs need, and fail-closed safeguards.">
+    <meta name="twitter:image" content="https://secs.observer/assets/og-default.jpg">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="canonical" href="https://secs.observer/services.html">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/secs.min.css?v=13">
+    <script src="js/includes.min.js?v=14"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-667KK00S7H');</script>
+
+    <style>
+        .svc-page { max-width: 920px; margin: 0 auto; padding-bottom: 64px; }
+        .svc-lead {
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            line-height: 1.75;
+            margin-bottom: 1.25rem;
+        }
+        .svc-body p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.75;
+            margin-bottom: 1rem;
+        }
+        .svc-body p strong { color: var(--text-primary); }
+        .svc-cta-card {
+            margin: 28px 0 36px;
+            padding: 22px 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,178,255,0.28);
+            background: linear-gradient(145deg, rgba(0,178,255,0.08), rgba(12,15,20,0.95));
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 24px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .svc-cta-card .cta-copy {
+            flex: 1 1 240px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .svc-cta-card .cta-copy strong { color: var(--text-primary); }
+        .svc-cta-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .svc-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .svc-btn:hover { text-decoration: none; color: var(--text-primary); border-color: rgba(0,178,255,0.45); }
+        .svc-btn.primary {
+            border-color: rgba(0,178,255,0.45);
+            background: rgba(0,178,255,0.14);
+            color: #7dd3ff;
+        }
+        .svc-btn.green {
+            border-color: rgba(72,230,98,0.4);
+            background: rgba(72,230,98,0.1);
+            color: var(--accent-green);
+        }
+        .svc-section {
+            margin-top: 48px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .svc-section h3 {
+            font-size: 1.05rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent-orange);
+            margin: 0 0 16px;
+        }
+        .svc-section h4 {
+            font-size: 0.98rem;
+            color: var(--text-primary);
+            margin: 1.25rem 0 0.5rem;
+            font-weight: 500;
+        }
+        .svc-pillars {
+            display: grid;
+            gap: 14px;
+            margin: 18px 0;
+        }
+        @media (min-width: 768px) {
+            .svc-pillars { grid-template-columns: 1fr 1fr; }
+        }
+        .svc-pillar {
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            padding: 18px 18px 14px;
+        }
+        .svc-pillar h4 {
+            margin: 0 0 8px;
+            font-size: 0.95rem;
+            color: var(--accent-blue);
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .svc-pillar p {
+            margin: 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+        .svc-proof-grid {
+            display: grid;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        @media (min-width: 700px) {
+            .svc-proof-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .svc-proof {
+            border-left: 3px solid var(--accent-green);
+            padding: 12px 14px 12px 16px;
+            background: rgba(72,230,98,0.04);
+            border-radius: 0 8px 8px 0;
+        }
+        .svc-proof .kicker {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-green);
+            margin-bottom: 6px;
+        }
+        .svc-proof p {
+            margin: 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .svc-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 8px;
+            font-size: 0.88rem;
+        }
+        .svc-matrix th,
+        .svc-matrix td {
+            border: 1px solid var(--border-subtle);
+            padding: 12px 14px;
+            vertical-align: top;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+        .svc-matrix th {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-primary);
+            font-weight: 500;
+            text-align: left;
+        }
+        .svc-matrix ul {
+            margin: 0;
+            padding-left: 1.1rem;
+        }
+        .svc-matrix li { margin-bottom: 0.35rem; }
+        .svc-fit {
+            display: grid;
+            gap: 14px;
+            margin: 16px 0;
+        }
+        @media (min-width: 700px) {
+            .svc-fit { grid-template-columns: 1fr 1fr; }
+        }
+        .svc-fit-card {
+            border-radius: 10px;
+            padding: 16px 18px;
+            border: 1px solid var(--border-subtle);
+        }
+        .svc-fit-card.good {
+            border-color: rgba(72,230,98,0.3);
+            background: rgba(72,230,98,0.05);
+        }
+        .svc-fit-card.bad {
+            border-color: rgba(255,94,0,0.28);
+            background: rgba(255,94,0,0.05);
+        }
+        .svc-fit-card h4 {
+            margin: 0 0 10px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .svc-fit-card.good h4 { color: var(--accent-green); }
+        .svc-fit-card.bad h4 { color: var(--accent-orange); }
+        .svc-fit-card ul {
+            margin: 0;
+            padding-left: 1.1rem;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.55;
+        }
+        .svc-fit-card li { margin-bottom: 0.4rem; }
+        .svc-note {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+        .svc-pull {
+            border-left: 3px solid var(--accent-orange);
+            padding: 12px 0 12px 18px;
+            margin: 20px 0;
+            font-style: italic;
+            color: var(--text-primary);
+            font-size: 1.02rem;
+            line-height: 1.7;
+        }
+        .svc-eng {
+            display: grid;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        @media (min-width: 700px) {
+            .svc-eng { grid-template-columns: 1fr 1fr 1fr; }
+        }
+        .svc-eng-card {
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            padding: 16px;
+            background: var(--bg-card);
+        }
+        .svc-eng-card h4 {
+            margin: 0 0 8px;
+            color: var(--text-primary);
+            font-size: 0.92rem;
+        }
+        .svc-eng-card p {
+            margin: 0;
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+        .svc-footer-cta {
+            margin-top: 40px;
+            text-align: center;
+            padding: 28px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+        .svc-footer-cta p {
+            color: var(--text-secondary);
+            margin: 0 0 16px;
+            font-size: 0.95rem;
+            line-height: 1.65;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="container page-content">
+        <div class="section-header text-center">
+            <h2 class="animated fadeInLeft">Work with Jay</h2>
+            <div class="section-line"></div>
+            <p class="section-subtitle animated fadeInRight">
+                IT &amp; operations consultant &middot; operational excellence &amp; innovation
+                &middot; AI judged against the floor &middot; safeguards that fail closed
+            </p>
+        </div>
+
+        <div class="svc-page animated fadeInUp svc-body">
+
+            <p class="svc-lead">
+                I get paid to make operations and systems work under pressure.
+                I also build <a href="index.html">SECS</a> in public &mdash; a constitutional gate you can run &mdash;
+                because the same mind will not leave a hard problem half-solved.
+            </p>
+
+            <p>
+                Most of this site is the substrate, the research trail, and the family why.
+                This page is the other door: <strong>contract work</strong>. Warehouses, supply chains,
+                marketplaces, IT product, tenders, KPIs, national scale-ups &mdash; and now AI projects
+                that need someone who can tell theatre from capability and put a hard boundary on what
+                the machine is allowed to do.
+            </p>
+
+            <div class="svc-cta-card" id="hire">
+                <p class="cta-copy">
+                    <strong>Available for project and contract engagements</strong> (AU-based; remote-friendly).
+                    Short diagnostic, defined project, or fractional leadership &mdash; if the problem is real.
+                </p>
+                <div class="svc-cta-actions">
+                    <a class="svc-btn primary" href="mailto:jay@secs.observer?subject=Contract%20enquiry%20%E2%80%94%20ops%20%2F%20IT%20%2F%20AI">
+                        <i class="fa-solid fa-envelope"></i> jay@secs.observer
+                    </a>
+                    <a class="svc-btn" href="https://www.linkedin.com/in/jay-carpentersecs" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a class="svc-btn green" href="founder.html">
+                        <i class="fa-solid fa-user"></i> Founder story
+                    </a>
+                </div>
+            </div>
+
+            <div class="svc-pull">
+                I don&rsquo;t sell diagrams. I change how the floor and the systems behave &mdash;
+                then leave something that keeps working when I&rsquo;m not in the room.
+            </div>
+
+            <!-- ── Pillars ── -->
+            <div class="svc-section">
+                <h3>What I bring</h3>
+                <p>
+                    Two decades inside the machinery: fulfilment, logistics, supply chain strategy,
+                    contractor marketplaces, customer experience engines, ERP/WMS, automation business cases,
+                    and the politics of getting change through. Then a deep public build of constitutional
+                    software and AI-adjacent research &mdash; large-codebase reading, architecture stress tests,
+                    gates that admit or annihilate.
+                </p>
+                <div class="svc-pillars">
+                    <div class="svc-pillar">
+                        <h4>Operations &amp; excellence</h4>
+                        <p>
+                            Throughput, accuracy, labour, carriers, DIFOT, cost-to-serve.
+                            Redesign the process, instrument it, and hold the number until it sticks.
+                        </p>
+                    </div>
+                    <div class="svc-pillar">
+                        <h4>IT &amp; systems projects</h4>
+                        <p>
+                            WMS/ERP usage that matches reality, integrations, dashboards, SOPs,
+                            tender and vendor selection, go-lives that the floor can run.
+                        </p>
+                    </div>
+                    <div class="svc-pillar">
+                        <h4>AI capability vs need</h4>
+                        <p>
+                            Interpret what models and tools can actually do for <em>this</em> operation.
+                            Kill hype early. Map proposals to labour, service, risk, and cash &mdash; not demos.
+                        </p>
+                    </div>
+                    <div class="svc-pillar">
+                        <h4>Safeguards for systems that act</h4>
+                        <p>
+                            Admission rules, allowlists, identity boundaries, human override, audit/replay.
+                            Fail closed. No soft middle when a machine is allowed to move work or money.
+                        </p>
+                    </div>
+                </div>
+                <p class="svc-note">
+                    SECS is not mandatory for every engagement. It is proof of how I think about
+                    governed action. Clients often need process, policy, and lightweight gates first.
+                    See <a href="terminal.html">Terminal</a> and <a href="architecture.html">Architecture</a>
+                    if you want the public artefact.
+                </p>
+            </div>
+
+            <!-- ── Patterns (no names) ── -->
+            <div class="svc-section">
+                <h3>Patterns I have run (anonymised)</h3>
+                <p>
+                    No client names on this page. The shapes are real; the brands are not the point.
+                </p>
+                <div class="svc-proof-grid">
+                    <div class="svc-proof">
+                        <div class="kicker">Hyper-growth fulfilment</div>
+                        <p>
+                            Scaled outbound operations from tens of people to well over a hundred.
+                            Performance systems that roughly doubled pick rates and lifted pack rates
+                            by ~75%. On-time despatch from the high-nineties into &gt;99.9%.
+                            Category-first speed products (same-day interstate, Saturday delivery),
+                            live dashboards on ERP/WMS, multi-site fulfilment launch.
+                        </p>
+                    </div>
+                    <div class="svc-proof">
+                        <div class="kicker">End-to-end supply chain</div>
+                        <p>
+                            Purchasing, import, warehouse, freight, installation, customer experience
+                            as one system. Multi-year people / process / systems strategy with
+                            ownership models &mdash; change only when it measurably improves service
+                            predictability, not for theatre.
+                        </p>
+                    </div>
+                    <div class="svc-proof">
+                        <div class="kicker">Marketplace ops + data-led expansion</div>
+                        <p>
+                            Owned IT product, customer service, and the contractor supply side of an
+                            online marketplace during aggressive growth. National expansion
+                            (multi-city reach order-of-magnitude larger), mobile apps both sides,
+                            commercial booking product, fulfilment &gt;99.85%, response times cut ~70%.
+                        </p>
+                        <p style="margin-top:0.65rem">
+                            Under NDA with a data partner that had won grant-backed work: took
+                            <strong>churn-propensity</strong> signals, turned them into a national
+                            <strong>location heatmap</strong>, and overlaid where contractors actually lived.
+                            That map drove where to expand next &mdash; same pattern as any two-sided
+                            field marketplace. I am confident that twelve-month expansion window changed
+                            what the business was later worth to a buyer; runway was short, the acquisition
+                            happened, and I do not believe the same money would have been on the table
+                            without the footprint built in that year.
+                        </p>
+                    </div>
+                    <div class="svc-proof">
+                        <div class="kicker">Subscription / DTC ops rebuild</div>
+                        <p>
+                            Procurement-to-delivery rebuild in a growth sprint. JIT forecasting tied to
+                            manufacturing and freight lead times. Vertical capacity gain without a new
+                            building. WMS selection and location-driven barcode ops. National transport
+                            kept stable under scale.
+                        </p>
+                    </div>
+                    <div class="svc-proof">
+                        <div class="kicker">ANZ ops + IT general management</div>
+                        <p>
+                            Joint ownership of operations and IT &mdash; the join where most programmes
+                            fail. Continuity under commercial pressure, systems that match the floor.
+                        </p>
+                    </div>
+                    <div class="svc-proof">
+                        <div class="kicker">Long-arc industrial &amp; 3PL contracts</div>
+                        <p>
+                            Ongoing innovation and optimisation across warehousing, logistics, transport,
+                            IT, and customer experience. Automation, relocation, procurement, KPI control,
+                            and commercial warehouse agreements &mdash; where drift hides when no one is looking.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── AI ── -->
+            <div class="svc-section">
+                <h3>AI &mdash; capability, ops fit, safeguards</h3>
+                <p>
+                    I treat AI expertise as <strong>judgment under operational constraint</strong>, not
+                    as a content brand. Public work includes large-repository architecture reading
+                    (order of ~10k repos class of analysis: where systems break, where &ldquo;AI breakpoints&rdquo;
+                    live, when the architecture is the architecture), constitutional gates, and research
+                    that is honest about what is proven vs what is still open.
+                </p>
+                <p>For clients, that becomes three services:</p>
+                <ol style="color:var(--text-secondary);font-size:0.92rem;line-height:1.7;padding-left:1.25rem">
+                    <li style="margin-bottom:0.5rem">
+                        <strong style="color:var(--text-primary)">Capability vs need</strong> &mdash;
+                        what this model/tool can actually do for this process, this labour model, this risk.
+                    </li>
+                    <li style="margin-bottom:0.5rem">
+                        <strong style="color:var(--text-primary)">Architecture &amp; codebase interpretation</strong> &mdash;
+                        read what you already have; find where AI will fight the process or the governance.
+                    </li>
+                    <li>
+                        <strong style="color:var(--text-primary)">Safeguards</strong> &mdash;
+                        admission rules, identity-free signal packets where appropriate, human override,
+                        audit paths. Machines that act should not get a soft middle.
+                    </li>
+                </ol>
+                <div class="svc-pull">
+                    Most AI projects fail at the join: capability without operations, or operations without a hard stop.
+                    I work that join.
+                </div>
+            </div>
+
+            <!-- ── How engagements work ── -->
+            <div class="svc-section">
+                <h3>How engagements usually run</h3>
+                <table class="svc-matrix">
+                    <thead>
+                        <tr>
+                            <th>Diagnose</th>
+                            <th>Design</th>
+                            <th>Deliver</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Ops health check, honest KPIs</li>
+                                    <li>Process walks, cost-to-serve, labour</li>
+                                    <li>Why the floor fights the system</li>
+                                    <li>AI proposal stress test</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul>
+                                    <li>Target operating model, RACI</li>
+                                    <li>Strategy streams with owners</li>
+                                    <li>WMS/ERP usage, automation cases</li>
+                                    <li>Admission rules &amp; control design</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul>
+                                    <li>Project ownership and go-live</li>
+                                    <li>Tender &amp; vendor support</li>
+                                    <li>SOPs, scorecards, dashboards</li>
+                                    <li>Change that sticks with the people who run it</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="svc-eng">
+                    <div class="svc-eng-card">
+                        <h4>2-week diagnostic</h4>
+                        <p>Fixed scope. What is broken, what is theatre, what is worth money. Written findings and a recommended path.</p>
+                    </div>
+                    <div class="svc-eng-card">
+                        <h4>Defined project</h4>
+                        <p>Clear outcomes: site launch, WMS cutover, expansion pack, AI pilot with gates, freight tender, KPI rebuild.</p>
+                    </div>
+                    <div class="svc-eng-card">
+                        <h4>Fractional</h4>
+                        <p>Ongoing leadership capacity (ops / IT / innovation) when you need senior judgment without a full-time hire.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Fit ── -->
+            <div class="svc-section">
+                <h3>Good fit / bad fit</h3>
+                <div class="svc-fit">
+                    <div class="svc-fit-card good">
+                        <h4>Good fit</h4>
+                        <ul>
+                            <li>Growth or chaos: the process and the systems are out of sync</li>
+                            <li>Multi-site or multi-party handoffs failing</li>
+                            <li>AI or automation proposed without an ops owner</li>
+                            <li>Need someone who can talk floor, IT, and commercial in one room</li>
+                            <li>Willing to measure and kill soft middles</li>
+                        </ul>
+                    </div>
+                    <div class="svc-fit-card bad">
+                        <h4>Bad fit</h4>
+                        <ul>
+                            <li>Body-shop coding with no operational outcome</li>
+                            <li>Strategy theatre with no executive owner</li>
+                            <li>&ldquo;Make us look innovative&rdquo; without changing how work runs</li>
+                            <li>Expecting research papers as a substitute for delivery</li>
+                            <li>Unwilling to put a hard stop on automated action</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Bridge ── -->
+            <div class="svc-section">
+                <h3>How this sits next to SECS</h3>
+                <p>
+                    <a href="founder.html">The founder page</a> is the personal trail: family, why the constitution
+                    was worth building, software first. The journal is the honest record of where the work is now.
+                    This page is what you hire. Same person. Different contract.
+                </p>
+                <p>
+                    If you only want the public gate: <a href="terminal.html">Run the Terminal</a>.
+                    If you want the map: <a href="architecture.html">Architecture</a>.
+                    If you want the work surface: email below.
+                </p>
+            </div>
+
+            <div class="svc-footer-cta" id="contact">
+                <p>
+                    <strong style="color:var(--text-primary)">Tell me what is broken and what &ldquo;fixed&rdquo; looks like.</strong><br>
+                    I will tell you quickly if I am the wrong person.
+                </p>
+                <div class="svc-cta-actions" style="justify-content:center">
+                    <a class="svc-btn primary" href="mailto:jay@secs.observer?subject=Contract%20enquiry">
+                        <i class="fa-solid fa-envelope"></i> jay@secs.observer
+                    </a>
+                    <a class="svc-btn" href="https://www.linkedin.com/in/jay-carpentersecs" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a class="svc-btn" href="founder.html">
+                        Founder
+                    </a>
+                    <a class="svc-btn" href="journal.html">
+                        Journal
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+
+    <span class="border-top"></span><span class="border-left"></span><span class="border-right"></span><span class="border-bottom"></span>
+
+</body>
+</html>

@@ -56,6 +56,7 @@
     var navItems =
         li('index.html', 'Home') +
         li('founder.html', 'Founder') +
+        li('services.html', 'Work with Jay') +
         li('fingerprint.html', 'JJ\u2019s Fingerprint') +
         dropdown('Systems', [
             li('architecture.html', 'Architecture'),
