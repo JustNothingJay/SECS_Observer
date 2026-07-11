@@ -101,6 +101,97 @@ header.top .badge.iso {
 
 #hud .v { color: rgba(210, 245, 210, 0.95); }
 
+/* Fast-path pipeline overlay on stage */
+#pipeline {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  pointer-events: none;
+  padding: 10px 12px;
+  background: rgba(8, 12, 10, 0.88);
+  border: 1px solid rgba(40, 70, 50, 0.7);
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+.pipe-title {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(130, 170, 145, 0.75);
+  margin-bottom: 8px;
+}
+.pipe-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pipe-stage {
+  flex: 1 1 auto;
+  min-width: 4.2rem;
+  text-align: center;
+  padding: 6px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: rgba(18, 28, 22, 0.9);
+  border: 1px solid #1a2a1e;
+  color: #5a7a64;
+}
+.pipe-stage.on {
+  background: rgba(30, 70, 48, 0.95);
+  border-color: #3a8a58;
+  color: #b0f0c8;
+  box-shadow: 0 0 14px rgba(60, 160, 100, 0.35);
+}
+.pipe-stage.fail {
+  background: rgba(60, 20, 20, 0.95);
+  border-color: #8a3030;
+  color: #f0a0a0;
+}
+.pipe-stage.panic {
+  background: rgba(80, 20, 20, 0.95);
+  border-color: #c04040;
+  color: #ffb0b0;
+  animation: panic-pulse 0.8s infinite;
+}
+@keyframes panic-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+.pipe-veto {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #e09090;
+  min-height: 1.1em;
+}
+
+.event-now {
+  font-size: 12px;
+  color: var(--ink);
+  padding: 8px 10px;
+  background: #080c0a;
+  border: 1px solid #1a2a1e;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.veto-break {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 10px;
+  font-size: 11px;
+}
+.veto-break .vb {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-mute);
+}
+.veto-break .vb .n { color: var(--ink); font-variant-numeric: tabular-nums; }
+.veto-break .vb.has .n { color: #f09090; }
+
 #side {
   display: flex;
   flex-direction: column;

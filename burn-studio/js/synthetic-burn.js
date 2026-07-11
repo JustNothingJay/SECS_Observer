@@ -85,15 +85,18 @@
         // collapse hops along a short deterministic walk
         let cx = site.x;
         let cy = site.y;
-        const hops = 2 + rng.int(5);
+        // Always walk validate → route → react (SECS stage order), then extra hops as react
+        const hops = 3 + rng.int(4);
         for (let h = 0; h < hops; h++) {
           t += 1;
+          const stage =
+            h === 0 ? 'validate' : h === 1 ? 'route' : h === 2 ? 'react' : 'react';
           rec.append({
             type: 'collapse_step',
             t_ms: t,
             x: cx,
             y: cy,
-            stage: Schema.COLLAPSE_STAGES[Math.min(h, 3)],
+            stage,
             hop: h,
           });
           const dir = rng.int(4);

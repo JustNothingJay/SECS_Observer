@@ -283,8 +283,13 @@ input[type=range]::-moz-range-thumb{
     <div class="section-title">Healing</div>
     <div class="slider-row"><label>Speed</label><span class="sv" id="v-hspeed">1.0x</span></div>
     <input type="range" id="sl-hspeed" min="1" max="8" value="2" oninput="updateHealSpeed(this.value)">
-    <div class="slider-row"><label>Plasticity</label><span class="sv" id="v-plast">3</span></div>
-    <input type="range" id="sl-plast" min="1" max="4" value="3" oninput="plasticity=+this.value;document.getElementById('v-plast').textContent=this.value">
+    <div class="slider-row"><label>Plasticity</label><span class="sv" id="v-plast">3 · need 2 nbr</span></div>
+    <input type="range" id="sl-plast" min="1" max="4" value="3" oninput="setPlasticity(+this.value)">
+    <div style="font-size:10px;color:var(--ink-mute);line-height:1.45;margin:4px 0 2px;">
+      Higher plasticity = easier repair (fewer healthy neighbours required).
+      A damaged cell heals only if it still has original doctrine (A) and enough
+      currently healthy (R) 4-neighbours. Needs a heal beacon (H + click).
+    </div>
     <div class="section-title" style="margin-top:6px;">Propagation</div>
     <div class="btn-group">
       <button id="btn-single" class="btn btn-sm" onclick="setPropMode('single')">Single</button>
@@ -298,8 +303,10 @@ input[type=range]::-moz-range-thumb{
     <div class="metric"><span class="metric-label">Coverage</span><span class="metric-val" id="m-cov">&mdash;</span></div>
     <div class="metric"><span class="metric-label">Damaged</span><span class="metric-val dmg" id="m-dmg">0</span></div>
     <div class="metric"><span class="metric-label">Healed</span><span class="metric-val heal" id="m-heal">0</span></div>
+    <div class="metric"><span class="metric-label">Repairable now</span><span class="metric-val" id="m-repairable">&mdash;</span></div>
     <div class="metric"><span class="metric-label">Isolated (veto)</span><span class="metric-val" id="m-veto">&mdash;</span></div>
-    <div class="metric"><span class="metric-label">Est. heal time</span><span class="metric-val" id="m-htime">&mdash;</span></div>
+    <div class="metric"><span class="metric-label">Est. wave cover</span><span class="metric-val" id="m-wtime">&mdash;</span></div>
+    <div class="metric"><span class="metric-label">Est. repair time</span><span class="metric-val" id="m-htime">&mdash;</span></div>
     <div class="metric"><span class="metric-label">Wave returns</span><span class="metric-val" id="m-ret">0</span></div>
     <div class="metric"><span class="metric-label">Phase</span><span class="metric-val phase" id="m-phase">dormant</span></div>
   </div>
@@ -804,24 +811,64 @@ function applyDamagePreset(pct){
 
 /* ════════════════════════════════════════════════════════════
    HEALING SYSTEM — CPU neurotrophic repair
+   Plasticity UI 1..4 (higher = easier). Maps to neighbour need:
+     plast 1 → need 4 healthy R-neighbours (strict)
+     plast 2 → need 3
+     plast 3 → need 2  (default)
+     plast 4 → need 1  (very plastic)
+   A damaged cell (R=0, original A=1) repairs only when enough of its
+   4-neighbours currently have R=1. Deep damage interiors stay stuck
+   until edges peel inward.
    ════════════════════════════════════════════════════════════ */
 var healedCount=0;
+var lastRepairable=0;
+var lastHealPassCount=0;
 
-function healingPass(threshold){
+/** Neighbours required for a cell to heal this pass (1..4). */
+function neighbourNeed(){
+  return Math.max(1, Math.min(4, 5 - plasticity));
+}
+
+function setPlasticity(v){
+  plasticity = Math.max(1, Math.min(4, v|0));
+  var need = neighbourNeed();
+  var el = document.getElementById('v-plast');
+  if(el) el.textContent = plasticity + ' · need ' + need + ' nbr';
+}
+
+function countHealthyNeighbours(x, y){
+  var c=0;
+  if(topoData[(y*GRID+(x+1)%GRID)*4]>0.5)c++;
+  if(topoData[(y*GRID+(x-1+GRID)%GRID)*4]>0.5)c++;
+  if(topoData[(((y+1)%GRID)*GRID+x)*4]>0.5)c++;
+  if(topoData[(((y-1+GRID)%GRID)*GRID+x)*4]>0.5)c++;
+  return c;
+}
+
+/** How many damaged cells are eligible under current plasticity (no mutate). */
+function countRepairable(){
+  var need=neighbourNeed(), n=0;
+  for(var y=0;y<GRID;y++){for(var x=0;x<GRID;x++){
+    var idx=(y*GRID+x)*4;
+    if(topoData[idx]>0.5)continue;
+    if(topoData[idx+3]<0.5)continue;
+    if(countHealthyNeighbours(x,y)>=need)n++;
+  }}
+  return n;
+}
+
+function healingPass(){
   if(damagedCount===0)return 0;
+  var need=neighbourNeed();
   var marks=[];
   for(var y=0;y<GRID;y++){for(var x=0;x<GRID;x++){
     var idx=(y*GRID+x)*4;
     if(topoData[idx]>0.5)continue;
     if(topoData[idx+3]<0.5)continue;
-    var c=0;
-    if(topoData[(y*GRID+(x+1)%GRID)*4]>0.5)c++;
-    if(topoData[(y*GRID+(x-1+GRID)%GRID)*4]>0.5)c++;
-    if(topoData[(((y+1)%GRID)*GRID+x)*4]>0.5)c++;
-    if(topoData[(((y-1+GRID)%GRID)*GRID+x)*4]>0.5)c++;
-    if(c>=threshold)marks.push(idx);
+    if(countHealthyNeighbours(x,y)>=need)marks.push(idx);
   }}
   for(var m=0;m<marks.length;m++){topoData[marks[m]]=1;topoData[marks[m]+2]=1;}
+  lastHealPassCount=marks.length;
   if(marks.length>0){healedCount+=marks.length;damagedCount-=marks.length;uploadTopo();}
   return marks.length;
 }
@@ -876,7 +923,7 @@ function updateShutdown(){
 /* ════════════════════════════════════════════════════════════
    MODE + UI STATE
    ════════════════════════════════════════════════════════════ */
-var mode='damage',propMode='beacon',brushSize=8,healSpeedMult=1.0,plasticity=3;
+var mode='damage',propMode='beacon',brushSize=8,healSpeedMult=1.0,plasticity=3; // default: need 2 nbr
 var inject=[0,0,0,0],origin=[0,0],hasOrigin=0,frame=0,lastInjectFrame=-1;
 var paused=false, narratorVisible=true, lastNarratorKey='';
 
@@ -980,10 +1027,14 @@ function updateNarrator(){
     tip=(propMode==='beacon'?'Beacon keeps pulsing new waves from that point.':
          propMode==='pulse'?'Pulse sends occasional bursts from that point.':
          'Single fires one wave from that point.');
+  } else if(hasOrigin&&damagedCount>0&&lastRepairable===0){
+    el.className='narrator-stress';
+    text='Repair is stalled — damaged cells do not yet have enough healthy neighbours for this plasticity.';
+    tip='Raise plasticity (easier: need fewer neighbours) or lower it only if you want strict repair. Speed only changes how often a pass runs, not the neighbour rule.';
   } else if(hasOrigin&&damagedCount>0){
     el.className='';
-    text='Recovery in progress — a bright wave is spreading from your beacon, rebuilding paths through the damage.';
-    tip='Gold-tinted cells have been healed. Coverage % shows how much of the original grid the wave can still reach.';
+    text='Recovery in progress — neurotrophic repair fills from healthy edges; the wave is separate coverage.';
+    tip='Plasticity '+plasticity+' needs '+neighbourNeed()+' healthy neighbour(s). Repairable now: '+lastRepairable+'. Gold = healed. Est. repair ≠ wave cover.';
   } else if(hasOrigin&&healedCount>0&&damagedCount===0){
     el.className='';
     text='Equilibrium — damage cleared and the wave has settled. The substrate is stable again.';
@@ -1132,10 +1183,10 @@ function tick(){
     if(s===0&&inject[2]>0.5)inject=[inject[0],inject[1],0,inject[3]];
   }
 
-  /* CPU healing */
+  /* CPU healing — neighbour rule uses plasticity→need mapping */
   if(hasOrigin&&damagedCount>0&&shutdownFrame<0){
     var effI=Math.max(3,Math.round(baseHealInterval/healSpeedMult));
-    if(frame%effI===0)healingPass(plasticity);
+    if(frame%effI===0)healingPass();
   }
 
   /* Stress + Shutdown */
@@ -1162,13 +1213,36 @@ function tick(){
     document.getElementById('m-dmg').textContent=damagedCount.toLocaleString();
     document.getElementById('m-heal').textContent=healedCount.toLocaleString();
 
+    lastRepairable = damagedCount>0 ? countRepairable() : 0;
+    var repEl=document.getElementById('m-repairable');
+    if(repEl){
+      if(damagedCount===0)repEl.textContent='0';
+      else if(!hasOrigin)repEl.textContent='\u2014 (plant heal)';
+      else repEl.textContent=lastRepairable.toLocaleString()+' / '+damagedCount.toLocaleString();
+    }
+
     if(bfsResult){
       var cov=bfsResult.reachable/(origAdmissible||1);
       document.getElementById('m-cov').textContent=(cov*100).toFixed(1)+'%';
       document.getElementById('m-veto').textContent=bfsResult.isolated.toLocaleString();
-      var htSec=bfsResult.maxDepth/STEPS/60/healSpeedMult;
-      document.getElementById('m-htime').textContent=htSec<999?htSec.toFixed(1)+'s':'\u2014';
+      var waveSec=bfsResult.maxDepth/STEPS/60/healSpeedMult;
+      var wEl=document.getElementById('m-wtime');
+      if(wEl)wEl.textContent=waveSec<999?waveSec.toFixed(1)+'s':'\u2014';
     }
+
+    var htEl=document.getElementById('m-htime');
+    if(htEl){
+      if(damagedCount===0)htEl.textContent='done';
+      else if(!hasOrigin)htEl.textContent='plant H beacon';
+      else if(lastRepairable===0)htEl.textContent='stalled \u00b7 \u2191 plasticity';
+      else{
+        var effI2=Math.max(3,Math.round(baseHealInterval/healSpeedMult));
+        var passes=Math.ceil(damagedCount/Math.max(1,lastRepairable));
+        var repairSec=(passes*effI2)/60;
+        htEl.textContent=repairSec<999?repairSec.toFixed(1)+'s':'\u2014';
+      }
+    }
+
     if(hasOrigin){
       var rets=Math.floor((frame-lastInjectFrame)*STEPS/GRID);
       document.getElementById('m-ret').textContent=rets;
@@ -1178,6 +1252,7 @@ function tick(){
     if(shutdownFrame>=0)ph='SHUTDOWN';
     else if(stressLevel>=3)ph='INPUT BLOCK';
     else if(stressLevel>=2)ph='safe-mode';
+    else if(hasOrigin&&damagedCount>0&&lastRepairable===0)ph='repair stalled';
     else if(hasOrigin&&damagedCount>0)ph='healing';
     else if(hasOrigin&&damagedCount===0&&healedCount>0)ph='equilibrium';
     else if(hasOrigin)ph='propagating';
@@ -1190,6 +1265,7 @@ function tick(){
 
 maybeShowOnboard();
 setMode('damage');
+setPlasticity(plasticity);
 updateNarrator();
 tick();
 </script>

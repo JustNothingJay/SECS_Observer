@@ -15,6 +15,9 @@ const Schema = require(path.join(js, 'schema.js'));
 const Engine = require(path.join(js, 'engine.js'));
 const Recorder = require(path.join(js, 'recorder.js'));
 const Synthetic = require(path.join(js, 'synthetic-burn.js'));
+const Adaptor = require(path.join(js, 'adaptor-ingress.js'));
+const Pipeline = require(path.join(js, 'pipeline-view.js'));
+const Compare = require(path.join(js, 'compare.js'));
 
 let failed = 0;
 function assert(cond, msg) {
@@ -154,6 +157,47 @@ console.log('=== Burn Studio integrity tests ===\n');
   assert(same, 'slow_tick does not mutate lattice');
   assert(st1.metrics.slow_phase === 'A', 'slow_tick updates observation metrics');
   assert(h0 !== Engine.stateHash(st1), 'state hash still changes via metrics/seq (audit trail)');
+}
+
+// 11. Adaptor identity extinction
+{
+  let threw = false;
+  try {
+    Adaptor.envelopeToSpark({ a: 1, userId: 'nope' }, { grid: 64, strict: true });
+  } catch (e) {
+    threw = /IDENTITY/.test(e.message);
+  }
+  assert(threw, 'adaptor rejects userId');
+  const ok = Adaptor.envelopeToSpark({ kind: 'x', n: 1 }, { grid: 64, strict: true });
+  assert(/^[0-9a-f]{16}$/.test(ok.digest), 'adaptor digest 16 hex');
+  assert(ok.sparkPartial.x >= 0 && ok.sparkPartial.x < 64, 'site in range');
+}
+
+// 12. Adaptor inject into recorder
+{
+  const rec = Recorder.createRecorder({ seed: 55, grid: 64, snapshotEvery: 100 });
+  const r = Adaptor.injectEnvelope(rec, { kind: 'test', n: 0 }, { source: 'test', hops: 2 });
+  assert(typeof r.pass === 'boolean', 'inject returns pass');
+  rec.end();
+  const pack = rec.getPack();
+  Recorder.loadPack(pack);
+  assert(pack.events.some((e) => e.type === 'spark'), 'inject wrote spark');
+}
+
+// 13. Pipeline derive pure
+{
+  const p = Synthetic.generateBurn({ seed: 8, grid: 64, sparkCount: 15 });
+  const d = Pipeline.derive(p.events, p.events[p.events.length - 1].seq, 40);
+  assert(d.stages.length === 7, 'pipeline has 7 stages');
+  assert(Array.isArray(d.recent), 'pipeline recent events');
+}
+
+// 14. Compare same pack at progress
+{
+  const p = Synthetic.generateBurn({ seed: 9, grid: 64, sparkCount: 20 });
+  const c = Compare.compareAtProgress(p, p, 0.5);
+  assert(c.sameHash === true, 'compare identical packs same hash at 0.5');
+  assert(c.delta.sparks === 0, 'compare delta sparks 0');
 }
 
 console.log('\n=== done ===');

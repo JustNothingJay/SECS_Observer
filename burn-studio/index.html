@@ -30,6 +30,11 @@
         <div>seq <span class="v" id="seq-label">—</span> · t <span class="v" id="t-label">—</span></div>
         <div>state <span class="v" id="hash-label" style="font-size:10px">—</span></div>
       </div>
+      <div id="pipeline" aria-label="Fast path pipeline">
+        <div class="pipe-title">Fast path · C collapse stages</div>
+        <div class="pipe-stages" id="pipe-stages"></div>
+        <div class="pipe-veto" id="pipe-veto"></div>
+      </div>
     </div>
 
     <aside id="side">
@@ -67,6 +72,29 @@
               <input type="file" id="file-import" accept="application/json,.json" hidden>
             </label>
           </div>
+          <div class="btn-row" style="margin-top:8px">
+            <label style="flex:1;color:#5a7a64;font-size:11px">Replay speed
+              <select id="inp-speed" style="width:100%;margin-top:4px;background:#121a14;border:1px solid #24382c;color:#c8e6d0;padding:4px;font-family:inherit">
+                <option value="80">Slow</option>
+                <option value="40" selected>Normal</option>
+                <option value="16">Fast</option>
+                <option value="4">Max</option>
+              </select>
+            </label>
+            <button type="button" class="btn" id="btn-inject" title="Inject identity-free adaptor envelope">Inject spark</button>
+          </div>
+          <p class="doctrine-note" style="margin-top:8px">Keys: <strong>Space</strong> play/pause · <strong>←/→</strong> step · <strong>Home/End</strong> · <strong>V</strong> verify · <strong>G</strong> generate</p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Event at scrub</div>
+          <div class="event-now" id="event-now">—</div>
+          <div class="log-box" id="event-trail" style="max-height:110px"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Veto breakdown</div>
+          <div id="veto-break" class="veto-break"></div>
         </div>
 
         <div class="section">
@@ -140,6 +168,9 @@
   <script src="js/engine.js"></script>
   <script src="js/recorder.js"></script>
   <script src="js/synthetic-burn.js"></script>
+  <script src="js/adaptor-ingress.js"></script>
+  <script src="js/pipeline-view.js"></script>
+  <script src="js/compare.js"></script>
   <script src="js/renderer.js"></script>
   <script src="js/app.js"></script>
 </body>

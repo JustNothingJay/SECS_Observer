@@ -26,6 +26,14 @@
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://secs.observer/dev-compute-visuals.html</loc>
+    <priority>0.55</priority>
+  </url>
+  <url>
+    <loc>https://secs.observer/burn-studio/</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://secs.observer/equation.html</loc>
     <priority>0.8</priority>
   </url>

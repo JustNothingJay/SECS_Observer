@@ -1,6 +1,7 @@
 /**
  * Burn Studio application shell.
- * Live burn · scrub · recompute · import/export.
+ * Live burn · scrub · recompute · import/export · pipeline · adaptor inject.
+ * UNCOMMITTED workstream — review before git.
  */
 (function () {
   'use strict';
@@ -14,11 +15,13 @@
   let playTimer = null;
   let renderer = null;
   let logLines = [];
+  let liveRec = null;
+  let injectCount = 0;
 
   function log(msg, cls) {
     const t = new Date().toISOString().slice(11, 19);
     logLines.unshift({ t, msg, cls: cls || '' });
-    if (logLines.length > 80) logLines.pop();
+    if (logLines.length > 100) logLines.pop();
     const el = $('log');
     if (!el) return;
     el.innerHTML = logLines
@@ -33,17 +36,80 @@
       .replace(/>/g, '&gt;');
   }
 
-  function setBusy(on) {
-    document.querySelectorAll('button.btn').forEach((b) => {
-      if (b.dataset.keep) return;
-      // don't disable all — only heavy ops buttons use disabled attr set locally
-    });
-    $('status-badge').textContent = on ? 'working…' : pack ? 'burn loaded' : 'idle';
-  }
-
   function maxSeq() {
     if (!pack || !pack.events.length) return 0;
     return pack.events[pack.events.length - 1].seq;
+  }
+
+  function findEvent(seq) {
+    if (!pack) return null;
+    // events are dense seq from 0 — index often equals seq
+    if (pack.events[seq] && pack.events[seq].seq === seq) return pack.events[seq];
+    for (let i = 0; i < pack.events.length; i++) {
+      if (pack.events[i].seq === seq) return pack.events[i];
+    }
+    return null;
+  }
+
+  function updatePipeline(seq) {
+    if (!pack || typeof BurnPipeline === 'undefined') return;
+    const d = BurnPipeline.derive(pack.events, seq, 32);
+    const host = $('pipe-stages');
+    if (host) {
+      host.innerHTML = d.stages
+        .map((st) => {
+          let cls = 'pipe-stage';
+          if (st.id === 'boundary' && d.lights.boundary) cls += ' on';
+          if (st.id === 'alpha' && d.lights.alpha) {
+            cls += d.lights.alpha_pass === false ? ' fail' : ' on';
+          }
+          if (st.id === 'validate' && d.lights.validate) cls += ' on';
+          if (st.id === 'route' && d.lights.route) cls += ' on';
+          if (st.id === 'react' && d.lights.react) cls += ' on';
+          if (st.id === 'extinguish' && d.lights.extinguish) cls += ' on';
+          if (st.id === 'purity' && d.lights.purity) cls += ' on';
+          if (d.lights.panic) cls += ' panic';
+          return `<div class="${cls}">${st.label}</div>`;
+        })
+        .join('');
+    }
+    const vetoEl = $('pipe-veto');
+    if (vetoEl) {
+      vetoEl.textContent = d.vetoName
+        ? 'Veto: ' + d.vetoName
+        : d.lights.panic
+          ? 'PANIC — input blocked'
+          : '';
+    }
+    const now = $('event-now');
+    if (now) {
+      const ev = findEvent(seq);
+      now.textContent =
+        'seq ' + seq + ' · ' + BurnPipeline.eventLine(ev) +
+        (viewState ? ' · hash ' + BurnEngine.stateHash(viewState).slice(0, 12) + '…' : '');
+    }
+    const trail = $('event-trail');
+    if (trail) {
+      trail.innerHTML = d.recent
+        .map(
+          (e) =>
+            `<div>${e.seq}: ${escapeHtml(BurnPipeline.eventLine(e))}</div>`,
+        )
+        .join('');
+    }
+  }
+
+  function updateVetoBreak(s) {
+    const el = $('veto-break');
+    if (!el || !s) return;
+    const vb = s.metrics.veto_breakdown || {};
+    const names = BurnSchema.VETO_CLASSES;
+    el.innerHTML = [1, 2, 3, 4, 5, 6]
+      .map((k) => {
+        const n = vb[k] || 0;
+        return `<div class="vb ${n ? 'has' : ''}"><span>v${k} ${names[k] || ''}</span><span class="n">${n}</span></div>`;
+      })
+      .join('');
   }
 
   function seekTo(seq) {
@@ -51,13 +117,14 @@
     seq = Math.max(0, Math.min(maxSeq(), seq | 0));
     try {
       viewState = BurnEngine.seek(pack.events, pack.snapshots, seq);
-      // integrity: optional rehash
       $('seq-label').textContent = String(viewState.seq);
       $('t-label').textContent = viewState.t_ms + ' ms';
       $('hash-label').textContent = BurnEngine.stateHash(viewState);
       $('scrub').value = String(viewState.seq);
       $('scrub').max = String(maxSeq());
       updateMetrics(viewState);
+      updatePipeline(viewState.seq);
+      updateVetoBreak(viewState);
       if (renderer) renderer.draw(viewState);
     } catch (e) {
       log('SEEK FAIL: ' + e.message, 'err');
@@ -81,13 +148,11 @@
     $('m-grid').textContent = s.grid + '²';
     $('m-events').textContent = String(pack.events.length);
 
-    // slow path phases
     document.querySelectorAll('.slow-path .ph').forEach((el) => {
       el.classList.toggle('on', el.dataset.phase === m.slow_phase);
     });
     const phiBar = $('phi-fill');
     if (phiBar && typeof m.phi_ratio === 'number') {
-      // map ratio toward golden-ish 1.618 as mid visual
       const pct = Math.max(5, Math.min(100, (m.phi_ratio / 3) * 100));
       phiBar.style.width = pct + '%';
     }
@@ -99,7 +164,6 @@
     try {
       const verified = BurnRecorder.loadPack(p);
       pack = verified.pack;
-      // ensure tip_hash
       pack.tip_hash = pack.chain[pack.chain.length - 1];
       log('Loaded burn ' + (pack.burn_id || '').slice(0, 12) + '… (' + label + ')', 'ok');
       log(
@@ -122,7 +186,6 @@
   }
 
   function runSynthetic() {
-    setBusy(true);
     log('Generating synthetic burn (deterministic)…');
     try {
       const seed = parseInt($('inp-seed').value, 10) || 0x53454353;
@@ -142,7 +205,6 @@
       log('GENERATE FAIL: ' + e.message, 'err');
       console.error(e);
     }
-    setBusy(false);
   }
 
   function exportPack() {
@@ -163,17 +225,13 @@
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const raw = JSON.parse(reader.result);
-        loadPack(raw, file.name);
+        loadPack(JSON.parse(reader.result), file.name);
       } catch (e) {
         log('IMPORT FAIL: ' + e.message, 'err');
       }
     };
     reader.readAsText(file);
   }
-
-  /** Live mode: generate sparks on a timer into a growing recorder */
-  let liveRec = null;
 
   function startLive() {
     stopPlay();
@@ -188,70 +246,30 @@
     });
     pack = liveRec.getPack();
     liveMode = true;
+    injectCount = 0;
     $('status-badge').textContent = 'LIVE';
+    $('btn-live').textContent = 'Stop live';
     log('Live burn started seed=' + seed, 'ok');
-
-    const rng = BurnRng.fromSeed(seed);
-    const adm = liveRec.getState().adm;
-    let sparks = 0;
 
     liveTimer = setInterval(() => {
       if (!liveMode || !liveRec) return;
       try {
-        const st = liveRec.getState();
-        if (st.panic) {
-          liveRec.append({ type: 'recover', t_ms: st.t_ms + 1 });
-        }
-        let x = rng.int(grid);
-        let y = rng.int(grid);
-        for (let k = 0; k < 20; k++) {
-          if (adm[y * grid + x]) break;
-          x = rng.int(grid);
-          y = rng.int(grid);
-        }
-        const digest = BurnHash.hashHex('live:' + sparks + ':' + x + ',' + y);
-        const t = st.t_ms + 1;
-        const sp = liveRec.append({
-          type: 'spark',
-          t_ms: t,
-          x,
-          y,
-          digest,
-          source: 'live',
-        });
-        sparks++;
-        const pass = adm[y * grid + x] === 1 && !rng.chance(0.1);
-        if (pass) {
-          liveRec.append({
-            type: 'alpha',
-            t_ms: t + 1,
-            spark_seq: sp.event.seq,
-            pass: true,
-          });
-          liveRec.append({
-            type: 'collapse_step',
-            t_ms: t + 2,
-            x,
-            y,
-            stage: 'react',
-            hop: rng.int(4),
-          });
-          liveRec.append({ type: 'extinguish', t_ms: t + 3, x, y });
-        } else {
-          liveRec.append({
-            type: 'alpha',
-            t_ms: t + 1,
-            spark_seq: sp.event.seq,
-            pass: false,
-            veto: 1 + rng.int(6),
-          });
-        }
-        if (sparks % 6 === 0) {
+        // Use adaptor ingress so live path = same code as inject
+        BurnAdaptor.injectEnvelope(
+          liveRec,
+          {
+            kind: 'live_tick',
+            n: injectCount++,
+            note: 'studio_live',
+          },
+          { source: 'live', hops: 2 + (injectCount % 3) },
+        );
+        if (injectCount % 6 === 0) {
           const s2 = liveRec.getState();
           liveRec.append({
             type: 'slow_tick',
             t_ms: s2.t_ms + 1,
-            phase: ['A', 'B', 'C', 'D', 'E'][Math.min(4, Math.floor(sparks / 50))],
+            phase: ['A', 'B', 'C', 'D', 'E'][Math.min(4, Math.floor(injectCount / 40))],
             phi_ratio: (s2.metrics.passed + 1) / (s2.metrics.vetoed + 1),
             stress: Math.min(4, Math.floor(s2.metrics.vetoed / 40)),
           });
@@ -262,24 +280,25 @@
         log('LIVE error: ' + e.message, 'err');
         stopLive();
       }
-    }, 120);
+    }, 140);
   }
 
   function stopLive() {
+    const was = liveMode;
     liveMode = false;
     if (liveTimer) clearInterval(liveTimer);
     liveTimer = null;
-    if (liveRec) {
+    if ($('btn-live')) $('btn-live').textContent = 'Live burn';
+    if (liveRec && was) {
       try {
         liveRec.end();
         pack = liveRec.getPack();
-        // re-verify full pack
         loadPack(pack, 'live-finalized');
       } catch (e) {
         log('Live finalize: ' + e.message, 'err');
       }
-      liveRec = null;
     }
+    liveRec = null;
   }
 
   function startPlay() {
@@ -288,6 +307,7 @@
     stopPlay();
     let seq = viewState ? viewState.seq : 0;
     if (seq >= maxSeq()) seq = 0;
+    const speed = parseInt($('inp-speed').value, 10) || 40;
     playTimer = setInterval(() => {
       seq += 1;
       if (seq > maxSeq()) {
@@ -295,13 +315,24 @@
         return;
       }
       seekTo(seq);
-    }, 40);
+    }, speed);
     $('status-badge').textContent = 'replaying';
   }
 
   function stopPlay() {
     if (playTimer) clearInterval(playTimer);
     playTimer = null;
+  }
+
+  function togglePlay() {
+    if (playTimer) {
+      stopPlay();
+      $('status-badge').textContent = pack ? 'paused' : 'idle';
+    } else if (liveMode) {
+      stopLive();
+    } else {
+      startPlay();
+    }
   }
 
   function verifyNow() {
@@ -317,7 +348,6 @@
       const hb = BurnEngine.stateHash(b);
       if (ha !== hb) throw new Error('double-fold hash mismatch');
       log('VERIFY OK · final ' + ha, 'ok');
-      // random seeks
       const mid = Math.floor(maxSeq() / 2);
       const s1 = BurnEngine.seek(pack.events, pack.snapshots, mid);
       const s2 = BurnEngine.fold(pack.events, { upToSeq: mid });
@@ -328,6 +358,91 @@
     } catch (e) {
       log('VERIFY FAIL: ' + e.message, 'err');
     }
+  }
+
+  /** Manual adaptor spark — identity-free envelope */
+  function injectSpark() {
+    if (liveMode && liveRec) {
+      try {
+        const r = BurnAdaptor.injectEnvelope(
+          liveRec,
+          {
+            kind: 'manual_inject',
+            n: injectCount++,
+            doctrine: 'studio',
+          },
+          { source: 'manual', hops: 4 },
+        );
+        pack = liveRec.getPack();
+        seekTo(maxSeq());
+        log(
+          'Injected spark ' + r.digest.slice(0, 8) + ' @' + r.site.x + ',' + r.site.y +
+            (r.pass ? ' PASS' : ' VETO'),
+          r.pass ? 'ok' : 'err',
+        );
+      } catch (e) {
+        log('Inject fail: ' + e.message, 'err');
+      }
+      return;
+    }
+    // Offline: rebuild pack by appending via new recorder from existing events — heavy.
+    // Simpler path: if no pack, start recorder; if pack exists, create recorder and replay then inject
+    try {
+      const seed = viewState ? viewState.seed : parseInt($('inp-seed').value, 10) || 0x53454353;
+      const grid = viewState ? viewState.grid : parseInt($('inp-grid').value, 10) || 128;
+      if (!pack) {
+        liveRec = BurnRecorder.createRecorder({ seed, grid, source: 'inject-session', snapshotEvery: 24 });
+      } else {
+        // Continue from end by reconstructing recorder state is not exported —
+        // generate a micro session on current seed topology
+        liveRec = BurnRecorder.createRecorder({
+          seed: seed ^ (injectCount + 1),
+          grid,
+          source: 'inject-session',
+          snapshotEvery: 24,
+        });
+      }
+      const r = BurnAdaptor.injectEnvelope(
+        liveRec,
+        {
+          kind: 'manual_inject',
+          n: injectCount++,
+          doctrine: 'studio',
+          // identity fields must be stripped / rejected:
+          // userId: 'should-never-appear'
+        },
+        { source: 'manual', hops: 4, strict: true },
+      );
+      // also prove identity rejection
+      try {
+        BurnAdaptor.envelopeToSpark(
+          { payload: 1, userId: 'bad' },
+          { grid, strict: true },
+        );
+        log('IDENTITY CHECK FAILED — should have thrown', 'err');
+      } catch (idErr) {
+        log('Identity extinction OK: ' + idErr.message.slice(0, 60), 'ok');
+      }
+      liveRec.end();
+      loadPack(liveRec.getPack(), 'inject-session');
+      liveRec = null;
+      log(
+        'Injected ' + r.digest.slice(0, 8) + ' @' + r.site.x + ',' + r.site.y +
+          (r.pass ? ' PASS' : ' VETO'),
+        r.pass ? 'ok' : 'err',
+      );
+    } catch (e) {
+      log('Inject fail: ' + e.message, 'err');
+      liveRec = null;
+    }
+  }
+
+  function step(delta) {
+    stopPlay();
+    stopLive();
+    if (!pack) return;
+    const cur = viewState ? viewState.seq : 0;
+    seekTo(cur + delta);
   }
 
   function init() {
@@ -342,29 +457,56 @@
     $('btn-live').addEventListener('click', () => {
       if (liveMode) stopLive();
       else startLive();
-      $('btn-live').textContent = liveMode ? 'Stop live' : 'Live burn';
     });
     $('btn-play').addEventListener('click', startPlay);
     $('btn-pause').addEventListener('click', () => {
       stopPlay();
       stopLive();
-      $('btn-live').textContent = 'Live burn';
       $('status-badge').textContent = pack ? 'paused' : 'idle';
     });
     $('btn-export').addEventListener('click', exportPack);
     $('btn-verify').addEventListener('click', verifyNow);
+    $('btn-inject').addEventListener('click', injectSpark);
     $('file-import').addEventListener('change', (e) => {
       const f = e.target.files && e.target.files[0];
       if (f) importPack(f);
     });
     $('scrub').addEventListener('input', () => {
       stopPlay();
-      stopLive();
-      $('btn-live').textContent = 'Live burn';
+      if (liveMode) stopLive();
       seekTo(parseInt($('scrub').value, 10));
     });
 
-    // Boot: generate a default burn so the room is not empty
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        step(e.shiftKey ? -10 : -1);
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        step(e.shiftKey ? 10 : 1);
+      } else if (e.code === 'Home') {
+        e.preventDefault();
+        stopPlay();
+        seekTo(0);
+      } else if (e.code === 'End') {
+        e.preventDefault();
+        stopPlay();
+        seekTo(maxSeq());
+      } else if (e.key === 'v' || e.key === 'V') {
+        verifyNow();
+      } else if (e.key === 'g' || e.key === 'G') {
+        runSynthetic();
+      } else if (e.key === 'i' || e.key === 'I') {
+        injectSpark();
+      }
+    });
+
     runSynthetic();
     requestAnimationFrame(function loop() {
       if (renderer && viewState) renderer.draw(viewState);
