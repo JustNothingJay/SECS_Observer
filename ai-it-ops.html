@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="Jay Carpenter — AI · IT · Ops. C-suite level excellence engineering. Project ownership from data. Floor to board. Change only for improvement.">
+    <title>AI · IT · Ops — Jay Carpenter — SECS</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/ai-it-ops.html">
+    <meta property="og:title" content="AI · IT · Ops — Jay Carpenter">
+    <meta property="og:description" content="Excellence engineering across AI, IT, and operations. Data-led project ownership. Lived the floor. Change for improvement, never for theatre.">
+    <meta property="og:image" content="https://secs.observer/assets/og-default.jpg">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI · IT · Ops — Jay Carpenter">
+    <meta name="twitter:description" content="C-suite level excellence engineering. Project ownership from data. Intersect or standalone.">
+    <meta name="twitter:image" content="https://secs.observer/assets/og-default.jpg">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="canonical" href="https://secs.observer/ai-it-ops.html">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/secs.min.css?v=13">
+    <script src="js/includes.min.js?v=15"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-667KK00S7H"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-667KK00S7H');</script>
+
+    <style>
+        .aio-page { max-width: 820px; margin: 0 auto; padding-bottom: 64px; }
+        .aio-triad {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+            margin: 0 auto 1.25rem;
+        }
+        .aio-triad span {
+            font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.12em;
+            text-transform: uppercase; padding: 8px 14px; border-radius: 999px;
+            border: 1px solid var(--border-subtle); background: rgba(255,255,255,0.03);
+        }
+        .aio-triad .ai { border-color: rgba(72,230,98,0.4); color: var(--accent-green); }
+        .aio-triad .it { border-color: rgba(0,178,255,0.4); color: var(--accent-blue); }
+        .aio-triad .ops { border-color: rgba(255,94,0,0.4); color: var(--accent-orange); }
+        .aio-level {
+            text-align: center; font-size: 0.88rem; color: var(--text-muted);
+            margin: 0 0 1.5rem; line-height: 1.55;
+        }
+        .aio-level strong { color: var(--text-primary); font-weight: 500; }
+        .aio-page p {
+            color: var(--text-secondary); font-size: 0.95rem; line-height: 1.75; margin-bottom: 1rem;
+        }
+        .aio-page p strong { color: var(--text-primary); }
+        .aio-lead {
+            font-size: 1.12rem; color: var(--text-primary); line-height: 1.75; margin-bottom: 1.15rem;
+        }
+        .aio-pull {
+            border-left: 3px solid var(--accent-orange);
+            padding: 12px 0 12px 18px; margin: 22px 0;
+            font-style: italic; color: var(--text-primary); font-size: 1.02rem; line-height: 1.7;
+        }
+        .aio-cta {
+            margin: 28px 0 36px; padding: 22px 24px; border-radius: 12px;
+            border: 1px solid rgba(0,178,255,0.28);
+            background: linear-gradient(145deg, rgba(0,178,255,0.08), rgba(12,15,20,0.95));
+            display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; justify-content: space-between;
+        }
+        .aio-cta .copy {
+            flex: 1 1 240px; margin: 0; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;
+        }
+        .aio-cta .copy strong { color: var(--text-primary); }
+        .aio-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        .aio-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 11px 16px; border-radius: 10px; border: 1px solid var(--border-subtle);
+            color: var(--text-primary); text-decoration: none; font-size: 0.88rem;
+        }
+        .aio-btn:hover { text-decoration: none; color: var(--text-primary); border-color: rgba(0,178,255,0.45); }
+        .aio-btn.primary {
+            border-color: rgba(0,178,255,0.45); background: rgba(0,178,255,0.14); color: #7dd3ff;
+        }
+        .aio-btn.green {
+            border-color: rgba(72,230,98,0.4); background: rgba(72,230,98,0.1); color: var(--accent-green);
+        }
+        .aio-section {
+            margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--border-subtle);
+        }
+        .aio-section h3 {
+            font-size: 1.05rem; font-weight: 500; letter-spacing: 0.06em;
+            text-transform: uppercase; color: var(--accent-orange); margin: 0 0 16px;
+        }
+        .aio-section h4 {
+            font-size: 0.98rem; color: var(--text-primary); margin: 1.2rem 0 0.5rem; font-weight: 500;
+        }
+        .aio-steps {
+            list-style: none; padding: 0; margin: 16px 0 8px; counter-reset: aio;
+        }
+        .aio-steps li {
+            position: relative; padding: 14px 14px 14px 52px; margin-bottom: 10px;
+            border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-card);
+            color: var(--text-secondary); font-size: 0.9rem; line-height: 1.65;
+        }
+        .aio-steps li::before {
+            counter-increment: aio; content: counter(aio);
+            position: absolute; left: 14px; top: 14px;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: rgba(0,178,255,0.12); border: 1px solid rgba(0,178,255,0.35);
+            color: var(--accent-blue); font-family: var(--font-mono); font-size: 0.75rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .aio-steps li strong { color: var(--text-primary); }
+        /* Patterns: single column — no uneven 2-col heights */
+        .aio-patterns {
+            display: flex; flex-direction: column; gap: 12px; margin: 18px 0 8px;
+        }
+        .aio-pattern {
+            display: grid;
+            grid-template-columns: 9rem 1fr;
+            gap: 12px 18px;
+            align-items: start;
+            padding: 16px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+        @media (max-width: 640px) {
+            .aio-pattern { grid-template-columns: 1fr; gap: 6px; }
+        }
+        .aio-pattern .kicker {
+            font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.07em;
+            text-transform: uppercase; color: var(--accent-green); line-height: 1.4;
+            padding-top: 2px;
+        }
+        .aio-pattern .body {
+            margin: 0; font-size: 0.88rem; color: var(--text-secondary); line-height: 1.65;
+        }
+        .aio-pattern.wide {
+            border-left: 3px solid var(--accent-blue);
+        }
+        .aio-modes {
+            display: grid; gap: 12px; margin: 16px 0;
+        }
+        @media (min-width: 700px) {
+            .aio-modes { grid-template-columns: 1fr 1fr; }
+        }
+        .aio-mode {
+            border-radius: 10px; border: 1px solid var(--border-subtle);
+            background: var(--bg-card); padding: 16px 18px;
+        }
+        .aio-mode h4 {
+            margin: 0 0 8px; font-size: 0.92rem; color: var(--accent-blue);
+        }
+        .aio-mode p {
+            margin: 0; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.6;
+        }
+        .aio-fit {
+            display: grid; gap: 14px; margin: 16px 0;
+        }
+        @media (min-width: 700px) {
+            .aio-fit { grid-template-columns: 1fr 1fr; }
+        }
+        .aio-fit-card {
+            border-radius: 10px; padding: 16px 18px; border: 1px solid var(--border-subtle);
+        }
+        .aio-fit-card.good {
+            border-color: rgba(72,230,98,0.3); background: rgba(72,230,98,0.05);
+        }
+        .aio-fit-card.bad {
+            border-color: rgba(255,94,0,0.28); background: rgba(255,94,0,0.05);
+        }
+        .aio-fit-card h4 {
+            margin: 0 0 10px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .aio-fit-card.good h4 { color: var(--accent-green); }
+        .aio-fit-card.bad h4 { color: var(--accent-orange); }
+        .aio-fit-card ul {
+            margin: 0; padding-left: 1.1rem; color: var(--text-secondary);
+            font-size: 0.88rem; line-height: 1.55;
+        }
+        .aio-fit-card li { margin-bottom: 0.4rem; }
+        .aio-note {
+            font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-top: 12px;
+        }
+        .aio-footer {
+            margin-top: 40px; text-align: center; padding: 28px 20px;
+            border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-card);
+        }
+        .aio-footer p {
+            color: var(--text-secondary); margin: 0 0 16px; font-size: 0.95rem; line-height: 1.65;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="container page-content">
+        <div class="section-header text-center">
+            <h2 class="animated fadeInLeft">AI · IT · Ops</h2>
+            <div class="section-line"></div>
+            <p class="section-subtitle animated fadeInRight">
+                Jay Carpenter &mdash; the AI&ndash;IT&ndash;Ops guy.<br>
+                Wherever they intersect, or any one of them alone.
+            </p>
+        </div>
+
+        <div class="aio-page animated fadeInUp">
+
+            <div class="aio-triad" aria-label="Positioning triad">
+                <span class="ai">AI</span>
+                <span class="it">IT</span>
+                <span class="ops">Ops</span>
+            </div>
+            <p class="aio-level">
+                <strong>C-suite level excellence engineering</strong><br>
+                Project ownership from data &middot; floor to board &middot; change only for improvement
+            </p>
+
+            <p class="aio-lead">
+                I am a <strong>data guy with project ownership</strong>. I take systematic operational and business data,
+                couple it with real consultancy practice &mdash; speaking with people, watching how they use systems,
+                understanding what utopia would look like for their role &mdash; and I translate that into
+                cross-departmental, cross-role, cross-level work: systems &rarr; operations &rarr; business need,
+                from the stack you already have.
+            </p>
+
+            <p>
+                That can mean new functionality and features. Automation. Process redesign.
+                It can mean a smart VBA module that finally stops the spreadsheet task that keeps breaking
+                because customer service cannot get order details into the right fields &mdash; and the impact
+                of that mess is downstream on the floor. Small enabling wins open doors. I prioritise them on purpose.
+            </p>
+
+            <div class="aio-cta" id="hire">
+                <p class="copy">
+                    <strong>Available for project and contract engagements</strong> (AU-based; remote-friendly).
+                    One edge of the triad, or the join. Board-readable path; floor-real delivery.
+                </p>
+                <div class="aio-actions">
+                    <a class="aio-btn primary" href="mailto:jay@secs.observer?subject=AI-IT-Ops%20enquiry">
+                        <i class="fa-solid fa-envelope"></i> jay@secs.observer
+                    </a>
+                    <a class="aio-btn" href="https://www.linkedin.com/in/jay-carpentersecs" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a class="aio-btn green" href="founder.html">
+                        <i class="fa-solid fa-user"></i> Founder story
+                    </a>
+                </div>
+            </div>
+
+            <div class="aio-pull">
+                Change never for the sake of change. Change for improvement &mdash; forever better, not louder.
+            </div>
+
+            <!-- ── Method ── -->
+            <div class="aio-section">
+                <h3>How the work actually runs</h3>
+                <ol class="aio-steps">
+                    <li>
+                        <strong>Gather what is true.</strong> Operational data, business data, system exports,
+                        and the data of experience: walking the process, doing the work where needed,
+                        interviewing the people who live in it.
+                    </li>
+                    <li>
+                        <strong>See the whole chain, not the symptom.</strong> I do not only see an inefficient
+                        picking method that allows errors. I see the process and the systems that let a pick error
+                        become a customer impact, a safety risk, re-work, delay, and a P&amp;L cost.
+                    </li>
+                    <li>
+                        <strong>Clean data first; make it meaningful.</strong> Small enabling wins:
+                        fields that work, reports that tell the truth, cost of inefficiency tied to a real line
+                        on the P&amp;L &mdash; not vanity metrics.
+                    </li>
+                    <li>
+                        <strong>Roadmap with realistic change capacity.</strong> Clear targets, sequenced so the
+                        organisation can absorb them. Cross-department ownership. Utopia as a north star;
+                        today&rsquo;s stack as the starting constraint.
+                    </li>
+                    <li>
+                        <strong>Improve the stack in place.</strong> Functionality, features, automation, redesign.
+                        Fix the broken spreadsheet task if that unblocks the floor. Hold the number until it sticks.
+                    </li>
+                </ol>
+            </div>
+
+            <!-- ── Floor ── -->
+            <div class="aio-section">
+                <h3>I have lived every layer</h3>
+                <p>
+                    I have used AI to develop <strong>real systems in real operational environments</strong> &mdash;
+                    and I have lived through every role that those systems are supposed to serve.
+                </p>
+                <p>
+                    I have been a warehouse picker and a packer. I have unloaded containers in a yard on a
+                    forty-degree day in Western Sydney. I have dropped pallets on a forklift. I have sat in
+                    the lunch rooms and the pubs with the people who run the floor. I understand the cultural
+                    divide between sales and ops &mdash; and that the shape of that divide is unique to every business.
+                </p>
+                <p>
+                    That is not colour. That is method. Roadmaps that ignore culture and lunch-room truth
+                    do not survive contact with Monday morning.
+                </p>
+            </div>
+
+            <!-- ── Patterns: single column ── -->
+            <div class="aio-section">
+                <h3>Shapes of work (anonymised)</h3>
+                <p>
+                    No client names. The patterns are the product of data, floor time, and ownership of the outcome.
+                </p>
+                <div class="aio-patterns">
+                    <div class="aio-pattern">
+                        <div class="kicker">Hyper-growth fulfilment</div>
+                        <p class="body">
+                            Outbound scaled from tens of people to well over a hundred. Performance systems that
+                            roughly doubled pick rates and lifted pack rates ~75%. On-time despatch into &gt;99.9%.
+                            Speed products (same-day interstate, Saturday delivery), live ERP/WMS dashboards,
+                            multi-site fulfilment launch &mdash; owned as a measurable chain, not a slide.
+                        </p>
+                    </div>
+                    <div class="aio-pattern">
+                        <div class="kicker">End-to-end supply chain</div>
+                        <p class="body">
+                            Purchasing through import, warehouse, freight, installation, and customer experience
+                            as one system. Multi-year people / process / systems strategy with owners.
+                            Change only when service predictability moves.
+                        </p>
+                    </div>
+                    <div class="aio-pattern wide">
+                        <div class="kicker">Marketplace · data-led expansion</div>
+                        <p class="body">
+                            IT product, customer service, and contractor supply side under aggressive growth.
+                            National multi-city expansion, apps both sides of the marketplace, commercial booking,
+                            fulfilment &gt;99.85%, response times cut ~70%. Under NDA with a grant-backed data partner:
+                            churn-propensity signals &rarr; national location heatmap overlaid with where field
+                            contractors actually lived &rarr; expansion decisions from that map. Same pattern as any
+                            two-sided field marketplace. Short runway; acquisition followed. I am confident that
+                            twelve-month footprint changed what the business was worth to a buyer.
+                        </p>
+                    </div>
+                    <div class="aio-pattern">
+                        <div class="kicker">DTC / subscription rebuild</div>
+                        <p class="body">
+                            Procurement-to-delivery rebuild in a growth sprint. JIT forecasting to manufacturing
+                            and freight lead times. Capacity without a new building. WMS selection; location-driven
+                            barcode ops. National transport held under scale.
+                        </p>
+                    </div>
+                    <div class="aio-pattern">
+                        <div class="kicker">Ops + IT joint ownership</div>
+                        <p class="body">
+                            The join where most programmes fail. Continuity under commercial pressure;
+                            systems that match the floor; executive targets that survive the lunch room.
+                        </p>
+                    </div>
+                    <div class="aio-pattern">
+                        <div class="kicker">Industrial &amp; 3PL continuity</div>
+                        <p class="body">
+                            Long-arc innovation and optimisation: warehousing, logistics, transport, IT, CX.
+                            Automation, relocation, procurement, KPI control, commercial warehouse agreements.
+                            Where drift hides when no one is looking.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── AI ── -->
+            <div class="aio-section">
+                <h3>Where AI enters</h3>
+                <p>
+                    AI is only beginning. I already use it to <strong>build working systems inside real operations</strong> &mdash;
+                    not demos. I also read large architectures and codebases (order of ~10k-repo class analysis:
+                    breakpoints, structure, where soft middles hide), and I design safeguards so machines that act
+                    do not get a free pass.
+                </p>
+                <p>
+                    The strategy is not &ldquo;AI everywhere.&rdquo; It is AI that brings
+                    <strong>security as much as speed</strong>,
+                    <strong>people development as much as process development</strong>,
+                    and that can <strong>carry operational baggage</strong> so people focus on the work with
+                    measurable impact on how the business and its operations arm deliver end-to-end &mdash;
+                    doing things right now so they stay better forever.
+                </p>
+                <p>
+                    Same rule as everything else on this page:
+                    <strong>change for improvement, never for the sake of change.</strong>
+                </p>
+                <p class="aio-note">
+                    Public artefact of how I think about fail-closed action:
+                    <a href="terminal.html">Terminal</a> ·
+                    <a href="architecture.html">Architecture</a>.
+                    SECS is not mandatory on every engagement; process and policy often come first.
+                </p>
+            </div>
+
+            <!-- ── Modes ── -->
+            <div class="aio-section">
+                <h3>Intersect or standalone</h3>
+                <div class="aio-modes">
+                    <div class="aio-mode">
+                        <h4>AI alone</h4>
+                        <p>Capability vs need. Architecture reading. Admission rules, identity boundaries, override, audit before automation touches work or money.</p>
+                    </div>
+                    <div class="aio-mode">
+                        <h4>IT alone</h4>
+                        <p>WMS/ERP truth, integrations, product, tenders, go-lives, the spreadsheet that is secretly a system of record.</p>
+                    </div>
+                    <div class="aio-mode">
+                        <h4>Ops alone</h4>
+                        <p>Throughput, labour, DIFOT, cost-to-serve, multi-site, marketplace supply, expansion. Hold the number.</p>
+                    </div>
+                    <div class="aio-mode">
+                        <h4>Where they meet</h4>
+                        <p>Default home. AI on real workflows. Systems that only pay if ops changes. Ops excellence that needs IT and governed AI.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Fit ── -->
+            <div class="aio-section">
+                <h3>Good fit / bad fit</h3>
+                <div class="aio-fit">
+                    <div class="aio-fit-card good">
+                        <h4>Good fit</h4>
+                        <ul>
+                            <li>Someone owns the P&amp;L or the service promise</li>
+                            <li>Willing to start with data and small enabling wins</li>
+                            <li>AI, IT, and ops misaligned &mdash; or one edge on fire</li>
+                            <li>Culture and the floor are allowed into the room</li>
+                            <li>Change for improvement, not for announcement</li>
+                        </ul>
+                    </div>
+                    <div class="aio-fit-card bad">
+                        <h4>Bad fit</h4>
+                        <ul>
+                            <li>Body-shop coding with no operational outcome</li>
+                            <li>Strategy theatre with no owner of the number</li>
+                            <li>AI for the press release only</li>
+                            <li>Unwilling to clean data or touch the broken process</li>
+                            <li>Soft middle required when machines act</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="aio-section">
+                <h3>Next to the rest of this site</h3>
+                <p>
+                    <a href="founder.html">Founder</a> is the personal trail.
+                    The journal is the honest record.
+                    This page is how I work when you hire the AI&ndash;IT&ndash;Ops guy.
+                </p>
+            </div>
+
+            <div class="aio-footer" id="contact">
+                <p>
+                    <strong style="color:var(--text-primary)">Tell me what is broken and what &ldquo;fixed&rdquo; looks like on the P&amp;L and on the floor.</strong><br>
+                    I will tell you quickly if I am the wrong person.
+                </p>
+                <div class="aio-actions" style="justify-content:center">
+                    <a class="aio-btn primary" href="mailto:jay@secs.observer?subject=AI-IT-Ops%20enquiry">
+                        <i class="fa-solid fa-envelope"></i> jay@secs.observer
+                    </a>
+                    <a class="aio-btn" href="https://www.linkedin.com/in/jay-carpentersecs" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a class="aio-btn" href="founder.html">Founder</a>
+                    <a class="aio-btn" href="journal.html">Journal</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+
+    <span class="border-top"></span><span class="border-left"></span><span class="border-right"></span><span class="border-bottom"></span>
+
+</body>
+</html>
