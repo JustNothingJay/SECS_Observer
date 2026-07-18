@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta name="description" content="SECS Apps — working vertical products that prove the substrate in real multi-party workflows. Catalogue only; apps run as separate deploy units.">
+    <title>Apps — SECS Vertical Products</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://secs.observer/apps.html">
+    <meta property="og:title" content="Apps — SECS Vertical Products">
+    <meta property="og:description" content="Working vertical demos sit beside Observer — pride of place without diluting the research surface.">
+    <meta property="og:image" content="https://secs.observer/assets/og-default.jpg">
+    <meta property="og:site_name" content="SECS">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Apps — SECS Vertical Products">
+    <meta name="twitter:description" content="Working vertical demos sit beside Observer — pride of place without diluting the research surface.">
+    <meta name="twitter:image" content="https://secs.observer/assets/og-default.jpg">
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="canonical" href="https://secs.observer/apps.html">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/secs.min.css?v=13">
+    <script src="js/includes.min.js?v=13"></script>
+    <style>
+        .apps-page { padding: 24px 0 72px; max-width: 1040px; }
+        .apps-intro { max-width: 720px; margin: 0 auto 36px; text-align: center; color: var(--text-secondary); line-height: 1.75; }
+        .apps-grid { display: grid; gap: 20px; }
+        @media (min-width: 768px) { .apps-grid { grid-template-columns: 1fr 1fr; } }
+        .app-card {
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(21,25,32,0.96), rgba(12,15,20,0.98));
+            padding: 22px 22px 18px;
+            box-shadow: 0 14px 32px rgba(0,0,0,0.22);
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .app-card-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+        .app-card h3 { margin: 0; font-weight: 400; font-size: 1.25rem; }
+        .app-card .kicker { color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+        .app-status {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 6px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+            border: 1px solid rgba(72,230,98,0.35);
+            color: var(--accent-green);
+            background: rgba(72,230,98,0.08);
+        }
+        .app-status.narrative {
+            border-color: rgba(0,178,255,0.35);
+            color: var(--accent-blue);
+            background: rgba(0,178,255,0.08);
+        }
+        .app-card p { margin: 0; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.65; flex: 1; }
+        .app-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+        .app-actions a {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 9px 14px; border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary); text-decoration: none;
+            font-size: 0.88rem;
+        }
+        .app-actions a.primary {
+            border-color: rgba(0,178,255,0.4);
+            background: rgba(0,178,255,0.12);
+            color: var(--accent-blue);
+        }
+        .apps-note {
+            margin-top: 40px; padding: 18px 20px; border-radius: 12px;
+            border: 1px dashed rgba(255,255,255,0.12);
+            color: var(--text-muted); font-size: 0.9rem; line-height: 1.7;
+        }
+        .apps-note code { color: var(--accent-blue); }
+    </style>
+</head>
+<body>
+
+    <div id="site-header"></div>
+    <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+    <main class="apps-page container">
+        <div class="section-header text-center">
+            <h2 class="animated fadeInLeft">Apps</h2>
+            <div class="section-line"></div>
+            <p class="section-subtitle animated fadeInRight">Working vertical products — pride of place, off the Observer core</p>
+        </div>
+
+        <p class="apps-intro animated fadeInUp">
+            Observer stays the research and proof surface. <strong>Apps</strong> is the catalogue of
+            sovereign-native vertical products that actually run multi-party workflows.
+            Each app is a separate deploy unit; Observer only catalogues, links, and can poll a
+            read-only governance snapshot.
+        </p>
+
+        <div class="apps-grid animated fadeInUp">
+
+            <article class="app-card">
+                <div class="app-card-head">
+                    <div>
+                        <div class="kicker"><i class="fa-solid fa-people-group"></i> Labour hire</div>
+                        <h3>Agconn</h3>
+                    </div>
+                    <span class="app-status">Working</span>
+                </div>
+                <p>
+                    Client–agency operations product: staff requests, fill, shared timesheet mirror,
+                    dual-approval invoicing, skills and preferred-worker ratings. Runs as a
+                    <strong>separate deploy unit</strong> (private product repo) — not as source on this site.
+                    Public pages only describe the vertical; the application codebase is not published here.
+                </p>
+                <div class="app-actions">
+                    <a class="primary" href="vertical-demo.html?vertical=labour-hire">
+                        <i class="fa-solid fa-diagram-project"></i> Workflow story
+                    </a>
+                    <a href="verticals.html">
+                        <i class="fa-solid fa-layer-group"></i> Vertical surfaces
+                    </a>
+                </div>
+                <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">
+                    Live demo host is not on GitHub Pages. Local / invite-only runtime when available.
+                </p>
+            </article>
+
+            <article class="app-card">
+                <div class="app-card-head">
+                    <div>
+                        <div class="kicker"><i class="fa-solid fa-robot"></i> Robotics</div>
+                        <h3>Motion safety narrative</h3>
+                    </div>
+                    <span class="app-status narrative">Narrative</span>
+                </div>
+                <p>
+                    Governed control-cycle story for mixed human workcells. Not a robot runtime product yet —
+                    the deep-dive lives on Workflow Demos until a working deploy unit exists.
+                </p>
+                <div class="app-actions">
+                    <a class="primary" href="vertical-demo.html?vertical=robotics">
+                        <i class="fa-solid fa-diagram-project"></i> Workflow story
+                    </a>
+                </div>
+            </article>
+
+            <article class="app-card">
+                <div class="app-card-head">
+                    <div>
+                        <div class="kicker"><i class="fa fa-heartbeat"></i> Healthcare</div>
+                        <h3>Clinical governance narrative</h3>
+                    </div>
+                    <span class="app-status narrative">Narrative</span>
+                </div>
+                <p>
+                    Identity-free escalation and replayable clinical review path. Story surface only —
+                    no patient portal product linked here.
+                </p>
+                <div class="app-actions">
+                    <a class="primary" href="vertical-demo.html?vertical=healthcare">
+                        <i class="fa-solid fa-diagram-project"></i> Workflow story
+                    </a>
+                </div>
+            </article>
+
+            <article class="app-card">
+                <div class="app-card-head">
+                    <div>
+                        <div class="kicker"><i class="fa fa-line-chart"></i> Fintech</div>
+                        <h3>Replayable decisioning narrative</h3>
+                    </div>
+                    <span class="app-status narrative">Narrative</span>
+                </div>
+                <p>
+                    Trade recommendation hold/release under deterministic governance. Narrative demo;
+                    working vertical app not yet catalogued.
+                </p>
+                <div class="app-actions">
+                    <a class="primary" href="vertical-demo.html?vertical=fintech">
+                        <i class="fa-solid fa-diagram-project"></i> Workflow story
+                    </a>
+                </div>
+            </article>
+
+        </div>
+
+        <div class="apps-note animated fadeInUp">
+            <strong>Boundary rule.</strong> Working apps do not ship as folders inside the Observer static site.
+            They run as separate processes (e.g. Agconn on <code>localhost:3927</code>) and expose
+            <code>/api/observer/snapshot</code> for optional read-only ops integration.
+            Full product architecture: see local docs <code>SECS_Agconn/PRODUCT_SURFACE.md</code>.
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+    <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/secs.min.js?v=1"></script>
+</body>
+</html>

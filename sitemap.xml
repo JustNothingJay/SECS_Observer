@@ -63,6 +63,14 @@
     <loc>https://secs.observer/game.html</loc>
   </url>
   <url>
+    <loc>https://secs.observer/towers-lab.html</loc>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://secs.observer/apps.html</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://secs.observer/terminal.html</loc>
   </url>
   <url>

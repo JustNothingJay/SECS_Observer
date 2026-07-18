@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+  <meta name="description" content="Summit Lab — a quiet SECS playground. Push-your-luck column climbing. Watch different pilot styles. Not a product pitch.">
+  <title>Summit Lab — SECS</title>
+  <meta name="robots" content="noindex,follow">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="canonical" href="https://secs.observer/towers-lab.html">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="css/secs.min.css?v=14">
+  <script src="js/includes.min.js?v=14"></script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src https://cdnjs.cloudflare.com; connect-src https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; img-src 'self' data:; frame-ancestors 'none';">
+  <style>
+    .lab-wrap { max-width: 1180px; margin: 1.5rem auto 3rem; padding: 0 1rem; color: var(--text-primary, #e7ecf3); }
+    .lab-hero { text-align: center; margin-bottom: 1.25rem; }
+    .lab-hero h2 { color: var(--accent-green, #48e662); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .lab-hero p { color: var(--text-muted, #8b9bb4); max-width: 42rem; margin: 0.35rem auto; font-size: 0.95rem; line-height: 1.5; }
+    .lab-disclaimer {
+      font-size: 0.78rem; color: var(--text-muted, #8b9bb4); border: 1px solid var(--border-subtle, #2a3548);
+      border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem auto 1.5rem; max-width: 52rem; background: #0a0b0d;
+    }
+
+    /* Main play column + seats sidebar */
+    .lab-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .lab-grid { grid-template-columns: 1fr; }
+      .lab-seats { order: -1; }
+    }
+
+    .lab-card {
+      background: #121820; border: 1px solid #2a3548; border-radius: 12px; padding: 0.9rem 1rem;
+    }
+    .lab-card h3 {
+      margin: 0 0 0.65rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8b9bb4;
+    }
+    .lab-card + .lab-card { margin-top: 0.75rem; }
+
+    /* Flow: board → turn → feed (all in one column) */
+    .lab-play { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
+
+    .board {
+      display: flex; justify-content: space-between; align-items: flex-end; gap: 4px;
+      min-height: 280px; padding: 0.5rem 0.25rem 0;
+    }
+    .col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
+    .stack { display: flex; flex-direction: column-reverse; gap: 2px; width: 100%; max-width: 44px; }
+    .floor {
+      height: 12px; border-radius: 2px; background: #2a3548; border: 1px solid #1a2030; position: relative; overflow: hidden;
+    }
+    .floor.top-claim { background: #d4a84b !important; box-shadow: 0 0 6px #d4a84b66; }
+    .floor.climb-ring { box-shadow: inset 0 0 0 2px #fff7; }
+    .floor .stripe { position: absolute; top: 0; bottom: 0; }
+    .col-lab { font-size: 0.7rem; color: #8b9bb4; font-weight: 700; }
+    .col.hot .col-lab { color: #e8c36a; }
+
+    /* Turn strip sits under towers — no nested scroll that clips coach glow */
+    .turn-strip {
+      border-top: 1px solid #2a3548;
+      margin-top: 0.65rem;
+      padding-top: 0.75rem;
+    }
+    .status { min-height: 1.4em; font-size: 0.92rem; line-height: 1.4; margin-bottom: 0.35rem; }
+    .status.bust { color: #e05555; font-weight: 700; }
+    .status.win { color: #3ecf8e; font-weight: 700; }
+    .dice-row { display: flex; gap: 8px; justify-content: center; margin: 0.45rem 0 0.55rem; }
+    .die {
+      width: 42px; height: 42px; background: #f4f0e6; color: #111; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;
+    }
+
+    /* Pairings: full width under board, room for highlight ring (no overflow clip) */
+    .pairings {
+      display: flex; flex-direction: column; gap: 0.45rem;
+      padding: 3px; /* room for outline so coach highlight stays on-screen */
+      margin: 0 -3px; /* cancel padding for alignment */
+    }
+    .pair-btn {
+      text-align: left; width: 100%; padding: 0.55rem 0.7rem; border-radius: 8px;
+      border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; cursor: pointer;
+      box-sizing: border-box;
+    }
+    .pair-btn:hover:not(:disabled) { border-color: #5b9fd4; }
+    .pair-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .pair-btn.best {
+      border-color: #3ecf8e;
+      outline: 2px solid #3ecf8e;
+      outline-offset: 0;
+      box-shadow: none;
+    }
+    .pair-btn .out { font-weight: 700; font-size: 0.95rem; }
+    .pair-btn .meta { font-size: 0.72rem; color: #8b9bb4; margin-top: 2px; }
+
+    .controls { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.65rem; }
+    .btn-lab {
+      border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; padding: 0.45rem 0.75rem;
+      border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+    }
+    .btn-lab:hover:not(:disabled) { border-color: #5b9fd4; }
+    .btn-lab:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-lab.primary { background: #2a5a8a; border-color: #5b9fd4; }
+    .btn-lab.ok { background: #1e4a35; border-color: #3ecf8e; }
+    .hint { font-size: 0.75rem; color: #8b9bb4; margin-top: 0.55rem; line-height: 1.4; }
+
+    /* Feed below turn — separate card, taller, scrolls itself */
+    .feed {
+      max-height: 220px; overflow-y: auto; font-size: 0.8rem; color: #8b9bb4; line-height: 1.4;
+    }
+    .feed .line { padding: 4px 0; border-bottom: 1px solid #1e2836; }
+    .feed .line:last-child { border-bottom: none; }
+    .feed .line b { color: #e7ecf3; }
+
+    .setup-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.55rem; }
+    .setup-row label { font-size: 0.78rem; color: #8b9bb4; min-width: 4.5rem; }
+    .setup-stack { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.6rem; }
+    .setup-stack > label { font-size: 0.78rem; color: #8b9bb4; }
+    select, input[type="text"] {
+      background: #1a2332; color: #e7ecf3; border: 1px solid #3a4a62; border-radius: 6px; padding: 5px 8px; font-size: 0.85rem;
+      max-width: 100%;
+    }
+    .setup-stack select { width: 100%; }
+    .assist-blurb {
+      display: block; color: #8b9bb4; font-size: 0.72rem; line-height: 1.35; min-height: 2em;
+    }
+    .seat-grid { display: flex; flex-direction: column; gap: 0.45rem; }
+    .seat {
+      display: grid; grid-template-columns: 14px 1fr; gap: 0.5rem; align-items: start;
+      background: #1a2332; border-radius: 8px; padding: 0.5rem 0.6rem; border: 1px solid #2a3548;
+    }
+    .seat.current { outline: 2px solid #5b9fd4; outline-offset: 1px; }
+    .swatch { width: 12px; height: 12px; border-radius: 3px; margin-top: 0.35rem; }
+    .seat-main { font-size: 0.85rem; min-width: 0; }
+    .seat-head {
+      display: flex; align-items: center; gap: 0.65rem; /* air after seat name before chooser */
+      margin-bottom: 0.2rem;
+    }
+    .seat-head b {
+      flex: 0 0 auto; font-weight: 600; letter-spacing: 0.01em; min-width: 3.4rem;
+    }
+    .seat-head .seat-pilot {
+      flex: 1 1 auto; min-width: 0; max-width: 100%;
+    }
+    .seat-main small { display: block; color: #8b9bb4; font-size: 0.72rem; line-height: 1.35; }
+
+    .links-row { text-align: center; margin: 0.75rem 0 0; font-size: 0.85rem; }
+    .links-row a { color: #5b9fd4; margin: 0 0.4rem; }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+  <main class="lab-wrap">
+    <div class="lab-hero">
+      <h2>Summit Lab</h2>
+      <p>Quiet playground beside the gate. Climb columns, bank or push, watch different pilot styles take seats. Showcase of <em>behaviour</em> — not a rulebook dump, not a product page.</p>
+    </div>
+
+    <div class="lab-disclaimer">
+      <strong>Independent educational toy.</strong> Original presentation for secs.observer.
+      Not affiliated with Hasbro, Parker Brothers, Milton Bradley, Redwood EDA, or Makerchip.
+      Not the contest entry; not a commercial board-game product.
+      Logic runs in your browser; treat client code as visible to anyone who cares enough to look.
+    </div>
+
+    <div class="lab-grid">
+      <div class="lab-play">
+        <div class="lab-card">
+          <h3>Board</h3>
+          <div class="board" id="board"></div>
+
+          <div class="turn-strip">
+            <div class="status" id="status">New game.</div>
+            <div class="dice-row" id="dice"></div>
+            <div class="pairings" id="pairings"></div>
+            <div class="controls">
+              <button class="btn-lab primary" id="btnRoll" type="button">Roll</button>
+              <button class="btn-lab ok" id="btnStop" type="button" disabled>Bank</button>
+              <button class="btn-lab" id="btnGuide" type="button" disabled>Take highlight</button>
+            </div>
+            <p class="hint">First to lock three summits wins. Bust wipes the turn. Bank to keep progress.</p>
+          </div>
+        </div>
+
+        <div class="lab-card">
+          <h3>Feed</h3>
+          <div class="feed" id="feed"><div class="line">Start a game. Moves appear here.</div></div>
+        </div>
+      </div>
+
+      <aside class="lab-seats">
+        <div class="lab-card">
+          <h3>Seats</h3>
+          <div class="setup-row">
+            <label>Seats</label>
+            <select id="numPlayers">
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          <div class="seat-grid" id="seatSetup"></div>
+          <div class="setup-stack">
+            <label for="humanSkill">Human assist</label>
+            <select id="humanSkill">
+              <option value="solo">Solo</option>
+              <option value="coach" selected>Coach</option>
+              <option value="guide">Guide</option>
+            </select>
+            <small class="assist-blurb" id="assistBlurb">Highlight a strong legal climb.</small>
+          </div>
+          <div class="controls">
+            <button class="btn-lab primary" id="btnNew" type="button">New game</button>
+          </div>
+          <p class="hint">Each seat picks a pilot style. Humans use the assist level above. Bots play their style silently.</p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="links-row">
+      <a href="game.html">The Game: SECS</a>
+      <a href="terminal.html">Terminal</a>
+      <a href="journal.html#entry-2026-07-18-001">Journal</a>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+  <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+  <script src="js/towers-lab.js?v=3"></script>
+</body>
+</html>

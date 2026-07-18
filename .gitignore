@@ -1,3 +1,4 @@
+﻿
 templatemo_421_raleway/
 origin.html
 assets/origin-*.jpg
@@ -11,3 +12,19 @@ css/jj-gtf.css
 data/jj-gtf-milestones.js
 js/jj-gtf.js
 js/jj-gtf-memories.js
+
+# Secrets / local env (never ship)
+.env
+.env.*
+*.pem
+*.key
+**/credentials.local.*
+**/secrets.local.*
+governance/catalog/data/.credentials.real.json
+
+# Internal human-test facilitator notes (local file paths)
+HUMAN-TEST-PHASE.md
+human-test-feedback/
+
+# Runtime traces with local absolute paths
+governance/traces/

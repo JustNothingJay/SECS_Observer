@@ -2,6 +2,53 @@
     'use strict';
 
     var verticals = {
+        'labour-hire': {
+            label: 'Labour Hire',
+            icon: 'fa-solid fa-people-group',
+            kicker: 'Multi-party commercial governance',
+            subtitle: 'A working dual-portal product: clients request staff, agencies fill, both parties dual-approve timesheets and invoices.',
+            summary: 'Labour hire fails when client and agency keep separate spreadsheets for the same shift. SECS Agconn treats timesheet lines as the single source of truth, enforces G1 (agency holds candidate identity) and G2 (client overlays nominations and Optimal Fit), and refuses invoice issue without dual signature. This vertical has a working local app — not only a narrative demo.',
+            missionTitle: 'Example Mission: Warehouse roster week → dual-approved invoice',
+            missionSummary: 'Demo Warehouse requests Pick/Pack coverage. Demo Labour Hire fills candidates, records worked shifts, submits the period; the client approves; agency drafts and both parties sign the invoice; lines lock.',
+            workingApp: {
+                status: 'Working product (separate deploy)',
+                href: 'apps.html',
+                label: 'See Apps catalogue',
+                note: 'Runtime is not hosted on this static site. Private product repo; invite-only or local demo when offered.'
+            },
+            meta: [
+                { label: 'Adaptor pressure', value: 'Dual approval + locked periods + linked tenancy' },
+                { label: 'Operator question', value: 'Can both parties prove the same hours and signature path?' },
+                { label: 'Failure posture', value: 'Invoice issue without both signatures is structurally refused' }
+            ],
+            workflow: [
+                { phase: '01 · Spark In', detail: 'Client roster/quick/training requests enter as staff-request lines (N/P/C/T grid).' },
+                { phase: '02 · Accept', detail: 'Only linked client↔agency pairs and role-scoped sessions may mutate; org identity comes from the session, not the body.' },
+                { phase: '03 · Route', detail: 'Agency fill creates timesheet lines (scheduled); client may nominate (G2) but only agency assigns (G1).' },
+                { phase: '04 · React', detail: 'Attendance O/L/N/F → worked → agency submit → client approve period under domain state machine.' },
+                { phase: '05 · Emit Proof', detail: 'Invoice from approved lines; agency then client sign; HMAC-durable governance events; optional Xero CSV export.' },
+                { phase: '06 · Extinguish / Lock', detail: 'Issued invoice locks timesheet lines; locked lines refuse further mutation.' },
+                { phase: '07 · Observer boundary', detail: 'Read-only /api/observer/snapshot exposes health and audit counts without writing domain tables.' }
+            ],
+            gains: [
+                { title: 'Shared mirror', detail: 'One timesheet line for client and agency — not two exports that never match.' },
+                { title: 'Dual commercial sign-off', detail: 'Issue requires agencySigned and clientSigned (labour-hire-0001).' },
+                { title: 'Skills + Optimal Fit', detail: 'Placement rules and preferred-worker boosts are first-class and audited.' },
+                { title: 'Working product, not a slide', detail: 'Multi-user portal, durable SQLite, scrypt auth, CSV import/export.' }
+            ],
+            config: [
+                { name: 'dual-approval-before-issue', value: 'Required', meaning: 'invoice.issue refused without both signatures.' },
+                { name: 'locked-period-immutable', value: 'Required', meaning: 'timesheet.line.mutate blocked when complianceFlag/status is locked.' },
+                { name: 'allowedSignals', value: 'Closed set', meaning: 'entityId, lineId, hours, rateCents, transition, … only.' },
+                { name: 'G1 / G2', value: 'Agency / Client', meaning: 'Agency owns candidate shell; client overlays cannot fill.' }
+            ],
+            incident: [
+                'Agency attempts to issue an invoice after generating draft without client signature.',
+                'Domain contract + adaptor predicate refuse issue; governance records the path.',
+                'Both parties sign; lines lock; Xero CSV can be exported for the accounting system.'
+            ],
+            regulators: ['AU labour-hire licensing context', 'Payroll / invoice dual control', 'Privacy — G1 agency holds worker identity']
+        },
         robotics: {
             label: 'Robotics',
             icon: 'fa-solid fa-robot',
@@ -502,6 +549,28 @@
         }).join('');
     }
 
+    function renderWorkingApp(app) {
+        var el = $('vertical-working-app');
+        if (!el) return;
+        if (!app || !app.href) {
+            el.style.display = 'none';
+            el.innerHTML = '';
+            return;
+        }
+        el.style.display = 'block';
+        el.innerHTML =
+            '<div style="padding:14px 16px;border-radius:12px;border:1px solid rgba(72,230,98,0.28);background:rgba(72,230,98,0.07);">' +
+            '<div style="font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent-green);margin-bottom:8px;">Working app · ' +
+            escapeHtml(app.status || 'Available') +
+            '</div>' +
+            '<a href="' + escapeHtml(app.href) + '" target="_blank" rel="noopener noreferrer" style="color:var(--accent-blue);font-weight:500;">' +
+            escapeHtml(app.label || 'Open app') +
+            '</a>' +
+            (app.note ? '<p style="margin:8px 0 0;color:var(--text-muted);font-size:0.88rem;">' + escapeHtml(app.note) + '</p>' : '') +
+            ' · <a href="apps.html" style="color:var(--text-secondary);font-size:0.88rem;">All apps</a>' +
+            '</div>';
+    }
+
     function renderRegulators(items) {
         $('vertical-regulators').innerHTML = items.map(function (item) {
             return '<span><i class="fa-solid fa-check"></i>' + escapeHtml(item) + '</span>';
@@ -523,6 +592,7 @@
         renderConfig(vertical.config);
         renderIncident(vertical.incident);
         renderRegulators(vertical.regulators);
+        renderWorkingApp(vertical.workingApp);
         renderSelector(slug);
         updateUrl(slug);
     }
