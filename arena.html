@@ -8,9 +8,10 @@
   <meta name="robots" content="noindex,nofollow">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="css/secs.min.css?v=14">
-  <script src="js/includes.min.js?v=14"></script>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src wss://secs-arena.fly.dev ws://localhost:8080 ws://127.0.0.1:8080 https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; img-src 'self' data:; frame-ancestors 'none';">
+  <script src="js/includes.min.js?v=15"></script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src https://cdnjs.cloudflare.com; connect-src wss://secs-arena.fly.dev ws://localhost:8080 ws://127.0.0.1:8080 https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; img-src 'self' data:; frame-ancestors 'none';">
   <style>
     .ar-wrap {
       max-width: 1100px; margin: 1.5rem auto 3rem; padding: 0 1rem; color: var(--text-primary, #e7ecf3);
@@ -76,6 +77,23 @@
     .ar-optbtn { text-align: left; width: 100%; padding: 0.6rem 0.7rem; border-radius: 8px; border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; cursor: pointer; font-weight: 600; }
     .ar-optbtn:hover { border-color: #5b9fd4; }
     .ar-controls { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+    .ar-toast {
+      position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
+      background: #1a2332; border: 1px solid #5b9fd4; color: #e7ecf3;
+      padding: 0.65rem 1rem; border-radius: 10px; z-index: 10000;
+      font-size: 0.88rem; max-width: 90vw; box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+      transition: opacity 0.25s;
+    }
+    .ar-toast.warn { border-color: #e8c36a; }
+    .ar-toast.ok { border-color: #3ecf8e; }
+    .ar-toast.bad { border-color: #e05555; }
+    .ar-sib-chip {
+      display: inline-block; font-size: 0.65rem; padding: 0.1rem 0.35rem; margin-left: 0.25rem;
+      border-radius: 4px; background: rgba(232,195,106,0.15); color: #e8c36a; border: 1px solid #6a5430;
+    }
+    .ar-stats-panel {
+      border-top: 1px solid #2a3548; margin-top: 0.75rem; padding-top: 0.65rem;
+    }
     .ar-seatbar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
     .ar-seat { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; padding: 0.3rem 0.55rem; border-radius: 8px; border: 1px solid #2a3548; }
     .ar-seat.cur { border-color: #5b9fd4; box-shadow: 0 0 0 1px #5b9fd4; }
@@ -140,7 +158,8 @@
   <main class="ar-wrap">
     <div class="ar-hero">
       <h2>Summit Arena</h2>
-      <p>Family tables &mdash; 2 to 5 humans plus optional Rivals. Create a table, wait for siblings, host starts the climb.</p>
+      <p>Family tables &mdash; 2 to 5 humans plus optional Rivals. Create a table, wait for siblings, host starts the climb.
+        Prefer one device? <a href="towers-lab.html" style="color:#5b9fd4;">Play Alone</a>.</p>
     </div>
     <div class="ar-conn"><span class="ar-dot" id="connDot"></span><span id="connText">connecting…</span></div>
     <div class="ar-err" id="errLine"></div>
@@ -198,7 +217,37 @@
       <div class="ar-card">
         <h3>Ledger</h3>
         <div id="statsBody"><p class="stats-empty">No Arena games yet. Finish a match and it lands here.</p></div>
-        <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0.45rem 0 0;">Saved on this device only. Sibling rivalries from Arena matches.</p>
+        <div style="margin-top:0.75rem;padding-top:0.65rem;border-top:1px solid #2a3548;">
+          <h3 style="margin-bottom:0.45rem;">Sibling flags</h3>
+          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Tag a pair for the rivalry board (Big Bro / Lil Sis…). Stored on this device.</p>
+          <div class="ar-row" style="margin-bottom:0.4rem;">
+            <select id="sibA" style="flex:1;min-width:6rem;"></select>
+            <select id="sibRoleA">
+              <option value="Big Bro">Big Bro</option>
+              <option value="Lil Bro">Lil Bro</option>
+              <option value="Big Sis">Big Sis</option>
+              <option value="Lil Sis">Lil Sis</option>
+              <option value="Twin">Twin</option>
+              <option value="Cousin">Cousin</option>
+            </select>
+          </div>
+          <div class="ar-row" style="margin-bottom:0.4rem;">
+            <select id="sibB" style="flex:1;min-width:6rem;"></select>
+            <select id="sibRoleB">
+              <option value="Lil Sis">Lil Sis</option>
+              <option value="Lil Bro">Lil Bro</option>
+              <option value="Big Sis">Big Sis</option>
+              <option value="Big Bro">Big Bro</option>
+              <option value="Twin">Twin</option>
+              <option value="Cousin">Cousin</option>
+            </select>
+          </div>
+          <div class="ar-row">
+            <button class="btn-ar primary" id="btnSibFlag" type="button">Flag pair</button>
+          </div>
+          <ul class="stats-riv" id="sibList" style="margin-top:0.55rem;"></ul>
+        </div>
+        <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0.45rem 0 0;">Scores &amp; flags stay on this device only.</p>
       </div>
     </div>
 
@@ -214,14 +263,18 @@
           <div class="ar-controls">
             <button class="btn-ar primary" id="btnRoll" type="button" disabled>Roll</button>
             <button class="btn-ar ok" id="btnBank" type="button" disabled>Bank</button>
+            <button class="btn-ar" id="btnStatsInGame" type="button">Stats</button>
             <button class="btn-ar warn" id="btnLeave" type="button">Leave game</button>
+          </div>
+          <div class="ar-stats-panel" id="gameStatsPanel" hidden>
+            <div id="statsBodyGame"></div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="links-row">
-      <a href="towers-lab.html">Summit Lab (solo / pass-and-play)</a>
+      <a href="towers-lab.html">Play Alone</a>
       <a href="journal.html#entry-2026-07-18-001">Journal</a>
     </div>
 
@@ -271,6 +324,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=4"></script>
+  <script src="js/arena.js?v=5"></script>
 </body>
 </html>

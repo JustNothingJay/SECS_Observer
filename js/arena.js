@@ -77,8 +77,7 @@
     pushGame({ t: Date.now(), seats: seats, win: m.winnerSeat, src: 'arena' });
     renderStats();
   }
-  function renderStats() {
-    var body = $('statsBody');
+  function renderStatsInto(body) {
     if (!body) return;
     var games = getGames();
     if (!games.length) {
@@ -138,21 +137,29 @@
       html += '<div class="stats-sub">Rivalries</div><ul class="stats-riv">';
       for (var ri = 0; ri < rk.length && ri < 8; ri++) {
         var v = rk[ri];
-        html += '<li><span>' + esc(v.a) + '</span><b>' + v.aw + '&ndash;' + v.bw +
-                '</b><span>' + esc(v.b) + '</span></li>';
+        var ra = roleForName(v.a), rb = roleForName(v.b);
+        var la = esc(v.a) + (ra ? ' <i class="ar-sib-chip">' + esc(ra) + '</i>' : '');
+        var lb2 = esc(v.b) + (rb ? ' <i class="ar-sib-chip">' + esc(rb) + '</i>' : '');
+        html += '<li><span>' + la + '</span><b>' + v.aw + '&ndash;' + v.bw +
+                '</b><span>' + lb2 + '</span></li>';
       }
       html += '</ul>';
     }
     html += '<div class="stats-danger"><div class="stats-danger-label">⚠ Danger zone</div>' +
-            '<button type="button" class="stats-reset" id="statsReset">Erase all scores</button></div>';
+            '<button type="button" class="stats-reset stats-reset-btn">Erase all scores</button></div>';
     body.innerHTML = html;
-    var rb = $('statsReset');
+    var rb = body.querySelector('.stats-reset-btn');
     if (rb) rb.onclick = function () {
       if (window.confirm('Erase ALL Arena scores on this device? This cannot be undone.')) {
         lsSet(LS_GAMES, []);
         renderStats();
       }
     };
+  }
+  function renderStats() {
+    renderStatsInto($('statsBody'));
+    renderStatsInto($('statsBodyGame'));
+    renderSibUI();
   }
 
   // Victory boasts — winner picks one of three (YDKJ host energy, family-safe)
@@ -200,6 +207,122 @@
     try { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); } catch (e) {}
   }
 
+  // Soft toast for brief dropouts / back-online (doesn't yank the board away)
+  var toastT = null;
+  function toast(msg, kind) {
+    var el = document.getElementById('arToast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'arToast';
+      el.className = 'ar-toast';
+      el.setAttribute('role', 'status');
+      document.body.appendChild(el);
+    }
+    el.className = 'ar-toast' + (kind ? ' ' + kind : '');
+    el.textContent = msg;
+    el.hidden = false;
+    el.style.opacity = '1';
+    if (toastT) clearTimeout(toastT);
+    toastT = setTimeout(function () {
+      el.style.opacity = '0';
+      setTimeout(function () { el.hidden = true; }, 280);
+    }, 3200);
+  }
+
+  // Sibling pair flags (device-local)
+  var LS_SIB = 'sa_sib_v1';
+  function getSibs() {
+    var s = lsGet(LS_SIB, []);
+    return (s instanceof Array) ? s : [];
+  }
+  function setSibs(list) { lsSet(LS_SIB, list); }
+  function sibKey(a, b) {
+    var x = String(a || '').toLowerCase(), y = String(b || '').toLowerCase();
+    return x < y ? x + '|' + y : y + '|' + x;
+  }
+  function roleForName(name) {
+    var n = String(name || '').toLowerCase();
+    var list = getSibs();
+    for (var i = 0; i < list.length; i++) {
+      var s = list[i];
+      if (String(s.a).toLowerCase() === n) return s.aRole;
+      if (String(s.b).toLowerCase() === n) return s.bRole;
+    }
+    return null;
+  }
+  function renderSibUI() {
+    var list = getSibs();
+    var ul = $('sibList');
+    if (ul) {
+      ul.innerHTML = '';
+      if (!list.length) {
+        ul.innerHTML = '<li class="ar-empty" style="border:none;font-size:0.75rem;">No sibling pairs flagged yet.</li>';
+      } else {
+        list.forEach(function (s, idx) {
+          var li = document.createElement('li');
+          li.innerHTML =
+            '<span>' + esc(s.a) + ' <i class="ar-sib-chip">' + esc(s.aRole) + '</i></span>' +
+            '<b>vs</b>' +
+            '<span>' + esc(s.b) + ' <i class="ar-sib-chip">' + esc(s.bRole) + '</i>' +
+            ' <button type="button" class="btn-ar" data-sib-x="' + idx + '" style="padding:0.15rem 0.4rem;font-size:0.7rem;margin-left:0.35rem;">✕</button></span>';
+          ul.appendChild(li);
+        });
+        ul.querySelectorAll('[data-sib-x]').forEach(function (btn) {
+          btn.onclick = function () {
+            var i = parseInt(btn.getAttribute('data-sib-x'), 10);
+            var next = getSibs();
+            next.splice(i, 1);
+            setSibs(next);
+            renderSibUI();
+            renderStats();
+          };
+        });
+      }
+    }
+    // Populate name pickers from aliases + ledger + online
+    var names = {};
+    getAliases().forEach(function (n) { if (n) names[n] = 1; });
+    getGames().forEach(function (g) {
+      (g.seats || []).forEach(function (s) { if (s.h && s.n) names[s.n] = 1; });
+    });
+    lobbyPlayers.forEach(function (p) { if (p.alias) names[p.alias] = 1; });
+    var me = myAlias(); if (me) names[me] = 1;
+    var arr = Object.keys(names).sort(function (a, b) { return a.localeCompare(b); });
+    ['sibA', 'sibB'].forEach(function (id) {
+      var sel = $(id); if (!sel) return;
+      var cur = sel.value;
+      sel.innerHTML = '';
+      if (!arr.length) {
+        var o0 = document.createElement('option'); o0.value = ''; o0.textContent = '— name —';
+        sel.appendChild(o0);
+        return;
+      }
+      arr.forEach(function (n) {
+        var o = document.createElement('option'); o.value = n; o.textContent = n;
+        sel.appendChild(o);
+      });
+      if (cur && names[cur]) sel.value = cur;
+    });
+  }
+  function flagSiblingPair() {
+    var a = ($('sibA') && $('sibA').value) || '';
+    var b = ($('sibB') && $('sibB').value) || '';
+    var aRole = ($('sibRoleA') && $('sibRoleA').value) || 'Big Bro';
+    var bRole = ($('sibRoleB') && $('sibRoleB').value) || 'Lil Sis';
+    if (!a || !b || a.toLowerCase() === b.toLowerCase()) {
+      setErr('Pick two different names to flag as siblings.');
+      return;
+    }
+    var list = getSibs().filter(function (s) { return sibKey(s.a, s.b) !== sibKey(a, b); });
+    list.unshift({ a: a, b: b, aRole: aRole, bRole: bRole });
+    if (list.length > 40) list = list.slice(0, 40);
+    setSibs(list);
+    setErr('');
+    toast(aRole + ' ' + a + ' · ' + bRole + ' ' + b, 'ok');
+    renderSibUI();
+    renderStats();
+  }
+
   function connect() {
     if (reconnectT) { clearTimeout(reconnectT); reconnectT = null; }
     if (ws) {
@@ -218,10 +341,12 @@
     catch (e) { setConn(false, 'offline · bad server URL'); scheduleReconnect(); return; }
 
     ws.onopen = function () {
+      var wasRe = reconnectAttempt > 0 || everConnected;
       everConnected = true;
       reconnectAttempt = 0;
       setConn(true, 'online · ' + host);
       setErr('');
+      if (wasRe) toast('Back online — brief dropouts are normal on tablets.', 'ok');
       send({ t: 'hello', alias: myAlias() || 'Player' });
       startPing();
     };
@@ -234,8 +359,13 @@
       stopPing();
       var host2 = WS_URL.replace(/^wss?:\/\//, '');
       setConn(false, (everConnected ? 'disconnected' : 'can\'t reach server') + ' · ' + host2);
+      if (everConnected) {
+        toast(inGame
+          ? 'Connection blip — reconnecting. Stay on this screen if you can.'
+          : 'Connection dropped — reconnecting…', 'warn');
+      }
       if (inGame) {
-        try { setStatus('Connection lost — reconnecting… (game may need a restart)', ''); } catch (e) {}
+        try { setStatus('Connection blip — reconnecting… (hang tight)', ''); } catch (e) {}
       }
       scheduleReconnect();
     };
@@ -322,8 +452,10 @@
         break;
       case 'opponentLeft':
         setStatus((m.byAlias ? esc(m.byAlias) + ' left' : 'Someone left') + ' — table closed.', '');
+        toast((m.byAlias || 'A player') + ' left the table (or lost connection).', 'bad');
         inGame = false;
-        setTimeout(showLobby, 1600);
+        hideWin();
+        setTimeout(showLobby, 1800);
         break;
       case 'error':
         setErr(m.msg || 'Something went wrong');
@@ -498,9 +630,11 @@
     curState.players.forEach(function (p, i) {
       var d = document.createElement('div');
       d.className = 'ar-seat' + (i === curState.current ? ' cur' : '');
+      var role = p.human ? roleForName(p.name) : null;
       d.innerHTML =
         '<span class="ar-swatch" style="background:' + COL[i % COL.length] + '"></span>' +
-        '<span>' + esc(p.name) + (i === mySeat ? ' (you)' : '') + '</span>' +
+        '<span>' + esc(p.name) + (i === mySeat ? ' (you)' : '') +
+        (role ? ' <i class="ar-sib-chip">' + esc(role) + '</i>' : '') + '</span>' +
         '<span class="ar-claims">' + p.claimed.length + '/3</span>';
       bar.appendChild(d);
     });
@@ -765,6 +899,21 @@
     lastGameOver = null;
     showLobby();
   };
+
+  $('btnStatsInGame').onclick = function () {
+    var panel = $('gameStatsPanel');
+    if (!panel) return;
+    var open = panel.hidden;
+    panel.hidden = !open;
+    if (open) {
+      renderStatsInto($('statsBodyGame'));
+      $('btnStatsInGame').textContent = 'Hide stats';
+    } else {
+      $('btnStatsInGame').textContent = 'Stats';
+    }
+  };
+
+  if ($('btnSibFlag')) $('btnSibFlag').onclick = flagSiblingPair;
 
   initAliasUI();
   renderStats();

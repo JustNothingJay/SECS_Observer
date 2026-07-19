@@ -846,8 +846,38 @@
     }, 380);
   }
 
+  function assistMode() {
+    var el = $('humanSkill');
+    return el ? el.value : 'solo';
+  }
+  function coachGuideActive() {
+    if (!isHuman(G.current)) return false;
+    var m = assistMode();
+    return m === 'coach' || m === 'guide';
+  }
+  /** Warn before risky coach/guide moves. Returns true if the action may proceed. */
+  function confirmAssistRisk(kind) {
+    if (!G || !coachGuideActive()) return true;
+    if (kind === 'roll' && anyAtTop(G)) {
+      return window.confirm(
+        'Coach note: you already have a tower at the summit this turn.\n\n' +
+        'Roll again and you risk a bust that wipes the claim. Bank to lock it in.\n\n' +
+        'Roll anyway?'
+      );
+    }
+    if (kind === 'bank' && G.climbing && G.climbing.size > 0 && G.climbing.size < 3 && !anyAtTop(G)) {
+      return window.confirm(
+        'Coach note: you still have open climber slots (' + G.climbing.size + ' of 3 in play).\n\n' +
+        'Banking keeps progress, but you could open another column first.\n\n' +
+        'Bank anyway?'
+      );
+    }
+    return true;
+  }
+
   function doRoll() {
     if (G.phase !== 'need_roll' && G.phase !== 'can_stop') return;
+    if (!confirmAssistRisk('roll')) return;
     var who = escHtml(seatName(G.current));
     G.dice = [die(), die(), die(), die()];
     G.rolls += 1;
@@ -898,6 +928,7 @@
   function doStop() {
     if (G.phase !== 'can_stop' && G.phase !== 'need_roll') return;
     if (!G.climbing.size && G.phase === 'need_roll') return;
+    if (!confirmAssistRisk('bank')) return;
     var pi = G.current;
     var who = escHtml(seatName(pi));
     var r = bank(G);
@@ -957,8 +988,8 @@
   $('numPlayers').onchange = function () { renderSeatSetup(); };
   $('humanSkill').onchange = function () { updateAssistBlurb(); refresh(); };
   $('btnNew').onclick = newGame;
-  $('btnRoll').onclick = doRoll;
-  $('btnStop').onclick = doStop;
+  $('btnRoll').onclick = function () { doRoll(); };
+  $('btnStop').onclick = function () { doStop(); };
   $('btnGuide').onclick = function () {
     if (coachPick) choosePairing(coachPick.p, coachPick.priority);
   };
