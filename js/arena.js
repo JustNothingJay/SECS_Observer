@@ -977,7 +977,7 @@
     if (!ul) return;
     ul.innerHTML = '';
     if (!mySaves.length) {
-      ul.innerHTML = '<li class="ar-empty">No paused games yet. Mid-match use <b>Save &amp; pause</b>.</li>';
+      ul.innerHTML = '<li class="ar-empty">Nothing parked yet. In a match, tap <b>Pause</b>.</li>';
       return;
     }
     mySaves.forEach(function (sv) {
@@ -1697,29 +1697,58 @@
     showLobby();
   };
 
-  function openSaveOverlay(prefill) {
+  function openSaveOverlay() {
     if (!inGame) return;
-    $('saveLabelInput').value = prefill || '';
+    var inp = $('saveLabelInput');
+    if (inp) inp.value = '';
+    var more = document.querySelector('.ar-pause-more');
+    if (more) more.open = false;
     $('saveOverlay').hidden = false;
-    try { $('saveLabelInput').focus(); } catch (e) {}
   }
   function doSave(label) {
-    label = (label || '').trim().slice(0, 40);
+    // Empty / "Just pause" = no reason — still parks the match for everyone
+    label = (label == null ? '' : String(label)).trim().slice(0, 40);
     if (!label) label = 'Paused';
     send({ t: 'saveGame', label: label });
-    $('saveOverlay').hidden = true;
+    if ($('saveOverlay')) $('saveOverlay').hidden = true;
+    toast(
+      label === 'Paused'
+        ? 'Paused — pick it up from Paused when you’re back.'
+        : ('Paused · ' + label + ' — see you when you’re back.'),
+      'ok'
+    );
   }
-  $('btnSaveGame').onclick = function () { openSaveOverlay(''); };
-  $('btnSaveConfirm').onclick = function () { doSave($('saveLabelInput').value); };
-  $('btnSaveCancel').onclick = function () { $('saveOverlay').hidden = true; };
-  document.querySelectorAll('[data-qsave]').forEach(function (btn) {
-    btn.onclick = function () { doSave(btn.getAttribute('data-qsave')); };
-  });
-  document.querySelectorAll('[data-qsave-pick]').forEach(function (btn) {
+  if ($('btnSaveGame')) {
+    $('btnSaveGame').onclick = function () { openSaveOverlay(); };
+  }
+  if ($('btnSaveConfirm')) {
+    $('btnSaveConfirm').onclick = function () {
+      doSave($('saveLabelInput') ? $('saveLabelInput').value : '');
+    };
+  }
+  if ($('btnSaveCancel')) {
+    $('btnSaveCancel').onclick = function () {
+      if ($('saveOverlay')) $('saveOverlay').hidden = true;
+    };
+  }
+  // One-tap chips: reason optional, flex immediate
+  document.querySelectorAll('#pauseChips [data-qsave], [data-qsave]').forEach(function (btn) {
+    if (btn._pauseWired) return;
+    btn._pauseWired = true;
     btn.onclick = function () {
-      $('saveLabelInput').value = btn.getAttribute('data-qsave-pick') || '';
+      var v = btn.getAttribute('data-qsave');
+      doSave(v == null ? '' : v);
     };
   });
+  // Enter in custom note = pause
+  if ($('saveLabelInput')) {
+    $('saveLabelInput').onkeydown = function (ev) {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        doSave($('saveLabelInput').value);
+      }
+    };
+  }
 
   $('btnPlayAgain').onclick = function () {
     setErr('');

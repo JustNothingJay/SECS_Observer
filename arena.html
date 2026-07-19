@@ -541,11 +541,66 @@
     .links-row a { color: #5b9fd4; margin: 0 0.4rem; }
     .ar-err { color: #e05555; font-size: 0.82rem; min-height: 1.2em; margin: 0.35rem 0; }
 
+    /* Pause sheet — light, flexible, not a form */
+    .ar-box.ar-pause-box {
+      border-color: #3a4a62;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.4);
+      max-width: 20rem;
+      text-align: center;
+    }
+    .ar-box.ar-pause-box h4 {
+      font-size: 1.15rem; letter-spacing: 0.06em; color: #cdd7e6; margin-bottom: 0.35rem;
+    }
+    .ar-pause-lead {
+      font-size: 0.78rem; color: #8b9bb4; line-height: 1.4; margin: 0 0 0.85rem; font-style: normal;
+    }
+    .ar-pause-chips {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-bottom: 0.75rem;
+    }
+    .ar-chip {
+      border: 1px solid #3a4a62; background: #1a2332; color: #cdd7e6;
+      border-radius: 999px; padding: 0.4rem 0.75rem; font-size: 0.8rem; cursor: pointer;
+      line-height: 1.2; transition: border-color 0.12s, background 0.12s;
+    }
+    .ar-chip:hover { border-color: #5b9fd4; background: #1e2a3a; }
+    .ar-chip:active { transform: scale(0.97); }
+    .ar-chip-quiet {
+      border-style: dashed; color: #8b9bb4;
+    }
+    .ar-chip-quiet:hover { color: #e7ecf3; border-color: #6fcf97; }
+    .ar-pause-more {
+      text-align: left; margin: 0.25rem 0 0; border-top: 1px solid #2a3548; padding-top: 0.55rem;
+    }
+    .ar-pause-more summary {
+      cursor: pointer; font-size: 0.72rem; color: #8b9bb4; list-style: none;
+      text-align: center; user-select: none;
+    }
+    .ar-pause-more summary::-webkit-details-marker { display: none; }
+    .ar-pause-more[open] summary { margin-bottom: 0.45rem; color: #a8b6c8; }
+    .ar-pause-more input[type=text] {
+      width: 100%; font-size: 0.88rem; padding: 0.45rem 0.6rem;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-chip {
+      background: #000; border-color: #fff; color: #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-chip-quiet { color: #bbb; border-style: dashed; }
+    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-box.ar-pause-box {
+      border-color: #7ec8e8; box-shadow: 4px 4px 0 #fff9c4;
+    }
+    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-chip {
+      background: #fffef8; border-color: #7ec8e8; color: #2a3a48;
+    }
+    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-chip-quiet { color: #5a7080; }
+    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-pause-lead,
+    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-pause-more summary { color: #5a7080; }
+    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-box.ar-pause-box h4 { color: #2a6a8a; }
+
     @media (max-width: 720px) {
       .btn-ar { padding: 0.7rem 1rem; font-size: 1rem; min-height: 48px; }
       .ar-optbtn { min-height: 54px; }
       .ar-die { width: 46px; height: 46px; }
       input[type=text], select { font-size: 16px; padding: 0.55rem 0.6rem; }
+      .ar-chip { min-height: 40px; padding: 0.5rem 0.85rem; }
     }
   </style>
 </head>
@@ -659,8 +714,8 @@
       </div>
 
       <div class="ar-card">
-        <h3>Saved games</h3>
-        <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Pause mid-match and resume when everyone is back online (same names).</p>
+        <h3>Paused</h3>
+        <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Pick up where you left off when everyone&rsquo;s back (same names).</p>
         <ul class="ar-players" id="savesList"></ul>
       </div>
 
@@ -737,16 +792,9 @@
           <div class="ar-controls">
             <button class="btn-ar primary" id="btnRoll" type="button" disabled>Roll</button>
             <button class="btn-ar ok" id="btnBank" type="button" disabled>Bank</button>
-            <button class="btn-ar" id="btnSaveGame" type="button">Save &amp; pause</button>
+            <button class="btn-ar" id="btnSaveGame" type="button" title="Park the match — everyone can resume later">Pause</button>
             <button class="btn-ar" id="btnStatsInGame" type="button">Stats</button>
             <button class="btn-ar warn" id="btnLeave" type="button">Leave game</button>
-          </div>
-          <div class="ar-row" id="quickSaveRow" style="margin-top:0.45rem;">
-            <span class="ar-lbl">Quick save:</span>
-            <button class="btn-ar" type="button" data-qsave="Off to school">Off to school</button>
-            <button class="btn-ar" type="button" data-qsave="Time for dinner">Time for dinner</button>
-            <button class="btn-ar" type="button" data-qsave="Shower time">Shower time</button>
-            <button class="btn-ar" type="button" data-qsave="Bedtime">Bedtime</button>
           </div>
           <div class="ar-stats-panel" id="gameStatsPanel" hidden>
             <div id="statsBodyGame"></div>
@@ -797,22 +845,26 @@
     </div>
   </div>
 
-  <!-- Save label picker -->
+  <!-- Quiet pause sheet — optional family reasons, one-tap flex -->
   <div id="saveOverlay" class="ar-overlay" hidden>
-    <div class="ar-box">
-      <h4>Save &amp; pause</h4>
-      <p class="ar-lbl" style="margin:0 0 0.5rem;">Name this pause so you can find it later:</p>
-      <input type="text" id="saveLabelInput" maxlength="40" placeholder="e.g. Off to school" style="width:100%;margin-bottom:0.75rem;">
-      <div class="ar-row" style="flex-wrap:wrap;justify-content:center;margin-bottom:0.75rem;">
-        <button class="btn-ar" type="button" data-qsave-pick="Off to school">Off to school</button>
-        <button class="btn-ar" type="button" data-qsave-pick="Time for dinner">Time for dinner</button>
-        <button class="btn-ar" type="button" data-qsave-pick="Shower time">Shower time</button>
-        <button class="btn-ar" type="button" data-qsave-pick="Bedtime">Bedtime</button>
+    <div class="ar-box ar-pause-box">
+      <h4>Pause</h4>
+      <p class="ar-pause-lead">Park the climb for everyone. Optional reason — polite shorthand, nothing more.</p>
+      <div class="ar-pause-chips" id="pauseChips" role="group" aria-label="Pause reason">
+        <button type="button" class="ar-chip ar-chip-quiet" data-qsave="">Just pause</button>
+        <button type="button" class="ar-chip" data-qsave="Off to school">Off to school</button>
+        <button type="button" class="ar-chip" data-qsave="Dinner">Dinner</button>
+        <button type="button" class="ar-chip" data-qsave="Shower">Shower</button>
+        <button type="button" class="ar-chip" data-qsave="Bedtime">Bedtime</button>
       </div>
-      <div class="ar-row">
-        <button class="btn-ar ok" id="btnSaveConfirm" type="button">Save for everyone</button>
-        <button class="btn-ar warn" id="btnSaveCancel" type="button">Cancel</button>
-      </div>
+      <details class="ar-pause-more">
+        <summary>Custom note</summary>
+        <input type="text" id="saveLabelInput" maxlength="40" placeholder="short note (optional)" autocomplete="off">
+        <div class="ar-row" style="justify-content:center;margin-top:0.55rem;">
+          <button class="btn-ar ok" id="btnSaveConfirm" type="button">Pause</button>
+        </div>
+      </details>
+      <button class="btn-ar" id="btnSaveCancel" type="button" style="margin-top:0.65rem;">Keep playing</button>
     </div>
   </div>
 
@@ -835,6 +887,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=24"></script>
+  <script src="js/arena.js?v=25"></script>
 </body>
 </html>
