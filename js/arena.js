@@ -891,16 +891,18 @@
         (roleForName(p.alias) ? '<i class="ar-sib-chip">' + esc(roleForName(p.alias)) + '</i> ' : '') +
         '<span class="ar-pstatus ' + esc(p.status || 'idle') + '">' + esc(p.status || 'idle') + '</span>';
       li.appendChild(left);
-      // Quick invite only if both idle (legacy 1v1 path)
+      // Quick 1v1 = pure human head-to-head (no Rivals from table config)
       if (p.status === 'idle' && me && me.status === 'idle' && !myParty) {
         var btn = document.createElement('button');
-        btn.className = 'btn-ar';
+        btn.className = 'btn-ar primary';
         btn.type = 'button';
         btn.textContent = 'Quick 1v1';
+        btn.title = 'Head-to-head, no bots';
         btn.onclick = function () {
           setErr('');
-          send({ t: 'invite', toId: p.id, bots: parseInt($('botCount').value, 10) || 1 });
-          setErr('Challenge sent to ' + p.alias + '…');
+          send({ t: 'invite', toId: p.id, bots: 0 });
+          setErr('1v1 challenge sent to ' + p.alias + ' (no Rivals)…');
+          toast('1v1 sent to ' + p.alias + ' — no bots', 'ok');
         };
         li.appendChild(btn);
       }
@@ -909,10 +911,12 @@
   }
 
   function showInvite(m) {
-    $('inviteTitle').textContent = 'Challenge from ' + m.fromAlias;
-    var botTxt = m.bots === 0 ? 'no Rivals' : (m.bots + ' Rival' + (m.bots > 1 ? 's' : ''));
+    $('inviteTitle').textContent = '1v1 from ' + m.fromAlias;
+    var botTxt = (!m.bots || m.bots === 0)
+      ? 'just you two — no Rivals'
+      : (m.bots + ' Rival' + (m.bots > 1 ? 's' : '') + ' as well');
     $('inviteBody').innerHTML =
-      '<b>' + esc(m.fromAlias) + '</b> wants a quick 1v1 + ' + botTxt + '.';
+      '<b>' + esc(m.fromAlias) + '</b> wants a quick head-to-head &mdash; ' + botTxt + '.';
     $('inviteAccept').onclick = function () {
       send({ t: 'inviteResponse', fromId: m.fromId, accept: true });
       hideInvite();
@@ -925,15 +929,42 @@
   }
   function hideInvite() { $('inviteOverlay').hidden = true; }
 
+  // ── Load screen (mask device lag on start / resume) ──
+  var loadHideT = null;
+  function showLoadScreen(title, sub) {
+    var ov = $('loadOverlay');
+    if (!ov) return;
+    if ($('loadTitle')) $('loadTitle').textContent = title || 'Climbing the summit…';
+    if ($('loadSub')) $('loadSub').textContent = sub || 'Syncing boards across devices';
+    ov.hidden = false;
+  }
+  function hideLoadScreen() {
+    var ov = $('loadOverlay');
+    if (!ov) return;
+    ov.hidden = true;
+  }
+
   // ── Game ──
   function showGame(opts) {
     opts = opts || {};
     $('lobbyView').hidden = true;
     $('gameView').hidden = false;
-    setStatus(opts.resumed
-      ? ('Resumed: <b>' + esc(opts.saveLabel || 'Paused game') + '</b>')
-      : 'Game on!', 'mine');
-    if (opts.resumed) toast('Welcome back — pick up where you left off.', 'ok');
+    showLoadScreen(
+      opts.resumed ? 'Resuming…' : 'Match starting…',
+      opts.resumed
+        ? ('Loading “' + (opts.saveLabel || 'paused game') + '”')
+        : 'Syncing dice & towers — hang tight'
+    );
+    if (loadHideT) clearTimeout(loadHideT);
+    // Brief hold so laggy tablets land on the same first frame more often
+    loadHideT = setTimeout(function () {
+      hideLoadScreen();
+      setStatus(opts.resumed
+        ? ('Resumed: <b>' + esc(opts.saveLabel || 'Paused game') + '</b>')
+        : 'Game on!', 'mine');
+      if (opts.resumed) toast('Welcome back — pick up where you left off.', 'ok');
+      loadHideT = null;
+    }, opts.resumed ? 1400 : 1600);
   }
   function setStatus(html, cls) {
     var el = $('status');
@@ -1196,6 +1227,15 @@
     setErr('');
     send({ t: 'createParty' });
   };
+  if ($('btnSoloBot')) {
+    $('btnSoloBot').onclick = function () {
+      setErr('');
+      var n = parseInt(($('soloBotCount') && $('soloBotCount').value) || '1', 10) || 1;
+      n = Math.max(1, Math.min(3, n));
+      send({ t: 'soloBot', bots: n });
+      toast('Starting 1v' + n + ' vs Rival' + (n > 1 ? 's' : '') + '…', 'ok');
+    };
+  }
   function leaveTable() {
     setErr('');
     send({ t: 'leaveParty' });
