@@ -251,9 +251,9 @@
         <div id="statsBody"><p class="stats-empty">No Arena games yet. Finish a match and it lands here.</p></div>
         <div style="margin-top:0.75rem;padding-top:0.65rem;border-top:1px solid #2a3548;">
           <h3 style="margin-bottom:0.45rem;">Family &amp; friend flags</h3>
-          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Optional — nobody needs a tag to play. Flag a pair when you want rivalry chips (Big Bro / Lil Sis / Friend / Ma / Pa…). Tags save on this device. Sibling untags need a parent.</p>
-          <div class="ar-row" style="margin-bottom:0.4rem;">
-            <select id="sibA" style="flex:1;min-width:6rem;"></select>
+          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Optional. You tag people you&rsquo;ve <em>played against</em> (or who are online). Sibling untags need a parent.</p>
+          <div class="ar-row" style="margin-bottom:0.45rem;align-items:center;">
+            <span id="sibMeLabel" style="flex:1;min-width:6rem;font-size:0.88rem;">(you)</span>
             <select id="sibRoleA">
               <option value="Friend">Friend</option>
               <option value="Big Bro">Big Bro</option>
@@ -389,6 +389,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=8"></script>
+  <script src="js/arena.js?v=9"></script>
 </body>
 </html>

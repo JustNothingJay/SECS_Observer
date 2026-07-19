@@ -71,11 +71,32 @@
     if (g.length > 500) g = g.slice(g.length - 500);
     lsSet(LS_GAMES, g);
   }
+  function isPlaceholderName(n) {
+    var s = String(n || '').trim().toLowerCase();
+    if (!s) return true;
+    if (s === 'player' || s === 'you' || s === 'seat') return true;
+    if (/^player\s*#?\s*\d+$/i.test(s)) return true; // Player 1, Player one via number
+    if (/^player\s+(one|two|three|four|five)$/i.test(s)) return true;
+    if (/^seat\s*\d+$/i.test(s)) return true;
+    return false;
+  }
+  function cleanDisplayName(n) {
+    var s = String(n || '').trim();
+    return isPlaceholderName(s) ? null : s;
+  }
   function recordArenaGame(m) {
     if (!m || !m.seats || m.winnerSeat == null) return;
+    var me = myAlias();
     var seats = m.seats.map(function (s) {
-      return { h: !!s.human, pilot: s.pilot || 'human', n: s.name || 'Player', c: s.claims || 0 };
+      var nm = cleanDisplayName(s.name) || (s.human ? null : (s.name || 'Rival'));
+      // Prefer live alias if this seat is "me" under a placeholder
+      if (s.human && isPlaceholderName(s.name) && me) nm = me;
+      if (!nm) nm = s.human ? 'Unknown' : (s.pilot || 'Rival');
+      return { h: !!s.human, pilot: s.pilot || 'human', n: nm, c: s.claims || 0 };
     });
+    // Skip total junk all-placeholder human games
+    var realHumans = seats.filter(function (s) { return s.h && !isPlaceholderName(s.n) && s.n !== 'Unknown'; });
+    if (realHumans.length < 1) return;
     pushGame({ t: Date.now(), seats: seats, win: m.winnerSeat, src: 'arena' });
     renderStats();
   }
@@ -92,12 +113,14 @@
       for (var si = 0; si < rec.seats.length; si++) {
         var s = rec.seats[si];
         if (!s.h) continue;
-        var key = s.n.toLowerCase();
-        if (!lb[key]) lb[key] = { disp: s.n, played: 0, won: 0 };
-        lb[key].disp = s.n;
+        var disp = cleanDisplayName(s.n);
+        if (!disp) continue; // hide "Player 1" / empty placeholders
+        var key = disp.toLowerCase();
+        if (!lb[key]) lb[key] = { disp: disp, played: 0, won: 0 };
+        lb[key].disp = disp;
         lb[key].played++;
         if (si === rec.win) lb[key].won++;
-        humans.push({ i: si, key: key, n: s.n, c: s.c || 0 });
+        humans.push({ i: si, key: key, n: disp, c: s.c || 0 });
       }
       for (var x = 0; x < humans.length; x++) {
         for (var y = x + 1; y < humans.length; y++) {
@@ -375,38 +398,82 @@
         });
       }
     }
-    // Populate name pickers from aliases + ledger + online
-    var names = {};
-    getAliases().forEach(function (n) { if (n) names[n] = 1; });
-    getGames().forEach(function (g) {
-      (g.seats || []).forEach(function (s) { if (s.h && s.n) names[s.n] = 1; });
-    });
-    lobbyPlayers.forEach(function (p) { if (p.alias) names[p.alias] = 1; });
-    var me = myAlias(); if (me) names[me] = 1;
-    var arr = Object.keys(names).sort(function (a, b) { return a.localeCompare(b); });
-    ['sibA', 'sibB'].forEach(function (id) {
-      var sel = $(id); if (!sel) return;
+    // Opponents you've actually played (and others online) — not yourself twice
+    var me = (myAlias() || '').trim();
+    var meKey = me.toLowerCase();
+    var opp = opponentsForTagging();
+    var meLabel = $('sibMeLabel');
+    if (meLabel) {
+      meLabel.innerHTML = me
+        ? (avatarHtml(me) + ' <strong>' + esc(me) + '</strong> <span style="color:#8b9bb4;">(you)</span>')
+        : '<span style="color:#e05555;">Save your name above first</span>';
+    }
+    var sel = $('sibB');
+    if (sel) {
       var cur = sel.value;
       sel.innerHTML = '';
-      if (!arr.length) {
-        var o0 = document.createElement('option'); o0.value = ''; o0.textContent = '— name —';
+      if (!opp.length) {
+        var o0 = document.createElement('option');
+        o0.value = '';
+        o0.textContent = me ? '— play someone first —' : '— save your name —';
         sel.appendChild(o0);
-        return;
+      } else {
+        var ph = document.createElement('option');
+        ph.value = '';
+        ph.textContent = '— pick who to tag —';
+        sel.appendChild(ph);
+        opp.forEach(function (n) {
+          var o = document.createElement('option');
+          o.value = n;
+          o.textContent = n + (avatarFor(n) !== '🙂' ? ' ' + avatarFor(n) : '');
+          sel.appendChild(o);
+        });
+        if (cur && opp.indexOf(cur) !== -1) sel.value = cur;
       }
-      arr.forEach(function (n) {
-        var o = document.createElement('option'); o.value = n; o.textContent = n;
-        sel.appendChild(o);
-      });
-      if (cur && names[cur]) sel.value = cur;
-    });
+    }
   }
+
+  /** Names of humans you've shared a finished Arena game with (excludes you + placeholders). */
+  function opponentsForTagging() {
+    var me = (myAlias() || '').trim().toLowerCase();
+    var map = {};
+    getGames().forEach(function (g) {
+      var humans = (g.seats || []).filter(function (s) {
+        return s.h && cleanDisplayName(s.n);
+      });
+      if (!humans.length) return;
+      var meIn = me && humans.some(function (h) { return h.n.toLowerCase() === me; });
+      // Only count games you were in (if we know who "you" are)
+      if (me && !meIn) return;
+      humans.forEach(function (h) {
+        var n = cleanDisplayName(h.n);
+        if (!n) return;
+        if (me && n.toLowerCase() === me) return;
+        map[n] = 1;
+      });
+    });
+    // Also anyone else currently online (friends about to play)
+    lobbyPlayers.forEach(function (p) {
+      var n = cleanDisplayName(p.alias);
+      if (!n) return;
+      if (me && n.toLowerCase() === me) return;
+      map[n] = 1;
+    });
+    return Object.keys(map).sort(function (a, b) { return a.localeCompare(b); });
+  }
+
   function flagSiblingPair() {
-    var a = ($('sibA') && $('sibA').value) || '';
+    var me = (myAlias() || '').trim();
     var b = ($('sibB') && $('sibB').value) || '';
     var aRole = ($('sibRoleA') && $('sibRoleA').value) || 'Friend';
     var bRole = ($('sibRoleB') && $('sibRoleB').value) || 'Friend';
-    if (!a || !b || a.toLowerCase() === b.toLowerCase()) {
-      setErr('Pick two different names to flag (optional — you can play without tags).');
+    var a = me;
+    if (!a) {
+      setErr('Save your name first, then flag someone you\'ve played.');
+      return;
+    }
+    if (!b || a.toLowerCase() === b.toLowerCase()) {
+      setErr('Pick someone you\'ve played against (optional — tags not required).');
       return;
     }
     // Replacing an existing family/sibling pair is treated like untag + retag → parent gate
