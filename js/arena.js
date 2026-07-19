@@ -313,29 +313,62 @@
     if ($('myAvatarPreview')) $('myAvatarPreview').textContent = cur;
   }
 
+  function isSiblingStyleRole(role) {
+    var r = String(role || '').toLowerCase();
+    return r === 'big bro' || r === 'lil bro' || r === 'big sis' || r === 'lil sis' ||
+      r === 'ma' || r === 'pa' || r === 'twin' || r === 'cousin';
+  }
+  function isFriendPair(s) {
+    return String(s.aRole || '') === 'Friend' && String(s.bRole || '') === 'Friend';
+  }
+  function untagBlockedMessage(s) {
+    var roles = [s.aRole, s.bRole].filter(Boolean);
+    var label = roles.length ? roles.join(' / ') : 'sibling';
+    return 'Go see your parents and tell them why you want to untag this ' + label + '.';
+  }
+
   function renderSibUI() {
     var list = getSibs();
     var ul = $('sibList');
     if (ul) {
       ul.innerHTML = '';
       if (!list.length) {
-        ul.innerHTML = '<li class="ar-empty" style="border:none;font-size:0.75rem;">No family pairs flagged yet.</li>';
+        ul.innerHTML = '<li class="ar-empty" style="border:none;font-size:0.75rem;">No pairs flagged yet — totally fine. Tags are optional.</li>';
       } else {
         list.forEach(function (s, idx) {
           var li = document.createElement('li');
+          var friendOnly = isFriendPair(s);
+          // Friends can be removed; family/sibling-style tags need parents.
+          var untagBtn = friendOnly
+            ? '<button type="button" class="btn-ar" data-sib-x="' + idx + '" data-sib-friend="1" style="padding:0.15rem 0.4rem;font-size:0.7rem;margin-left:0.35rem;" title="Remove friend tag">✕</button>'
+            : '<button type="button" class="btn-ar" data-sib-x="' + idx + '" data-sib-locked="1" style="padding:0.15rem 0.4rem;font-size:0.7rem;margin-left:0.35rem;" title="Sibling tags need a parent">✕</button>';
           li.innerHTML =
             '<span>' + avatarHtml(s.a) + ' ' + esc(s.a) + ' <i class="ar-sib-chip">' + esc(s.aRole) + '</i></span>' +
             '<b>vs</b>' +
-            '<span>' + avatarHtml(s.b) + ' ' + esc(s.b) + ' <i class="ar-sib-chip">' + esc(s.bRole) + '</i>' +
-            ' <button type="button" class="btn-ar" data-sib-x="' + idx + '" style="padding:0.15rem 0.4rem;font-size:0.7rem;margin-left:0.35rem;">✕</button></span>';
+            '<span>' + avatarHtml(s.b) + ' ' + esc(s.b) + ' <i class="ar-sib-chip">' + esc(s.bRole) + '</i> ' +
+            untagBtn + '</span>';
           ul.appendChild(li);
         });
         ul.querySelectorAll('[data-sib-x]').forEach(function (btn) {
           btn.onclick = function () {
             var i = parseInt(btn.getAttribute('data-sib-x'), 10);
             var next = getSibs();
+            var pair = next[i];
+            if (!pair) return;
+            // Sibling / family tags: cannot self-untag
+            if (btn.getAttribute('data-sib-locked') === '1' ||
+                (!isFriendPair(pair) && (isSiblingStyleRole(pair.aRole) || isSiblingStyleRole(pair.bRole)))) {
+              var msg = untagBlockedMessage(pair);
+              setErr(msg);
+              toast(msg, 'warn');
+              window.alert(msg);
+              return;
+            }
+            // Friend–Friend pairs may be removed
             next.splice(i, 1);
             setSibs(next);
+            setErr('');
+            toast('Friend tag removed.', 'ok');
             renderSibUI();
             renderStats();
           };
@@ -370,18 +403,32 @@
   function flagSiblingPair() {
     var a = ($('sibA') && $('sibA').value) || '';
     var b = ($('sibB') && $('sibB').value) || '';
-    var aRole = ($('sibRoleA') && $('sibRoleA').value) || 'Big Bro';
-    var bRole = ($('sibRoleB') && $('sibRoleB').value) || 'Lil Sis';
+    var aRole = ($('sibRoleA') && $('sibRoleA').value) || 'Friend';
+    var bRole = ($('sibRoleB') && $('sibRoleB').value) || 'Friend';
     if (!a || !b || a.toLowerCase() === b.toLowerCase()) {
-      setErr('Pick two different names to flag as siblings.');
+      setErr('Pick two different names to flag (optional — you can play without tags).');
       return;
     }
-    var list = getSibs().filter(function (s) { return sibKey(s.a, s.b) !== sibKey(a, b); });
-    list.unshift({ a: a, b: b, aRole: aRole, bRole: bRole });
+    // Replacing an existing family/sibling pair is treated like untag + retag → parent gate
+    var list = getSibs();
+    var existing = null;
+    for (var i = 0; i < list.length; i++) {
+      if (sibKey(list[i].a, list[i].b) === sibKey(a, b)) { existing = list[i]; break; }
+    }
+    if (existing && !isFriendPair(existing) &&
+        (isSiblingStyleRole(existing.aRole) || isSiblingStyleRole(existing.bRole))) {
+      var msg = untagBlockedMessage(existing);
+      setErr(msg);
+      toast(msg, 'warn');
+      window.alert(msg);
+      return;
+    }
+    list = list.filter(function (s) { return sibKey(s.a, s.b) !== sibKey(a, b); });
+    list.unshift({ a: a, b: b, aRole: aRole, bRole: bRole, t: Date.now() });
     if (list.length > 40) list = list.slice(0, 40);
     setSibs(list);
     setErr('');
-    toast(aRole + ' ' + a + ' · ' + bRole + ' ' + b, 'ok');
+    toast(aRole + ' ' + a + ' · ' + bRole + ' ' + b + ' — saved on this device.', 'ok');
     renderSibUI();
     renderStats();
   }

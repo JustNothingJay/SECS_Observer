@@ -250,11 +250,12 @@
         <h3>Ledger</h3>
         <div id="statsBody"><p class="stats-empty">No Arena games yet. Finish a match and it lands here.</p></div>
         <div style="margin-top:0.75rem;padding-top:0.65rem;border-top:1px solid #2a3548;">
-          <h3 style="margin-bottom:0.45rem;">Family flags</h3>
-          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Tag a pair for the rivalry board (Big Bro / Lil Sis / Ma / Pa…). Stored on this device.</p>
+          <h3 style="margin-bottom:0.45rem;">Family &amp; friend flags</h3>
+          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Optional — nobody needs a tag to play. Flag a pair when you want rivalry chips (Big Bro / Lil Sis / Friend / Ma / Pa…). Tags save on this device. Sibling untags need a parent.</p>
           <div class="ar-row" style="margin-bottom:0.4rem;">
             <select id="sibA" style="flex:1;min-width:6rem;"></select>
             <select id="sibRoleA">
+              <option value="Friend">Friend</option>
               <option value="Big Bro">Big Bro</option>
               <option value="Lil Bro">Lil Bro</option>
               <option value="Big Sis">Big Sis</option>
@@ -268,6 +269,7 @@
           <div class="ar-row" style="margin-bottom:0.4rem;">
             <select id="sibB" style="flex:1;min-width:6rem;"></select>
             <select id="sibRoleB">
+              <option value="Friend">Friend</option>
               <option value="Lil Sis">Lil Sis</option>
               <option value="Lil Bro">Lil Bro</option>
               <option value="Big Sis">Big Sis</option>
@@ -283,7 +285,7 @@
           </div>
           <ul class="stats-riv" id="sibList" style="margin-top:0.55rem;"></ul>
         </div>
-        <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0.45rem 0 0;">Scores &amp; flags stay on this device only.</p>
+        <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0.45rem 0 0;">Scores &amp; flags stay on this device only. Tags are optional.</p>
       </div>
     </div>
 
@@ -387,6 +389,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=7"></script>
+  <script src="js/arena.js?v=8"></script>
 </body>
 </html>
