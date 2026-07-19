@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
   <meta name="description" content="Summit Lab — a quiet SECS playground. Push-your-luck column climbing. Watch different pilot styles. Not a product pitch.">
-  <title>Play Alone — Summit Lab — SECS</title>
+  <title>Summit Lab — SECS</title>
   <meta name="robots" content="noindex,nofollow">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="canonical" href="https://secs.observer/towers-lab.html">
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="css/secs.min.css?v=14">
-  <script src="js/includes.min.js?v=15"></script>
+  <script src="js/includes.min.js?v=16"></script>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src https://cdnjs.cloudflare.com; connect-src https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; img-src 'self' data:; frame-ancestors 'none';">
   <style>
     .lab-wrap {
@@ -125,6 +125,74 @@
     .lab-hero { text-align: center; margin-bottom: 1.25rem; }
     .lab-hero h2 { color: var(--accent-green, #48e662); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
     .lab-hero p { color: var(--text-muted, #8b9bb4); max-width: 42rem; margin: 0.35rem auto; font-size: 0.95rem; line-height: 1.5; }
+    /* Cross-link CTA → Summit Arena (live multiplayer twin) */
+    .lab-arena-cta-wrap { display: flex; justify-content: center; margin: 0.85rem 0 1.35rem; padding: 0 0.5rem; }
+    a.lab-arena-cta {
+      display: flex; align-items: center; gap: 0.9rem; text-align: left; text-decoration: none;
+      max-width: 28rem; width: 100%;
+      padding: 0.95rem 1.15rem; border-radius: 14px;
+      border: 1px solid rgba(91, 159, 212, 0.5);
+      background: linear-gradient(135deg, rgba(18, 28, 48, 0.95) 0%, rgba(12, 18, 28, 0.98) 55%, rgba(20, 32, 40, 0.95) 100%);
+      box-shadow: 0 0 0 1px rgba(91, 159, 212, 0.1), 0 12px 32px rgba(0, 0, 0, 0.35);
+      color: #e7ecf3;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    a.lab-arena-cta:hover {
+      transform: translateY(-2px); border-color: #5b9fd4; text-decoration: none; color: #fff;
+      box-shadow: 0 0 0 1px rgba(91, 159, 212, 0.25), 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+    .lab-arena-cta-icon {
+      flex: 0 0 auto; width: 3rem; height: 3rem; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
+      background: rgba(91, 159, 212, 0.18); border: 1px solid rgba(91, 159, 212, 0.4); color: #5b9fd4;
+    }
+    .lab-arena-cta-kicker {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.14em;
+      color: #7ab0d8; font-weight: 600; margin-bottom: 0.15rem;
+    }
+    .lab-arena-cta-title {
+      font-size: 1.15rem; font-weight: 700; color: #e7ecf3; letter-spacing: 0.04em; line-height: 1.2;
+    }
+    .lab-arena-cta-title span { color: #5b9fd4; }
+    .lab-arena-cta-sub { font-size: 0.78rem; color: #a8b6c8; margin-top: 0.2rem; line-height: 1.35; }
+    .lab-arena-cta-arrow { flex: 0 0 auto; color: #5b9fd4; font-size: 1.1rem; }
+    a.lab-arena-cta:hover .lab-arena-cta-title,
+    a.lab-arena-cta:hover .lab-arena-cta-sub,
+    a.lab-arena-cta:hover .lab-arena-cta-kicker,
+    a.lab-arena-cta:hover .lab-arena-cta-icon,
+    a.lab-arena-cta:hover .lab-arena-cta-arrow { color: #9fd0f0; }
+    a.lab-arena-cta:hover .lab-arena-cta-title { color: #fff; }
+    a.lab-arena-cta:hover .lab-arena-cta-title span { color: #9fd0f0; }
+    .lab-wrap[data-lab-theme="bombaclarttttt"] a.lab-arena-cta {
+      border-color: #fff; background: linear-gradient(135deg, #000, #1a1a1a); box-shadow: 4px 4px 0 #fff; color: #fff;
+    }
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .lab-arena-cta-title,
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .lab-arena-cta-title span,
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .lab-arena-cta-kicker,
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .lab-arena-cta-sub,
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .lab-arena-cta-icon,
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .lab-arena-cta-arrow { color: #fff; }
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .lab-arena-cta-icon { background: #111; border-color: #fff; }
+    .lab-wrap[data-lab-theme="duckduckgoose"] a.lab-arena-cta {
+      border-color: #7ec8e8;
+      background: linear-gradient(135deg, #fffef5 0%, #e8f6fc 100%);
+      box-shadow: 4px 4px 0 #fff9c4; color: #1e3344;
+    }
+    .lab-wrap[data-lab-theme="duckduckgoose"] .lab-arena-cta-title { color: #1e3344; }
+    .lab-wrap[data-lab-theme="duckduckgoose"] .lab-arena-cta-title span,
+    .lab-wrap[data-lab-theme="duckduckgoose"] .lab-arena-cta-kicker,
+    .lab-wrap[data-lab-theme="duckduckgoose"] .lab-arena-cta-icon,
+    .lab-wrap[data-lab-theme="duckduckgoose"] .lab-arena-cta-arrow { color: #2a8ab8; }
+    .lab-wrap[data-lab-theme="duckduckgoose"] .lab-arena-cta-sub { color: #4a6578; }
+    .lab-wrap[data-lab-theme="duckduckgoose"] .lab-arena-cta-icon {
+      background: rgba(110,198,235,0.2); border-color: #7ec8e8;
+    }
+    .lab-wrap[data-lab-theme="duckduckgoose"] a.lab-arena-cta:hover .lab-arena-cta-title { color: #1e3344; }
+    .lab-wrap[data-lab-theme="duckduckgoose"] a.lab-arena-cta:hover .lab-arena-cta-title span,
+    .lab-wrap[data-lab-theme="duckduckgoose"] a.lab-arena-cta:hover .lab-arena-cta-kicker,
+    .lab-wrap[data-lab-theme="duckduckgoose"] a.lab-arena-cta:hover .lab-arena-cta-icon,
+    .lab-wrap[data-lab-theme="duckduckgoose"] a.lab-arena-cta:hover .lab-arena-cta-arrow { color: #1a6a90; }
+    .lab-wrap[data-lab-theme="duckduckgoose"] a.lab-arena-cta:hover .lab-arena-cta-sub { color: #3a5568; }
 
     /* Main play column + seats sidebar */
     .lab-grid {
@@ -358,9 +426,19 @@
 
   <main class="lab-wrap">
     <div class="lab-hero">
-      <h2>Play Alone</h2>
-      <p>Off-server practice board &mdash; one device, no lobby. Climb with Rivals or pass-and-play. For live sibling tables head to
-        <a href="arena.html" style="color:#5b9fd4;">Summit Arena</a>.</p>
+      <h2>Summit Lab</h2>
+      <p>Offline climb on one device &mdash; vs Rivals or pass-and-play, coach optional. Same game as multiplayer; for live family tables use Summit Arena.</p>
+    </div>
+    <div class="lab-arena-cta-wrap">
+      <a class="lab-arena-cta" href="arena.html">
+        <span class="lab-arena-cta-icon" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
+        <span class="lab-arena-cta-body">
+          <span class="lab-arena-cta-kicker">Live online · multiplayer</span>
+          <span class="lab-arena-cta-title"><span>Summit Arena</span></span>
+          <span class="lab-arena-cta-sub">Family tables, Quick 1v1, saves &amp; ledger &mdash; same climb, head-to-head.</span>
+        </span>
+        <span class="lab-arena-cta-arrow" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
+      </a>
     </div>
 
     <div class="lab-grid">
@@ -426,16 +504,16 @@
         </div>
 
         <div class="lab-card">
-          <h3>Family matches</h3>
-          <p class="hint" style="margin:0;">Head-to-head scores &amp; rivalries live in
-            <a href="arena.html" style="color:#5b9fd4;">Summit Arena</a>
-            (online tables). This Lab is solo / pass-and-play on one device.</p>
+          <h3>Same game, two modes</h3>
+          <p class="hint" style="margin:0;"><b>Summit Lab</b> = offline (Rivals / pass-and-play).
+            <b>Summit Arena</b> = live online tables.
+            <a href="arena.html" style="color:#5b9fd4;">Open Summit Arena →</a></p>
         </div>
       </aside>
     </div>
 
     <div class="links-row">
-      <a href="arena.html">Summit Arena (online)</a>
+      <a href="arena.html">Summit Arena (multiplayer)</a>
       <a href="game.html">The Game: SECS</a>
       <a href="terminal.html">Terminal</a>
       <a href="journal.html#entry-2026-07-18-001">Journal</a>

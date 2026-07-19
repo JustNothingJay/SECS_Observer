@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="css/secs.min.css?v=14">
-  <script src="js/includes.min.js?v=15"></script>
+  <script src="js/includes.min.js?v=16"></script>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src https://cdnjs.cloudflare.com; connect-src wss://secs-arena.fly.dev ws://localhost:8080 ws://127.0.0.1:8080 https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; img-src 'self' data:; frame-ancestors 'none';">
   <style>
     .ar-wrap {
@@ -123,23 +123,21 @@
     .ar-wrap[data-ar-skin="bombaclarttttt"] select {
       background: #000; color: #fff; border: 2px solid #fff;
     }
-    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-lab-cta {
-      border-color: #fff;
-      background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
-      box-shadow: 4px 4px 0 #fff;
+    .ar-wrap[data-ar-skin="bombaclarttttt"] {
+      --ar-cta-border: #fff;
+      --ar-cta-bg: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+      --ar-cta-title: #ffffff;
+      --ar-cta-accent: #ffffff;
+      --ar-cta-muted: #c8c8c8;
+      --ar-cta-kicker: #e0e0e0;
+      --ar-cta-icon-bg: #111;
+      --ar-cta-icon-border: #fff;
+      --ar-cta-shadow: 4px 4px 0 #fff;
+      --ar-cta-hover-bg: #ffffff;
+      --ar-cta-hover-title: #000000;
+      --ar-cta-hover-accent: #000000;
+      --ar-cta-hover-muted: #333333;
     }
-    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-lab-cta-title span,
-    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-lab-cta-icon,
-    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-lab-cta-arrow { color: #fff; }
-    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover {
-      border-color: #fff; background: #fff; color: #000;
-    }
-    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-title,
-    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-title span,
-    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-sub,
-    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-kicker,
-    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-icon,
-    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-arrow { color: #000; }
 
     /* AC — duckduckgoose (light yellow/white vertical stripes · pastel climbs) */
     .ar-wrap[data-ar-skin="duckduckgoose"] {
@@ -253,19 +251,20 @@
     .ar-wrap[data-ar-skin="duckduckgoose"] select {
       background: #fffef8; color: #2a3a48; border: 2px solid #7ec8e8;
     }
-    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-lab-cta {
-      border-color: #7ec8e8;
-      background: linear-gradient(135deg, #fffef5 0%, #e8f6fc 100%);
-      box-shadow: 4px 4px 0 #fff9c4;
-    }
-    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-lab-cta-title { color: #2a3a48; }
-    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-lab-cta-title span,
-    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-lab-cta-icon,
-    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-lab-cta-arrow,
-    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-lab-cta-kicker { color: #3a9fcf; }
-    .ar-wrap[data-ar-skin="duckduckgoose"] .ar-lab-cta-sub { color: #5a7080; }
-    .ar-wrap[data-ar-skin="duckduckgoose"] a.ar-lab-cta:hover {
-      border-color: #3a9fcf; box-shadow: 0 0 20px rgba(110,198,235,0.35);
+    .ar-wrap[data-ar-skin="duckduckgoose"] {
+      --ar-cta-border: #7ec8e8;
+      --ar-cta-bg: linear-gradient(135deg, #fffef5 0%, #e8f6fc 100%);
+      --ar-cta-title: #1e3344;
+      --ar-cta-accent: #2a8ab8;
+      --ar-cta-muted: #4a6578;
+      --ar-cta-kicker: #3a9fcf;
+      --ar-cta-icon-bg: rgba(110,198,235,0.2);
+      --ar-cta-icon-border: #7ec8e8;
+      --ar-cta-shadow: 4px 4px 0 #fff9c4;
+      --ar-cta-hover-bg: linear-gradient(135deg, #e8f6fc 0%, #fffef5 100%);
+      --ar-cta-hover-title: #1e3344;
+      --ar-cta-hover-accent: #1a6a90;
+      --ar-cta-hover-muted: #3a5568;
     }
     .ar-wrap[data-ar-skin="duckduckgoose"] .ar-floor.climb-ring {
       box-shadow: inset 0 0 0 2px #fff, 0 0 8px currentColor;
@@ -291,25 +290,39 @@
     .ar-wrap[data-ar-skin="duckduckgoose"] .stats-table td.stats-name { color: #2a3a48; }
     .ar-wrap[data-ar-skin="duckduckgoose"] .stats-table tbody tr:first-child td.stats-name { color: #2a8ab8; }
 
-    /* Play Alone — Summit Lab CTA */
+    /* Cross-link CTA → Summit Lab (theme tokens so text always matches the button) */
+    .ar-wrap {
+      --ar-cta-border: rgba(72, 230, 98, 0.45);
+      --ar-cta-bg: linear-gradient(135deg, rgba(18, 40, 28, 0.95) 0%, rgba(12, 18, 28, 0.98) 55%, rgba(20, 28, 48, 0.95) 100%);
+      --ar-cta-title: #e7ecf3;
+      --ar-cta-accent: #48e662;
+      --ar-cta-muted: #a8b6c8;
+      --ar-cta-kicker: #6fcf97;
+      --ar-cta-icon-bg: linear-gradient(145deg, rgba(72, 230, 98, 0.25), rgba(0, 180, 120, 0.12));
+      --ar-cta-icon-border: rgba(72, 230, 98, 0.35);
+      --ar-cta-shadow: 0 0 0 1px rgba(72, 230, 98, 0.08), 0 12px 32px rgba(0, 0, 0, 0.35), 0 0 28px rgba(72, 230, 98, 0.12);
+      --ar-cta-hover-bg: linear-gradient(135deg, rgba(22, 50, 34, 0.98) 0%, rgba(14, 22, 34, 0.98) 55%, rgba(24, 34, 54, 0.98) 100%);
+      --ar-cta-hover-title: #ffffff;
+      --ar-cta-hover-accent: #6aff8a;
+      --ar-cta-hover-muted: #c5d0de;
+    }
     .ar-lab-cta-wrap { display: flex; justify-content: center; margin: 1rem 0 1.35rem; padding: 0 0.5rem; }
     a.ar-lab-cta {
       display: flex; align-items: center; gap: 0.9rem; text-align: left; text-decoration: none;
       max-width: 28rem; width: 100%;
       padding: 0.95rem 1.15rem;
       border-radius: 14px;
-      border: 1px solid rgba(72, 230, 98, 0.45);
-      background:
-        linear-gradient(135deg, rgba(18, 40, 28, 0.95) 0%, rgba(12, 18, 28, 0.98) 55%, rgba(20, 28, 48, 0.95) 100%);
-      box-shadow: 0 0 0 1px rgba(72, 230, 98, 0.08), 0 12px 32px rgba(0, 0, 0, 0.35),
-        0 0 28px rgba(72, 230, 98, 0.12);
-      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      border: 1px solid var(--ar-cta-border);
+      background: var(--ar-cta-bg);
+      box-shadow: var(--ar-cta-shadow);
+      color: var(--ar-cta-title);
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
     a.ar-lab-cta:hover {
       transform: translateY(-2px);
-      border-color: #48e662;
-      box-shadow: 0 0 0 1px rgba(72, 230, 98, 0.2), 0 16px 40px rgba(0, 0, 0, 0.4),
-        0 0 36px rgba(72, 230, 98, 0.22);
+      border-color: var(--ar-cta-accent);
+      background: var(--ar-cta-hover-bg);
+      color: var(--ar-cta-hover-title);
       text-decoration: none;
     }
     a.ar-lab-cta:active { transform: translateY(0); }
@@ -317,26 +330,32 @@
       flex: 0 0 auto; width: 3rem; height: 3rem; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.45rem;
-      background: linear-gradient(145deg, rgba(72, 230, 98, 0.25), rgba(0, 180, 120, 0.12));
-      border: 1px solid rgba(72, 230, 98, 0.35);
-      color: #48e662;
+      background: var(--ar-cta-icon-bg);
+      border: 1px solid var(--ar-cta-icon-border);
+      color: var(--ar-cta-accent);
     }
-    .ar-lab-cta-body { flex: 1; min-width: 0; }
+    a.ar-lab-cta:hover .ar-lab-cta-icon { color: var(--ar-cta-hover-accent); }
+    .ar-lab-cta-body { flex: 1; min-width: 0; color: inherit; }
     .ar-lab-cta-kicker {
       font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.14em;
-      color: #6fcf97; font-weight: 600; margin-bottom: 0.15rem;
+      color: var(--ar-cta-kicker); font-weight: 600; margin-bottom: 0.15rem;
     }
+    a.ar-lab-cta:hover .ar-lab-cta-kicker { color: var(--ar-cta-hover-accent); }
     .ar-lab-cta-title {
-      font-size: 1.15rem; font-weight: 700; color: #e7ecf3; letter-spacing: 0.04em;
+      font-size: 1.15rem; font-weight: 700; color: var(--ar-cta-title); letter-spacing: 0.04em;
       line-height: 1.2;
     }
-    .ar-lab-cta-title span { color: #48e662; }
+    .ar-lab-cta-title span { color: var(--ar-cta-accent); }
+    a.ar-lab-cta:hover .ar-lab-cta-title { color: var(--ar-cta-hover-title); }
+    a.ar-lab-cta:hover .ar-lab-cta-title span { color: var(--ar-cta-hover-accent); }
     .ar-lab-cta-sub {
-      font-size: 0.78rem; color: #8b9bb4; margin-top: 0.2rem; line-height: 1.35;
+      font-size: 0.78rem; color: var(--ar-cta-muted); margin-top: 0.2rem; line-height: 1.35;
     }
+    a.ar-lab-cta:hover .ar-lab-cta-sub { color: var(--ar-cta-hover-muted); }
     .ar-lab-cta-arrow {
-      flex: 0 0 auto; color: #48e662; font-size: 1.1rem; opacity: 0.85;
+      flex: 0 0 auto; color: var(--ar-cta-accent); font-size: 1.1rem; opacity: 0.9;
     }
+    a.ar-lab-cta:hover .ar-lab-cta-arrow { color: var(--ar-cta-hover-accent); }
     @media (max-width: 720px) {
       a.ar-lab-cta { padding: 1rem 1.05rem; min-height: 72px; }
       .ar-lab-cta-title { font-size: 1.2rem; }
@@ -690,14 +709,14 @@
         <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0.45rem 0 0;">Scores &amp; flags stay on this device only. Tags are optional.</p>
       </div>
 
-      <!-- Play Alone sits below the lobby, not above the action -->
+      <!-- Offline twin of Arena — same climb, one device -->
       <div class="ar-lab-cta-wrap" style="margin:1.25rem 0 0.5rem;">
         <a class="ar-lab-cta" href="towers-lab.html">
           <span class="ar-lab-cta-icon" aria-hidden="true"><i class="fa-solid fa-mountain"></i></span>
           <span class="ar-lab-cta-body">
-            <span class="ar-lab-cta-kicker">Off-server · one device</span>
-            <span class="ar-lab-cta-title">Play Alone · <span>Summit Lab</span></span>
-            <span class="ar-lab-cta-sub">Practice board, coach mode, pass-and-play &mdash; no lobby needed.</span>
+            <span class="ar-lab-cta-kicker">Offline · one device</span>
+            <span class="ar-lab-cta-title"><span>Summit Lab</span></span>
+            <span class="ar-lab-cta-sub">Same game offline &mdash; vs Rivals or pass-and-play. Coach optional. No lobby.</span>
           </span>
           <span class="ar-lab-cta-arrow" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
         </a>
@@ -814,6 +833,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=22"></script>
+  <script src="js/arena.js?v=23"></script>
 </body>
 </html>

@@ -63,7 +63,7 @@
             li('terminal.html', 'Run (Terminal)'),
             li('game.html', 'The Game'),
             li('arena.html', 'Summit Arena'),
-            li('towers-lab.html', 'Play Alone'),
+            li('towers-lab.html', 'Summit Lab'),
             li('neurotrophic.html', 'Neurotrophic OS'),
             li('neurotrophic-proof.html', 'Neurotrophic Proof'),
             li('sovereign.html', 'Sovereign'),
