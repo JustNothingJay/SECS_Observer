@@ -850,7 +850,8 @@
         myParty = m.party;
         if (myParty && myParty.members) learnAvatarsFromList(myParty.members);
         ensureMyAvatarOnServer();
-        if (m.request && myParty && myParty.hostId === youId) {
+        if (m.request && myParty && String(myParty.hostId) === String(youId) &&
+            m.request.type && m.request.fromId) {
           var rq = m.request;
           if (rq.type === 'bots') {
             toast((rq.fromAlias || 'Guest') + ' asks for ' + rq.bots +
@@ -859,7 +860,7 @@
             toast((rq.fromAlias || 'Guest') + ' wants to start — accept to play', 'ok');
           }
         }
-        if (m.requestDeclined && myParty && myParty.hostId !== youId) {
+        if (m.requestDeclined && myParty && String(myParty.hostId) !== String(youId)) {
           toast((m.byAlias || 'Host') + ' said not yet', 'warn');
         }
         renderLobby();
@@ -1077,16 +1078,32 @@
         ' · ' + unique.length + ' online';
     }
 
-    // My table panel
+    // My table panel — host UI vs guest UI must never both show
     var atTable = !!(myParty && myParty.members && myParty.members.length);
+    var hc = $('hostControls');
+    var gc = $('guestControls');
+    var reqBox = $('hostRequestBox');
+    function showEl(el, on) {
+      if (!el) return;
+      el.hidden = !on;
+    }
     $('myTableCard').hidden = !atTable;
     $('openActions').hidden = atTable;
-    if (atTable) {
-      var isHost = myParty.hostId === youId;
+    if (!atTable) {
+      showEl(hc, false);
+      showEl(gc, false);
+      showEl(reqBox, false);
+    } else {
+      // Strict string compare — hostId / youId must match for host chrome
+      var isHost = String(myParty.hostId || '') === String(youId || '') && !!youId;
+      // Real pending request only (not empty junk)
+      var req = myParty.pendingRequest;
+      if (!req || typeof req !== 'object' || !req.type || !req.fromId) req = null;
+
       learnAvatarsFromList(myParty.members);
       var names = myParty.members.map(function (m) {
-        var tag = m.id === myParty.hostId ? ' (host)' : '';
-        var you = m.id === youId ? ' ★' : '';
+        var tag = String(m.id) === String(myParty.hostId) ? ' (host)' : '';
+        var you = String(m.id) === String(youId) ? ' ★' : '';
         var role = roleForName(m.alias);
         return avatarHtml(m.alias, '', avatarForPlayer(m)) + ' ' + esc(m.alias) +
           (role ? ' <i class="ar-sib-chip">' + esc(role) + '</i>' : '') + tag + you;
@@ -1099,47 +1116,54 @@
         (myParty.members.length === 1 ? '' : 's') +
         ' + ' + myParty.bots + ' Rival' + (myParty.bots === 1 ? '' : 's') +
         ' = ' + myParty.seats + '/5 seats' +
-        (openSeats > 0 ? ' · ' + openSeats + ' empty' : '');
+        (openSeats > 0 ? ' · ' + openSeats + ' empty' : '') +
+        (isHost ? ' · you host' : ' · waiting on host');
       if ($('seatHint')) {
         $('seatHint').textContent =
           freeSeats + ' open seat' + (freeSeats === 1 ? '' : 's') + ' → Rivals 0–' + freeSeats;
       }
       $('myTableMembers').innerHTML = names || '…';
-      $('hostControls').hidden = !isHost;
-      $('guestControls').hidden = isHost;
-      var reqBox = $('hostRequestBox');
-      var req = myParty.pendingRequest || null;
-      if (reqBox) {
-        if (isHost && req) {
-          reqBox.hidden = false;
-          var face = avatarHtml(req.fromAlias || '?', '', req.fromAvatar || avatarFor(req.fromAlias));
-          var line = face + ' <b>' + esc(req.fromAlias || 'Guest') + '</b> ';
-          if (req.type === 'bots') {
-            line += 'asks for <b>' + (req.bots | 0) + '</b> Rival' +
-              ((req.bots | 0) === 1 ? '' : 's');
-          } else {
-            line += 'wants to <b>start</b> (' + (myParty.bots | 0) + ' Rival' +
-              ((myParty.bots | 0) === 1 ? '' : 's') + ')';
-          }
-          if ($('hostRequestText')) $('hostRequestText').innerHTML = line;
-          reqBox.setAttribute('data-req-id', req.id || '');
+
+      // Mutually exclusive panels
+      showEl(hc, isHost);
+      showEl(gc, !isHost);
+      // Request bar: host only, and only when a guest actually asked
+      showEl(reqBox, !!(isHost && req));
+      if (isHost && req && reqBox) {
+        var face = avatarHtml(req.fromAlias || '?', '', req.fromAvatar || avatarFor(req.fromAlias));
+        var line = face + ' <b>' + esc(req.fromAlias || 'Guest') + '</b> ';
+        if (req.type === 'bots') {
+          line += 'asks for <b>' + (req.bots | 0) + '</b> Rival' +
+            ((req.bots | 0) === 1 ? '' : 's');
+        } else if (req.type === 'start') {
+          line += 'wants to <b>start</b> (' + (myParty.bots | 0) + ' Rival' +
+            ((myParty.bots | 0) === 1 ? '' : 's') + ')';
         } else {
-          reqBox.hidden = true;
-          reqBox.removeAttribute('data-req-id');
+          line += 'sent a table request';
+        }
+        if ($('hostRequestText')) $('hostRequestText').innerHTML = line;
+        reqBox.setAttribute('data-req-id', req.id || '');
+      } else if (reqBox) {
+        reqBox.removeAttribute('data-req-id');
+        if ($('hostRequestText')) {
+          $('hostRequestText').textContent = 'Someone wants a change…';
         }
       }
+
       if (isHost) {
         var bc = $('botCount');
         fillBotSelect(bc, freeSeats, Math.min(myParty.bots, freeSeats), 0);
         // Host may start with 2+ humans, or 1 human + rivals
-        $('btnStart').disabled = myParty.members.length < 2 && myParty.bots < 1;
+        if ($('btnStart')) {
+          $('btnStart').disabled = myParty.members.length < 2 && myParty.bots < 1;
+        }
       } else {
         var sum = $('guestTableSummary');
         if (sum) {
           sum.textContent = 'Host sets the table · now ' + (myParty.bots | 0) +
             ' Rival' + ((myParty.bots | 0) === 1 ? '' : 's') +
             ' · ' + freeSeats + ' open seat' + (freeSeats === 1 ? '' : 's') +
-            (req && req.fromId === youId
+            (req && String(req.fromId) === String(youId)
               ? ' · waiting on host…'
               : ' · ask below if you want a change');
         }
@@ -1147,15 +1171,15 @@
         if (gba) {
           fillBotSelect(gba, freeSeats, Math.min(myParty.bots, freeSeats), 0);
         }
-        if ($('btnRequestBots')) $('btnRequestBots').disabled = !!(req && req.fromId === youId);
+        if ($('btnRequestBots')) {
+          $('btnRequestBots').disabled = !!(req && String(req.fromId) === String(youId));
+        }
         if ($('btnRequestStart')) {
           $('btnRequestStart').disabled =
-            !!(req && req.fromId === youId) ||
+            !!(req && String(req.fromId) === String(youId)) ||
             (myParty.members.length < 2 && myParty.bots < 1);
         }
       }
-    } else if ($('hostRequestBox')) {
-      $('hostRequestBox').hidden = true;
     }
 
     // Open parties list
@@ -1616,13 +1640,13 @@
   };
   $('botCount').onchange = function () {
     // Host only — guests use Ask host
-    if (myParty && myParty.hostId === youId) {
+    if (myParty && String(myParty.hostId) === String(youId)) {
       send({ t: 'setPartyBots', bots: parseInt($('botCount').value, 10) || 0 });
     }
   };
   if ($('btnRequestBots')) {
     $('btnRequestBots').onclick = function () {
-      if (!myParty || myParty.hostId === youId) return;
+      if (!myParty || String(myParty.hostId) === String(youId)) return;
       setErr('');
       var n = parseInt(($('guestBotAsk') && $('guestBotAsk').value) || '0', 10) || 0;
       var free = myParty ? Math.max(0, MAX_SEATS_UI - myParty.members.length) : 4;
@@ -1633,14 +1657,14 @@
   }
   if ($('btnRequestStart')) {
     $('btnRequestStart').onclick = function () {
-      if (!myParty || myParty.hostId === youId) return;
+      if (!myParty || String(myParty.hostId) === String(youId)) return;
       setErr('');
       send({ t: 'requestStart' });
       toast('Asked host to start', 'ok');
     };
   }
   function respondTableRequest(accept) {
-    if (!myParty || myParty.hostId !== youId || !myParty.pendingRequest) return;
+    if (!myParty || String(myParty.hostId) !== String(youId) || !myParty.pendingRequest) return;
     setErr('');
     send({
       t: 'respondPartyRequest',

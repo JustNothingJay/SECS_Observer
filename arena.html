@@ -386,6 +386,8 @@
     .ar-card h3 { margin: 0 0 0.7rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ar-muted, #8b9bb4); }
 
     .ar-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    /* .ar-row sets display:flex — must not override the HTML hidden attribute */
+    [hidden], .ar-row[hidden], .ar-card[hidden] { display: none !important; }
     label.ar-lbl { font-size: 0.78rem; color: var(--ar-muted, #8b9bb4); }
     input[type=text], select {
       background: var(--ar-input-bg, #1a2332); color: #e7ecf3; border: 1px solid var(--ar-btn-border, #3a4a62); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.9rem;
@@ -833,6 +835,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=23"></script>
+  <script src="js/arena.js?v=24"></script>
 </body>
 </html>
