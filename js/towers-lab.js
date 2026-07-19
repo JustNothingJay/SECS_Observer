@@ -26,8 +26,8 @@
     mountain: ['#6aa06a','#b5732f','#7d94b8','#d9b64a','#9a7b4f'],
     // Elijah — BOMBACLARTTTTT: pitch UI is B&W; climb pills = oztag jersey kits
     bombaclarttttt: ['#e31c23', '#1b4f9c', '#f5c400', '#00a651', '#ff5a00'],
-    // Acacia — duckduckgoose: light-blue climb pills on soft board
-    duckduckgoose: ['#6ec6eb', '#9ad9f2', '#4eb0dc', '#c5ebf8', '#3a9fcf']
+    // Acacia — duckduckgoose: light-blue climb pills + one light pink
+    duckduckgoose: ['#6ec6eb', '#ffb6c8', '#4eb0dc', '#c5ebf8', '#3a9fcf']
   };
   var THEME_ORDER = ['slate','neon','candy','mountain','bombaclarttttt','duckduckgoose'];
   var THEME_LABEL = {
