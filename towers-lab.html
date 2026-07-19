@@ -494,11 +494,11 @@
           <div class="setup-stack">
             <label for="humanSkill">Human assist</label>
             <select id="humanSkill">
-              <option value="solo">Solo</option>
-              <option value="coach" selected>Coach</option>
-              <option value="guide">Guide</option>
+              <option value="solo">Solo — no hints</option>
+              <option value="coach" selected>Coach — highlight strong climb</option>
+              <option value="guide">Guide — highlight + one-tap</option>
             </select>
-            <small class="assist-blurb" id="assistBlurb">Highlight a strong legal climb.</small>
+            <small class="assist-blurb" id="assistBlurb">Highlights one strong legal climb each turn. You still choose.</small>
           </div>
           <div class="setup-stack">
             <label for="themePick">Theme</label>
@@ -553,6 +553,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/towers-lab.js?v=17"></script>
+  <script src="js/towers-lab.js?v=18"></script>
 </body>
 </html>

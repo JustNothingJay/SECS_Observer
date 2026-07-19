@@ -456,6 +456,12 @@
     .ar-opts { display: flex; flex-direction: column; gap: 0.45rem; margin: 0.3rem 0; }
     .ar-optbtn { text-align: left; width: 100%; padding: 0.6rem 0.7rem; border-radius: 8px; border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; cursor: pointer; font-weight: 600; }
     .ar-optbtn:hover { border-color: #5b9fd4; }
+    .ar-optbtn.best {
+      border-color: #3ecf8e; box-shadow: 0 0 0 1px rgba(62, 207, 142, 0.35);
+      background: #1a2a22;
+    }
+    .ar-optbtn .ar-opt-meta { display: block; font-size: 0.72rem; font-weight: 500; color: #8b9bb4; margin-top: 0.2rem; }
+    .ar-optbtn.best .ar-opt-meta { color: #6fcf97; }
     .ar-controls { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
     .ar-toast {
       position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
@@ -651,6 +657,15 @@
           <select id="skinPick" title="Kid-designed Arena skins"></select>
           <span class="ar-lbl" id="skinCredit" style="font-size:0.72rem;"></span>
         </div>
+        <div style="margin-top:0.75rem;padding-top:0.65rem;border-top:1px solid #2a3548;">
+          <label class="ar-lbl" for="assistPick">Your assist</label>
+          <select id="assistPick" title="Help on your turns — used when the table lets each player choose" style="margin-left:0.35rem;">
+            <option value="solo">Solo — no hints</option>
+            <option value="coach">Coach — highlight a strong climb</option>
+            <option value="guide">Guide — highlight + one-tap take it</option>
+          </select>
+          <p class="hint" id="assistBlurb" style="font-size:0.72rem;color:#8b9bb4;margin:0.35rem 0 0;line-height:1.4;">No hints — pure seat. Best for fair head-to-head.</p>
+        </div>
       </div>
 
       <div class="ar-card" id="myTableCard" hidden>
@@ -668,9 +683,20 @@
               <option value="4">4</option>
             </select>
             <span class="ar-lbl" id="seatHint" style="font-size:0.72rem;">Open seats → Rivals</span>
+            <label class="ar-lbl" for="tableAssistPolicy">Assist</label>
+            <select id="tableAssistPolicy" title="Who picks coach mode for this table">
+              <option value="player" selected>Each player chooses</option>
+              <option value="table">Same for whole table</option>
+            </select>
+            <select id="tableAssistMode" title="Mode when whole table shares one setting" hidden>
+              <option value="solo">Solo — no hints</option>
+              <option value="coach">Coach — highlight strong climb</option>
+              <option value="guide">Guide — highlight + one-tap</option>
+            </select>
             <button class="btn-ar ok" id="btnStart" type="button">Start game</button>
             <button class="btn-ar warn" id="btnLeaveTable" type="button">Leave table</button>
           </div>
+          <p class="hint" id="tableAssistHint" style="font-size:0.72rem;color:#8b9bb4;margin:0.4rem 0 0;line-height:1.35;">Default: everyone uses their own assist (set under You).</p>
           <div id="hostRequestBox" class="ar-row" hidden style="margin-top:0.55rem;padding:0.55rem 0.65rem;border-radius:10px;border:1px solid #3d5a80;background:#121c2a;flex-wrap:wrap;gap:0.45rem;align-items:center;">
             <span class="ar-lbl" id="hostRequestText" style="flex:1 1 auto;margin:0;">Someone wants a change…</span>
             <button class="btn-ar ok" id="btnAcceptRequest" type="button">Accept</button>
@@ -724,6 +750,18 @@
             <option value="3">3</option>
           </select>
           <span class="ar-lbl" style="font-size:0.72rem;">Open seats after you two (optional)</span>
+        </div>
+        <div class="ar-row" style="margin-bottom:0.55rem;flex-wrap:wrap;">
+          <label class="ar-lbl" for="quickAssistPolicy">1v1 assist</label>
+          <select id="quickAssistPolicy" title="Agreed for this challenge">
+            <option value="player" selected>Each chooses (default)</option>
+            <option value="table">Same for both</option>
+          </select>
+          <select id="quickAssistMode" title="Shared mode if same for both" hidden>
+            <option value="solo">Solo</option>
+            <option value="coach">Coach</option>
+            <option value="guide">Guide</option>
+          </select>
         </div>
         <ul class="ar-players" id="playerList"></ul>
       </div>
@@ -807,10 +845,12 @@
           <div class="ar-controls">
             <button class="btn-ar primary" id="btnRoll" type="button" disabled>Roll</button>
             <button class="btn-ar ok" id="btnBank" type="button" disabled>Bank</button>
+            <button class="btn-ar" id="btnTakeHighlight" type="button" hidden title="Take the coach highlight (Guide mode)">Take highlight</button>
             <button class="btn-ar" id="btnSaveGame" type="button" title="Park the match — everyone can resume later">Pause</button>
             <button class="btn-ar" id="btnStatsInGame" type="button">Stats</button>
             <button class="btn-ar warn" id="btnLeave" type="button">Leave game</button>
           </div>
+          <p class="hint" id="matchAssistLine" style="font-size:0.72rem;color:#8b9bb4;margin:0.4rem 0 0;"></p>
           <div class="ar-stats-panel" id="gameStatsPanel" hidden>
             <div id="statsBodyGame"></div>
           </div>
@@ -902,6 +942,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=26"></script>
+  <script src="js/arena.js?v=27"></script>
 </body>
 </html>

@@ -144,6 +144,82 @@
   var hostId = null;
   var mySaves = [];
   var rageCount = 0;
+  // Assist / coach — personal pick vs match table rule
+  var LS_ASSIST = 'sa_assist_v1';
+  var matchAssistPolicy = 'player'; // 'player' | 'table' frozen at gameStart
+  var matchAssistMode = 'solo';
+  var coachPickSig = null;
+  var ASSIST_BLURB = {
+    solo: 'No hints — pure seat. Best for fair sibling head-to-head.',
+    coach: 'Highlights one strong legal climb each turn. You still pick — just a nudge.',
+    guide: 'Coach highlight plus a one-tap “Take highlight” button if you want that climb.'
+  };
+  function getPersonalAssist() {
+    try {
+      var v = localStorage.getItem(LS_ASSIST) || 'solo';
+      return (v === 'coach' || v === 'guide' || v === 'solo') ? v : 'solo';
+    } catch (e) { return 'solo'; }
+  }
+  function setPersonalAssist(v) {
+    v = (v === 'coach' || v === 'guide') ? v : 'solo';
+    try { localStorage.setItem(LS_ASSIST, v); } catch (e) {}
+    return v;
+  }
+  /** Effective assist for this device right now (lobby personal or match lock). */
+  function effectiveAssist() {
+    if (inGame && matchAssistPolicy === 'table') return matchAssistMode || 'solo';
+    return getPersonalAssist();
+  }
+  function updateAssistBlurb() {
+    var bl = $('assistBlurb');
+    var pick = $('assistPick');
+    var mode = pick ? pick.value : getPersonalAssist();
+    if (bl) bl.textContent = ASSIST_BLURB[mode] || ASSIST_BLURB.solo;
+  }
+  function wireAssistPickers() {
+    var pick = $('assistPick');
+    if (pick && !pick._wired) {
+      pick._wired = true;
+      pick.value = getPersonalAssist();
+      pick.onchange = function () {
+        setPersonalAssist(pick.value);
+        updateAssistBlurb();
+        if (inGame && matchAssistPolicy === 'player') renderControls();
+        toast('Your assist: ' + pick.options[pick.selectedIndex].text, 'ok');
+      };
+    }
+    updateAssistBlurb();
+    function wirePolicy(policyEl, modeEl) {
+      if (!policyEl || policyEl._wired) return;
+      policyEl._wired = true;
+      var sync = function () {
+        if (modeEl) modeEl.hidden = policyEl.value !== 'table';
+      };
+      policyEl.onchange = sync;
+      sync();
+    }
+    wirePolicy($('tableAssistPolicy'), $('tableAssistMode'));
+    wirePolicy($('quickAssistPolicy'), $('quickAssistMode'));
+    if ($('tableAssistPolicy') && !$('tableAssistPolicy')._hostSend) {
+      $('tableAssistPolicy')._hostSend = true;
+      var sendAssist = function () {
+        if (!myParty || String(myParty.hostId) !== String(youId)) return;
+        send({
+          t: 'setPartyAssist',
+          assistPolicy: $('tableAssistPolicy').value,
+          assistMode: ($('tableAssistMode') && $('tableAssistMode').value) || 'solo'
+        });
+        var hint = $('tableAssistHint');
+        if (hint) {
+          hint.textContent = $('tableAssistPolicy').value === 'table'
+            ? ('Whole table: ' + (($('tableAssistMode') && $('tableAssistMode').selectedOptions[0].text) || 'Solo'))
+            : 'Each player uses their own assist (set under You).';
+        }
+      };
+      $('tableAssistPolicy').addEventListener('change', sendAssist);
+      if ($('tableAssistMode')) $('tableAssistMode').addEventListener('change', sendAssist);
+    }
+  }
 
   // ── Ledger (moved from Summit Lab — Arena matches only) ──
   // Prefer sa_games_v1; migrate old sl_games_v1 once so sibling history isn&apos;t lost.
@@ -894,6 +970,8 @@
         myParty = null;
         lastGameOver = null;
         gameSeats = m.seats || null;
+        matchAssistPolicy = m.assistPolicy === 'table' ? 'table' : 'player';
+        matchAssistMode = (m.assistMode === 'coach' || m.assistMode === 'guide') ? m.assistMode : 'solo';
         learnAvatarsFromList(gameSeats);
         // Re-assert face once more at match start (covers late picks)
         ensureMyAvatarOnServer();
@@ -1131,6 +1209,25 @@
       // Mutually exclusive panels
       showEl(hc, isHost);
       showEl(gc, !isHost);
+      // Host assist policy controls
+      var pol = myParty.assistPolicy === 'table' ? 'table' : 'player';
+      var amode = myParty.assistMode || 'solo';
+      if (isHost) {
+        if ($('tableAssistPolicy') && $('tableAssistPolicy').value !== pol) {
+          $('tableAssistPolicy').value = pol;
+        }
+        if ($('tableAssistMode')) {
+          $('tableAssistMode').value = amode;
+          $('tableAssistMode').hidden = pol !== 'table';
+        }
+        if ($('tableAssistHint')) {
+          $('tableAssistHint').textContent = pol === 'table'
+            ? ('Whole table shares: ' + (ASSIST_BLURB[amode] || amode))
+            : 'Each player uses their own assist (set under You). Default.';
+        }
+      } else if ($('guestTableSummary')) {
+        // append assist note into guest summary later below
+      }
       // Request bar: host only, and only when a guest actually asked
       showEl(reqBox, !!(isHost && req));
       if (isHost && req && reqBox) {
@@ -1164,9 +1261,13 @@
       } else {
         var sum = $('guestTableSummary');
         if (sum) {
+          var aNote = (myParty.assistPolicy === 'table')
+            ? (' · assist for all: ' + (myParty.assistMode || 'solo'))
+            : ' · each player picks their own assist';
           sum.textContent = 'Host sets the table · now ' + (myParty.bots | 0) +
             ' Rival' + ((myParty.bots | 0) === 1 ? '' : 's') +
             ' · ' + freeSeats + ' open seat' + (freeSeats === 1 ? '' : 's') +
+            aNote +
             (req && String(req.fromId) === String(youId)
               ? ' · waiting on host…'
               : ' · ask below if you want a change');
@@ -1264,9 +1365,18 @@
           var qr = $('quickRivalCount');
           var n = qr ? (parseInt(qr.value, 10) || 0) : 0;
           n = Math.max(0, Math.min(3, n)); // 2 humans → 3 free seats
-          send({ t: 'invite', toId: p.id, bots: n });
+          var ap = ($('quickAssistPolicy') && $('quickAssistPolicy').value) || 'player';
+          var am = ($('quickAssistMode') && $('quickAssistMode').value) || 'solo';
+          send({
+            t: 'invite',
+            toId: p.id,
+            bots: n,
+            assistPolicy: ap,
+            assistMode: am
+          });
           var extra = n ? (' + ' + n + ' Rival' + (n === 1 ? '' : 's')) : ' (no Rivals)';
-          setErr('1v1 challenge sent to ' + p.alias + extra + '…');
+          var aExtra = ap === 'table' ? (', assist: ' + am) : ', each picks assist';
+          setErr('1v1 challenge sent to ' + p.alias + extra + aExtra + '…');
           toast('1v1 sent to ' + p.alias + extra, 'ok');
         };
         li.appendChild(btn);
@@ -1280,8 +1390,12 @@
     var botTxt = (!m.bots || m.bots === 0)
       ? 'just you two — no Rivals'
       : (m.bots + ' Rival' + (m.bots > 1 ? 's' : '') + ' as well');
+    var assistTxt = (m.assistPolicy === 'table')
+      ? ('Shared assist: <b>' + esc(m.assistMode || 'solo') + '</b> for both.')
+      : 'Each of you keeps your own assist (Solo / Coach / Guide).';
     $('inviteBody').innerHTML =
-      '<b>' + esc(m.fromAlias) + '</b> wants a quick head-to-head &mdash; ' + botTxt + '.';
+      '<b>' + esc(m.fromAlias) + '</b> wants a quick head-to-head &mdash; ' + botTxt + '.<br><br>' +
+      assistTxt;
     $('inviteAccept').onclick = function () {
       send({ t: 'inviteResponse', fromId: m.fromId, accept: true });
       hideInvite();
@@ -1481,9 +1595,21 @@
   function renderControls() {
     var opts = $('opts'); opts.innerHTML = '';
     var roll = $('btnRoll'), bank = $('btnBank');
+    var takeBtn = $('btnTakeHighlight');
+    coachPickSig = null;
+    if (takeBtn) { takeBtn.hidden = true; takeBtn.disabled = true; }
     var mine = myTurn();
     var curName = curState.players[curState.current]
       ? curState.players[curState.current].name : '';
+    var assist = effectiveAssist();
+    var mal = $('matchAssistLine');
+    if (mal) {
+      if (matchAssistPolicy === 'table') {
+        mal.textContent = 'Table assist: ' + assist + ' — ' + (ASSIST_BLURB[assist] || '');
+      } else {
+        mal.textContent = 'Your assist: ' + assist + ' (each player chooses) — ' + (ASSIST_BLURB[assist] || '');
+      }
+    }
 
     if (curState.winner != null) {
       roll.disabled = true; bank.disabled = true; return;
@@ -1497,16 +1623,32 @@
       return;
     }
     if (curState.phase === 'choose_pair' && curState.options) {
-      setStatus('Your climb — pick a pairing.', 'mine');
+      var showCoach = assist === 'coach' || assist === 'guide';
+      setStatus(
+        showCoach
+          ? 'Your climb — pick a pairing' + (assist === 'guide' ? ' (or Take highlight).' : ' (highlight = strong option).')
+          : 'Your climb — pick a pairing.',
+        'mine'
+      );
       roll.disabled = true; bank.disabled = true;
-      curState.options.forEach(function (o) {
+      if (showCoach && curState.options.length) coachPickSig = curState.options[0].signature;
+      curState.options.forEach(function (o, idx) {
         var b = document.createElement('button');
-        b.className = 'ar-optbtn'; b.type = 'button'; b.textContent = o.headline;
+        b.className = 'ar-optbtn' + (showCoach && idx === 0 ? ' best' : '');
+        b.type = 'button';
+        b.innerHTML = esc(o.headline) +
+          (showCoach && idx === 0
+            ? '<span class="ar-opt-meta">coach highlight · strong legal climb</span>'
+            : '<span class="ar-opt-meta">legal climb</span>');
         b.onclick = function () {
           send({ t: 'action', action: 'choose', signature: o.signature });
         };
         opts.appendChild(b);
       });
+      if (takeBtn && assist === 'guide' && coachPickSig) {
+        takeBtn.hidden = false;
+        takeBtn.disabled = false;
+      }
     } else if (curState.phase === 'need_roll') {
       setStatus('Your turn — <b>Roll</b> to climb.', 'mine');
       roll.disabled = false; bank.disabled = true;
@@ -1653,7 +1795,7 @@
       setErr('');
       var n = parseInt(($('soloBotCount') && $('soloBotCount').value) || '1', 10) || 1;
       n = Math.max(1, Math.min(4, n)); // 1 human + up to 4 rivals = 5 seats
-      send({ t: 'soloBot', bots: n });
+      send({ t: 'soloBot', bots: n, assistMode: getPersonalAssist() });
       toast('Starting 1v' + n + ' vs Rival' + (n > 1 ? 's' : '') + '…', 'ok');
     };
   }
@@ -1716,6 +1858,12 @@
   $('btnBank').onclick = function () {
     if (myTurn()) send({ t: 'action', action: 'stop' });
   };
+  if ($('btnTakeHighlight')) {
+    $('btnTakeHighlight').onclick = function () {
+      if (!myTurn() || !coachPickSig) return;
+      send({ t: 'action', action: 'choose', signature: coachPickSig });
+    };
+  }
   $('btnLeave').onclick = function () {
     if (inGame && !window.confirm(
       'Leave without saving?\n\n' +
@@ -1812,6 +1960,7 @@
   // UI setup must never prevent the WebSocket from connecting
   try { initAliasUI(); } catch (e0) { try { console.warn('initAliasUI', e0); } catch (e) {} }
   try { populateSkinPicker(); } catch (e1) { try { console.warn('skin', e1); } catch (e) {} }
+  try { wireAssistPickers(); } catch (eAssist) {}
   // Seat math: 5 total — rivals fill whatever humans leave open
   try {
     fillBotSelect($('botCount'), 4, 1, 0);

@@ -705,9 +705,9 @@
   }
 
   var ASSIST_BLURB = {
-    solo: 'No hints — pure seat.',
-    coach: 'Highlight a strong legal climb.',
-    guide: 'Coach plus one-tap take highlight.'
+    solo: 'No hints — pure seat. Best for fair head-to-head.',
+    coach: 'Highlights one strong legal climb each turn. You still choose.',
+    guide: 'Coach highlight plus a one-tap “Take highlight” if you want that climb.'
   };
 
   function updateAssistBlurb() {
