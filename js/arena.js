@@ -21,8 +21,9 @@
     default: ['#3d9a6a', '#c45a7a', '#7a6bc4', '#c47a3a', '#4a9a9a'],
     // Elijah — pitch B&W; climb pills = oztag jersey kits
     bombaclarttttt: ['#e31c23', '#1b4f9c', '#f5c400', '#00a651', '#ff5a00'],
-    // Acacia — yellow/white stripes; climb pills = light blue + one light pink
-    duckduckgoose: ['#6ec6eb', '#ffb6c8', '#4eb0dc', '#c5ebf8', '#3a9fcf']
+    // Acacia — yellow/white stripes; climb pills = pastel rainbow
+    // pink · green · purple · orange · cyan
+    duckduckgoose: ['#ffb6c8', '#b8e6b8', '#d4b8f0', '#ffd0a8', '#9eecf5']
   };
   var SKIN_ORDER = ['default', 'bombaclarttttt', 'duckduckgoose'];
   var SKIN_META = {
