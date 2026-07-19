@@ -39,6 +39,157 @@
   var reconnectT = null, bustHideT = null, pingT = null;
   var everConnected = false, reconnectAttempt = 0, intentionalClose = false;
   var inGame = false;
+  var lastGameOver = null; // hold for rematch / stats
+  var hostId = null;
+
+  // ── Ledger (moved from Summit Lab — Arena matches only) ──
+  // Prefer sa_games_v1; migrate old sl_games_v1 once so sibling history isn&apos;t lost.
+  var LS_GAMES = 'sa_games_v1';
+  var LS_GAMES_LEGACY = 'sl_games_v1';
+  function lsGet(key, fallback) {
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function lsSet(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+  }
+  function getGames() {
+    var g = lsGet(LS_GAMES, null);
+    if (g instanceof Array) return g;
+    var legacy = lsGet(LS_GAMES_LEGACY, []);
+    if (legacy instanceof Array && legacy.length) {
+      lsSet(LS_GAMES, legacy);
+      return legacy;
+    }
+    return [];
+  }
+  function pushGame(rec) {
+    var g = getGames();
+    g.push(rec);
+    if (g.length > 500) g = g.slice(g.length - 500);
+    lsSet(LS_GAMES, g);
+  }
+  function recordArenaGame(m) {
+    if (!m || !m.seats || m.winnerSeat == null) return;
+    var seats = m.seats.map(function (s) {
+      return { h: !!s.human, pilot: s.pilot || 'human', n: s.name || 'Player', c: s.claims || 0 };
+    });
+    pushGame({ t: Date.now(), seats: seats, win: m.winnerSeat, src: 'arena' });
+    renderStats();
+  }
+  function renderStats() {
+    var body = $('statsBody');
+    if (!body) return;
+    var games = getGames();
+    if (!games.length) {
+      body.innerHTML = '<p class="stats-empty">No Arena games yet. Finish a match and it lands here.</p>';
+      return;
+    }
+    var lb = {}, riv = {};
+    for (var gi = 0; gi < games.length; gi++) {
+      var rec = games[gi], humans = [];
+      for (var si = 0; si < rec.seats.length; si++) {
+        var s = rec.seats[si];
+        if (!s.h) continue;
+        var key = s.n.toLowerCase();
+        if (!lb[key]) lb[key] = { disp: s.n, played: 0, won: 0 };
+        lb[key].disp = s.n;
+        lb[key].played++;
+        if (si === rec.win) lb[key].won++;
+        humans.push({ i: si, key: key, n: s.n, c: s.c || 0 });
+      }
+      for (var x = 0; x < humans.length; x++) {
+        for (var y = x + 1; y < humans.length; y++) {
+          var A = humans[x], B = humans[y];
+          var first = A.key < B.key ? A : B, second = A.key < B.key ? B : A;
+          var pk = first.key + '|' + second.key;
+          if (!riv[pk]) riv[pk] = { a: first.n, b: second.n, aw: 0, bw: 0 };
+          riv[pk].a = first.n; riv[pk].b = second.n;
+          var wKey = null;
+          if (rec.win === A.i) wKey = A.key;
+          else if (rec.win === B.i) wKey = B.key;
+          else if (A.c !== B.c) wKey = (A.c > B.c) ? A.key : B.key;
+          if (wKey === first.key) riv[pk].aw++;
+          else if (wKey === second.key) riv[pk].bw++;
+        }
+      }
+    }
+    var rows = [];
+    for (var k in lb) if (lb.hasOwnProperty(k)) rows.push(lb[k]);
+    rows.sort(function (p, q) {
+      var pw = p.played ? p.won / p.played : 0, qw = q.played ? q.won / q.played : 0;
+      if (qw !== pw) return qw - pw;
+      return q.won - p.won;
+    });
+    var html = '';
+    if (rows.length) {
+      html += '<table class="stats-table"><thead><tr><th>Player</th><th>P</th><th>W</th><th>Win%</th></tr></thead><tbody>';
+      for (var r = 0; r < rows.length; r++) {
+        var row = rows[r], pct = row.played ? Math.round(100 * row.won / row.played) : 0;
+        html += '<tr><td class="stats-name">' + esc(row.disp) + '</td><td>' + row.played +
+                '</td><td>' + row.won + '</td><td>' + pct + '%</td></tr>';
+      }
+      html += '</tbody></table>';
+    }
+    var rk = [];
+    for (var pk2 in riv) if (riv.hasOwnProperty(pk2)) rk.push(riv[pk2]);
+    if (rk.length) {
+      rk.sort(function (p, q) { return (q.aw + q.bw) - (p.aw + p.bw); });
+      html += '<div class="stats-sub">Rivalries</div><ul class="stats-riv">';
+      for (var ri = 0; ri < rk.length && ri < 8; ri++) {
+        var v = rk[ri];
+        html += '<li><span>' + esc(v.a) + '</span><b>' + v.aw + '&ndash;' + v.bw +
+                '</b><span>' + esc(v.b) + '</span></li>';
+      }
+      html += '</ul>';
+    }
+    html += '<div class="stats-danger"><div class="stats-danger-label">⚠ Danger zone</div>' +
+            '<button type="button" class="stats-reset" id="statsReset">Erase all scores</button></div>';
+    body.innerHTML = html;
+    var rb = $('statsReset');
+    if (rb) rb.onclick = function () {
+      if (window.confirm('Erase ALL Arena scores on this device? This cannot be undone.')) {
+        lsSet(LS_GAMES, []);
+        renderStats();
+      }
+    };
+  }
+
+  // Victory boasts — winner picks one of three (YDKJ host energy, family-safe)
+  var WIN_LINES = [
+    'King of the mountain. Bow, bank, or both.',
+    'That wasn\'t luck — that was pure summit science.',
+    'I climbed. You watched. Roll credits.',
+    'Three summits. Zero sympathy. Next customer!',
+    'The dice liked me better. Fact-check that.',
+    'Call the papers: another legend is born (it\'s me).',
+    'You brought strategy. I brought the trophy.',
+    'Survey says… I win. Ding ding ding!',
+    'Please hold your applause until I\'ve finished gloating.',
+    'Bank early? That\'s adorable. I banked last — and best.',
+    'The towers have spoken. They said my name. Twice.',
+    'Sibling note: this one goes on the fridge.',
+    'I\'d say good game, but I\'m still high on altitude.',
+    'Your climb was educational. Mine was victorious.',
+    'Insert coin to congratulate the champion.',
+    'Math is hard. Winning is easy. For some of us.',
+    'That scoreboard is not a suggestion. It\'s a story about me.',
+    'Pass the tablet — I need a better angle for my victory pose.',
+    'Greed paid off. I\'m writing a self-help book.',
+    'You almost had it! Psych. I had it.',
+    'Error 200: victory successful.',
+    'The house always wins… and today I am the house.',
+    'Climb complete. Ego inflated. Feelings optional.',
+    'I came, I rolled, I claimed three summits. Classic me.'
+  ];
+  function pickThreeWinLines() {
+    var bag = WIN_LINES.slice();
+    for (var i = bag.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = bag[i]; bag[i] = bag[j]; bag[j] = t;
+    }
+    return bag.slice(0, 3);
+  }
 
   function setConn(on, text) {
     $('connDot').className = 'ar-dot' + (on ? ' on' : '');
@@ -144,9 +295,12 @@
         break;
       case 'gameStart':
         mySeat = m.seatIndex;
+        hostId = m.hostId || null;
         hideInvite();
+        hideWin();
         inGame = true;
         myParty = null;
+        lastGameOver = null;
         showGame();
         break;
       case 'state':
@@ -162,6 +316,9 @@
         break;
       case 'gameOver':
         onGameOver(m);
+        break;
+      case 'victoryTaunt':
+        onVictoryTaunt(m);
         break;
       case 'opponentLeft':
         setStatus((m.byAlias ? esc(m.byAlias) + ' left' : 'Someone left') + ' — table closed.', '');
@@ -465,7 +622,14 @@
     }, 2400);
   }
 
+  function hideWin() {
+    var ov = $('winOverlay');
+    if (ov) ov.hidden = true;
+  }
+
   function onGameOver(m) {
+    lastGameOver = m;
+    hostId = m.hostId || hostId;
     var youWon = m.winnerSeat === mySeat;
     setStatus(
       youWon ? '🏆 You win!' : ('<b>' + esc(m.winnerName || 'Someone') + '</b> wins.'),
@@ -473,8 +637,68 @@
     );
     $('btnRoll').disabled = true;
     $('btnBank').disabled = true;
-    inGame = false;
-    setTimeout(showLobby, 3200);
+    inGame = true; // stay "in room" until rematch / leave
+    recordArenaGame(m);
+    showWinOverlay(m, youWon);
+  }
+
+  function showWinOverlay(m, youWon) {
+    $('winTitle').textContent = youWon ? 'YOU WIN!' : 'GAME OVER';
+    $('winHeadline').innerHTML = youWon
+      ? 'Three summits. The table is yours.'
+      : ('<b>' + esc(m.winnerName || 'Someone') + '</b> sealed three summits.');
+
+    var pick = $('winTauntPick');
+    var heard = $('winTauntHeard');
+    var choices = $('winChoices');
+    pick.hidden = true;
+    heard.hidden = true;
+    heard.innerHTML = '';
+    choices.innerHTML = '';
+
+    if (youWon) {
+      pick.hidden = false;
+      var lines = pickThreeWinLines();
+      lines.forEach(function (line) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'ar-taunt-btn';
+        b.textContent = line;
+        b.onclick = function () {
+          send({ t: 'victoryTaunt', line: line });
+          pick.hidden = true;
+          heard.hidden = false;
+          heard.innerHTML = 'You sent: &ldquo;' + esc(line) + '&rdquo;';
+        };
+        choices.appendChild(b);
+      });
+    } else {
+      heard.hidden = false;
+      heard.innerHTML = 'Waiting for the champion\'s victory line…';
+    }
+
+    var isHost = hostId && hostId === youId;
+    $('btnPlayAgain').hidden = !isHost;
+    $('btnPlayAgain').disabled = false;
+    $('winOverlay').hidden = false;
+  }
+
+  function onVictoryTaunt(m) {
+    var heard = $('winTauntHeard');
+    var pick = $('winTauntPick');
+    if (pick) pick.hidden = true;
+    if (heard) {
+      heard.hidden = false;
+      heard.innerHTML =
+        '<b>' + esc(m.fromName || 'Winner') + ':</b> &ldquo;' + esc(m.line || '') + '&rdquo;';
+    }
+    // If win overlay already closed, flash in status
+    if ($('winOverlay').hidden) {
+      setStatus(
+        '<b>' + esc(m.fromName || 'Winner') + '</b>: &ldquo;' + esc(m.line || '') + '&rdquo;',
+        'win'
+      );
+    }
   }
 
   // ── Wire UI ──
@@ -525,10 +749,25 @@
   $('btnLeave').onclick = function () {
     send({ t: 'leaveRoom' });
     inGame = false;
+    hideWin();
+    showLobby();
+  };
+
+  $('btnPlayAgain').onclick = function () {
+    setErr('');
+    $('btnPlayAgain').disabled = true;
+    send({ t: 'rematch' });
+  };
+  $('btnWinDone').onclick = function () {
+    hideWin();
+    send({ t: 'leaveRoom' });
+    inGame = false;
+    lastGameOver = null;
     showLobby();
   };
 
   initAliasUI();
+  renderStats();
   if (!myAlias()) $('aliasInput').focus();
   connect();
 })();

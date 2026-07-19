@@ -149,97 +149,7 @@
     });
     return out;
   }
-  // Append a finished game to the ledger. winIdx = winning seat index.
-  function recordGame(winIdx) {
-    if (!G) return;
-    if (winIdx == null) winIdx = G.winner;
-    if (winIdx == null) return;
-    var seats = [];
-    for (var i = 0; i < G.n; i++) {
-      var p = G.players[i];
-      seats.push({ h: !!p.human, pilot: p.pilot, n: p.name || ('Seat ' + (i + 1)), c: p.claimed.size });
-    }
-    pushGame({ t: Date.now(), seats: seats, win: winIdx });
-    renderStats();
-  }
-  // Derive leaderboard + sibling rivalries from the ledger and paint the card.
-  function renderStats() {
-    var body = $('statsBody');
-    if (!body) return;
-    var games = getGames();
-    if (!games.length) {
-      body.innerHTML = '<p class="stats-empty">No games banked yet. Finish a game and it lands here.</p>';
-      return;
-    }
-    var lb = {}, riv = {};
-    for (var gi = 0; gi < games.length; gi++) {
-      var rec = games[gi], humans = [];
-      for (var si = 0; si < rec.seats.length; si++) {
-        var s = rec.seats[si];
-        if (!s.h) continue;
-        var key = s.n.toLowerCase();
-        if (!lb[key]) lb[key] = { disp: s.n, played: 0, won: 0 };
-        lb[key].disp = s.n;
-        lb[key].played++;
-        if (si === rec.win) lb[key].won++;
-        humans.push({ i: si, key: key, n: s.n, c: s.c || 0 });
-      }
-      for (var x = 0; x < humans.length; x++) {
-        for (var y = x + 1; y < humans.length; y++) {
-          var A = humans[x], B = humans[y];
-          var first = A.key < B.key ? A : B, second = A.key < B.key ? B : A;
-          var pk = first.key + '|' + second.key;
-          if (!riv[pk]) riv[pk] = { a: first.n, b: second.n, aw: 0, bw: 0 };
-          riv[pk].a = first.n; riv[pk].b = second.n;
-          var wKey = null;
-          if (rec.win === A.i) wKey = A.key;
-          else if (rec.win === B.i) wKey = B.key;
-          else if (A.c !== B.c) wKey = (A.c > B.c) ? A.key : B.key;
-          if (wKey === first.key) riv[pk].aw++;
-          else if (wKey === second.key) riv[pk].bw++;
-        }
-      }
-    }
-    var rows = [];
-    for (var k in lb) if (lb.hasOwnProperty(k)) rows.push(lb[k]);
-    rows.sort(function (p, q) {
-      var pw = p.played ? p.won / p.played : 0, qw = q.played ? q.won / q.played : 0;
-      if (qw !== pw) return qw - pw;
-      return q.won - p.won;
-    });
-    var html = '';
-    if (rows.length) {
-      html += '<table class="stats-table"><thead><tr><th>Player</th><th>P</th><th>W</th><th>Win%</th></tr></thead><tbody>';
-      for (var r = 0; r < rows.length; r++) {
-        var row = rows[r], pct = row.played ? Math.round(100 * row.won / row.played) : 0;
-        html += '<tr><td class="stats-name">' + escHtml(row.disp) + '</td><td>' + row.played +
-                '</td><td>' + row.won + '</td><td>' + pct + '%</td></tr>';
-      }
-      html += '</tbody></table>';
-    }
-    var rk = [];
-    for (var pk2 in riv) if (riv.hasOwnProperty(pk2)) rk.push(riv[pk2]);
-    if (rk.length) {
-      rk.sort(function (p, q) { return (q.aw + q.bw) - (p.aw + p.bw); });
-      html += '<div class="stats-sub">Rivalries</div><ul class="stats-riv">';
-      for (var ri = 0; ri < rk.length && ri < 8; ri++) {
-        var v = rk[ri];
-        html += '<li><span>' + escHtml(v.a) + '</span><b>' + v.aw + '&ndash;' + v.bw +
-                '</b><span>' + escHtml(v.b) + '</span></li>';
-      }
-      html += '</ul>';
-    }
-    html += '<div class="stats-danger"><div class="stats-danger-label">⚠ Danger zone</div>' +
-            '<button type="button" class="stats-reset" id="statsReset">Erase all scores</button></div>';
-    body.innerHTML = html;
-    var rb = $('statsReset');
-    if (rb) rb.onclick = function () {
-      if (window.confirm('Erase ALL saved scores on this device? This cannot be undone. (Player names are kept.)')) {
-        lsSet(LS_GAMES, []);
-        renderStats();
-      }
-    };
-  }
+  // Ledger/stats moved to Summit Arena (online family matches).
 
   // Apply a theme: swap the player palette + set the CSS surface variables.
   function applyTheme(t) {
@@ -996,7 +906,6 @@
     if (r.win) {
       setStatus(who + ' wins!', 'win');
       feed('🏆 <b style="color:' + COL[pi] + '">' + who + '</b> seals three summits.');
-      recordGame(pi);
       refresh();
       return;
     }
@@ -1067,5 +976,4 @@
   renderSeatSetup();
   updateAssistBlurb();
   newGame();
-  renderStats();
 })();

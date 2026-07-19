@@ -86,11 +86,39 @@
     .ar-overlay[hidden] { display: none; }
     .ar-box { background: #121820; border: 2px solid #5b9fd4; border-radius: 14px; padding: 1.5rem 1.6rem; max-width: 22rem; width: 100%; text-align: center; }
     .ar-box.bust { border-color: #e05555; box-shadow: 0 0 40px rgba(224,85,85,0.35); }
+    .ar-box.win { border-color: #3ecf8e; box-shadow: 0 0 40px rgba(62,207,142,0.35); }
     .ar-box h4 { margin: 0 0 0.6rem; font-size: 1.4rem; }
     .ar-box.bust h4 { color: #ff5252; text-shadow: 0 0 12px rgba(255,82,82,0.5); letter-spacing: 0.06em; }
+    .ar-box.win h4 { color: #3ecf8e; text-shadow: 0 0 12px rgba(62,207,142,0.45); letter-spacing: 0.06em; }
     .ar-smack { font-style: italic; color: #e7ecf3; margin: 0.5rem 0 1rem; }
     .ar-smack b { color: #ffd23f; font-style: normal; }
     .ar-box .ar-row { justify-content: center; }
+    .ar-taunt-choices { display: flex; flex-direction: column; gap: 0.45rem; margin: 0.5rem 0 0.75rem; }
+    .ar-taunt-btn {
+      text-align: left; width: 100%; padding: 0.65rem 0.75rem; border-radius: 8px;
+      border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; cursor: pointer; font-size: 0.88rem; line-height: 1.35;
+    }
+    .ar-taunt-btn:hover { border-color: #3ecf8e; background: #1e2a24; }
+
+    /* Ledger (moved from Summit Lab) */
+    #statsBody { font-size: 0.8rem; }
+    .stats-empty { color: #8b9bb4; font-size: 0.75rem; margin: 0.2rem 0 0.4rem; }
+    .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; }
+    .stats-table th, .stats-table td { padding: 0.22rem 0.35rem; text-align: right; }
+    .stats-table th { color: #8b9bb4; font-weight: 600; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid #2a3444; }
+    .stats-table td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .stats-table td.stats-name, .stats-table th:first-child { text-align: left; color: #cdd7e6; }
+    .stats-table tbody tr:first-child td.stats-name { color: #6fcf97; font-weight: 600; }
+    .stats-sub { color: #8b9bb4; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em; margin: 0.5rem 0 0.3rem; }
+    .stats-riv { list-style: none; padding: 0; margin: 0; }
+    .stats-riv li { display: flex; justify-content: space-between; align-items: center; padding: 0.18rem 0.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .stats-riv li span { color: #cdd7e6; flex: 1; }
+    .stats-riv li span:last-child { text-align: right; }
+    .stats-riv li b { color: #d6b24a; padding: 0 0.5rem; font-variant-numeric: tabular-nums; }
+    .stats-danger { margin-top: 0.9rem; padding-top: 0.6rem; border-top: 1px dashed #4a2a34; }
+    .stats-danger-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #b56074; margin-bottom: 0.35rem; }
+    .stats-reset { width: 100%; background: rgba(196,90,122,0.10); border: 1px solid #7a3a4a; color: #d98a9f; font-size: 0.72rem; padding: 0.45rem 0.6rem; border-radius: 4px; cursor: pointer; }
+    .stats-reset:hover { background: rgba(196,90,122,0.22); border-color: #c45a7a; color: #f2b0c2; }
 
     .ar-notice { max-width: 56ch; margin: 2rem auto 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.07); font-size: 0.72rem; line-height: 1.6; color: #7a828a; text-align: center; }
     .links-row { text-align: center; margin: 1rem 0 0; font-size: 0.85rem; }
@@ -166,6 +194,12 @@
         <h3>Who&rsquo;s online</h3>
         <ul class="ar-players" id="playerList"></ul>
       </div>
+
+      <div class="ar-card">
+        <h3>Ledger</h3>
+        <div id="statsBody"><p class="stats-empty">No Arena games yet. Finish a match and it lands here.</p></div>
+        <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0.45rem 0 0;">Saved on this device only. Sibling rivalries from Arena matches.</p>
+      </div>
     </div>
 
     <!-- GAME -->
@@ -218,8 +252,25 @@
     </div>
   </div>
 
+  <!-- Winner overlay: pick a taunt (winner) / hear it (others) + play again -->
+  <div id="winOverlay" class="ar-overlay" hidden>
+    <div class="ar-box win" id="winBox">
+      <h4 id="winTitle">WINNER!</h4>
+      <div class="ar-smack" id="winHeadline"></div>
+      <div id="winTauntPick" hidden>
+        <p class="ar-lbl" style="margin:0 0 0.5rem;">Send one to the table:</p>
+        <div class="ar-taunt-choices" id="winChoices"></div>
+      </div>
+      <div class="ar-smack" id="winTauntHeard" hidden></div>
+      <div class="ar-row" style="margin-top:1rem;flex-direction:column;gap:0.5rem;">
+        <button class="btn-ar ok" id="btnPlayAgain" type="button" hidden>Play again</button>
+        <button class="btn-ar" id="btnWinDone" type="button">Back to lobby</button>
+      </div>
+    </div>
+  </div>
+
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=3"></script>
+  <script src="js/arena.js?v=4"></script>
 </body>
 </html>
