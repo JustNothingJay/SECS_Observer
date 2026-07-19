@@ -741,8 +741,10 @@
         } else {
           var occ = [];
           for (var pi = 0; pi < G.n; pi++) if (effH(pi, s) >= f) occ.push(pi);
-          if (occ.length === 1) fl.style.background = COL[occ[0] % COL.length];
-          else if (occ.length > 1) {
+          if (occ.length === 1) {
+            fl.style.background = COL[occ[0] % COL.length];
+            fl.style.color = COL[occ[0] % COL.length];
+          } else if (occ.length > 1) {
             var pct = 100 / occ.length;
             occ.forEach(function (pi, i) {
               var st = document.createElement('div');
@@ -752,9 +754,13 @@
               st.style.background = COL[pi % COL.length];
               fl.appendChild(st);
             });
+            if (occ.indexOf(G.current) !== -1) fl.style.color = COL[G.current % COL.length];
           }
           var locked = G.players[G.current].floor[s] || 0;
-          if (G.phase !== 'over' && (G.climbFloor[s] || 0) >= f && locked < f) fl.classList.add('climb-ring');
+          if (G.phase !== 'over' && (G.climbFloor[s] || 0) >= f && locked < f) {
+            fl.classList.add('climb-ring');
+            fl.style.color = COL[G.current % COL.length];
+          }
         }
         stack.appendChild(fl);
       }
