@@ -37,25 +37,30 @@
       return SKIN_COLS[s] ? s : 'default';
     } catch (e) { return 'default'; }
   }
-  function applySkin(id) {
+  function applySkin(id, opts) {
+    opts = opts || {};
     if (!SKIN_COLS[id]) id = 'default';
     COL = SKIN_COLS[id].slice();
-    var wrap = $('arWrap') || document.querySelector('.ar-wrap');
-    if (wrap) {
-      if (id === 'default') wrap.removeAttribute('data-ar-skin');
-      else wrap.setAttribute('data-ar-skin', id);
+    try {
+      var wrap = document.getElementById('arWrap') || document.querySelector('.ar-wrap');
+      if (wrap) {
+        if (id === 'default') wrap.removeAttribute('data-ar-skin');
+        else wrap.setAttribute('data-ar-skin', id);
+      }
+      try { localStorage.setItem(LS_SKIN, id); } catch (e) {}
+      var meta = SKIN_META[id] || SKIN_META.default;
+      var credit = document.getElementById('skinCredit');
+      if (credit) credit.textContent = meta.credit || '';
+      var badge = document.getElementById('arSkinBadge');
+      if (badge && id === 'bombaclarttttt') {
+        badge.textContent = 'BOMBACLARTTTTT · Elijah · Oztag';
+      }
+    } catch (eSkin) {}
+    // Re-paint only when asked (never block startup / connect)
+    if (opts.repaint) {
+      try { if (typeof renderGame === 'function' && curState) renderGame(); } catch (e2) {}
+      try { if (typeof renderLobby === 'function') renderLobby(); } catch (e3) {}
     }
-    try { localStorage.setItem(LS_SKIN, id); } catch (e) {}
-    var meta = SKIN_META[id] || SKIN_META.default;
-    var credit = $('skinCredit');
-    if (credit) credit.textContent = meta.credit || '';
-    var badge = $('arSkinBadge');
-    if (badge && id === 'bombaclarttttt') {
-      badge.textContent = 'BOMBACLARTTTTT · Elijah · Oztag';
-    }
-    // Re-paint board if mid-game
-    try { if (typeof renderGame === 'function' && curState) renderGame(); } catch (e2) {}
-    try { if (typeof renderLobby === 'function') renderLobby(); } catch (e3) {}
   }
   function populateSkinPicker() {
     var sel = $('skinPick');
@@ -71,7 +76,7 @@
       sel.appendChild(o);
     });
     sel.onchange = function () {
-      applySkin(sel.value);
+      applySkin(sel.value, { repaint: true });
       var m = SKIN_META[sel.value];
       if (m && sel.value !== 'default') {
         toast('Skin on: ' + m.label + (m.credit ? ' (' + m.credit + ')' : ''), 'ok');
@@ -79,7 +84,8 @@
         toast('Default Arena skin', 'ok');
       }
     };
-    applySkin(cur);
+    // CSS only on first load — don't touch lobby DOM before connect wires up
+    applySkin(cur, { repaint: false });
   }
 
   function $(id) { return document.getElementById(id); }
@@ -1681,11 +1687,15 @@
 
   if ($('btnSibFlag')) $('btnSibFlag').onclick = flagSiblingPair;
 
-  initAliasUI();
-  populateSkinPicker();
-  renderStats();
-  renderRage();
-  renderSaves();
-  if (!myAlias()) $('aliasInput').focus();
-  connect();
+  // UI setup must never prevent the WebSocket from connecting
+  try { initAliasUI(); } catch (e0) { try { console.warn('initAliasUI', e0); } catch (e) {} }
+  try { populateSkinPicker(); } catch (e1) { try { console.warn('skin', e1); } catch (e) {} }
+  try { renderStats(); } catch (e2) {}
+  try { renderRage(); } catch (e3) {}
+  try { renderSaves(); } catch (e4) {}
+  try { if (!myAlias() && $('aliasInput')) $('aliasInput').focus(); } catch (e5) {}
+  try { connect(); } catch (e6) {
+    try { setConn(false, 'connect failed — retrying…'); } catch (e7) {}
+    try { scheduleReconnect(); } catch (e8) {}
+  }
 })();
