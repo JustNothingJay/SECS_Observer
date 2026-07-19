@@ -9,12 +9,12 @@
 
   // Public labels only — internal ids stay opaque
   var PILOTS = {
-    human: { label: 'Human', blurb: 'You decide.' },
-    loom:  { label: 'Loom',  blurb: 'Patient lines, outer preference.' },
-    ember: { label: 'Ember', blurb: 'Presses when the table pays.' },
-    frost: { label: 'Frost', blurb: 'Holds the middle; banks early.' },
-    bolt:  { label: 'Bolt',  blurb: 'Hunts short summits.' },
-    drift: { label: 'Drift', blurb: 'No fixed habit.' }
+    human: { label: 'Human', blurb: 'You decide.', face: '🙂' },
+    loom:  { label: 'Loom',  blurb: 'Patient lines, outer preference.', face: '🧵' },
+    ember: { label: 'Ember', blurb: 'Presses when the table pays.', face: '🔥' },
+    frost: { label: 'Frost', blurb: 'Holds the middle; banks early.', face: '❄️' },
+    bolt:  { label: 'Bolt',  blurb: 'Hunts short summits.', face: '⚡' },
+    drift: { label: 'Drift', blurb: 'No fixed habit.', face: '🌊' }
   };
   var PILOT_ORDER = ['human','loom','ember','frost','bolt','drift'];
 
@@ -672,23 +672,35 @@
       row.className = 'seat';
       var pick = prev[i] || defaultPilot(i);
       var aliasVal = prevAlias[i] || '';
+      var face = (PILOTS[pick] && PILOTS[pick].face) || '🙂';
+      var kind = pick === 'human' ? 'HUMAN' : 'RIVAL';
       row.innerHTML =
         '<div class="swatch" style="background:' + COL[i] + '"></div>' +
+        '<span class="seat-face" title="' + escAttr(kind) + '" style="font-size:1.15rem;line-height:1;width:1.6rem;text-align:center;">' + face + '</span>' +
         '<div class="seat-main">' +
-          '<div class="seat-head"><b>Seat ' + (i + 1) + '</b>' + seatSelectHtml(i, pick) + '</div>' +
+          '<div class="seat-head"><b>Seat ' + (i + 1) + '</b> ' +
+            '<i class="seat-kind ' + (pick === 'human' ? 'human' : 'rival') + '">' + kind + '</i> ' +
+            seatSelectHtml(i, pick) + '</div>' +
           '<input class="seat-alias" data-seat="' + i + '" list="aliasList" maxlength="18" ' +
             'placeholder="name…" value="' + escAttr(aliasVal) + '"' +
             (pick === 'human' ? '' : ' style="display:none"') + '>' +
           '<small>' + (PILOTS[pick] ? PILOTS[pick].blurb : '') + '</small>' +
         '</div>';
       el.appendChild(row);
-      (function (small, aliasInp) {
+      (function (small, aliasInp, faceEl, kindEl) {
         var sel = row.querySelector('select');
         sel.onchange = function () {
-          small.textContent = PILOTS[sel.value].blurb;
-          aliasInp.style.display = (sel.value === 'human') ? '' : 'none';
+          var pid = sel.value;
+          small.textContent = PILOTS[pid] ? PILOTS[pid].blurb : '';
+          aliasInp.style.display = (pid === 'human') ? '' : 'none';
+          if (faceEl) faceEl.textContent = (PILOTS[pid] && PILOTS[pid].face) || '🙂';
+          if (kindEl) {
+            kindEl.textContent = pid === 'human' ? 'HUMAN' : 'RIVAL';
+            kindEl.className = 'seat-kind ' + (pid === 'human' ? 'human' : 'rival');
+          }
         };
-      })(row.querySelector('small'), row.querySelector('.seat-alias'));
+      })(row.querySelector('small'), row.querySelector('.seat-alias'),
+         row.querySelector('.seat-face'), row.querySelector('.seat-kind'));
     }
   }
 

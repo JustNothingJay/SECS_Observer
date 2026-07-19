@@ -493,9 +493,24 @@
       border-top: 1px solid #2a3548; margin-top: 0.75rem; padding-top: 0.65rem;
     }
     .ar-seatbar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
-    .ar-seat { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; padding: 0.3rem 0.55rem; border-radius: 8px; border: 1px solid #2a3548; }
+    .ar-seat { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; padding: 0.35rem 0.55rem; border-radius: 8px; border: 1px solid #2a3548; }
     .ar-seat.cur { border-color: #5b9fd4; box-shadow: 0 0 0 1px #5b9fd4; }
-    .ar-swatch { width: 12px; height: 12px; border-radius: 3px; }
+    .ar-seat-rival { border-style: dashed; opacity: 0.95; }
+    .ar-seat-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 0.3rem; min-width: 0; }
+    .ar-seat-name { font-weight: 600; }
+    .ar-kind-chip {
+      display: inline-block; font-size: 0.58rem; font-style: normal; font-weight: 700;
+      letter-spacing: 0.06em; padding: 0.08rem 0.32rem; border-radius: 3px;
+      line-height: 1.2; vertical-align: middle;
+    }
+    .ar-kind-chip.human {
+      background: rgba(62, 207, 142, 0.15); color: #6fcf97; border: 1px solid #2a5a3a;
+    }
+    .ar-kind-chip.rival {
+      background: rgba(91, 159, 212, 0.12); color: #8bb8e0; border: 1px solid #2a4060;
+    }
+    .ar-avatar-rival { border-style: dashed; }
+    .ar-swatch { width: 12px; height: 12px; border-radius: 3px; flex: 0 0 auto; }
     .ar-claims { color: #8b9bb4; font-size: 0.72rem; }
 
     .ar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
@@ -729,25 +744,13 @@
         <div id="statsBody"><p class="stats-empty">No Arena games yet. Finish a match and it lands here.</p></div>
         <div style="margin-top:0.75rem;padding-top:0.65rem;border-top:1px solid #2a3548;">
           <h3 style="margin-bottom:0.45rem;">Family &amp; friend flags</h3>
-          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Optional. You tag people you&rsquo;ve <em>played against</em> (or who are online). Sibling untags need a parent.</p>
-          <div class="ar-row" style="margin-bottom:0.45rem;align-items:center;">
-            <span id="sibMeLabel" style="flex:1;min-width:6rem;font-size:0.88rem;">(you)</span>
-            <select id="sibRoleA">
-              <option value="Friend">Friend</option>
-              <option value="Big Bro">Big Bro</option>
-              <option value="Lil Bro">Lil Bro</option>
-              <option value="Big Sis">Big Sis</option>
-              <option value="Lil Sis">Lil Sis</option>
-              <option value="Ma">Ma</option>
-              <option value="Pa">Pa</option>
-              <option value="Twin">Twin</option>
-              <option value="Cousin">Cousin</option>
-            </select>
-          </div>
-          <div class="ar-row" style="margin-bottom:0.4rem;">
-            <select id="sibB" style="flex:1;min-width:6rem;"></select>
-            <select id="sibRoleB">
-              <option value="Friend">Friend</option>
+          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Optional — nobody is tagged until you flag them. Pick someone you&rsquo;ve played (or who&rsquo;s online). Sibling untags need a parent.</p>
+          <p id="sibMeLabel" class="hint" style="font-size:0.78rem;margin:0 0 0.4rem;color:#8b9bb4;">Save your name above first.</p>
+          <div class="ar-row" style="margin-bottom:0.4rem;flex-wrap:wrap;">
+            <select id="sibB" style="flex:1;min-width:8rem;" title="Who to tag"></select>
+            <span class="ar-lbl">is my</span>
+            <select id="sibRoleB" title="Their role to you">
+              <option value="Friend" selected>Friend</option>
               <option value="Lil Sis">Lil Sis</option>
               <option value="Lil Bro">Lil Bro</option>
               <option value="Big Sis">Big Sis</option>
@@ -758,7 +761,19 @@
               <option value="Cousin">Cousin</option>
             </select>
           </div>
-          <div class="ar-row">
+          <div class="ar-row" style="margin-bottom:0.4rem;flex-wrap:wrap;">
+            <span class="ar-lbl">I am their</span>
+            <select id="sibRoleA" title="Your role to them">
+              <option value="Friend" selected>Friend</option>
+              <option value="Big Bro">Big Bro</option>
+              <option value="Lil Bro">Lil Bro</option>
+              <option value="Big Sis">Big Sis</option>
+              <option value="Lil Sis">Lil Sis</option>
+              <option value="Ma">Ma</option>
+              <option value="Pa">Pa</option>
+              <option value="Twin">Twin</option>
+              <option value="Cousin">Cousin</option>
+            </select>
             <button class="btn-ar primary" id="btnSibFlag" type="button">Flag pair</button>
           </div>
           <ul class="stats-riv" id="sibList" style="margin-top:0.55rem;"></ul>
@@ -887,6 +902,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=25"></script>
+  <script src="js/arena.js?v=26"></script>
 </body>
 </html>

@@ -646,38 +646,36 @@
         });
       }
     }
-    // Opponents you've actually played (and others online) — not yourself twice
+    // Opponents only — never yourself; empty selection by default
     var me = (myAlias() || '').trim();
-    var meKey = me.toLowerCase();
     var opp = opponentsForTagging();
     var meLabel = $('sibMeLabel');
     if (meLabel) {
       meLabel.innerHTML = me
-        ? (avatarHtml(me) + ' <strong>' + esc(me) + '</strong> <span style="color:#8b9bb4;">(you)</span>')
+        ? ('Tagging as <strong>' + esc(me) + '</strong> — pick someone else below (optional).')
         : '<span style="color:#e05555;">Save your name above first</span>';
     }
     var sel = $('sibB');
     if (sel) {
       var cur = sel.value;
+      // Drop selection if it is you or gone from list
+      if (cur && me && cur.toLowerCase() === me.toLowerCase()) cur = '';
+      if (cur && opp.indexOf(cur) === -1) cur = '';
       sel.innerHTML = '';
-      if (!opp.length) {
-        var o0 = document.createElement('option');
-        o0.value = '';
-        o0.textContent = me ? '— play someone first —' : '— save your name —';
-        sel.appendChild(o0);
-      } else {
-        var ph = document.createElement('option');
-        ph.value = '';
-        ph.textContent = '— pick who to tag —';
-        sel.appendChild(ph);
-        opp.forEach(function (n) {
-          var o = document.createElement('option');
-          o.value = n;
-          o.textContent = n + (avatarFor(n) !== '🙂' ? ' ' + avatarFor(n) : '');
-          sel.appendChild(o);
-        });
-        if (cur && opp.indexOf(cur) !== -1) sel.value = cur;
-      }
+      var ph = document.createElement('option');
+      ph.value = '';
+      ph.textContent = !me
+        ? '— save your name first —'
+        : (!opp.length ? '— play someone first —' : '— nobody (pick to tag) —');
+      sel.appendChild(ph);
+      opp.forEach(function (n) {
+        if (me && n.toLowerCase() === me.toLowerCase()) return;
+        var o = document.createElement('option');
+        o.value = n;
+        o.textContent = n + (avatarFor(n) !== '🙂' ? ' ' + avatarFor(n) : '');
+        sel.appendChild(o);
+      });
+      sel.value = cur || '';
     }
   }
 
@@ -716,6 +714,12 @@
     var aRole = ($('sibRoleA') && $('sibRoleA').value) || 'Friend';
     var bRole = ($('sibRoleB') && $('sibRoleB').value) || 'Friend';
     var a = me;
+    // Never tag yourself
+    if (b && me && b.toLowerCase() === me.toLowerCase()) {
+      setErr('Pick someone else — you can\'t flag yourself.');
+      toast('Pick someone else to flag.', 'warn');
+      return;
+    }
     if (!a) {
       setErr('Save your name first, then flag someone you\'ve played.');
       return;
@@ -1345,30 +1349,57 @@
     renderControls();
   }
 
+  // Rival pilots get distinct faces (not four identical robots)
+  var RIVAL_FACE = {
+    loom: '🧵', ember: '🔥', frost: '❄️', bolt: '⚡', drift: '🌊'
+  };
+  function rivalFace(p, seatMeta) {
+    var pilot = (p && p.pilot) || (seatMeta && seatMeta.pilot) || '';
+    if (pilot && pilot !== 'human' && RIVAL_FACE[pilot]) return RIVAL_FACE[pilot];
+    var av = (p && p.avatar) || (seatMeta && seatMeta.avatar);
+    if (av && av !== '🤖' && !isDefaultAv(av)) return av;
+    // Fallback by pilot name label if server only sent name
+    var nm = String((p && p.name) || '').toLowerCase();
+    if (nm === 'loom') return '🧵';
+    if (nm === 'ember') return '🔥';
+    if (nm === 'frost') return '❄️';
+    if (nm === 'bolt') return '⚡';
+    if (nm === 'drift') return '🌊';
+    return '🤖';
+  }
+
   function renderSeatBar() {
     var bar = $('seatBar'); bar.innerHTML = '';
     curState.players.forEach(function (p, i) {
       var d = document.createElement('div');
-      d.className = 'ar-seat' + (i === curState.current ? ' cur' : '');
+      d.className = 'ar-seat' + (i === curState.current ? ' cur' : '') +
+        (p.human ? ' ar-seat-human' : ' ar-seat-rival');
       var role = p.human ? roleForName(p.name) : null;
-      // Merge state avatar + gameStart seat + durable local cache
       var seatMeta = (gameSeats && gameSeats[i]) || null;
-      var faceEm = DEFAULT_AV;
+      var faceEm;
+      var kindChip;
       if (!p.human) {
-        faceEm = '🤖';
+        faceEm = rivalFace(p, seatMeta);
+        kindChip = '<i class="ar-kind-chip rival" title="CPU Rival">RIVAL</i>';
       } else {
         faceEm = avatarForPlayer(p);
         if (isDefaultAv(faceEm) && seatMeta) faceEm = avatarForPlayer(seatMeta);
         if (isDefaultAv(faceEm)) faceEm = avatarFor(p.name);
+        kindChip = '<i class="ar-kind-chip human" title="Human">YOU</i>';
+        // Only mark "YOU" on our seat; others get HUMAN
+        if (i !== mySeat) kindChip = '<i class="ar-kind-chip human" title="Human">HUMAN</i>';
       }
-      var face = p.human
-        ? avatarHtml(p.name, '', faceEm)
-        : '<span class="ar-avatar" title="Rival">🤖</span>';
+      var face = '<span class="ar-avatar' + (p.human ? '' : ' ar-avatar-rival') +
+        '" title="' + esc(p.human ? p.name : (p.name + ' · Rival')) + '">' + faceEm + '</span>';
       d.innerHTML =
         face +
         '<span class="ar-swatch" style="background:' + COL[i % COL.length] + '"></span>' +
-        '<span>' + esc(p.name) + (i === mySeat ? ' (you)' : '') +
-        (role ? ' <i class="ar-sib-chip">' + esc(role) + '</i>' : '') + '</span>' +
+        '<span class="ar-seat-meta">' +
+          '<span class="ar-seat-name">' + esc(p.name) +
+          (i === mySeat ? ' (you)' : '') + '</span> ' +
+          kindChip +
+          (role ? ' <i class="ar-sib-chip">' + esc(role) + '</i>' : '') +
+        '</span>' +
         '<span class="ar-claims">' + p.claimed.length + '/3</span>';
       bar.appendChild(d);
     });

@@ -337,18 +337,29 @@
     }
     .seat-grid { display: flex; flex-direction: column; gap: 0.45rem; }
     .seat {
-      display: grid; grid-template-columns: 14px 1fr; gap: 0.5rem; align-items: start;
+      display: grid; grid-template-columns: 14px 1.6rem 1fr; gap: 0.4rem; align-items: start;
       background: #1a2332; border-radius: 8px; padding: 0.5rem 0.6rem; border: 1px solid #2a3548;
     }
     .seat.current { outline: 2px solid #5b9fd4; outline-offset: 1px; }
     .swatch { width: 12px; height: 12px; border-radius: 3px; margin-top: 0.35rem; }
+    .seat-face { margin-top: 0.15rem; }
     .seat-main { font-size: 0.85rem; min-width: 0; }
     .seat-head {
-      display: flex; align-items: center; gap: 0.65rem; /* air after seat name before chooser */
+      display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;
       margin-bottom: 0.2rem;
     }
     .seat-head b {
       flex: 0 0 auto; font-weight: 600; letter-spacing: 0.01em; min-width: 3.4rem;
+    }
+    .seat-kind {
+      font-size: 0.58rem; font-style: normal; font-weight: 700; letter-spacing: 0.05em;
+      padding: 0.08rem 0.3rem; border-radius: 3px;
+    }
+    .seat-kind.human {
+      background: rgba(62, 207, 142, 0.15); color: #6fcf97; border: 1px solid #2a5a3a;
+    }
+    .seat-kind.rival {
+      background: rgba(91, 159, 212, 0.12); color: #8bb8e0; border: 1px solid #2a4060;
     }
     .seat-head .seat-pilot {
       flex: 1 1 auto; min-width: 0; max-width: 100%;
@@ -542,6 +553,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/towers-lab.js?v=16"></script>
+  <script src="js/towers-lab.js?v=17"></script>
 </body>
 </html>
