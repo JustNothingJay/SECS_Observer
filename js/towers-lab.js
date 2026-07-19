@@ -24,9 +24,9 @@
     neon:     ['#00e5ff','#ff2bd6','#7dff3a','#ffb300','#b14bff'],
     candy:    ['#ff5d8f','#ffa53d','#3ec8ff','#7ed957','#c86bff'],
     mountain: ['#6aa06a','#b5732f','#7d94b8','#d9b64a','#9a7b4f'],
-    // Elijah — BOMBACLARTTTTT: pitch UI is B&W; climb pills = oztag jersey kits
+    // EZ — BOMBACLARTTTTT: pitch UI is B&W; climb pills = oztag jersey kits
     bombaclarttttt: ['#e31c23', '#1b4f9c', '#f5c400', '#00a651', '#ff5a00'],
-    // Acacia — duckduckgoose: pastel climb pills (pink green purple orange cyan)
+    // AC — duckduckgoose: pastel climb pills (pink green purple orange cyan)
     duckduckgoose: ['#ffb6c8', '#b8e6b8', '#d4b8f0', '#ffd0a8', '#9eecf5']
   };
   var THEME_ORDER = ['slate','neon','candy','mountain','bombaclarttttt','duckduckgoose'];
@@ -35,8 +35,8 @@
     neon: 'Neon Arcade',
     candy: 'Candy Pop',
     mountain: 'Summit',
-    bombaclarttttt: 'BOMBACLARTTTTT — Elijah · oztag',
-    duckduckgoose: 'duckduckgoose — Acacia'
+    bombaclarttttt: 'BOMBACLARTTTTT — EZ',
+    duckduckgoose: 'duckduckgoose — AC'
   };
   var LS_THEME = 'sl_theme_v1';
 

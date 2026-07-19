@@ -32,7 +32,7 @@
     .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-skin-badge,
     .ar-wrap[data-ar-skin="duckduckgoose"] .ar-skin-badge { display: inline-block; }
 
-    /* Elijah — BOMBACLARTTTTT (oztag · black & white) */
+    /* EZ — BOMBACLARTTTTT (oztag · black & white) */
     .ar-wrap[data-ar-skin="bombaclarttttt"] {
       --col0:#ffffff; --col1:#b0b0b0; --col2:#707070; --col3:#e8e8e8; --col4:#4a4a4a;
       --ar-card-bg:#0a0a0a; --ar-card-border:#ffffff; --ar-floor:#1a1a1a; --ar-floor-border:#000;
@@ -141,7 +141,7 @@
     .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-icon,
     .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-arrow { color: #000; }
 
-    /* Acacia — duckduckgoose (light yellow/white vertical stripes · light blue columns) */
+    /* AC — duckduckgoose (light yellow/white vertical stripes · pastel climbs) */
     .ar-wrap[data-ar-skin="duckduckgoose"] {
       --col0:#ffb6c8; --col1:#b8e6b8; --col2:#d4b8f0; --col3:#ffd0a8; --col4:#9eecf5;
       --ar-card-bg:rgba(255,255,255,0.88); --ar-card-border:#7ec8e8; --ar-floor:#b8e4f6; --ar-floor-border:#8fd0ec;
@@ -535,8 +535,8 @@
   <main class="ar-wrap" id="arWrap">
     <div class="ar-hero">
       <h2>Summit Arena</h2>
-      <div class="ar-skin-badge" id="arSkinBadge">BOMBACLARTTTTT · Elijah · Oztag</div>
-      <p>Family tables &mdash; 2 to 5 humans plus optional Rivals. Create a table, wait for siblings, host starts the climb.</p>
+      <div class="ar-skin-badge" id="arSkinBadge">BOMBACLARTTTTT · EZ</div>
+      <p>Family tables &mdash; up to 5 seats. Humans fill first; open seats can be Rivals (or left empty).</p>
     </div>
     <div class="ar-conn"><span class="ar-dot" id="connDot"></span><span id="connText">connecting…</span></div>
     <div class="ar-err" id="errLine"></div>
@@ -569,12 +569,14 @@
           <div class="ar-members" id="myTableMembers"></div>
           <div class="ar-row" id="hostControls">
             <label class="ar-lbl" for="botCount">Rivals</label>
-            <select id="botCount">
+            <select id="botCount" title="Fill open seats only (max 5 total)">
               <option value="0">0</option>
               <option value="1" selected>1</option>
               <option value="2">2</option>
               <option value="3">3</option>
+              <option value="4">4</option>
             </select>
+            <span class="ar-lbl" id="seatHint" style="font-size:0.72rem;">Open seats → Rivals</span>
             <button class="btn-ar ok" id="btnStart" type="button">Start game</button>
             <button class="btn-ar warn" id="btnLeaveTable" type="button">Leave table</button>
           </div>
@@ -586,11 +588,12 @@
           <div class="ar-row" id="guestControls" hidden style="flex-wrap:wrap;gap:0.45rem;align-items:center;">
             <span class="ar-lbl" id="guestTableSummary">Host controls the table.</span>
             <label class="ar-lbl" for="guestBotAsk">Ask for Rivals</label>
-            <select id="guestBotAsk">
+            <select id="guestBotAsk" title="Fill open seats only (max 5 total)">
               <option value="0">0</option>
               <option value="1" selected>1</option>
               <option value="2">2</option>
               <option value="3">3</option>
+              <option value="4">4</option>
             </select>
             <button class="btn-ar" id="btnRequestBots" type="button">Ask host</button>
             <button class="btn-ar primary" id="btnRequestStart" type="button">Ask to play</button>
@@ -608,18 +611,29 @@
         <div class="ar-row" style="margin-bottom:0.85rem;padding:0.65rem 0.75rem;border-radius:10px;border:1px solid #2a3548;background:#0e141c;">
           <button class="btn-ar ok" id="btnSoloBot" type="button">1v Rival</button>
           <label class="ar-lbl" for="soloBotCount">Rivals</label>
-          <select id="soloBotCount">
+          <select id="soloBotCount" title="1 human + up to 4 Rivals = 5 seats">
             <option value="1" selected>1</option>
             <option value="2">2</option>
             <option value="3">3</option>
+            <option value="4">4</option>
           </select>
-          <span class="ar-lbl">Solo Arena match — counts on your ledger.</span>
+          <span class="ar-lbl">Solo Arena match — up to 5 seats total.</span>
         </div>
         <ul class="ar-players" id="partyList"></ul>
       </div>
 
       <div class="ar-card">
         <h3>Who&rsquo;s online</h3>
+        <div class="ar-row" style="margin-bottom:0.55rem;">
+          <label class="ar-lbl" for="quickRivalCount">Quick 1v1 Rivals</label>
+          <select id="quickRivalCount" title="2 humans + up to 3 Rivals = 5 seats">
+            <option value="0" selected>0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+          <span class="ar-lbl" style="font-size:0.72rem;">Open seats after you two (optional)</span>
+        </div>
         <ul class="ar-players" id="playerList"></ul>
       </div>
 
@@ -800,6 +814,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=21"></script>
+  <script src="js/arena.js?v=22"></script>
 </body>
 </html>

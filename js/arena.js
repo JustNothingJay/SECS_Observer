@@ -19,9 +19,9 @@
   // Each win unlocks a design session; skins stack forever.
   var SKIN_COLS = {
     default: ['#3d9a6a', '#c45a7a', '#7a6bc4', '#c47a3a', '#4a9a9a'],
-    // Elijah — pitch B&W; climb pills = oztag jersey kits
+    // EZ — pitch B&W; climb pills = oztag jersey kits
     bombaclarttttt: ['#e31c23', '#1b4f9c', '#f5c400', '#00a651', '#ff5a00'],
-    // Acacia — yellow/white stripes; climb pills = pastel rainbow
+    // AC — yellow/white stripes; climb pills = pastel rainbow
     // pink · green · purple · orange · cyan
     duckduckgoose: ['#ffb6c8', '#b8e6b8', '#d4b8f0', '#ffd0a8', '#9eecf5']
   };
@@ -30,15 +30,34 @@
     default: { label: 'Default Arena', credit: '', badge: '' },
     bombaclarttttt: {
       label: 'BOMBACLARTTTTT',
-      credit: 'Elijah · oztag · black & white',
-      badge: 'BOMBACLARTTTTT · Elijah · Oztag'
+      credit: 'EZ · oztag · black & white',
+      badge: 'BOMBACLARTTTTT · EZ'
     },
     duckduckgoose: {
       label: 'duckduckgoose',
-      credit: 'Acacia · yellow & white stripes · light blue towers',
-      badge: 'duckduckgoose · Acacia'
+      credit: 'AC · yellow & white stripes · pastel climbs',
+      badge: 'duckduckgoose · AC'
     }
   };
+  var MAX_SEATS_UI = 5;
+  /** Rebuild a <select> with 0..max options (or min..max). */
+  function fillBotSelect(sel, maxBots, selected, minBots) {
+    if (!sel) return;
+    minBots = minBots == null ? 0 : minBots;
+    maxBots = Math.max(minBots, maxBots | 0);
+    var cur = selected != null ? String(selected) : sel.value;
+    sel.innerHTML = '';
+    for (var n = minBots; n <= maxBots; n++) {
+      var o = document.createElement('option');
+      o.value = String(n);
+      o.textContent = String(n);
+      sel.appendChild(o);
+    }
+    var want = parseInt(cur, 10);
+    if (isNaN(want)) want = minBots;
+    want = Math.max(minBots, Math.min(maxBots, want));
+    sel.value = String(want);
+  }
   var LS_SKIN = 'sa_skin_v1';
   function getSkin() {
     try {
@@ -1072,11 +1091,19 @@
         return avatarHtml(m.alias, '', avatarForPlayer(m)) + ' ' + esc(m.alias) +
           (role ? ' <i class="ar-sib-chip">' + esc(role) + '</i>' : '') + tag + you;
       }).join(' · ');
+      // freeSeats = seats not taken by humans (can be Rivals or left empty)
+      var freeSeats = Math.max(0, MAX_SEATS_UI - myParty.members.length);
+      var openSeats = Math.max(0, freeSeats - (myParty.bots | 0));
       $('myTableTitle').textContent =
         'Table · ' + myParty.members.length + ' human' +
         (myParty.members.length === 1 ? '' : 's') +
         ' + ' + myParty.bots + ' Rival' + (myParty.bots === 1 ? '' : 's') +
-        ' = ' + myParty.seats + ' seats';
+        ' = ' + myParty.seats + '/5 seats' +
+        (openSeats > 0 ? ' · ' + openSeats + ' empty' : '');
+      if ($('seatHint')) {
+        $('seatHint').textContent =
+          freeSeats + ' open seat' + (freeSeats === 1 ? '' : 's') + ' → Rivals 0–' + freeSeats;
+      }
       $('myTableMembers').innerHTML = names || '…';
       $('hostControls').hidden = !isHost;
       $('guestControls').hidden = isHost;
@@ -1103,10 +1130,7 @@
       }
       if (isHost) {
         var bc = $('botCount');
-        var maxBots = Math.max(0, 5 - myParty.members.length);
-        // rebuild options if needed
-        var want = String(Math.min(myParty.bots, maxBots));
-        if (bc.value !== want) bc.value = want;
+        fillBotSelect(bc, freeSeats, Math.min(myParty.bots, freeSeats), 0);
         // Host may start with 2+ humans, or 1 human + rivals
         $('btnStart').disabled = myParty.members.length < 2 && myParty.bots < 1;
       } else {
@@ -1114,14 +1138,14 @@
         if (sum) {
           sum.textContent = 'Host sets the table · now ' + (myParty.bots | 0) +
             ' Rival' + ((myParty.bots | 0) === 1 ? '' : 's') +
+            ' · ' + freeSeats + ' open seat' + (freeSeats === 1 ? '' : 's') +
             (req && req.fromId === youId
               ? ' · waiting on host…'
               : ' · ask below if you want a change');
         }
         var gba = $('guestBotAsk');
-        if (gba && !req) {
-          var gWant = String(Math.min(myParty.bots, Math.max(0, 5 - myParty.members.length)));
-          if (gba.value !== gWant) gba.value = gWant;
+        if (gba) {
+          fillBotSelect(gba, freeSeats, Math.min(myParty.bots, freeSeats), 0);
         }
         if ($('btnRequestBots')) $('btnRequestBots').disabled = !!(req && req.fromId === youId);
         if ($('btnRequestStart')) {
@@ -1200,18 +1224,22 @@
         (roleForName(p.alias) ? '<i class="ar-sib-chip">' + esc(roleForName(p.alias)) + '</i> ' : '') +
         '<span class="ar-pstatus ' + esc(p.status || 'idle') + '">' + esc(p.status || 'idle') + '</span>';
       li.appendChild(left);
-      // Quick 1v1 = pure human head-to-head (no Rivals from table config)
+      // Quick 1v1 = 2 humans; remaining seats (0–3) optional Rivals
       if (p.status === 'idle' && me && me.status === 'idle' && !myParty) {
         var btn = document.createElement('button');
         btn.className = 'btn-ar primary';
         btn.type = 'button';
         btn.textContent = 'Quick 1v1';
-        btn.title = 'Head-to-head, no bots';
+        btn.title = 'Head-to-head — open seats can be Rivals';
         btn.onclick = function () {
           setErr('');
-          send({ t: 'invite', toId: p.id, bots: 0 });
-          setErr('1v1 challenge sent to ' + p.alias + ' (no Rivals)…');
-          toast('1v1 sent to ' + p.alias + ' — no bots', 'ok');
+          var qr = $('quickRivalCount');
+          var n = qr ? (parseInt(qr.value, 10) || 0) : 0;
+          n = Math.max(0, Math.min(3, n)); // 2 humans → 3 free seats
+          send({ t: 'invite', toId: p.id, bots: n });
+          var extra = n ? (' + ' + n + ' Rival' + (n === 1 ? '' : 's')) : ' (no Rivals)';
+          setErr('1v1 challenge sent to ' + p.alias + extra + '…');
+          toast('1v1 sent to ' + p.alias + extra, 'ok');
         };
         li.appendChild(btn);
       }
@@ -1569,7 +1597,7 @@
     $('btnSoloBot').onclick = function () {
       setErr('');
       var n = parseInt(($('soloBotCount') && $('soloBotCount').value) || '1', 10) || 1;
-      n = Math.max(1, Math.min(3, n));
+      n = Math.max(1, Math.min(4, n)); // 1 human + up to 4 rivals = 5 seats
       send({ t: 'soloBot', bots: n });
       toast('Starting 1v' + n + ' vs Rival' + (n > 1 ? 's' : '') + '…', 'ok');
     };
@@ -1597,7 +1625,8 @@
       if (!myParty || myParty.hostId === youId) return;
       setErr('');
       var n = parseInt(($('guestBotAsk') && $('guestBotAsk').value) || '0', 10) || 0;
-      n = Math.max(0, Math.min(3, n));
+      var free = myParty ? Math.max(0, MAX_SEATS_UI - myParty.members.length) : 4;
+      n = Math.max(0, Math.min(free, n));
       send({ t: 'requestPartyBots', bots: n });
       toast('Asked host for ' + n + ' Rival' + (n === 1 ? '' : 's'), 'ok');
     };
@@ -1699,6 +1728,13 @@
   // UI setup must never prevent the WebSocket from connecting
   try { initAliasUI(); } catch (e0) { try { console.warn('initAliasUI', e0); } catch (e) {} }
   try { populateSkinPicker(); } catch (e1) { try { console.warn('skin', e1); } catch (e) {} }
+  // Seat math: 5 total — rivals fill whatever humans leave open
+  try {
+    fillBotSelect($('botCount'), 4, 1, 0);
+    fillBotSelect($('guestBotAsk'), 4, 1, 0);
+    fillBotSelect($('soloBotCount'), 4, 1, 1);
+    fillBotSelect($('quickRivalCount'), 3, 0, 0); // 1v1 → 3 free seats
+  } catch (eBots) {}
   try { renderStats(); } catch (e2) {}
   try { renderRage(); } catch (e3) {}
   try { renderSaves(); } catch (e4) {}
