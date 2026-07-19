@@ -215,6 +215,17 @@
       </div>
 
       <div class="ar-card">
+        <h3>Saved games</h3>
+        <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Pause mid-match and resume when everyone is back online (same names).</p>
+        <ul class="ar-players" id="savesList"></ul>
+      </div>
+
+      <div class="ar-card" id="rageCard">
+        <h3>Rage quitometer</h3>
+        <div id="rageBody" style="font-size:0.88rem;color:#e7ecf3;line-height:1.45;">No rage quits on record. Stay classy.</div>
+      </div>
+
+      <div class="ar-card">
         <h3>Ledger</h3>
         <div id="statsBody"><p class="stats-empty">No Arena games yet. Finish a match and it lands here.</p></div>
         <div style="margin-top:0.75rem;padding-top:0.65rem;border-top:1px solid #2a3548;">
@@ -263,8 +274,16 @@
           <div class="ar-controls">
             <button class="btn-ar primary" id="btnRoll" type="button" disabled>Roll</button>
             <button class="btn-ar ok" id="btnBank" type="button" disabled>Bank</button>
+            <button class="btn-ar" id="btnSaveGame" type="button">Save &amp; pause</button>
             <button class="btn-ar" id="btnStatsInGame" type="button">Stats</button>
             <button class="btn-ar warn" id="btnLeave" type="button">Leave game</button>
+          </div>
+          <div class="ar-row" id="quickSaveRow" style="margin-top:0.45rem;">
+            <span class="ar-lbl">Quick save:</span>
+            <button class="btn-ar" type="button" data-qsave="Off to school">Off to school</button>
+            <button class="btn-ar" type="button" data-qsave="Time for dinner">Time for dinner</button>
+            <button class="btn-ar" type="button" data-qsave="Shower time">Shower time</button>
+            <button class="btn-ar" type="button" data-qsave="Bedtime">Bedtime</button>
           </div>
           <div class="ar-stats-panel" id="gameStatsPanel" hidden>
             <div id="statsBodyGame"></div>
@@ -305,6 +324,25 @@
     </div>
   </div>
 
+  <!-- Save label picker -->
+  <div id="saveOverlay" class="ar-overlay" hidden>
+    <div class="ar-box">
+      <h4>Save &amp; pause</h4>
+      <p class="ar-lbl" style="margin:0 0 0.5rem;">Name this pause so you can find it later:</p>
+      <input type="text" id="saveLabelInput" maxlength="40" placeholder="e.g. Off to school" style="width:100%;margin-bottom:0.75rem;">
+      <div class="ar-row" style="flex-wrap:wrap;justify-content:center;margin-bottom:0.75rem;">
+        <button class="btn-ar" type="button" data-qsave-pick="Off to school">Off to school</button>
+        <button class="btn-ar" type="button" data-qsave-pick="Time for dinner">Time for dinner</button>
+        <button class="btn-ar" type="button" data-qsave-pick="Shower time">Shower time</button>
+        <button class="btn-ar" type="button" data-qsave-pick="Bedtime">Bedtime</button>
+      </div>
+      <div class="ar-row">
+        <button class="btn-ar ok" id="btnSaveConfirm" type="button">Save for everyone</button>
+        <button class="btn-ar warn" id="btnSaveCancel" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Winner overlay: pick a taunt (winner) / hear it (others) + play again -->
   <div id="winOverlay" class="ar-overlay" hidden>
     <div class="ar-box win" id="winBox">
@@ -324,6 +362,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=5"></script>
+  <script src="js/arena.js?v=6"></script>
 </body>
 </html>

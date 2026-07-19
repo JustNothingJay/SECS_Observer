@@ -41,6 +41,8 @@
   var inGame = false;
   var lastGameOver = null; // hold for rematch / stats
   var hostId = null;
+  var mySaves = [];
+  var rageCount = 0;
 
   // ── Ledger (moved from Summit Lab — Arena matches only) ──
   // Prefer sa_games_v1; migrate old sl_games_v1 once so sibling history isn&apos;t lost.
@@ -428,10 +430,11 @@
         hostId = m.hostId || null;
         hideInvite();
         hideWin();
+        if ($('saveOverlay')) $('saveOverlay').hidden = true;
         inGame = true;
         myParty = null;
         lastGameOver = null;
-        showGame();
+        showGame({ resumed: !!m.resumed, saveLabel: m.saveLabel });
         break;
       case 'state':
         curState = m.state;
@@ -452,13 +455,39 @@
         break;
       case 'opponentLeft':
         setStatus((m.byAlias ? esc(m.byAlias) + ' left' : 'Someone left') + ' — table closed.', '');
-        toast((m.byAlias || 'A player') + ' left the table (or lost connection).', 'bad');
+        toast(
+          (m.byAlias || 'A player') +
+          (m.reason === 'saved' ? ' paused the game.' : ' left the table (or lost connection).'),
+          m.reason === 'saved' ? 'ok' : 'bad'
+        );
         inGame = false;
         hideWin();
         setTimeout(showLobby, 1800);
         break;
+      case 'saves':
+        mySaves = m.saves || [];
+        renderSaves();
+        break;
+      case 'gameSaved':
+        toast('Saved: “' + (m.label || 'Paused') + '” — resume later from Saved games.', 'ok');
+        inGame = false;
+        hideWin();
+        if ($('saveOverlay')) $('saveOverlay').hidden = true;
+        showLobby();
+        send({ t: 'listSaves' });
+        break;
+      case 'rageQuit':
+        rageCount = m.count | 0;
+        renderRage();
+        toast(m.msg || 'Rage quit counted.', 'bad');
+        break;
+      case 'rageStats':
+        rageCount = m.count | 0;
+        renderRage();
+        break;
       case 'error':
         setErr(m.msg || 'Something went wrong');
+        toast(m.msg || 'Something went wrong', 'warn');
         break;
       case 'pong':
         break;
@@ -467,12 +496,81 @@
     }
   }
 
+  function renderRage() {
+    var el = $('rageBody');
+    if (!el) return;
+    if (!rageCount) {
+      el.innerHTML = 'No rage quits on record. Stay classy.';
+      el.style.color = '#6fcf97';
+      return;
+    }
+    el.style.color = '#e7ecf3';
+    el.innerHTML =
+      '<strong style="color:#e05555;">Rage quitometer: ' + rageCount + '</strong><br>' +
+      (rageCount === 1
+        ? 'You left a game without saving while you were losing. Chill.'
+        : rageCount + ' times you left without saving while losing… stop rage quitting!');
+  }
+
+  function renderSaves() {
+    var ul = $('savesList');
+    if (!ul) return;
+    ul.innerHTML = '';
+    if (!mySaves.length) {
+      ul.innerHTML = '<li class="ar-empty">No paused games yet. Mid-match use <b>Save &amp; pause</b>.</li>';
+      return;
+    }
+    mySaves.forEach(function (sv) {
+      var li = document.createElement('li');
+      var when = sv.t ? new Date(sv.t).toLocaleString() : '';
+      var miss = (sv.missing && sv.missing.length)
+        ? ('waiting: ' + sv.missing.join(', '))
+        : 'all online';
+      var left = document.createElement('div');
+      left.innerHTML =
+        '<span class="ar-pname">' + esc(sv.label || 'Paused') + '</span> ' +
+        '<span class="ar-pstatus ' + (sv.ready ? 'idle' : 'party') + '">' + esc(miss) + '</span>' +
+        '<div style="font-size:0.72rem;color:#8b9bb4;margin-top:0.15rem;">' +
+        esc((sv.humans || []).join(' · ')) +
+        (when ? ' · ' + esc(when) : '') + '</div>';
+      var actions = document.createElement('div');
+      actions.style.display = 'flex';
+      actions.style.gap = '0.35rem';
+      var btn = document.createElement('button');
+      btn.className = 'btn-ar primary';
+      btn.type = 'button';
+      btn.textContent = sv.ready ? 'Resume' : 'Need players';
+      btn.disabled = !sv.ready;
+      btn.onclick = function () {
+        setErr('');
+        send({ t: 'resumeSave', saveId: sv.id });
+      };
+      var del = document.createElement('button');
+      del.className = 'btn-ar warn';
+      del.type = 'button';
+      del.textContent = '✕';
+      del.title = 'Delete save';
+      del.onclick = function () {
+        if (window.confirm('Delete save “' + (sv.label || '') + '”?')) {
+          send({ t: 'deleteSave', saveId: sv.id });
+        }
+      };
+      actions.appendChild(btn);
+      actions.appendChild(del);
+      li.appendChild(left);
+      li.appendChild(actions);
+      ul.appendChild(li);
+    });
+  }
+
   // ── Lobby ──
   function showLobby() {
     inGame = false;
     $('gameView').hidden = true;
     $('lobbyView').hidden = false;
     renderLobby();
+    renderSaves();
+    renderRage();
   }
 
   function renderLobby() {
@@ -602,10 +700,14 @@
   function hideInvite() { $('inviteOverlay').hidden = true; }
 
   // ── Game ──
-  function showGame() {
+  function showGame(opts) {
+    opts = opts || {};
     $('lobbyView').hidden = true;
     $('gameView').hidden = false;
-    setStatus('Game on!', 'mine');
+    setStatus(opts.resumed
+      ? ('Resumed: <b>' + esc(opts.saveLabel || 'Paused game') + '</b>')
+      : 'Game on!', 'mine');
+    if (opts.resumed) toast('Welcome back — pick up where you left off.', 'ok');
   }
   function setStatus(html, cls) {
     var el = $('status');
@@ -881,11 +983,40 @@
     if (myTurn()) send({ t: 'action', action: 'stop' });
   };
   $('btnLeave').onclick = function () {
+    if (inGame && !window.confirm(
+      'Leave without saving?\n\n' +
+      'If you are losing, this counts as a rage quit on the quitometer.\n' +
+      'Use Save & pause if you need a break.'
+    )) return;
     send({ t: 'leaveRoom' });
     inGame = false;
     hideWin();
     showLobby();
   };
+
+  function openSaveOverlay(prefill) {
+    if (!inGame) return;
+    $('saveLabelInput').value = prefill || '';
+    $('saveOverlay').hidden = false;
+    try { $('saveLabelInput').focus(); } catch (e) {}
+  }
+  function doSave(label) {
+    label = (label || '').trim().slice(0, 40);
+    if (!label) label = 'Paused';
+    send({ t: 'saveGame', label: label });
+    $('saveOverlay').hidden = true;
+  }
+  $('btnSaveGame').onclick = function () { openSaveOverlay(''); };
+  $('btnSaveConfirm').onclick = function () { doSave($('saveLabelInput').value); };
+  $('btnSaveCancel').onclick = function () { $('saveOverlay').hidden = true; };
+  document.querySelectorAll('[data-qsave]').forEach(function (btn) {
+    btn.onclick = function () { doSave(btn.getAttribute('data-qsave')); };
+  });
+  document.querySelectorAll('[data-qsave-pick]').forEach(function (btn) {
+    btn.onclick = function () {
+      $('saveLabelInput').value = btn.getAttribute('data-qsave-pick') || '';
+    };
+  });
 
   $('btnPlayAgain').onclick = function () {
     setErr('');
@@ -917,6 +1048,8 @@
 
   initAliasUI();
   renderStats();
+  renderRage();
+  renderSaves();
   if (!myAlias()) $('aliasInput').focus();
   connect();
 })();
