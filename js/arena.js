@@ -276,58 +276,91 @@
     return null;
   }
 
-  // Per-name emoji avatars (device-local map)
+  // Per-name emoji avatars — local cache + session memory; server is source of truth online
   var LS_AVATAR = 'sa_avatar_v1';
   var AVATAR_POOL = [
     '🙂', '😎', '🦊', '🐱', '🐶', '🦁', '🐯', '🐸', '🐵', '🐼',
     '🦄', '🐲', '🌟', '🔥', '⚡', '🎮', '🚀', '🏆', '🍕', '🍩',
     '🌈', '🧊', '🎯', '🎲', '👾', '🤖', '👑', '💎', '🌊', '🍀'
   ];
+  var DEFAULT_AV = '🙂';
+  // Session memory (faster + survives mid-game when party is cleared)
+  var avatarMem = {};
+  var gameSeats = null; // last gameStart seats (with avatars)
+
+  function isDefaultAv(a) {
+    a = String(a || '').trim();
+    return !a || a === DEFAULT_AV || a === '🤖';
+  }
   function getAvatarMap() {
     var m = lsGet(LS_AVATAR, {});
     return (m && typeof m === 'object') ? m : {};
   }
   function setAvatarMap(m) { lsSet(LS_AVATAR, m); }
-  function avatarFor(name) {
-    var k = String(name || '').toLowerCase();
-    if (!k) return '🙂';
+  function setAvatarFor(name, emoji) {
+    var k = String(name || '').trim().toLowerCase();
+    if (!k || isDefaultAv(emoji)) return;
+    avatarMem[k] = emoji;
     var m = getAvatarMap();
-    if (m[k]) return m[k];
+    if (m[k] !== emoji) {
+      m[k] = emoji;
+      setAvatarMap(m);
+    }
+  }
+  function avatarFor(name) {
+    var k = String(name || '').trim().toLowerCase();
+    if (!k) return DEFAULT_AV;
+    if (avatarMem[k] && !isDefaultAv(avatarMem[k])) return avatarMem[k];
+    var m = getAvatarMap();
+    if (m[k] && !isDefaultAv(m[k])) {
+      avatarMem[k] = m[k];
+      return m[k];
+    }
     // Prefer server lobby avatar when we know this person is online
     for (var i = 0; i < lobbyPlayers.length; i++) {
       var p = lobbyPlayers[i];
       if (p && p.alias && String(p.alias).toLowerCase() === k &&
-          p.avatar && p.avatar !== '🙂') return p.avatar;
+          p.avatar && !isDefaultAv(p.avatar)) {
+        setAvatarFor(k, p.avatar);
+        return p.avatar;
+      }
     }
-    // Party members (table) when lobby list is stale
+    // Party members (table)
     if (myParty && myParty.members) {
       for (var j = 0; j < myParty.members.length; j++) {
         var mm = myParty.members[j];
         if (mm && mm.alias && String(mm.alias).toLowerCase() === k &&
-            mm.avatar && mm.avatar !== '🙂') return mm.avatar;
+            mm.avatar && !isDefaultAv(mm.avatar)) {
+          setAvatarFor(k, mm.avatar);
+          return mm.avatar;
+        }
       }
     }
-    return '🙂';
+    // In-game seats from gameStart
+    if (gameSeats) {
+      for (var g = 0; g < gameSeats.length; g++) {
+        var gs = gameSeats[g];
+        if (gs && gs.human && gs.name && String(gs.name).toLowerCase() === k &&
+            gs.avatar && !isDefaultAv(gs.avatar)) {
+          setAvatarFor(k, gs.avatar);
+          return gs.avatar;
+        }
+      }
+    }
+    return DEFAULT_AV;
   }
-  /** Avatar for a lobby/party/game player object (server non-default wins, then local cache). */
+  /** Avatar for a lobby/party/game player object (server non-default wins, then cache). */
   function avatarForPlayer(p) {
-    if (!p) return '🙂';
+    if (!p) return DEFAULT_AV;
     var name = p.alias || p.name || '';
     var serverAv = p.avatar;
-    if (serverAv && serverAv !== '🙂' && serverAv !== '🤖') {
+    if (serverAv && !isDefaultAv(serverAv)) {
       if (name) setAvatarFor(name, serverAv);
       return serverAv;
     }
     return avatarFor(name);
   }
-  function setAvatarFor(name, emoji) {
-    var k = String(name || '').toLowerCase();
-    if (!k || !emoji) return;
-    var m = getAvatarMap();
-    m[k] = emoji;
-    setAvatarMap(m);
-  }
-  /** Remember faces from lobby / party snapshots so they show at the table and in-game. */
+  /** Remember faces from any list so they show online, at table, and in-game. */
   function learnAvatarsFromList(list) {
     if (!list || !list.length) return;
     for (var i = 0; i < list.length; i++) {
@@ -335,20 +368,20 @@
       if (!p) continue;
       var name = p.alias || p.name;
       var av = p.avatar;
-      if (name && av && av !== '🙂' && av !== '🤖') setAvatarFor(name, av);
+      if (name && av && !isDefaultAv(av)) setAvatarFor(name, av);
     }
   }
   function ensureMyAvatarOnServer() {
     var me = myAlias();
     var want = avatarFor(me);
-    if (!me || !want || want === '🙂') return;
+    if (!me || isDefaultAv(want)) return;
     var have = null;
     if (myParty && myParty.members) {
       for (var i = 0; i < myParty.members.length; i++) {
         if (myParty.members[i].id === youId) { have = myParty.members[i].avatar; break; }
       }
     }
-    if (!have) {
+    if (have == null) {
       for (var j = 0; j < lobbyPlayers.length; j++) {
         if (lobbyPlayers[j].id === youId) { have = lobbyPlayers[j].avatar; break; }
       }
@@ -358,11 +391,13 @@
   function hasChosenAvatar(name) {
     var k = String(name || '').toLowerCase();
     if (!k) return false;
+    if (avatarMem[k] && !isDefaultAv(avatarMem[k])) return true;
     var m = getAvatarMap();
-    return Object.prototype.hasOwnProperty.call(m, k) && !!m[k];
+    return Object.prototype.hasOwnProperty.call(m, k) && !isDefaultAv(m[k]);
   }
   function avatarHtml(name, cls, emojiOverride) {
-    var em = emojiOverride || avatarFor(name);
+    var em = emojiOverride != null ? emojiOverride : avatarFor(name);
+    if (isDefaultAv(em) && name) em = avatarFor(name);
     return '<span class="ar-avatar' + (cls ? ' ' + cls : '') + '" title="' + esc(name || '') + '">' +
       em + '</span>';
   }
@@ -405,21 +440,29 @@
       b.textContent = em;
       b.title = 'Pick ' + em;
       b.onclick = function () {
-        var name = myAlias() || ($('aliasInput') && $('aliasInput').value) || '';
-        name = (name || '').trim();
+        // Auto-save name from input if needed so face sticks to the real name
+        var typed = (($('aliasInput') && $('aliasInput').value) || '').trim().slice(0, 18);
+        var name = myAlias() || typed;
         if (!name) {
           setErr('Save a name first, then pick an avatar.');
           toast('Save your name first, then pick an avatar.', 'warn');
           return;
         }
+        if (typed && typed !== myAlias()) {
+          setAlias(typed);
+          rememberAlias(typed);
+          name = typed;
+          if ($('aliasInput')) $('aliasInput').value = typed;
+        }
         setAvatarFor(name, em);
         avatarPickOpen = false; // collapse after pick
         if ($('myAvatarPreview')) $('myAvatarPreview').textContent = em;
-        // Sync to server so "Who's online" shows the right face on other devices
+        // Sync name+face so server durable map + all devices match
+        send({ t: 'setAlias', alias: name, avatar: em });
         send({ t: 'setAvatar', avatar: em });
         renderAvatarPicker();
         renderLobby();
-        toast('Avatar set to ' + em, 'ok');
+        toast('Avatar set to ' + em + ' for ' + name, 'ok');
       };
       wrap.appendChild(b);
     });
@@ -678,6 +721,13 @@
       case 'welcome':
         youId = m.youId;
         $('meLine').textContent = m.alias ? ('playing as ' + m.alias) : '';
+        // Server may restore a durable face for this name — learn it
+        if (m.alias && m.avatar && !isDefaultAv(m.avatar)) {
+          setAvatarFor(m.alias, m.avatar);
+        }
+        // Always re-push our local pick so durable map + other tablets stay in sync
+        ensureMyAvatarOnServer();
+        renderAvatarPicker();
         break;
       case 'lobby':
         lobbyPlayers = m.players || [];
@@ -737,10 +787,15 @@
         inGame = true;
         myParty = null;
         lastGameOver = null;
+        gameSeats = m.seats || null;
+        learnAvatarsFromList(gameSeats);
+        // Re-assert face once more at match start (covers late picks)
+        ensureMyAvatarOnServer();
         showGame({ resumed: !!m.resumed, saveLabel: m.saveLabel });
         break;
       case 'state':
         curState = m.state;
+        if (curState && curState.players) learnAvatarsFromList(curState.players);
         if (bustHideT) {
           clearTimeout(bustHideT); bustHideT = null;
           $('bustOverlay').hidden = true;
@@ -1162,8 +1217,18 @@
       var d = document.createElement('div');
       d.className = 'ar-seat' + (i === curState.current ? ' cur' : '');
       var role = p.human ? roleForName(p.name) : null;
+      // Merge state avatar + gameStart seat + durable local cache
+      var seatMeta = (gameSeats && gameSeats[i]) || null;
+      var faceEm = DEFAULT_AV;
+      if (!p.human) {
+        faceEm = '🤖';
+      } else {
+        faceEm = avatarForPlayer(p);
+        if (isDefaultAv(faceEm) && seatMeta) faceEm = avatarForPlayer(seatMeta);
+        if (isDefaultAv(faceEm)) faceEm = avatarFor(p.name);
+      }
       var face = p.human
-        ? avatarHtml(p.name, '', avatarForPlayer(p))
+        ? avatarHtml(p.name, '', faceEm)
         : '<span class="ar-avatar" title="Rival">🤖</span>';
       d.innerHTML =
         face +
