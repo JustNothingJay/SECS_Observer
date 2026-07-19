@@ -20,14 +20,22 @@
   var SKIN_COLS = {
     default: ['#3d9a6a', '#c45a7a', '#7a6bc4', '#c47a3a', '#4a9a9a'],
     // Elijah — pitch B&W; climb pills = oztag jersey kits
-    bombaclarttttt: ['#e31c23', '#1b4f9c', '#f5c400', '#00a651', '#ff5a00']
+    bombaclarttttt: ['#e31c23', '#1b4f9c', '#f5c400', '#00a651', '#ff5a00'],
+    // Acacia — yellow/white stripes; climb pills = light blue family
+    duckduckgoose: ['#6ec6eb', '#9ad9f2', '#4eb0dc', '#c5ebf8', '#3a9fcf']
   };
-  var SKIN_ORDER = ['default', 'bombaclarttttt'];
+  var SKIN_ORDER = ['default', 'bombaclarttttt', 'duckduckgoose'];
   var SKIN_META = {
-    default: { label: 'Default Arena', credit: '' },
+    default: { label: 'Default Arena', credit: '', badge: '' },
     bombaclarttttt: {
       label: 'BOMBACLARTTTTT',
-      credit: 'Elijah · oztag · black & white'
+      credit: 'Elijah · oztag · black & white',
+      badge: 'BOMBACLARTTTTT · Elijah · Oztag'
+    },
+    duckduckgoose: {
+      label: 'duckduckgoose',
+      credit: 'Acacia · yellow & white stripes · light blue towers',
+      badge: 'duckduckgoose · Acacia'
     }
   };
   var LS_SKIN = 'sa_skin_v1';
@@ -52,8 +60,8 @@
       var credit = document.getElementById('skinCredit');
       if (credit) credit.textContent = meta.credit || '';
       var badge = document.getElementById('arSkinBadge');
-      if (badge && id === 'bombaclarttttt') {
-        badge.textContent = 'BOMBACLARTTTTT · Elijah · Oztag';
+      if (badge) {
+        badge.textContent = meta.badge || ((meta.label || '') + (meta.credit ? ' · ' + meta.credit : ''));
       }
     } catch (eSkin) {}
     // Re-paint only when asked (never block startup / connect)
