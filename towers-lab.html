@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
   <meta name="description" content="Summit Lab — a quiet SECS playground. Push-your-luck column climbing. Watch different pilot styles. Not a product pitch.">
   <title>Summit Lab — SECS</title>
-  <meta name="robots" content="noindex,follow">
+  <meta name="robots" content="noindex,nofollow">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="canonical" href="https://secs.observer/towers-lab.html">
   <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -14,14 +14,33 @@
   <script src="js/includes.min.js?v=14"></script>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; font-src https://cdnjs.cloudflare.com; connect-src https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; img-src 'self' data:; frame-ancestors 'none';">
   <style>
-    .lab-wrap { max-width: 1180px; margin: 1.5rem auto 3rem; padding: 0 1rem; color: var(--text-primary, #e7ecf3); }
+    .lab-wrap {
+      max-width: 1180px; margin: 1.5rem auto 3rem; padding: 0 1rem; color: var(--text-primary, #e7ecf3);
+      --lab-card-bg:#121820; --lab-card-border:#2a3548; --lab-floor:#2a3548; --lab-floor-border:#1a2030;
+      --lab-hot:#e8c36a; --lab-claim:#d4a84b; --lab-die-bg:#f4f0e6; --lab-die-fg:#111;
+      --lab-board-bg:transparent; --lab-floor-radius:2px; --lab-floor-glow:none;
+    }
+    .lab-wrap[data-lab-theme="neon"] {
+      --lab-card-bg:#0c0a1a; --lab-card-border:#2a1a4a; --lab-floor:#1a1030; --lab-floor-border:#0d0720;
+      --lab-hot:#ff2bd6; --lab-claim:#faff3a; --lab-die-bg:#0c0a1a; --lab-die-fg:#00e5ff;
+      --lab-board-bg:#070510; --lab-floor-radius:1px; --lab-floor-glow:0 0 3px rgba(0,229,255,0.35);
+    }
+    .lab-wrap[data-lab-theme="neon"] .lab-hero h2 { color:#00e5ff; text-shadow:0 0 10px rgba(0,229,255,0.6); }
+    .lab-wrap[data-lab-theme="candy"] {
+      --lab-card-bg:#241640; --lab-card-border:#4a2f7a; --lab-floor:#3a2a5e; --lab-floor-border:#2a1e46;
+      --lab-hot:#ffd23f; --lab-claim:#ff5d8f; --lab-die-bg:#fff0f6; --lab-die-fg:#a81e5a;
+      --lab-board-bg:#1e1236; --lab-floor-radius:5px; --lab-floor-glow:none;
+    }
+    .lab-wrap[data-lab-theme="candy"] .lab-hero h2 { color:#ff8ec2; }
+    .lab-wrap[data-lab-theme="mountain"] {
+      --lab-card-bg:#1b1712; --lab-card-border:#3a2f22; --lab-floor:#33291d; --lab-floor-border:#221a11;
+      --lab-hot:#e0a54a; --lab-claim:#e8d5a0; --lab-die-bg:#efe6d2; --lab-die-fg:#2a1f12;
+      --lab-board-bg:#12100c; --lab-floor-radius:2px; --lab-floor-glow:none;
+    }
+    .lab-wrap[data-lab-theme="mountain"] .lab-hero h2 { color:#e0a54a; }
     .lab-hero { text-align: center; margin-bottom: 1.25rem; }
     .lab-hero h2 { color: var(--accent-green, #48e662); letter-spacing: 0.08em; margin-bottom: 0.4rem; }
     .lab-hero p { color: var(--text-muted, #8b9bb4); max-width: 42rem; margin: 0.35rem auto; font-size: 0.95rem; line-height: 1.5; }
-    .lab-disclaimer {
-      font-size: 0.78rem; color: var(--text-muted, #8b9bb4); border: 1px solid var(--border-subtle, #2a3548);
-      border-radius: 8px; padding: 0.75rem 1rem; margin: 1rem auto 1.5rem; max-width: 52rem; background: #0a0b0d;
-    }
 
     /* Main play column + seats sidebar */
     .lab-grid {
@@ -32,11 +51,11 @@
     }
     @media (max-width: 960px) {
       .lab-grid { grid-template-columns: 1fr; }
-      .lab-seats { order: -1; }
+      /* Board first on small screens — kids want to play, not scroll past setup. */
     }
 
     .lab-card {
-      background: #121820; border: 1px solid #2a3548; border-radius: 12px; padding: 0.9rem 1rem;
+      background: var(--lab-card-bg); border: 1px solid var(--lab-card-border); border-radius: 12px; padding: 0.9rem 1rem;
     }
     .lab-card h3 {
       margin: 0 0 0.65rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8b9bb4;
@@ -49,17 +68,20 @@
     .board {
       display: flex; justify-content: space-between; align-items: flex-end; gap: 4px;
       min-height: 280px; padding: 0.5rem 0.25rem 0;
+      background: var(--lab-board-bg); border-radius: 10px;
     }
     .col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
     .stack { display: flex; flex-direction: column-reverse; gap: 2px; width: 100%; max-width: 44px; }
     .floor {
-      height: 12px; border-radius: 2px; background: #2a3548; border: 1px solid #1a2030; position: relative; overflow: hidden;
+      height: 12px; border-radius: var(--lab-floor-radius); background: var(--lab-floor);
+      border: 1px solid var(--lab-floor-border); box-shadow: var(--lab-floor-glow);
+      position: relative; overflow: hidden;
     }
-    .floor.top-claim { background: #d4a84b !important; box-shadow: 0 0 6px #d4a84b66; }
+    .floor.top-claim { background: var(--lab-claim) !important; box-shadow: 0 0 6px var(--lab-claim); }
     .floor.climb-ring { box-shadow: inset 0 0 0 2px #fff7; }
     .floor .stripe { position: absolute; top: 0; bottom: 0; }
     .col-lab { font-size: 0.7rem; color: #8b9bb4; font-weight: 700; }
-    .col.hot .col-lab { color: #e8c36a; }
+    .col.hot .col-lab { color: var(--lab-hot); }
 
     /* Turn strip sits under towers — no nested scroll that clips coach glow */
     .turn-strip {
@@ -72,7 +94,7 @@
     .status.win { color: #3ecf8e; font-weight: 700; }
     .dice-row { display: flex; gap: 8px; justify-content: center; margin: 0.45rem 0 0.55rem; }
     .die {
-      width: 42px; height: 42px; background: #f4f0e6; color: #111; border-radius: 8px;
+      width: 42px; height: 42px; background: var(--lab-die-bg); color: var(--lab-die-fg); border-radius: 8px;
       display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;
     }
 
@@ -151,6 +173,67 @@
 
     .links-row { text-align: center; margin: 0.75rem 0 0; font-size: 0.85rem; }
     .links-row a { color: #5b9fd4; margin: 0 0.4rem; }
+
+    .seat-alias {
+      width: 100%; margin-top: 0.3rem; padding: 0.25rem 0.4rem;
+      background: #10151d; border: 1px solid #2a3444; border-radius: 4px;
+      color: #cdd7e6; font-size: 0.78rem;
+    }
+    .seat-alias:focus { outline: none; border-color: #5b9fd4; }
+
+    #statsBody { font-size: 0.8rem; }
+    .stats-empty { color: #8b9bb4; font-size: 0.75rem; margin: 0.2rem 0 0.4rem; }
+    .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 0.5rem; }
+    .stats-table th, .stats-table td { padding: 0.22rem 0.35rem; text-align: right; }
+    .stats-table th { color: #8b9bb4; font-weight: 600; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid #2a3444; }
+    .stats-table td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .stats-table td.stats-name, .stats-table th:first-child { text-align: left; color: #cdd7e6; }
+    .stats-table tbody tr:first-child td.stats-name { color: #6fcf97; font-weight: 600; }
+    .stats-sub { color: #8b9bb4; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em; margin: 0.5rem 0 0.3rem; }
+    .stats-riv { list-style: none; padding: 0; margin: 0; }
+    .stats-riv li { display: flex; justify-content: space-between; align-items: center; padding: 0.18rem 0.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .stats-riv li span { color: #cdd7e6; flex: 1; }
+    .stats-riv li span:last-child { text-align: right; }
+    .stats-riv li b { color: #d6b24a; padding: 0 0.5rem; font-variant-numeric: tabular-nums; }
+    .stats-danger { margin-top: 0.9rem; padding-top: 0.6rem; border-top: 1px dashed #4a2a34; }
+    .stats-danger-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: #b56074; margin-bottom: 0.35rem; }
+    .stats-reset { width: 100%; background: rgba(196,90,122,0.10); border: 1px solid #7a3a4a; color: #d98a9f; font-size: 0.72rem; padding: 0.45rem 0.6rem; border-radius: 4px; cursor: pointer; }
+    .stats-reset:hover { background: rgba(196,90,122,0.22); border-color: #c45a7a; color: #f2b0c2; }
+
+    /* Theme picker + bust toggle */
+    .toggle-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.7rem; font-size: 0.8rem; color: #cdd7e6; cursor: pointer; }
+    .toggle-row input { width: 18px; height: 18px; flex: 0 0 auto; accent-color: #5b9fd4; }
+    .toggle-row small { color: #8b9bb4; }
+
+    /* Bust overlay — the "you busted" moment kids kept missing */
+    .bust-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
+    .bust-overlay[hidden] { display: none; }
+    .bust-box { background: var(--lab-card-bg, #121820); border: 2px solid #e05555; border-radius: 14px; padding: 1.5rem 1.6rem; max-width: 22rem; width: 100%; text-align: center; box-shadow: 0 0 40px rgba(224,85,85,0.35); }
+    .bust-title { font-size: 2rem; font-weight: 800; letter-spacing: 0.08em; color: #ff5252; text-shadow: 0 0 12px rgba(255,82,82,0.5); margin-bottom: 0.6rem; }
+    .bust-dice { display: flex; gap: 8px; justify-content: center; margin: 0.4rem 0 1rem; }
+    .bust-smack { font-size: 1rem; line-height: 1.45; color: #e7ecf3; font-style: italic; margin-bottom: 1.25rem; }
+    .bust-smack .smack-who { font-style: normal; font-weight: 700; color: #ffd23f; }
+    .bust-continue { min-width: 11rem; }
+
+    /* Touch sizing — small tablets / phones. Kids' fingers need bigger targets. */
+    @media (max-width: 960px) {
+      .btn-lab { padding: 0.75rem 1.15rem; font-size: 1.05rem; min-height: 50px; }
+      .controls { gap: 0.6rem; }
+      .pair-btn { padding: 0.8rem 0.9rem; min-height: 56px; }
+      .pair-btn .out { font-size: 1.1rem; }
+      .pair-btn .meta { font-size: 0.82rem; }
+      .die { width: 48px; height: 48px; font-size: 1.35rem; }
+      .seat-alias { font-size: 16px; padding: 0.55rem 0.6rem; }
+      select, .seat-pilot, #numPlayers, #humanSkill { font-size: 16px; padding: 0.5rem 0.6rem; }
+      #statsBody { font-size: 0.9rem; }
+      .stats-table th, .stats-table td { padding: 0.35rem 0.4rem; }
+      .stats-reset { padding: 0.6rem 0.8rem; font-size: 0.82rem; min-height: 44px; }
+      .toggle-row { font-size: 0.9rem; }
+      .toggle-row input { width: 22px; height: 22px; }
+      .bust-title { font-size: 2.4rem; }
+      .bust-smack { font-size: 1.1rem; }
+      .bust-continue { min-width: 13rem; min-height: 52px; }
+    }
   </style>
 </head>
 <body>
@@ -161,13 +244,6 @@
     <div class="lab-hero">
       <h2>Summit Lab</h2>
       <p>Quiet playground beside the gate. Climb columns, bank or push, watch different pilot styles take seats. Showcase of <em>behaviour</em> — not a rulebook dump, not a product page.</p>
-    </div>
-
-    <div class="lab-disclaimer">
-      <strong>Independent educational toy.</strong> Original presentation for secs.observer.
-      Not affiliated with Hasbro, Parker Brothers, Milton Bradley, Redwood EDA, or Makerchip.
-      Not the contest entry; not a commercial board-game product.
-      Logic runs in your browser; treat client code as visible to anyone who cares enough to look.
     </div>
 
     <div class="lab-grid">
@@ -208,6 +284,7 @@
             </select>
           </div>
           <div class="seat-grid" id="seatSetup"></div>
+          <datalist id="aliasList"></datalist>
           <div class="setup-stack">
             <label for="humanSkill">Human assist</label>
             <select id="humanSkill">
@@ -217,10 +294,24 @@
             </select>
             <small class="assist-blurb" id="assistBlurb">Highlight a strong legal climb.</small>
           </div>
+          <div class="setup-stack">
+            <label for="themePick">Theme</label>
+            <select id="themePick"></select>
+          </div>
+          <label class="toggle-row">
+            <input type="checkbox" id="bustAlertToggle" checked>
+            <span>Bust alert <small>&mdash; pause &amp; taunt on your bust</small></span>
+          </label>
           <div class="controls">
             <button class="btn-lab primary" id="btnNew" type="button">New game</button>
           </div>
           <p class="hint">Each seat picks a pilot style. Humans use the assist level above. Bots play their style silently.</p>
+        </div>
+
+        <div class="lab-card">
+          <h3>Ledger</h3>
+          <div id="statsBody"><p class="stats-empty">No games banked yet. Finish a game and it lands here.</p></div>
+          <p class="hint">Saved on this device only. Names auto-complete once used.</p>
         </div>
       </aside>
     </div>
@@ -230,10 +321,30 @@
       <a href="terminal.html">Terminal</a>
       <a href="journal.html#entry-2026-07-18-001">Journal</a>
     </div>
+
+    <aside class="lab-notice" aria-label="About this page" style="max-width:56ch;margin:2.5rem auto 0;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.07);font-size:0.72rem;line-height:1.6;color:#7a828a;text-align:center;">
+      Summit Lab is a personal, non-commercial project &mdash; a small toy I built for my
+      own kids to explore the push-your-luck climbing game at the heart of the Makerchip
+      ASIC Design Showdown, a competition I entered. The underlying game concept is
+      <em>Can&rsquo;t Stop</em>, designed by Sid Sackson; the &ldquo;Eleven Towers&rdquo;
+      framing belongs to the Showdown&rsquo;s organisers. All rights remain with their
+      respective owners. This page isn&rsquo;t affiliated with, sponsored by, or endorsed
+      by them, isn&rsquo;t a product, and isn&rsquo;t meant for wider distribution &mdash;
+      just a family learning toy on a personal site.
+    </aside>
   </main>
+
+  <div id="bustOverlay" class="bust-overlay" hidden>
+    <div class="bust-box">
+      <div class="bust-title">BUSTED!</div>
+      <div class="bust-dice" id="bustDice"></div>
+      <div class="bust-smack" id="bustSmack"></div>
+      <button class="btn-lab primary bust-continue" id="bustContinue" type="button">Continue &#9654;</button>
+    </div>
+  </div>
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/towers-lab.js?v=3"></script>
+  <script src="js/towers-lab.js?v=7"></script>
 </body>
 </html>

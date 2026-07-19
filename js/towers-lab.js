@@ -18,6 +18,235 @@
   };
   var PILOT_ORDER = ['human','loom','ember','frost','bolt','drift'];
 
+  // ── Themes: player palette (JS) + surface colours (CSS via [data-lab-theme]) ──
+  var THEME_COLS = {
+    slate:    ['#3d9a6a','#c47a3a','#7a6bc4','#c45a7a','#4a9a9a'],
+    neon:     ['#00e5ff','#ff2bd6','#7dff3a','#ffb300','#b14bff'],
+    candy:    ['#ff5d8f','#ffa53d','#3ec8ff','#7ed957','#c86bff'],
+    mountain: ['#6aa06a','#b5732f','#7d94b8','#d9b64a','#9a7b4f']
+  };
+  var THEME_ORDER = ['slate','neon','candy','mountain'];
+  var THEME_LABEL = { slate:'Slate (default)', neon:'Neon Arcade', candy:'Candy Pop', mountain:'Summit' };
+  var LS_THEME = 'sl_theme_v1';
+
+  // ── Bust alert: pause + a bit of 1990s-arcade smack when a HUMAN busts ──
+  var LS_BUSTALERT = 'sl_bustalert_v1';
+  var bustAlertOn = true;
+  var SMACK = [
+    'Insert coin to continue!',
+    'GAME OVER, rookie.',
+    'HA! Was that your best shot?',
+    'You crashed and burned!',
+    'Too bad, so sad.',
+    'Nice try, human.',
+    'You got greedy. Classic.',
+    'Down you go — better luck next quarter.',
+    'Should have banked, hot shot.',
+    'K.O.! The dice have spoken.',
+    'Press START to cry about it.',
+    'That roll goes straight in the bin.',
+    'Womp womp. My turn now.',
+    'Insufficient skill detected.'
+  ];
+
+  // ── Local records: player aliases + a game ledger. Per-browser, no server. ──
+  var LS_ALIASES = 'sl_aliases_v1';
+  var LS_GAMES = 'sl_games_v1';
+
+  function escHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function escAttr(s) {
+    return escHtml(s).replace(/"/g, '&quot;');
+  }
+  function lsGet(key, fallback) {
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function lsSet(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+  }
+  function getAliases() { var a = lsGet(LS_ALIASES, []); return (a instanceof Array) ? a : []; }
+  function rememberAlias(name) {
+    name = (name || '').trim();
+    if (!name) return;
+    var a = getAliases(), low = name.toLowerCase();
+    a = a.filter(function (x) { return x.toLowerCase() !== low; });
+    a.unshift(name);
+    if (a.length > 24) a = a.slice(0, 24);
+    lsSet(LS_ALIASES, a);
+  }
+  function getGames() { var g = lsGet(LS_GAMES, []); return (g instanceof Array) ? g : []; }
+  function pushGame(rec) {
+    var g = getGames();
+    g.push(rec);
+    if (g.length > 500) g = g.slice(g.length - 500);
+    lsSet(LS_GAMES, g);
+  }
+  function refreshAliasDatalist() {
+    var dl = $('aliasList');
+    if (!dl) return;
+    var a = getAliases();
+    dl.innerHTML = '';
+    for (var i = 0; i < a.length; i++) {
+      var o = document.createElement('option');
+      o.value = a[i];
+      dl.appendChild(o);
+    }
+  }
+  function readAliases() {
+    var out = {};
+    document.querySelectorAll('.seat-alias').forEach(function (inp) {
+      out[parseInt(inp.getAttribute('data-seat'), 10)] = (inp.value || '').trim();
+    });
+    return out;
+  }
+  // Append a finished game to the ledger. winIdx = winning seat index.
+  function recordGame(winIdx) {
+    if (!G) return;
+    if (winIdx == null) winIdx = G.winner;
+    if (winIdx == null) return;
+    var seats = [];
+    for (var i = 0; i < G.n; i++) {
+      var p = G.players[i];
+      seats.push({ h: !!p.human, pilot: p.pilot, n: p.name || ('Seat ' + (i + 1)), c: p.claimed.size });
+    }
+    pushGame({ t: Date.now(), seats: seats, win: winIdx });
+    renderStats();
+  }
+  // Derive leaderboard + sibling rivalries from the ledger and paint the card.
+  function renderStats() {
+    var body = $('statsBody');
+    if (!body) return;
+    var games = getGames();
+    if (!games.length) {
+      body.innerHTML = '<p class="stats-empty">No games banked yet. Finish a game and it lands here.</p>';
+      return;
+    }
+    var lb = {}, riv = {};
+    for (var gi = 0; gi < games.length; gi++) {
+      var rec = games[gi], humans = [];
+      for (var si = 0; si < rec.seats.length; si++) {
+        var s = rec.seats[si];
+        if (!s.h) continue;
+        var key = s.n.toLowerCase();
+        if (!lb[key]) lb[key] = { disp: s.n, played: 0, won: 0 };
+        lb[key].disp = s.n;
+        lb[key].played++;
+        if (si === rec.win) lb[key].won++;
+        humans.push({ i: si, key: key, n: s.n, c: s.c || 0 });
+      }
+      for (var x = 0; x < humans.length; x++) {
+        for (var y = x + 1; y < humans.length; y++) {
+          var A = humans[x], B = humans[y];
+          var first = A.key < B.key ? A : B, second = A.key < B.key ? B : A;
+          var pk = first.key + '|' + second.key;
+          if (!riv[pk]) riv[pk] = { a: first.n, b: second.n, aw: 0, bw: 0 };
+          riv[pk].a = first.n; riv[pk].b = second.n;
+          var wKey = null;
+          if (rec.win === A.i) wKey = A.key;
+          else if (rec.win === B.i) wKey = B.key;
+          else if (A.c !== B.c) wKey = (A.c > B.c) ? A.key : B.key;
+          if (wKey === first.key) riv[pk].aw++;
+          else if (wKey === second.key) riv[pk].bw++;
+        }
+      }
+    }
+    var rows = [];
+    for (var k in lb) if (lb.hasOwnProperty(k)) rows.push(lb[k]);
+    rows.sort(function (p, q) {
+      var pw = p.played ? p.won / p.played : 0, qw = q.played ? q.won / q.played : 0;
+      if (qw !== pw) return qw - pw;
+      return q.won - p.won;
+    });
+    var html = '';
+    if (rows.length) {
+      html += '<table class="stats-table"><thead><tr><th>Player</th><th>P</th><th>W</th><th>Win%</th></tr></thead><tbody>';
+      for (var r = 0; r < rows.length; r++) {
+        var row = rows[r], pct = row.played ? Math.round(100 * row.won / row.played) : 0;
+        html += '<tr><td class="stats-name">' + escHtml(row.disp) + '</td><td>' + row.played +
+                '</td><td>' + row.won + '</td><td>' + pct + '%</td></tr>';
+      }
+      html += '</tbody></table>';
+    }
+    var rk = [];
+    for (var pk2 in riv) if (riv.hasOwnProperty(pk2)) rk.push(riv[pk2]);
+    if (rk.length) {
+      rk.sort(function (p, q) { return (q.aw + q.bw) - (p.aw + p.bw); });
+      html += '<div class="stats-sub">Rivalries</div><ul class="stats-riv">';
+      for (var ri = 0; ri < rk.length && ri < 8; ri++) {
+        var v = rk[ri];
+        html += '<li><span>' + escHtml(v.a) + '</span><b>' + v.aw + '&ndash;' + v.bw +
+                '</b><span>' + escHtml(v.b) + '</span></li>';
+      }
+      html += '</ul>';
+    }
+    html += '<div class="stats-danger"><div class="stats-danger-label">⚠ Danger zone</div>' +
+            '<button type="button" class="stats-reset" id="statsReset">Erase all scores</button></div>';
+    body.innerHTML = html;
+    var rb = $('statsReset');
+    if (rb) rb.onclick = function () {
+      if (window.confirm('Erase ALL saved scores on this device? This cannot be undone. (Player names are kept.)')) {
+        lsSet(LS_GAMES, []);
+        renderStats();
+      }
+    };
+  }
+
+  // Apply a theme: swap the player palette + set the CSS surface variables.
+  function applyTheme(t) {
+    if (!THEME_COLS[t]) t = 'slate';
+    COL = THEME_COLS[t].slice();
+    var wrap = document.querySelector('.lab-wrap');
+    if (wrap) {
+      if (t === 'slate') wrap.removeAttribute('data-lab-theme');
+      else wrap.setAttribute('data-lab-theme', t);
+    }
+    lsSet(LS_THEME, t);
+    if ($('seatSetup')) renderSeatSetup();
+    if (G) refresh();
+  }
+  function populateThemePicker() {
+    var sel = $('themePick');
+    if (!sel) return;
+    var cur = lsGet(LS_THEME, 'slate');
+    sel.innerHTML = '';
+    for (var i = 0; i < THEME_ORDER.length; i++) {
+      var id = THEME_ORDER[i];
+      var o = document.createElement('option');
+      o.value = id; o.textContent = THEME_LABEL[id] || id;
+      if (id === cur) o.selected = true;
+      sel.appendChild(o);
+    }
+    sel.onchange = function () { applyTheme(sel.value); };
+  }
+  // The taunter is the next seat if it's a bot; otherwise a generic arcade voice.
+  function smackLine(nextIdx) {
+    var line = SMACK[Math.floor(rnd() * SMACK.length)];
+    var who = (nextIdx != null && G && isBot(nextIdx)) ? PILOTS[G.players[nextIdx].pilot].label : 'ARCADE';
+    return { who: who, line: line };
+  }
+  function showBustOverlay(dice, nextIdx, onContinue) {
+    var ov = $('bustOverlay');
+    if (!ov) { onContinue(); return; }
+    var dd = $('bustDice');
+    dd.innerHTML = '';
+    for (var i = 0; i < dice.length; i++) {
+      var d = document.createElement('div');
+      d.className = 'die bust-die';
+      d.textContent = dice[i];
+      dd.appendChild(d);
+    }
+    var sm = smackLine(nextIdx);
+    $('bustSmack').innerHTML = '<span class="smack-who">' + escHtml(sm.who) + ':</span> &ldquo;' +
+                               escHtml(sm.line) + '&rdquo;';
+    ov.hidden = false;
+    function done() { ov.hidden = true; ov.onclick = null; onContinue(); }
+    $('bustContinue').onclick = done;
+    ov.onclick = function (e) { if (e.target === ov) done(); };
+    setTimeout(function () { try { $('bustContinue').focus(); } catch (e) {} }, 30);
+  }
+
   var G = null;
   var rng = Math.random;
   var seedState = 1;
@@ -419,6 +648,10 @@
     startTurn(g);
   }
 
+  function seatName(i) {
+    if (!G || !G.players[i]) return 'Seat ' + (i + 1);
+    return G.players[i].name || ('Seat ' + (i + 1));
+  }
   function isHuman(i) {
     return G && G.players[i].pilot === 'human';
   }
@@ -455,28 +688,37 @@
   function renderSeatSetup() {
     var n = parseInt($('numPlayers').value, 10);
     var el = $('seatSetup');
-    var prev = {};
+    var prev = {}, prevAlias = {};
     el.querySelectorAll('.seat-pilot').forEach(function (sel) {
       prev[sel.getAttribute('data-seat')] = sel.value;
     });
+    el.querySelectorAll('.seat-alias').forEach(function (inp) {
+      prevAlias[inp.getAttribute('data-seat')] = inp.value;
+    });
+    refreshAliasDatalist();
     el.innerHTML = '';
     for (var i = 0; i < n; i++) {
       var row = document.createElement('div');
       row.className = 'seat';
       var pick = prev[i] || defaultPilot(i);
+      var aliasVal = prevAlias[i] || '';
       row.innerHTML =
         '<div class="swatch" style="background:' + COL[i] + '"></div>' +
         '<div class="seat-main">' +
           '<div class="seat-head"><b>Seat ' + (i + 1) + '</b>' + seatSelectHtml(i, pick) + '</div>' +
+          '<input class="seat-alias" data-seat="' + i + '" list="aliasList" maxlength="18" ' +
+            'placeholder="name…" value="' + escAttr(aliasVal) + '"' +
+            (pick === 'human' ? '' : ' style="display:none"') + '>' +
           '<small>' + (PILOTS[pick] ? PILOTS[pick].blurb : '') + '</small>' +
         '</div>';
       el.appendChild(row);
-      (function (small) {
+      (function (small, aliasInp) {
         var sel = row.querySelector('select');
         sel.onchange = function () {
           small.textContent = PILOTS[sel.value].blurb;
+          aliasInp.style.display = (sel.value === 'human') ? '' : 'none';
         };
-      })(row.querySelector('small'));
+      })(row.querySelector('small'), row.querySelector('.seat-alias'));
     }
   }
 
@@ -624,7 +866,7 @@
       $('btnStop').disabled = true;
     }
     if (G.phase === 'over') {
-      setStatus('Summit sealed — <b style="color:' + COL[G.winner] + '">Seat ' + (G.winner + 1) + ' (' + PILOTS[G.players[G.winner].pilot].label + ')</b> wins.', 'win');
+      setStatus('Summit sealed — <b style="color:' + COL[G.winner] + '">' + escHtml(seatName(G.winner)) + '</b> wins.', 'win');
     }
   }
 
@@ -647,17 +889,26 @@
 
   function doRoll() {
     if (G.phase !== 'need_roll' && G.phase !== 'can_stop') return;
-    var who = 'Seat ' + (G.current + 1);
+    var who = escHtml(seatName(G.current));
     G.dice = [die(), die(), die(), die()];
     G.rolls += 1;
     G.pending = pairings(G.dice);
     var any = G.pending.some(function (p) { return pairingLegal(G, p.sums); });
     if (!any) {
-      setStatus('Bust — turn progress wiped.', 'bust');
       feed('<b style="color:' + COL[G.current] + '">' + who + '</b> rolled [' + G.dice.join(',') + '] → <b>bust</b>');
-      bust(G);
-      refresh();
-      maybeBot();
+      var bustDice = G.dice.slice();
+      var nextIdx = (G.current + 1) % G.n;
+      if (isHuman(G.current) && bustAlertOn) {
+        // Show the busting roll and pause — bust() nulls the dice, so freeze it here.
+        setStatus('BUST! ' + who + ' rolled [' + bustDice.join(',') + '] with no legal move — turn lost.', 'bust');
+        refresh();
+        showBustOverlay(bustDice, nextIdx, function () { bust(G); refresh(); maybeBot(); });
+      } else {
+        setStatus('Bust — turn progress wiped.', 'bust');
+        bust(G);
+        refresh();
+        maybeBot();
+      }
       return;
     }
     G.phase = 'choose_pair';
@@ -669,7 +920,7 @@
 
   function choosePairing(p, pr) {
     if (G.phase !== 'choose_pair') return;
-    var who = 'Seat ' + (G.current + 1);
+    var who = escHtml(seatName(G.current));
     var dry = dryRun(G, p.sums, pr);
     applyClimb(G, p.sums, pr);
     G.phase = 'can_stop';
@@ -689,17 +940,18 @@
     if (G.phase !== 'can_stop' && G.phase !== 'need_roll') return;
     if (!G.climbing.size && G.phase === 'need_roll') return;
     var pi = G.current;
-    var who = 'Seat ' + (pi + 1);
+    var who = escHtml(seatName(pi));
     var r = bank(G);
     if (r.newly.length) feed('<b style="color:' + COL[pi] + '">' + who + '</b> banks & claims ' + r.newly.join(', '));
     else feed('<b style="color:' + COL[pi] + '">' + who + '</b> banks');
     if (r.win) {
-      setStatus('Seat ' + (pi + 1) + ' wins.', 'win');
-      feed('🏆 <b>Seat ' + (pi + 1) + ' (' + PILOTS[G.players[pi].pilot].label + ')</b> seals three summits.');
+      setStatus(who + ' wins!', 'win');
+      feed('🏆 <b style="color:' + COL[pi] + '">' + who + '</b> seals three summits.');
+      recordGame(pi);
       refresh();
       return;
     }
-    setStatus('Seat ' + (G.current + 1) + ' — roll.');
+    setStatus(escHtml(seatName(G.current)) + ' — roll.');
     refresh();
     maybeBot();
   }
@@ -707,6 +959,7 @@
   function newGame() {
     var n = parseInt($('numPlayers').value, 10);
     var pilots = readPilots();
+    var aliases = readAliases();
     while (pilots.length < n) pilots.push(defaultPilot(pilots.length));
     seedRng(Date.now());
     G = {
@@ -723,15 +976,22 @@
       phase: 'need_roll',
       winner: null
     };
+    var roster = [];
     for (var i = 0; i < n; i++) {
       var fl = {};
       for (var s = 2; s <= 12; s++) fl[s] = 0;
-      G.players.push({ floor: fl, claimed: new Set(), pilot: pilots[i] || defaultPilot(i) });
+      var pid = pilots[i] || defaultPilot(i);
+      var nm;
+      if (pid === 'human') { nm = aliases[i] || ('Player ' + (i + 1)); rememberAlias(aliases[i]); }
+      else { nm = PILOTS[pid].label; }
+      G.players.push({ floor: fl, claimed: new Set(), pilot: pid, name: nm, human: pid === 'human' });
+      roster.push(escHtml(nm));
     }
+    refreshAliasDatalist();
     startTurn(G);
     $('feed').innerHTML = '';
-    feed('New game · ' + n + ' seats');
-    setStatus('Seat 1 — roll.');
+    feed('New game · ' + roster.join(' · '));
+    setStatus(escHtml(seatName(0)) + ' — roll.');
     refresh();
     maybeBot();
   }
@@ -745,7 +1005,18 @@
     if (coachPick) choosePairing(coachPick.p, coachPick.priority);
   };
 
+  populateThemePicker();
+  applyTheme(lsGet(LS_THEME, 'slate'));
+  bustAlertOn = lsGet(LS_BUSTALERT, true);
+  (function () {
+    var bt = $('bustAlertToggle');
+    if (bt) {
+      bt.checked = !!bustAlertOn;
+      bt.onchange = function () { bustAlertOn = bt.checked; lsSet(LS_BUSTALERT, bustAlertOn); };
+    }
+  })();
   renderSeatSetup();
   updateAssistBlurb();
   newGame();
+  renderStats();
 })();
