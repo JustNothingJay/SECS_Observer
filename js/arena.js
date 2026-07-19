@@ -1,9 +1,7 @@
-/* Summit Arena client — lobby + head-to-head play against server-authoritative state.
-   The server owns the rules; this file only renders state and sends intents. */
+/* Summit Arena client — family tables (2–5 humans) + server-authoritative play. */
 (function () {
   'use strict';
 
-  // ── Config ──
   function wsUrl() {
     try {
       var q = new URLSearchParams(location.search).get('ws');
@@ -18,9 +16,15 @@
   var COL = ['#3d9a6a', '#c45a7a', '#7a6bc4', '#c47a3a', '#4a9a9a'];
 
   function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
 
-  // ── Identity (ephemeral; name persists locally, no login) ──
-  function getAliases() { try { return JSON.parse(localStorage.getItem('sa_aliases') || '[]') || []; } catch (e) { return []; } }
+  function getAliases() {
+    try { return JSON.parse(localStorage.getItem('sa_aliases') || '[]') || []; }
+    catch (e) { return []; }
+  }
   function rememberAlias(n) {
     n = (n || '').trim(); if (!n) return;
     var a = getAliases().filter(function (x) { return x.toLowerCase() !== n.toLowerCase(); });
@@ -30,22 +34,23 @@
   function myAlias() { try { return localStorage.getItem('sa_alias') || ''; } catch (e) { return ''; } }
   function setAlias(n) { try { localStorage.setItem('sa_alias', n); } catch (e) {} }
 
-  // ── State ──
-  var ws = null, youId = null, mySeat = null, curState = null, seats = null;
-  var lobby = [], reconnectT = null, bustHideT = null, everConnected = false;
-  var reconnectAttempt = 0;
-  var intentionalClose = false;
+  var ws = null, youId = null, mySeat = null, curState = null;
+  var lobbyPlayers = [], lobbyParties = [], myParty = null;
+  var reconnectT = null, bustHideT = null, pingT = null;
+  var everConnected = false, reconnectAttempt = 0, intentionalClose = false;
+  var inGame = false;
 
   function setConn(on, text) {
     $('connDot').className = 'ar-dot' + (on ? ' on' : '');
     $('connText').textContent = text;
   }
-  function send(o) { try { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); } catch (e) {} }
+  function setErr(msg) { $('errLine').textContent = msg || ''; }
+  function send(o) {
+    try { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); } catch (e) {}
+  }
 
-  // ── Connect / reconnect (exponential backoff — no thrash when offline) ──
   function connect() {
     if (reconnectT) { clearTimeout(reconnectT); reconnectT = null; }
-    // Close any half-open socket before opening another.
     if (ws) {
       try {
         intentionalClose = true;
@@ -55,123 +60,273 @@
       ws = null;
       intentionalClose = false;
     }
+    stopPing();
     var host = WS_URL.replace(/^wss?:\/\//, '');
-    setConn(false, reconnectAttempt ? ('reconnecting in a moment… · ' + host) : ('connecting… · ' + host));
-    try { ws = new WebSocket(WS_URL); } catch (e) {
-      setConn(false, 'offline · bad server URL');
-      scheduleReconnect();
-      return;
-    }
+    setConn(false, reconnectAttempt ? ('reconnecting… · ' + host) : ('connecting… · ' + host));
+    try { ws = new WebSocket(WS_URL); }
+    catch (e) { setConn(false, 'offline · bad server URL'); scheduleReconnect(); return; }
+
     ws.onopen = function () {
       everConnected = true;
       reconnectAttempt = 0;
       setConn(true, 'online · ' + host);
+      setErr('');
       send({ t: 'hello', alias: myAlias() || 'Player' });
+      startPing();
     };
     ws.onmessage = function (ev) {
       var m; try { m = JSON.parse(ev.data); } catch (e) { return; }
       handle(m);
     };
-    ws.onclose = function (ev) {
+    ws.onclose = function () {
       if (intentionalClose) return;
-      var code = ev && ev.code;
-      var hint = everConnected ? 'disconnected' : 'server unreachable';
-      if (code === 1006 && !everConnected) hint = 'can\'t reach arena server';
-      setConn(false, hint + ' · ' + host);
-      // Stay on lobby; don't wipe mid-game UI if we only dropped for a second —
-      // but if we were in a game, showLobby after a real disconnect.
-      if (everConnected) {
-        try { if (!$('gameView').hidden) setStatus('Connection lost — reconnecting…', ''); } catch (e) {}
+      stopPing();
+      var host2 = WS_URL.replace(/^wss?:\/\//, '');
+      setConn(false, (everConnected ? 'disconnected' : 'can\'t reach server') + ' · ' + host2);
+      if (inGame) {
+        try { setStatus('Connection lost — reconnecting… (game may need a restart)', ''); } catch (e) {}
       }
       scheduleReconnect();
     };
-    ws.onerror = function () { /* onclose will fire and schedule reconnect */ };
+    ws.onerror = function () {};
   }
+
   function scheduleReconnect() {
     if (reconnectT) return;
     reconnectAttempt = Math.min(reconnectAttempt + 1, 8);
-    // 1.5s, 3s, 5s… up to ~20s
-    var delay = Math.min(20000, 1000 + reconnectAttempt * 1500);
+    var delay = Math.min(20000, 1200 + reconnectAttempt * 1400);
     setConn(false, 'retry in ' + Math.round(delay / 1000) + 's · ' + WS_URL.replace(/^wss?:\/\//, ''));
     reconnectT = setTimeout(function () { reconnectT = null; connect(); }, delay);
   }
 
-  // ── Message handling ──
+  function startPing() {
+    stopPing();
+    // App-level heartbeat keeps mobile + Fly proxy from timing out idle WS
+    pingT = setInterval(function () {
+      if (ws && ws.readyState === 1) send({ t: 'ping' });
+    }, 12000);
+  }
+  function stopPing() {
+    if (pingT) { clearInterval(pingT); pingT = null; }
+  }
+
   function handle(m) {
     switch (m.t) {
       case 'welcome':
         youId = m.youId;
         $('meLine').textContent = m.alias ? ('playing as ' + m.alias) : '';
         break;
-      case 'lobby': lobby = m.players || []; renderLobby(); break;
-      case 'invited': showInvite(m); break;
-      case 'inviteDeclined': flashStatusLobby((m.byAlias || 'Player') + ' declined.'); break;
-      case 'inviteCancelled': hideInvite(); break;
+      case 'lobby':
+        lobbyPlayers = m.players || [];
+        lobbyParties = m.parties || [];
+        // Keep myParty in sync if we're listed
+        if (myParty) {
+          var found = null;
+          for (var i = 0; i < lobbyParties.length; i++) {
+            if (lobbyParties[i].id === myParty.id) { found = lobbyParties[i]; break; }
+          }
+          myParty = found;
+        }
+        renderLobby();
+        break;
+      case 'party':
+        myParty = m.party;
+        renderLobby();
+        break;
+      case 'invited':
+        showInvite(m);
+        break;
+      case 'inviteDeclined':
+        setErr((m.byAlias || 'Player') + ' declined.');
+        break;
+      case 'inviteCancelled':
+        hideInvite();
+        break;
       case 'gameStart':
-        mySeat = m.seatIndex; seats = m.seats; hideInvite();
+        mySeat = m.seatIndex;
+        hideInvite();
+        inGame = true;
+        myParty = null;
         showGame();
         break;
       case 'state':
         curState = m.state;
-        if (bustHideT) { clearTimeout(bustHideT); bustHideT = null; $('bustOverlay').hidden = true; }
+        if (bustHideT) {
+          clearTimeout(bustHideT); bustHideT = null;
+          $('bustOverlay').hidden = true;
+        }
         renderGame();
         break;
-      case 'bust': showBust(m); break;
-      case 'gameOver': onGameOver(m); break;
-      case 'opponentLeft':
-        setStatus('Opponent left the game.', '');
-        setTimeout(showLobby, 1400);
+      case 'bust':
+        showBust(m);
         break;
-      case 'error': /* soft */ break;
-      default: break;
+      case 'gameOver':
+        onGameOver(m);
+        break;
+      case 'opponentLeft':
+        setStatus((m.byAlias ? esc(m.byAlias) + ' left' : 'Someone left') + ' — table closed.', '');
+        inGame = false;
+        setTimeout(showLobby, 1600);
+        break;
+      case 'error':
+        setErr(m.msg || 'Something went wrong');
+        break;
+      case 'pong':
+        break;
+      default:
+        break;
     }
   }
 
-  // ── Lobby view ──
-  function showLobby() { $('gameView').hidden = true; $('lobbyView').hidden = false; }
-  function flashStatusLobby(msg) { $('meLine').textContent = msg; }
+  // ── Lobby ──
+  function showLobby() {
+    inGame = false;
+    $('gameView').hidden = true;
+    $('lobbyView').hidden = false;
+    renderLobby();
+  }
+
   function renderLobby() {
-    var ul = $('playerList'); ul.innerHTML = '';
-    var others = lobby.filter(function (p) { return p.id !== youId; });
-    var me = lobby.filter(function (p) { return p.id === youId; })[0];
-    if (me) $('meLine').textContent = 'playing as ' + me.alias + (me.status !== 'idle' ? ' · ' + me.status : '');
+    var me = null;
+    for (var i = 0; i < lobbyPlayers.length; i++) {
+      if (lobbyPlayers[i].id === youId) { me = lobbyPlayers[i]; break; }
+    }
+    if (me) {
+      $('meLine').textContent = 'playing as ' + me.alias +
+        (me.status && me.status !== 'idle' ? ' · ' + me.status : '') +
+        ' · ' + lobbyPlayers.length + ' online';
+    }
+
+    // My table panel
+    var atTable = !!(myParty && myParty.members && myParty.members.length);
+    $('myTableCard').hidden = !atTable;
+    $('openActions').hidden = atTable;
+    if (atTable) {
+      var isHost = myParty.hostId === youId;
+      var names = myParty.members.map(function (m) {
+        var tag = m.id === myParty.hostId ? ' (host)' : '';
+        var you = m.id === youId ? ' ★' : '';
+        return esc(m.alias) + tag + you;
+      }).join(' · ');
+      $('myTableTitle').textContent =
+        'Table · ' + myParty.members.length + ' human' +
+        (myParty.members.length === 1 ? '' : 's') +
+        ' + ' + myParty.bots + ' Rival' + (myParty.bots === 1 ? '' : 's') +
+        ' = ' + myParty.seats + ' seats';
+      $('myTableMembers').innerHTML = names || '…';
+      $('hostControls').hidden = !isHost;
+      $('guestControls').hidden = isHost;
+      if (isHost) {
+        var bc = $('botCount');
+        var maxBots = Math.max(0, 5 - myParty.members.length);
+        // rebuild options if needed
+        var want = String(Math.min(myParty.bots, maxBots));
+        if (bc.value !== want) bc.value = want;
+        $('btnStart').disabled = myParty.members.length < 2;
+      }
+    }
+
+    // Open parties list
+    var pl = $('partyList');
+    pl.innerHTML = '';
+    var others = lobbyParties.filter(function (p) {
+      return !myParty || p.id !== myParty.id;
+    });
     if (!others.length) {
-      ul.innerHTML = '<li class="ar-empty">Nobody else online yet. Open this page on another device (or tablet) with a different name, then challenge them here.</li>';
-      return;
+      pl.innerHTML = atTable
+        ? ''
+        : '<li class="ar-empty">No open tables. Create one and have siblings join.</li>';
     }
     others.forEach(function (p) {
+      var hostName = '?';
+      for (var j = 0; j < p.members.length; j++) {
+        if (p.members[j].id === p.hostId) hostName = p.members[j].alias;
+      }
       var li = document.createElement('li');
       var left = document.createElement('div');
-      left.innerHTML = '<span class="ar-pname">' + esc(p.alias) + '</span> <span class="ar-pstatus ' + p.status + '">' + p.status + '</span>';
+      left.innerHTML =
+        '<span class="ar-pname">' + esc(hostName) + '&rsquo;s table</span> ' +
+        '<span class="ar-pstatus party">' + p.members.length + ' human' +
+        (p.members.length === 1 ? '' : 's') + ' · ' + p.bots + ' rival' +
+        (p.bots === 1 ? '' : 's') + '</span>';
       var btn = document.createElement('button');
-      btn.className = 'btn-ar primary'; btn.type = 'button'; btn.textContent = 'Challenge';
-      btn.disabled = !(p.status === 'idle' && (!me || me.status === 'idle'));
+      btn.className = 'btn-ar primary';
+      btn.type = 'button';
+      btn.textContent = 'Join';
+      btn.disabled = !!(myParty) || p.members.length >= 5;
       btn.onclick = function () {
-        var bots = parseInt($('botCount').value, 10) || 0;
-        send({ t: 'invite', toId: p.id, bots: bots });
-        $('meLine').textContent = 'challenge sent to ' + p.alias + '…';
+        setErr('');
+        send({ t: 'joinParty', partyId: p.id });
       };
-      li.appendChild(left); li.appendChild(btn);
+      li.appendChild(left);
+      li.appendChild(btn);
+      pl.appendChild(li);
+    });
+
+    // Online list
+    var ul = $('playerList');
+    ul.innerHTML = '';
+    var people = lobbyPlayers.filter(function (p) { return p.id !== youId; });
+    if (!people.length) {
+      ul.innerHTML = '<li class="ar-empty">Nobody else online yet. Open this page on another tablet.</li>';
+      return;
+    }
+    people.forEach(function (p) {
+      var li = document.createElement('li');
+      var left = document.createElement('div');
+      left.innerHTML =
+        '<span class="ar-pname">' + esc(p.alias) + '</span> ' +
+        '<span class="ar-pstatus ' + esc(p.status || 'idle') + '">' + esc(p.status || 'idle') + '</span>';
+      li.appendChild(left);
+      // Quick invite only if both idle (legacy 1v1 path)
+      if (p.status === 'idle' && me && me.status === 'idle' && !myParty) {
+        var btn = document.createElement('button');
+        btn.className = 'btn-ar';
+        btn.type = 'button';
+        btn.textContent = 'Quick 1v1';
+        btn.onclick = function () {
+          setErr('');
+          send({ t: 'invite', toId: p.id, bots: parseInt($('botCount').value, 10) || 1 });
+          setErr('Challenge sent to ' + p.alias + '…');
+        };
+        li.appendChild(btn);
+      }
       ul.appendChild(li);
     });
   }
 
-  // ── Invite overlay ──
   function showInvite(m) {
     $('inviteTitle').textContent = 'Challenge from ' + m.fromAlias;
     var botTxt = m.bots === 0 ? 'no Rivals' : (m.bots + ' Rival' + (m.bots > 1 ? 's' : ''));
-    $('inviteBody').innerHTML = '<b>' + esc(m.fromAlias) + '</b> wants to play &mdash; you two + ' + botTxt + '.';
-    $('inviteAccept').onclick = function () { send({ t: 'inviteResponse', fromId: m.fromId, accept: true }); hideInvite(); };
-    $('inviteReject').onclick = function () { send({ t: 'inviteResponse', fromId: m.fromId, accept: false }); hideInvite(); };
+    $('inviteBody').innerHTML =
+      '<b>' + esc(m.fromAlias) + '</b> wants a quick 1v1 + ' + botTxt + '.';
+    $('inviteAccept').onclick = function () {
+      send({ t: 'inviteResponse', fromId: m.fromId, accept: true });
+      hideInvite();
+    };
+    $('inviteReject').onclick = function () {
+      send({ t: 'inviteResponse', fromId: m.fromId, accept: false });
+      hideInvite();
+    };
     $('inviteOverlay').hidden = false;
   }
   function hideInvite() { $('inviteOverlay').hidden = true; }
 
-  // ── Game view ──
-  function showGame() { $('lobbyView').hidden = true; $('gameView').hidden = false; setStatus('Game on!', 'mine'); }
-  function setStatus(html, cls) { var el = $('status'); el.className = 'ar-status ' + (cls || ''); el.innerHTML = html; }
-
-  function myTurn() { return curState && curState.current === mySeat && curState.currentIsHuman && curState.winner == null; }
+  // ── Game ──
+  function showGame() {
+    $('lobbyView').hidden = true;
+    $('gameView').hidden = false;
+    setStatus('Game on!', 'mine');
+  }
+  function setStatus(html, cls) {
+    var el = $('status');
+    el.className = 'ar-status ' + (cls || '');
+    el.innerHTML = html;
+  }
+  function myTurn() {
+    return curState && curState.current === mySeat &&
+      curState.currentIsHuman && curState.winner == null;
+  }
 
   function renderGame() {
     if (!curState) return;
@@ -186,11 +341,10 @@
     curState.players.forEach(function (p, i) {
       var d = document.createElement('div');
       d.className = 'ar-seat' + (i === curState.current ? ' cur' : '');
-      var claims = p.claimed.length;
-      var who = esc(p.name);
-      d.innerHTML = '<span class="ar-swatch" style="background:' + COL[i % COL.length] + '"></span>' +
-        '<span>' + who + (i === mySeat ? ' (you)' : '') + '</span>' +
-        '<span class="ar-claims">' + claims + '/3</span>';
+      d.innerHTML =
+        '<span class="ar-swatch" style="background:' + COL[i % COL.length] + '"></span>' +
+        '<span>' + esc(p.name) + (i === mySeat ? ' (you)' : '') + '</span>' +
+        '<span class="ar-claims">' + p.claimed.length + '/3</span>';
       bar.appendChild(d);
     });
   }
@@ -218,7 +372,9 @@
           if (f === h) { fl.classList.add('top-claim'); fl.style.color = c; }
         } else {
           var occ = [];
-          for (var seat = 0; seat < curState.n; seat++) if (effFloor(seat, s) >= f) occ.push(seat);
+          for (var seat = 0; seat < curState.n; seat++) {
+            if (effFloor(seat, s) >= f) occ.push(seat);
+          }
           if (occ.length === 1) fl.style.background = COL[occ[0] % COL.length];
           else if (occ.length > 1) {
             var pct = 100 / occ.length;
@@ -253,12 +409,17 @@
     var opts = $('opts'); opts.innerHTML = '';
     var roll = $('btnRoll'), bank = $('btnBank');
     var mine = myTurn();
-    var curName = curState.players[curState.current] ? curState.players[curState.current].name : '';
+    var curName = curState.players[curState.current]
+      ? curState.players[curState.current].name : '';
 
-    if (curState.winner != null) { roll.disabled = true; bank.disabled = true; return; }
+    if (curState.winner != null) {
+      roll.disabled = true; bank.disabled = true; return;
+    }
     if (!mine) {
       roll.disabled = true; bank.disabled = true;
-      var waitOn = curState.currentIsHuman ? esc(curName) : (esc(curName) + ' (Rival)');
+      var waitOn = curState.currentIsHuman
+        ? esc(curName)
+        : (esc(curName) + ' (Rival)');
       setStatus('Waiting for <b>' + waitOn + '</b>…', '');
       return;
     }
@@ -268,7 +429,9 @@
       curState.options.forEach(function (o) {
         var b = document.createElement('button');
         b.className = 'ar-optbtn'; b.type = 'button'; b.textContent = o.headline;
-        b.onclick = function () { send({ t: 'action', action: 'choose', signature: o.signature }); };
+        b.onclick = function () {
+          send({ t: 'action', action: 'choose', signature: o.signature });
+        };
         opts.appendChild(b);
       });
     } else if (curState.phase === 'need_roll') {
@@ -289,29 +452,39 @@
   function showBust(m) {
     var dd = $('bustDice'); dd.innerHTML = '';
     (m.dice || []).forEach(function (v) {
-      var d = document.createElement('div'); d.className = 'ar-die'; d.textContent = v; dd.appendChild(d);
+      var d = document.createElement('div');
+      d.className = 'ar-die'; d.textContent = v; dd.appendChild(d);
     });
-    $('bustSmack').innerHTML = '<b>' + esc(m.byName || '') + '</b> busted &mdash; &ldquo;' + esc(m.smack || '') + '&rdquo;';
+    $('bustSmack').innerHTML =
+      '<b>' + esc(m.byName || '') + '</b> busted &mdash; &ldquo;' +
+      esc(m.smack || '') + '&rdquo;';
     $('bustOverlay').hidden = false;
     if (bustHideT) clearTimeout(bustHideT);
-    bustHideT = setTimeout(function () { $('bustOverlay').hidden = true; bustHideT = null; }, 2400);
+    bustHideT = setTimeout(function () {
+      $('bustOverlay').hidden = true; bustHideT = null;
+    }, 2400);
   }
 
   function onGameOver(m) {
     var youWon = m.winnerSeat === mySeat;
-    setStatus(youWon ? '🏆 You win!' : ('<b>' + esc(m.winnerName || 'Someone') + '</b> wins.'), youWon ? 'win' : '');
-    $('btnRoll').disabled = true; $('btnBank').disabled = true;
+    setStatus(
+      youWon ? '🏆 You win!' : ('<b>' + esc(m.winnerName || 'Someone') + '</b> wins.'),
+      youWon ? 'win' : ''
+    );
+    $('btnRoll').disabled = true;
+    $('btnBank').disabled = true;
+    inGame = false;
     setTimeout(showLobby, 3200);
   }
 
-  // ── Wiring ──
-  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
+  // ── Wire UI ──
   function initAliasUI() {
     var input = $('aliasInput');
     input.value = myAlias();
     var dl = $('aliasList'); dl.innerHTML = '';
-    getAliases().forEach(function (n) { var o = document.createElement('option'); o.value = n; dl.appendChild(o); });
+    getAliases().forEach(function (n) {
+      var o = document.createElement('option'); o.value = n; dl.appendChild(o);
+    });
     $('saveAlias').onclick = function () {
       var n = (input.value || '').trim().slice(0, 18);
       if (!n) return;
@@ -321,9 +494,39 @@
     };
   }
 
-  $('btnRoll').onclick = function () { if (myTurn()) send({ t: 'action', action: 'roll' }); };
-  $('btnBank').onclick = function () { if (myTurn()) send({ t: 'action', action: 'stop' }); };
-  $('btnLeave').onclick = function () { send({ t: 'leaveRoom' }); showLobby(); };
+  $('btnCreateTable').onclick = function () {
+    setErr('');
+    send({ t: 'createParty' });
+  };
+  function leaveTable() {
+    setErr('');
+    send({ t: 'leaveParty' });
+    myParty = null;
+    renderLobby();
+  }
+  $('btnLeaveTable').onclick = leaveTable;
+  $('btnLeaveTable2').onclick = leaveTable;
+  $('btnStart').onclick = function () {
+    setErr('');
+    send({ t: 'startParty' });
+  };
+  $('botCount').onchange = function () {
+    if (myParty && myParty.hostId === youId) {
+      send({ t: 'setPartyBots', bots: parseInt($('botCount').value, 10) || 0 });
+    }
+  };
+
+  $('btnRoll').onclick = function () {
+    if (myTurn()) send({ t: 'action', action: 'roll' });
+  };
+  $('btnBank').onclick = function () {
+    if (myTurn()) send({ t: 'action', action: 'stop' });
+  };
+  $('btnLeave').onclick = function () {
+    send({ t: 'leaveRoom' });
+    inGame = false;
+    showLobby();
+  };
 
   initAliasUI();
   if (!myAlias()) $('aliasInput').focus();
