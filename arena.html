@@ -246,17 +246,6 @@
       <h2>Summit Arena</h2>
       <p>Family tables &mdash; 2 to 5 humans plus optional Rivals. Create a table, wait for siblings, host starts the climb.</p>
     </div>
-    <div class="ar-lab-cta-wrap">
-      <a class="ar-lab-cta" href="towers-lab.html">
-        <span class="ar-lab-cta-icon" aria-hidden="true"><i class="fa-solid fa-mountain"></i></span>
-        <span class="ar-lab-cta-body">
-          <span class="ar-lab-cta-kicker">Off-server · one device</span>
-          <span class="ar-lab-cta-title">Play Alone · <span>Summit Lab</span></span>
-          <span class="ar-lab-cta-sub">Practice board, coach mode, pass-and-play &mdash; no lobby needed.</span>
-        </span>
-        <span class="ar-lab-cta-arrow" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
-      </a>
-    </div>
     <div class="ar-conn"><span class="ar-dot" id="connDot"></span><span id="connText">connecting…</span></div>
     <div class="ar-err" id="errLine"></div>
 
@@ -375,6 +364,19 @@
         </div>
         <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0.45rem 0 0;">Scores &amp; flags stay on this device only. Tags are optional.</p>
       </div>
+
+      <!-- Play Alone sits below the lobby, not above the action -->
+      <div class="ar-lab-cta-wrap" style="margin:1.25rem 0 0.5rem;">
+        <a class="ar-lab-cta" href="towers-lab.html">
+          <span class="ar-lab-cta-icon" aria-hidden="true"><i class="fa-solid fa-mountain"></i></span>
+          <span class="ar-lab-cta-body">
+            <span class="ar-lab-cta-kicker">Off-server · one device</span>
+            <span class="ar-lab-cta-title">Play Alone · <span>Summit Lab</span></span>
+            <span class="ar-lab-cta-sub">Practice board, coach mode, pass-and-play &mdash; no lobby needed.</span>
+          </span>
+          <span class="ar-lab-cta-arrow" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span>
+        </a>
+      </div>
     </div>
 
     <!-- GAME -->
@@ -487,6 +489,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=11"></script>
+  <script src="js/arena.js?v=12"></script>
 </body>
 </html>

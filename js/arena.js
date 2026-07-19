@@ -292,7 +292,19 @@
     var k = String(name || '').toLowerCase();
     if (!k) return '🙂';
     var m = getAvatarMap();
-    return m[k] || '🙂';
+    if (m[k]) return m[k];
+    // Prefer server lobby avatar when we know this person is online
+    for (var i = 0; i < lobbyPlayers.length; i++) {
+      var p = lobbyPlayers[i];
+      if (p && p.alias && String(p.alias).toLowerCase() === k && p.avatar) return p.avatar;
+    }
+    return '🙂';
+  }
+  /** Avatar for a lobby/party member object (server field wins for others). */
+  function avatarForPlayer(p) {
+    if (!p) return '🙂';
+    if (p.avatar) return p.avatar;
+    return avatarFor(p.alias || p.name || '');
   }
   function setAvatarFor(name, emoji) {
     var k = String(name || '').toLowerCase();
@@ -307,9 +319,10 @@
     var m = getAvatarMap();
     return Object.prototype.hasOwnProperty.call(m, k) && !!m[k];
   }
-  function avatarHtml(name, cls) {
+  function avatarHtml(name, cls, emojiOverride) {
+    var em = emojiOverride || avatarFor(name);
     return '<span class="ar-avatar' + (cls ? ' ' + cls : '') + '" title="' + esc(name || '') + '">' +
-      avatarFor(name) + '</span>';
+      em + '</span>';
   }
   var avatarPickOpen = false; // force-show after tap on preview
   function renderAvatarPicker() {
@@ -360,6 +373,8 @@
         setAvatarFor(name, em);
         avatarPickOpen = false; // collapse after pick
         if ($('myAvatarPreview')) $('myAvatarPreview').textContent = em;
+        // Sync to server so "Who's online" shows the right face on other devices
+        send({ t: 'setAvatar', avatar: em });
         renderAvatarPicker();
         renderLobby();
         toast('Avatar set to ' + em, 'ok');
@@ -571,7 +586,8 @@
       setConn(true, 'online · ' + host);
       setErr('');
       if (wasRe) toast('Back online — brief dropouts are normal on tablets.', 'ok');
-      send({ t: 'hello', alias: myAlias() || 'Player' });
+      var helloName = myAlias() || 'Player';
+      send({ t: 'hello', alias: helloName, avatar: avatarFor(helloName) });
       startPing();
     };
     ws.onmessage = function (ev) {
@@ -816,7 +832,7 @@
         var tag = m.id === myParty.hostId ? ' (host)' : '';
         var you = m.id === youId ? ' ★' : '';
         var role = roleForName(m.alias);
-        return avatarHtml(m.alias) + ' ' + esc(m.alias) +
+        return avatarHtml(m.alias, '', avatarForPlayer(m)) + ' ' + esc(m.alias) +
           (role ? ' <i class="ar-sib-chip">' + esc(role) + '</i>' : '') + tag + you;
       }).join(' · ');
       $('myTableTitle').textContent =
@@ -886,7 +902,7 @@
       var li = document.createElement('li');
       var left = document.createElement('div');
       left.innerHTML =
-        avatarHtml(p.alias) + ' ' +
+        avatarHtml(p.alias, '', avatarForPlayer(p)) + ' ' +
         '<span class="ar-pname">' + esc(p.alias) + '</span> ' +
         (roleForName(p.alias) ? '<i class="ar-sib-chip">' + esc(roleForName(p.alias)) + '</i> ' : '') +
         '<span class="ar-pstatus ' + esc(p.status || 'idle') + '">' + esc(p.status || 'idle') + '</span>';
@@ -1214,7 +1230,7 @@
         var prevAv = avatarFor(prev);
         if (prevAv && prevAv !== '🙂' && avatarFor(n) === '🙂') setAvatarFor(n, prevAv);
       }
-      send({ t: 'setAlias', alias: n });
+      send({ t: 'setAlias', alias: n, avatar: avatarFor(n) });
       $('meLine').textContent = 'playing as ' + n;
       renderAvatarPicker();
       renderLobby();
