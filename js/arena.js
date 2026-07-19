@@ -811,15 +811,49 @@
     renderRage();
   }
 
+  /** Unique humans for "Who's online" — server may still briefly list reconnect ghosts. */
+  function uniqueOnlinePeople() {
+    var byAlias = {};
+    var order = [];
+    lobbyPlayers.forEach(function (p) {
+      var k = String(p.alias || '').trim().toLowerCase();
+      if (!k) return;
+      var prev = byAlias[k];
+      if (!prev) {
+        byAlias[k] = p;
+        order.push(k);
+        return;
+      }
+      // Prefer our live youId, then non-idle (in party / game) over pure idle ghosts
+      var score = function (x) {
+        var s = 0;
+        if (x.id === youId) s += 100;
+        if (x.status === 'playing' || x.status === 'party') s += 10;
+        if (x.status === 'inviting' || x.status === 'invited') s += 5;
+        if (x.avatar && x.avatar !== '🙂') s += 1;
+        return s;
+      };
+      if (score(p) >= score(prev)) byAlias[k] = p;
+    });
+    return order.map(function (k) { return byAlias[k]; });
+  }
+
   function renderLobby() {
+    var unique = uniqueOnlinePeople();
     var me = null;
-    for (var i = 0; i < lobbyPlayers.length; i++) {
-      if (lobbyPlayers[i].id === youId) { me = lobbyPlayers[i]; break; }
+    for (var i = 0; i < unique.length; i++) {
+      if (unique[i].id === youId) { me = unique[i]; break; }
+    }
+    // Fallback: server may not have you yet, or id mismatch mid-reconnect
+    if (!me) {
+      for (var j = 0; j < lobbyPlayers.length; j++) {
+        if (lobbyPlayers[j].id === youId) { me = lobbyPlayers[j]; break; }
+      }
     }
     if (me) {
       $('meLine').textContent = 'playing as ' + me.alias +
         (me.status && me.status !== 'idle' ? ' · ' + me.status : '') +
-        ' · ' + lobbyPlayers.length + ' online';
+        ' · ' + unique.length + ' online';
     }
 
     // My table panel
@@ -890,10 +924,17 @@
       pl.appendChild(li);
     });
 
-    // Online list
+    // Online list (one row per name — reconnect zombies used to stack)
     var ul = $('playerList');
     ul.innerHTML = '';
-    var people = lobbyPlayers.filter(function (p) { return p.id !== youId; });
+    var people = unique.filter(function (p) { return p.id !== youId; });
+    // Also hide any residual row with the same name as us (zombie of self)
+    var meKey = me ? String(me.alias || '').trim().toLowerCase() : '';
+    if (meKey) {
+      people = people.filter(function (p) {
+        return String(p.alias || '').trim().toLowerCase() !== meKey;
+      });
+    }
     if (!people.length) {
       ul.innerHTML = '<li class="ar-empty">Nobody else online yet. Open this page on another tablet.</li>';
       return;
