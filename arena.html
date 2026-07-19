@@ -91,6 +91,24 @@
       display: inline-block; font-size: 0.65rem; padding: 0.1rem 0.35rem; margin-left: 0.25rem;
       border-radius: 4px; background: rgba(232,195,106,0.15); color: #e8c36a; border: 1px solid #6a5430;
     }
+    .ar-avatar {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.55rem; height: 1.55rem; border-radius: 50%;
+      background: #1a2332; border: 1px solid #3a4a62; font-size: 1rem; line-height: 1;
+      flex: 0 0 auto; vertical-align: middle;
+    }
+    .ar-avatar.lg { width: 2.1rem; height: 2.1rem; font-size: 1.25rem; }
+    .ar-avatar-pick {
+      display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.55rem;
+    }
+    .ar-avatar-btn {
+      width: 2.4rem; height: 2.4rem; border-radius: 10px; border: 1px solid #3a4a62;
+      background: #1a2332; font-size: 1.25rem; cursor: pointer; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center; padding: 0;
+    }
+    .ar-avatar-btn:hover { border-color: #5b9fd4; }
+    .ar-avatar-btn.on { border-color: #3ecf8e; box-shadow: 0 0 0 1px #3ecf8e; background: #1e2a24; }
+    .ar-seat .ar-avatar { margin-right: 0.15rem; }
     .ar-stats-panel {
       border-top: 1px solid #2a3548; margin-top: 0.75rem; padding-top: 0.65rem;
     }
@@ -169,12 +187,15 @@
       <div class="ar-card">
         <h3>You</h3>
         <div class="ar-row">
+          <span class="ar-avatar lg" id="myAvatarPreview" title="Your avatar">🙂</span>
           <label class="ar-lbl" for="aliasInput">Name</label>
           <input type="text" id="aliasInput" maxlength="18" placeholder="your name" list="aliasList">
           <datalist id="aliasList"></datalist>
           <button class="btn-ar" id="saveAlias" type="button">Save</button>
           <span class="ar-me" id="meLine"></span>
         </div>
+        <p class="ar-lbl" style="margin:0.65rem 0 0.25rem;">Avatar</p>
+        <div class="ar-avatar-pick" id="avatarPick" aria-label="Choose avatar"></div>
       </div>
 
       <div class="ar-card" id="myTableCard" hidden>
@@ -229,8 +250,8 @@
         <h3>Ledger</h3>
         <div id="statsBody"><p class="stats-empty">No Arena games yet. Finish a match and it lands here.</p></div>
         <div style="margin-top:0.75rem;padding-top:0.65rem;border-top:1px solid #2a3548;">
-          <h3 style="margin-bottom:0.45rem;">Sibling flags</h3>
-          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Tag a pair for the rivalry board (Big Bro / Lil Sis…). Stored on this device.</p>
+          <h3 style="margin-bottom:0.45rem;">Family flags</h3>
+          <p class="hint" style="font-size:0.72rem;color:#8b9bb4;margin:0 0 0.5rem;">Tag a pair for the rivalry board (Big Bro / Lil Sis / Ma / Pa…). Stored on this device.</p>
           <div class="ar-row" style="margin-bottom:0.4rem;">
             <select id="sibA" style="flex:1;min-width:6rem;"></select>
             <select id="sibRoleA">
@@ -238,6 +259,8 @@
               <option value="Lil Bro">Lil Bro</option>
               <option value="Big Sis">Big Sis</option>
               <option value="Lil Sis">Lil Sis</option>
+              <option value="Ma">Ma</option>
+              <option value="Pa">Pa</option>
               <option value="Twin">Twin</option>
               <option value="Cousin">Cousin</option>
             </select>
@@ -249,6 +272,8 @@
               <option value="Lil Bro">Lil Bro</option>
               <option value="Big Sis">Big Sis</option>
               <option value="Big Bro">Big Bro</option>
+              <option value="Ma">Ma</option>
+              <option value="Pa">Pa</option>
               <option value="Twin">Twin</option>
               <option value="Cousin">Cousin</option>
             </select>
@@ -362,6 +387,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=6"></script>
+  <script src="js/arena.js?v=7"></script>
 </body>
 </html>

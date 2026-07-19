@@ -127,7 +127,7 @@
       html += '<table class="stats-table"><thead><tr><th>Player</th><th>P</th><th>W</th><th>Win%</th></tr></thead><tbody>';
       for (var r = 0; r < rows.length; r++) {
         var row = rows[r], pct = row.played ? Math.round(100 * row.won / row.played) : 0;
-        html += '<tr><td class="stats-name">' + esc(row.disp) + '</td><td>' + row.played +
+        html += '<tr><td class="stats-name">' + avatarHtml(row.disp) + ' ' + esc(row.disp) + '</td><td>' + row.played +
                 '</td><td>' + row.won + '</td><td>' + pct + '%</td></tr>';
       }
       html += '</tbody></table>';
@@ -140,8 +140,8 @@
       for (var ri = 0; ri < rk.length && ri < 8; ri++) {
         var v = rk[ri];
         var ra = roleForName(v.a), rb = roleForName(v.b);
-        var la = esc(v.a) + (ra ? ' <i class="ar-sib-chip">' + esc(ra) + '</i>' : '');
-        var lb2 = esc(v.b) + (rb ? ' <i class="ar-sib-chip">' + esc(rb) + '</i>' : '');
+        var la = avatarHtml(v.a) + ' ' + esc(v.a) + (ra ? ' <i class="ar-sib-chip">' + esc(ra) + '</i>' : '');
+        var lb2 = avatarHtml(v.b) + ' ' + esc(v.b) + (rb ? ' <i class="ar-sib-chip">' + esc(rb) + '</i>' : '');
         html += '<li><span>' + la + '</span><b>' + v.aw + '&ndash;' + v.bw +
                 '</b><span>' + lb2 + '</span></li>';
       }
@@ -231,7 +231,7 @@
     }, 3200);
   }
 
-  // Sibling pair flags (device-local)
+  // Family pair flags (device-local) — Big Bro / Lil Sis / Ma / Pa / …
   var LS_SIB = 'sa_sib_v1';
   function getSibs() {
     var s = lsGet(LS_SIB, []);
@@ -252,20 +252,81 @@
     }
     return null;
   }
+
+  // Per-name emoji avatars (device-local map)
+  var LS_AVATAR = 'sa_avatar_v1';
+  var AVATAR_POOL = [
+    '🙂', '😎', '🦊', '🐱', '🐶', '🦁', '🐯', '🐸', '🐵', '🐼',
+    '🦄', '🐲', '🌟', '🔥', '⚡', '🎮', '🚀', '🏆', '🍕', '🍩',
+    '🌈', '🧊', '🎯', '🎲', '👾', '🤖', '👑', '💎', '🌊', '🍀'
+  ];
+  function getAvatarMap() {
+    var m = lsGet(LS_AVATAR, {});
+    return (m && typeof m === 'object') ? m : {};
+  }
+  function setAvatarMap(m) { lsSet(LS_AVATAR, m); }
+  function avatarFor(name) {
+    var k = String(name || '').toLowerCase();
+    if (!k) return '🙂';
+    var m = getAvatarMap();
+    return m[k] || '🙂';
+  }
+  function setAvatarFor(name, emoji) {
+    var k = String(name || '').toLowerCase();
+    if (!k || !emoji) return;
+    var m = getAvatarMap();
+    m[k] = emoji;
+    setAvatarMap(m);
+  }
+  function avatarHtml(name, cls) {
+    return '<span class="ar-avatar' + (cls ? ' ' + cls : '') + '" title="' + esc(name || '') + '">' +
+      avatarFor(name) + '</span>';
+  }
+  function renderAvatarPicker() {
+    var wrap = $('avatarPick');
+    if (!wrap) return;
+    var me = myAlias() || '';
+    var cur = avatarFor(me);
+    wrap.innerHTML = '';
+    AVATAR_POOL.forEach(function (em) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ar-avatar-btn' + (em === cur ? ' on' : '');
+      b.textContent = em;
+      b.title = 'Pick ' + em;
+      b.onclick = function () {
+        var name = myAlias() || ($('aliasInput') && $('aliasInput').value) || '';
+        name = (name || '').trim();
+        if (!name) {
+          setErr('Save a name first, then pick an avatar.');
+          toast('Save your name first, then pick an avatar.', 'warn');
+          return;
+        }
+        setAvatarFor(name, em);
+        if ($('myAvatarPreview')) $('myAvatarPreview').textContent = em;
+        renderAvatarPicker();
+        renderLobby();
+        toast('Avatar set to ' + em, 'ok');
+      };
+      wrap.appendChild(b);
+    });
+    if ($('myAvatarPreview')) $('myAvatarPreview').textContent = cur;
+  }
+
   function renderSibUI() {
     var list = getSibs();
     var ul = $('sibList');
     if (ul) {
       ul.innerHTML = '';
       if (!list.length) {
-        ul.innerHTML = '<li class="ar-empty" style="border:none;font-size:0.75rem;">No sibling pairs flagged yet.</li>';
+        ul.innerHTML = '<li class="ar-empty" style="border:none;font-size:0.75rem;">No family pairs flagged yet.</li>';
       } else {
         list.forEach(function (s, idx) {
           var li = document.createElement('li');
           li.innerHTML =
-            '<span>' + esc(s.a) + ' <i class="ar-sib-chip">' + esc(s.aRole) + '</i></span>' +
+            '<span>' + avatarHtml(s.a) + ' ' + esc(s.a) + ' <i class="ar-sib-chip">' + esc(s.aRole) + '</i></span>' +
             '<b>vs</b>' +
-            '<span>' + esc(s.b) + ' <i class="ar-sib-chip">' + esc(s.bRole) + '</i>' +
+            '<span>' + avatarHtml(s.b) + ' ' + esc(s.b) + ' <i class="ar-sib-chip">' + esc(s.bRole) + '</i>' +
             ' <button type="button" class="btn-ar" data-sib-x="' + idx + '" style="padding:0.15rem 0.4rem;font-size:0.7rem;margin-left:0.35rem;">✕</button></span>';
           ul.appendChild(li);
         });
@@ -593,7 +654,9 @@
       var names = myParty.members.map(function (m) {
         var tag = m.id === myParty.hostId ? ' (host)' : '';
         var you = m.id === youId ? ' ★' : '';
-        return esc(m.alias) + tag + you;
+        var role = roleForName(m.alias);
+        return avatarHtml(m.alias) + ' ' + esc(m.alias) +
+          (role ? ' <i class="ar-sib-chip">' + esc(role) + '</i>' : '') + tag + you;
       }).join(' · ');
       $('myTableTitle').textContent =
         'Table · ' + myParty.members.length + ' human' +
@@ -662,7 +725,9 @@
       var li = document.createElement('li');
       var left = document.createElement('div');
       left.innerHTML =
+        avatarHtml(p.alias) + ' ' +
         '<span class="ar-pname">' + esc(p.alias) + '</span> ' +
+        (roleForName(p.alias) ? '<i class="ar-sib-chip">' + esc(roleForName(p.alias)) + '</i> ' : '') +
         '<span class="ar-pstatus ' + esc(p.status || 'idle') + '">' + esc(p.status || 'idle') + '</span>';
       li.appendChild(left);
       // Quick invite only if both idle (legacy 1v1 path)
@@ -733,7 +798,9 @@
       var d = document.createElement('div');
       d.className = 'ar-seat' + (i === curState.current ? ' cur' : '');
       var role = p.human ? roleForName(p.name) : null;
+      var face = p.human ? avatarHtml(p.name) : '<span class="ar-avatar" title="Rival">🤖</span>';
       d.innerHTML =
+        face +
         '<span class="ar-swatch" style="background:' + COL[i % COL.length] + '"></span>' +
         '<span>' + esc(p.name) + (i === mySeat ? ' (you)' : '') +
         (role ? ' <i class="ar-sib-chip">' + esc(role) + '</i>' : '') + '</span>' +
@@ -948,10 +1015,19 @@
     $('saveAlias').onclick = function () {
       var n = (input.value || '').trim().slice(0, 18);
       if (!n) return;
+      var prev = myAlias();
       setAlias(n); rememberAlias(n); initAliasUI();
+      // Keep avatar if renaming same person; if new name, keep last pick if any
+      if (prev && prev.toLowerCase() !== n.toLowerCase()) {
+        var prevAv = avatarFor(prev);
+        if (prevAv && prevAv !== '🙂' && avatarFor(n) === '🙂') setAvatarFor(n, prevAv);
+      }
       send({ t: 'setAlias', alias: n });
       $('meLine').textContent = 'playing as ' + n;
+      renderAvatarPicker();
+      renderLobby();
     };
+    renderAvatarPicker();
   }
 
   $('btnCreateTable').onclick = function () {
