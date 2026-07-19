@@ -248,14 +248,14 @@
       <div class="ar-card">
         <h3>You</h3>
         <div class="ar-row">
-          <span class="ar-avatar lg" id="myAvatarPreview" title="Your avatar">🙂</span>
+          <button type="button" class="ar-avatar lg" id="myAvatarPreview" title="Your avatar — tap to change" style="cursor:pointer;border:none;padding:0;">🙂</button>
           <label class="ar-lbl" for="aliasInput">Name</label>
           <input type="text" id="aliasInput" maxlength="18" placeholder="your name" list="aliasList">
           <datalist id="aliasList"></datalist>
           <button class="btn-ar" id="saveAlias" type="button">Save</button>
           <span class="ar-me" id="meLine"></span>
         </div>
-        <p class="ar-lbl" style="margin:0.65rem 0 0.25rem;">Avatar</p>
+        <p class="ar-lbl" id="avatarPickLabel" style="margin:0.65rem 0 0.25rem;">Pick an avatar</p>
         <div class="ar-avatar-pick" id="avatarPick" aria-label="Choose avatar"></div>
       </div>
 
@@ -450,6 +450,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=9"></script>
+  <script src="js/arena.js?v=10"></script>
 </body>
 </html>

@@ -301,15 +301,47 @@
     m[k] = emoji;
     setAvatarMap(m);
   }
+  function hasChosenAvatar(name) {
+    var k = String(name || '').toLowerCase();
+    if (!k) return false;
+    var m = getAvatarMap();
+    return Object.prototype.hasOwnProperty.call(m, k) && !!m[k];
+  }
   function avatarHtml(name, cls) {
     return '<span class="ar-avatar' + (cls ? ' ' + cls : '') + '" title="' + esc(name || '') + '">' +
       avatarFor(name) + '</span>';
   }
+  var avatarPickOpen = false; // force-show after tap on preview
   function renderAvatarPicker() {
     var wrap = $('avatarPick');
+    var lab = $('avatarPickLabel');
     if (!wrap) return;
     var me = myAlias() || '';
     var cur = avatarFor(me);
+    var chosen = hasChosenAvatar(me);
+    if ($('myAvatarPreview')) {
+      $('myAvatarPreview').textContent = cur;
+      $('myAvatarPreview').title = chosen
+        ? 'Your avatar — tap to change'
+        : 'Pick an avatar';
+    }
+    // Hide grid once selected (unless user re-opened it)
+    if (chosen && !avatarPickOpen) {
+      wrap.hidden = true;
+      wrap.innerHTML = '';
+      if (lab) {
+        lab.hidden = false;
+        lab.textContent = 'Avatar locked in — tap your face to change';
+        lab.style.color = '#8b9bb4';
+      }
+      return;
+    }
+    wrap.hidden = false;
+    if (lab) {
+      lab.hidden = false;
+      lab.textContent = chosen ? 'Pick a new avatar' : 'Pick an avatar';
+      lab.style.color = '';
+    }
     wrap.innerHTML = '';
     AVATAR_POOL.forEach(function (em) {
       var b = document.createElement('button');
@@ -326,6 +358,7 @@
           return;
         }
         setAvatarFor(name, em);
+        avatarPickOpen = false; // collapse after pick
         if ($('myAvatarPreview')) $('myAvatarPreview').textContent = em;
         renderAvatarPicker();
         renderLobby();
@@ -333,7 +366,21 @@
       };
       wrap.appendChild(b);
     });
-    if ($('myAvatarPreview')) $('myAvatarPreview').textContent = cur;
+  }
+  function wireAvatarPreview() {
+    var prev = $('myAvatarPreview');
+    if (!prev || prev._avatarWired) return;
+    prev._avatarWired = true;
+    prev.onclick = function () {
+      var me = myAlias() || '';
+      if (!me) {
+        toast('Save your name first, then pick an avatar.', 'warn');
+        return;
+      }
+      avatarPickOpen = !avatarPickOpen;
+      if (!hasChosenAvatar(me)) avatarPickOpen = true;
+      renderAvatarPicker();
+    };
   }
 
   function isSiblingStyleRole(role) {
@@ -1141,6 +1188,7 @@
       renderAvatarPicker();
       renderLobby();
     };
+    wireAvatarPreview();
     renderAvatarPicker();
   }
 
