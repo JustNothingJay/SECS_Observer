@@ -23,10 +23,18 @@
     slate:    ['#3d9a6a','#c47a3a','#7a6bc4','#c45a7a','#4a9a9a'],
     neon:     ['#00e5ff','#ff2bd6','#7dff3a','#ffb300','#b14bff'],
     candy:    ['#ff5d8f','#ffa53d','#3ec8ff','#7ed957','#c86bff'],
-    mountain: ['#6aa06a','#b5732f','#7d94b8','#d9b64a','#9a7b4f']
+    mountain: ['#6aa06a','#b5732f','#7d94b8','#d9b64a','#9a7b4f'],
+    // Elijah — oztag · black & white
+    bombaclarttttt: ['#ffffff','#b0b0b0','#707070','#e8e8e8','#4a4a4a']
   };
-  var THEME_ORDER = ['slate','neon','candy','mountain'];
-  var THEME_LABEL = { slate:'Slate (default)', neon:'Neon Arcade', candy:'Candy Pop', mountain:'Summit' };
+  var THEME_ORDER = ['slate','neon','candy','mountain','bombaclarttttt'];
+  var THEME_LABEL = {
+    slate: 'Slate (default)',
+    neon: 'Neon Arcade',
+    candy: 'Candy Pop',
+    mountain: 'Summit',
+    bombaclarttttt: 'BOMBACLARTTTTT — Elijah · oztag'
+  };
   var LS_THEME = 'sl_theme_v1';
 
   // ── Bust alert: 90s CD-ROM host energy (YDKJ-adjacent), family-safe ──

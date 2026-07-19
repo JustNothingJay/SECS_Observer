@@ -16,10 +16,129 @@
     .ar-wrap {
       max-width: 1100px; margin: 1.5rem auto 3rem; padding: 0 1rem; color: var(--text-primary, #e7ecf3);
       --col0:#3d9a6a; --col1:#c45a7a; --col2:#7a6bc4; --col3:#c47a3a; --col4:#4a9a9a;
+      --ar-card-bg:#121820; --ar-card-border:#2a3548; --ar-floor:#2a3548; --ar-floor-border:#1a2030;
+      --ar-hot:#e8c36a; --ar-accent:#48e662; --ar-muted:#8b9bb4; --ar-die-bg:#f4f0e6; --ar-die-fg:#111;
+      --ar-btn-bg:#1a2332; --ar-btn-border:#3a4a62; --ar-input-bg:#1a2332;
     }
     .ar-hero { text-align: center; margin-bottom: 1rem; }
-    .ar-hero h2 { color: var(--accent-green, #48e662); letter-spacing: 0.08em; margin-bottom: 0.3rem; }
-    .ar-hero p { color: var(--text-muted, #8b9bb4); max-width: 40rem; margin: 0.3rem auto; font-size: 0.92rem; }
+    .ar-hero h2 { color: var(--ar-accent, var(--accent-green, #48e662)); letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+    .ar-hero p { color: var(--ar-muted, var(--text-muted, #8b9bb4)); max-width: 40rem; margin: 0.3rem auto; font-size: 0.92rem; }
+    .ar-skin-badge {
+      display: none; margin: 0.35rem auto 0; max-width: 22rem;
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      font-weight: 800; color: #fff; background: #000; border: 2px solid #fff;
+      padding: 0.25rem 0.65rem; border-radius: 4px;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-skin-badge { display: inline-block; }
+
+    /* Elijah — BOMBACLARTTTTT (oztag · black & white) */
+    .ar-wrap[data-ar-skin="bombaclarttttt"] {
+      --col0:#ffffff; --col1:#b0b0b0; --col2:#707070; --col3:#e8e8e8; --col4:#4a4a4a;
+      --ar-card-bg:#0a0a0a; --ar-card-border:#ffffff; --ar-floor:#1a1a1a; --ar-floor-border:#000;
+      --ar-hot:#ffffff; --ar-accent:#ffffff; --ar-muted:#a8a8a8;
+      --ar-die-bg:#ffffff; --ar-die-fg:#000000;
+      --ar-btn-bg:#111; --ar-btn-border:#fff; --ar-input-bg:#111;
+      color: #f2f2f2;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,255,255,0.03) 0 12px,
+          rgba(0,0,0,0) 12px 24px
+        );
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-hero h2 {
+      color: #fff; text-shadow: 0 0 0 #000, 2px 2px 0 #000;
+      letter-spacing: 0.14em; font-weight: 900;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-hero h2::after {
+      content: " · OZTAG";
+      font-size: 0.55em; letter-spacing: 0.2em; color: #bdbdbd; font-weight: 700;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-card {
+      background: var(--ar-card-bg); border: 2px solid #fff;
+      box-shadow: 4px 4px 0 #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-card h3 {
+      color: #fff; letter-spacing: 0.14em;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .btn-ar {
+      background: #000; border: 2px solid #fff; color: #fff; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .btn-ar:hover:not(:disabled) {
+      background: #fff; color: #000; border-color: #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .btn-ar.primary,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .btn-ar.ok {
+      background: #fff; color: #000; border-color: #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .btn-ar.warn {
+      background: #222; border-color: #fff; color: #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-table-box {
+      border: 2px solid #fff; background: #111;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-table-box h4 { color: #fff; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-floor {
+      background: var(--ar-floor); border-color: #333;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-col.hot .ar-collab { color: #fff; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-die {
+      background: var(--ar-die-bg); color: var(--ar-die-fg);
+      border: 2px solid #000; box-shadow: 2px 2px 0 #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-seat {
+      border: 1px solid #fff; background: #0d0d0d;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-seat.cur {
+      border-color: #fff; box-shadow: 0 0 0 2px #fff, 0 0 16px rgba(255,255,255,0.25);
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-optbtn {
+      background: #0d0d0d; border: 2px solid #fff; color: #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-optbtn:hover { background: #fff; color: #000; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-status.mine,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-status.win,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-me { color: #fff; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-pstatus.idle { color: #fff; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-box {
+      background: #000; border: 3px solid #fff; box-shadow: 6px 6px 0 #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-box.win {
+      border-color: #fff; box-shadow: 0 0 40px rgba(255,255,255,0.25), 6px 6px 0 #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-box.win h4 {
+      color: #fff; text-shadow: 2px 2px 0 #000; letter-spacing: 0.12em;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-box.bust {
+      border-color: #fff; box-shadow: 0 0 30px rgba(255,255,255,0.15), 6px 6px 0 #888;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-box.bust h4 { color: #fff; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-dot.on { background: #fff; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-avatar {
+      background: #000; border: 2px solid #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] input[type=text],
+    .ar-wrap[data-ar-skin="bombaclarttttt"] select {
+      background: #000; color: #fff; border: 2px solid #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-lab-cta {
+      border-color: #fff;
+      background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+      box-shadow: 4px 4px 0 #fff;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-lab-cta-title span,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-lab-cta-icon,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-lab-cta-arrow { color: #fff; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover {
+      border-color: #fff; background: #fff; color: #000;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-title,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-title span,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-sub,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-kicker,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-icon,
+    .ar-wrap[data-ar-skin="bombaclarttttt"] a.ar-lab-cta:hover .ar-lab-cta-arrow { color: #000; }
 
     /* Play Alone — Summit Lab CTA */
     .ar-lab-cta-wrap { display: flex; justify-content: center; margin: 1rem 0 1.35rem; padding: 0 0.5rem; }
@@ -93,15 +212,15 @@
     .ar-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #c45a5a; margin-right: 0.35rem; vertical-align: middle; }
     .ar-dot.on { background: #3ecf8e; }
 
-    .ar-card { background: #121820; border: 1px solid #2a3548; border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 1rem; }
-    .ar-card h3 { margin: 0 0 0.7rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8b9bb4; }
+    .ar-card { background: var(--ar-card-bg, #121820); border: 1px solid var(--ar-card-border, #2a3548); border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 1rem; }
+    .ar-card h3 { margin: 0 0 0.7rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ar-muted, #8b9bb4); }
 
     .ar-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-    label.ar-lbl { font-size: 0.78rem; color: #8b9bb4; }
+    label.ar-lbl { font-size: 0.78rem; color: var(--ar-muted, #8b9bb4); }
     input[type=text], select {
-      background: #1a2332; color: #e7ecf3; border: 1px solid #3a4a62; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.9rem;
+      background: var(--ar-input-bg, #1a2332); color: #e7ecf3; border: 1px solid var(--ar-btn-border, #3a4a62); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.9rem;
     }
-    .btn-ar { border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; padding: 0.5rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.88rem; }
+    .btn-ar { border: 1px solid var(--ar-btn-border, #3a4a62); background: var(--ar-btn-bg, #1a2332); color: #e7ecf3; padding: 0.5rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.88rem; }
     .btn-ar:hover:not(:disabled) { border-color: #5b9fd4; }
     .btn-ar:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-ar.primary { background: #2a5a8a; border-color: #5b9fd4; }
@@ -129,10 +248,10 @@
     .ar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
     .ar-col.hot .ar-collab { color: #e8c36a; }
     .ar-stack { display: flex; flex-direction: column-reverse; gap: 2px; width: 100%; max-width: 40px; }
-    .ar-floor { height: 11px; border-radius: 2px; background: #2a3548; border: 1px solid #1a2030; position: relative; overflow: hidden; }
+    .ar-floor { height: 11px; border-radius: 2px; background: var(--ar-floor, #2a3548); border: 1px solid var(--ar-floor-border, #1a2030); position: relative; overflow: hidden; }
     .ar-floor.top-claim { box-shadow: 0 0 6px currentColor; }
     .ar-floor .st { position: absolute; top: 0; bottom: 0; }
-    .ar-collab { font-size: 0.68rem; color: #8b9bb4; font-weight: 700; }
+    .ar-collab { font-size: 0.68rem; color: var(--ar-muted, #8b9bb4); font-weight: 700; }
 
     .ar-turnbar { border-top: 1px solid #2a3548; margin-top: 0.65rem; padding-top: 0.7rem; }
     .ar-status { min-height: 1.4em; font-size: 0.95rem; margin-bottom: 0.4rem; }
@@ -140,7 +259,7 @@
     .ar-status.bust { color: #e05555; font-weight: 700; }
     .ar-status.win { color: #3ecf8e; font-weight: 700; }
     .ar-dice { display: flex; gap: 8px; justify-content: center; margin: 0.4rem 0 0.6rem; }
-    .ar-die { width: 40px; height: 40px; background: #f4f0e6; color: #111; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.15rem; }
+    .ar-die { width: 40px; height: 40px; background: var(--ar-die-bg, #f4f0e6); color: var(--ar-die-fg, #111); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.15rem; }
     .ar-opts { display: flex; flex-direction: column; gap: 0.45rem; margin: 0.3rem 0; }
     .ar-optbtn { text-align: left; width: 100%; padding: 0.6rem 0.7rem; border-radius: 8px; border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; cursor: pointer; font-weight: 600; }
     .ar-optbtn:hover { border-color: #5b9fd4; }
@@ -241,9 +360,10 @@
   <div id="site-header"></div>
   <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
 
-  <main class="ar-wrap">
+  <main class="ar-wrap" id="arWrap">
     <div class="ar-hero">
       <h2>Summit Arena</h2>
+      <div class="ar-skin-badge" id="arSkinBadge">BOMBACLARTTTTT · Elijah · Oztag</div>
       <p>Family tables &mdash; 2 to 5 humans plus optional Rivals. Create a table, wait for siblings, host starts the climb.</p>
     </div>
     <div class="ar-conn"><span class="ar-dot" id="connDot"></span><span id="connText">connecting…</span></div>
@@ -263,6 +383,11 @@
         </div>
         <p class="ar-lbl" id="avatarPickLabel" style="margin:0.65rem 0 0.25rem;">Pick an avatar</p>
         <div class="ar-avatar-pick" id="avatarPick" aria-label="Choose avatar"></div>
+        <div class="ar-row" style="margin-top:0.75rem;">
+          <label class="ar-lbl" for="skinPick">Winner skin</label>
+          <select id="skinPick" title="Kid-designed Arena skins"></select>
+          <span class="ar-lbl" id="skinCredit" style="font-size:0.72rem;"></span>
+        </div>
       </div>
 
       <div class="ar-card" id="myTableCard" hidden>
@@ -503,6 +628,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=15"></script>
+  <script src="js/arena.js?v=16"></script>
 </body>
 </html>

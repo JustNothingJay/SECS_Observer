@@ -15,6 +15,73 @@
   var H = { 2:3, 3:5, 4:7, 5:9, 6:11, 7:13, 8:11, 9:9, 10:7, 11:5, 12:3 };
   var COL = ['#3d9a6a', '#c45a7a', '#7a6bc4', '#c47a3a', '#4a9a9a'];
 
+  // ── Winner skins (kid-designed) ──
+  // Each win unlocks a design session; skins stack forever.
+  var SKIN_COLS = {
+    default: ['#3d9a6a', '#c45a7a', '#7a6bc4', '#c47a3a', '#4a9a9a'],
+    // Elijah — oztag · black & white · BOMBACLARTTTTT
+    bombaclarttttt: ['#ffffff', '#b0b0b0', '#707070', '#e8e8e8', '#4a4a4a']
+  };
+  var SKIN_ORDER = ['default', 'bombaclarttttt'];
+  var SKIN_META = {
+    default: { label: 'Default Arena', credit: '' },
+    bombaclarttttt: {
+      label: 'BOMBACLARTTTTT',
+      credit: 'Elijah · oztag · black & white'
+    }
+  };
+  var LS_SKIN = 'sa_skin_v1';
+  function getSkin() {
+    try {
+      var s = localStorage.getItem(LS_SKIN) || 'default';
+      return SKIN_COLS[s] ? s : 'default';
+    } catch (e) { return 'default'; }
+  }
+  function applySkin(id) {
+    if (!SKIN_COLS[id]) id = 'default';
+    COL = SKIN_COLS[id].slice();
+    var wrap = $('arWrap') || document.querySelector('.ar-wrap');
+    if (wrap) {
+      if (id === 'default') wrap.removeAttribute('data-ar-skin');
+      else wrap.setAttribute('data-ar-skin', id);
+    }
+    try { localStorage.setItem(LS_SKIN, id); } catch (e) {}
+    var meta = SKIN_META[id] || SKIN_META.default;
+    var credit = $('skinCredit');
+    if (credit) credit.textContent = meta.credit || '';
+    var badge = $('arSkinBadge');
+    if (badge && id === 'bombaclarttttt') {
+      badge.textContent = 'BOMBACLARTTTTT · Elijah · Oztag';
+    }
+    // Re-paint board if mid-game
+    try { if (typeof renderGame === 'function' && curState) renderGame(); } catch (e2) {}
+    try { if (typeof renderLobby === 'function') renderLobby(); } catch (e3) {}
+  }
+  function populateSkinPicker() {
+    var sel = $('skinPick');
+    if (!sel) return;
+    var cur = getSkin();
+    sel.innerHTML = '';
+    SKIN_ORDER.forEach(function (id) {
+      var o = document.createElement('option');
+      o.value = id;
+      var m = SKIN_META[id] || { label: id };
+      o.textContent = m.label + (m.credit ? ' — ' + m.credit : '');
+      if (id === cur) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.onchange = function () {
+      applySkin(sel.value);
+      var m = SKIN_META[sel.value];
+      if (m && sel.value !== 'default') {
+        toast('Skin on: ' + m.label + (m.credit ? ' (' + m.credit + ')' : ''), 'ok');
+      } else {
+        toast('Default Arena skin', 'ok');
+      }
+    };
+    applySkin(cur);
+  }
+
   function $(id) { return document.getElementById(id); }
   function esc(s) {
     return String(s == null ? '' : s)
@@ -1598,6 +1665,7 @@
   if ($('btnSibFlag')) $('btnSibFlag').onclick = flagSiblingPair;
 
   initAliasUI();
+  populateSkinPicker();
   renderStats();
   renderRage();
   renderSaves();
