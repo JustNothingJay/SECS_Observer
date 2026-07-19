@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+  <meta name="description" content="Summit Arena — a private lobby for playing Summit Lab head-to-head. Family use.">
+  <title>Summit Arena — SECS</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/secs.min.css?v=14">
+  <script src="js/includes.min.js?v=14"></script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src wss://secs-arena.fly.dev ws://localhost:8080 ws://127.0.0.1:8080 https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; img-src 'self' data:; frame-ancestors 'none';">
+  <style>
+    .ar-wrap {
+      max-width: 1100px; margin: 1.5rem auto 3rem; padding: 0 1rem; color: var(--text-primary, #e7ecf3);
+      --col0:#3d9a6a; --col1:#c45a7a; --col2:#7a6bc4; --col3:#c47a3a; --col4:#4a9a9a;
+    }
+    .ar-hero { text-align: center; margin-bottom: 1rem; }
+    .ar-hero h2 { color: var(--accent-green, #48e662); letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+    .ar-hero p { color: var(--text-muted, #8b9bb4); max-width: 40rem; margin: 0.3rem auto; font-size: 0.92rem; }
+
+    .ar-conn { text-align: center; font-size: 0.78rem; margin: 0.4rem 0 1rem; }
+    .ar-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #c45a5a; margin-right: 0.35rem; vertical-align: middle; }
+    .ar-dot.on { background: #3ecf8e; }
+
+    .ar-card { background: #121820; border: 1px solid #2a3548; border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 1rem; }
+    .ar-card h3 { margin: 0 0 0.7rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8b9bb4; }
+
+    .ar-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    label.ar-lbl { font-size: 0.78rem; color: #8b9bb4; }
+    input[type=text], select {
+      background: #1a2332; color: #e7ecf3; border: 1px solid #3a4a62; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.9rem;
+    }
+    .btn-ar { border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; padding: 0.5rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.88rem; }
+    .btn-ar:hover:not(:disabled) { border-color: #5b9fd4; }
+    .btn-ar:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-ar.primary { background: #2a5a8a; border-color: #5b9fd4; }
+    .btn-ar.ok { background: #1e4a35; border-color: #3ecf8e; }
+    .btn-ar.warn { background: #4a2130; border-color: #c45a7a; }
+
+    .ar-players { list-style: none; padding: 0; margin: 0; }
+    .ar-players li { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.55rem 0.2rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ar-players li:last-child { border-bottom: none; }
+    .ar-pname { font-weight: 600; }
+    .ar-pstatus { font-size: 0.7rem; color: #8b9bb4; text-transform: uppercase; letter-spacing: 0.04em; }
+    .ar-pstatus.idle { color: #3ecf8e; }
+    .ar-empty { color: #8b9bb4; font-size: 0.82rem; }
+    .ar-me { font-size: 0.75rem; color: #6fcf97; }
+
+    /* Board */
+    .ar-board { display: flex; justify-content: space-between; align-items: flex-end; gap: 4px; min-height: 240px; padding: 0.5rem 0.25rem 0; }
+    .ar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
+    .ar-col.hot .ar-collab { color: #e8c36a; }
+    .ar-stack { display: flex; flex-direction: column-reverse; gap: 2px; width: 100%; max-width: 40px; }
+    .ar-floor { height: 11px; border-radius: 2px; background: #2a3548; border: 1px solid #1a2030; position: relative; overflow: hidden; }
+    .ar-floor.top-claim { box-shadow: 0 0 6px currentColor; }
+    .ar-floor .st { position: absolute; top: 0; bottom: 0; }
+    .ar-collab { font-size: 0.68rem; color: #8b9bb4; font-weight: 700; }
+
+    .ar-turnbar { border-top: 1px solid #2a3548; margin-top: 0.65rem; padding-top: 0.7rem; }
+    .ar-status { min-height: 1.4em; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .ar-status.mine { color: #6fcf97; font-weight: 700; }
+    .ar-status.bust { color: #e05555; font-weight: 700; }
+    .ar-status.win { color: #3ecf8e; font-weight: 700; }
+    .ar-dice { display: flex; gap: 8px; justify-content: center; margin: 0.4rem 0 0.6rem; }
+    .ar-die { width: 40px; height: 40px; background: #f4f0e6; color: #111; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.15rem; }
+    .ar-opts { display: flex; flex-direction: column; gap: 0.45rem; margin: 0.3rem 0; }
+    .ar-optbtn { text-align: left; width: 100%; padding: 0.6rem 0.7rem; border-radius: 8px; border: 1px solid #3a4a62; background: #1a2332; color: #e7ecf3; cursor: pointer; font-weight: 600; }
+    .ar-optbtn:hover { border-color: #5b9fd4; }
+    .ar-controls { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+    .ar-seatbar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+    .ar-seat { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; padding: 0.3rem 0.55rem; border-radius: 8px; border: 1px solid #2a3548; }
+    .ar-seat.cur { border-color: #5b9fd4; box-shadow: 0 0 0 1px #5b9fd4; }
+    .ar-swatch { width: 12px; height: 12px; border-radius: 3px; }
+    .ar-claims { color: #8b9bb4; font-size: 0.72rem; }
+
+    /* Incoming invite + bust overlay */
+    .ar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
+    .ar-overlay[hidden] { display: none; }
+    .ar-box { background: #121820; border: 2px solid #5b9fd4; border-radius: 14px; padding: 1.5rem 1.6rem; max-width: 22rem; width: 100%; text-align: center; }
+    .ar-box.bust { border-color: #e05555; box-shadow: 0 0 40px rgba(224,85,85,0.35); }
+    .ar-box h4 { margin: 0 0 0.6rem; font-size: 1.4rem; }
+    .ar-box.bust h4 { color: #ff5252; text-shadow: 0 0 12px rgba(255,82,82,0.5); letter-spacing: 0.06em; }
+    .ar-smack { font-style: italic; color: #e7ecf3; margin: 0.5rem 0 1rem; }
+    .ar-smack b { color: #ffd23f; font-style: normal; }
+    .ar-box .ar-row { justify-content: center; }
+
+    .ar-notice { max-width: 56ch; margin: 2rem auto 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.07); font-size: 0.72rem; line-height: 1.6; color: #7a828a; text-align: center; }
+    .links-row { text-align: center; margin: 1rem 0 0; font-size: 0.85rem; }
+    .links-row a { color: #5b9fd4; margin: 0 0.4rem; }
+
+    @media (max-width: 720px) {
+      .btn-ar { padding: 0.7rem 1rem; font-size: 1rem; min-height: 48px; }
+      .ar-optbtn { min-height: 54px; }
+      .ar-die { width: 46px; height: 46px; }
+      input[type=text], select { font-size: 16px; padding: 0.55rem 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="site-header"></div>
+  <script>document.getElementById('site-header').outerHTML=secsHeader();</script>
+
+  <main class="ar-wrap">
+    <div class="ar-hero">
+      <h2>Summit Arena</h2>
+      <p>A private lobby for playing Summit Lab head-to-head. Challenge someone who&rsquo;s online, add a few Rivals, and climb. Family use.</p>
+    </div>
+    <div class="ar-conn"><span class="ar-dot" id="connDot"></span><span id="connText">connecting…</span></div>
+
+    <!-- LOBBY -->
+    <div id="lobbyView">
+      <div class="ar-card">
+        <h3>You</h3>
+        <div class="ar-row">
+          <label class="ar-lbl" for="aliasInput">Name</label>
+          <input type="text" id="aliasInput" maxlength="18" placeholder="your name" list="aliasList">
+          <datalist id="aliasList"></datalist>
+          <button class="btn-ar" id="saveAlias" type="button">Save</button>
+          <span class="ar-me" id="meLine"></span>
+        </div>
+      </div>
+      <div class="ar-card">
+        <h3>Lobby — who&rsquo;s online</h3>
+        <div class="ar-row" style="margin-bottom:0.7rem;">
+          <label class="ar-lbl" for="botCount">Rivals to add</label>
+          <select id="botCount">
+            <option value="0">0 Rivals</option>
+            <option value="1" selected>1 Rival</option>
+            <option value="2">2 Rivals</option>
+            <option value="3">3 Rivals</option>
+          </select>
+          <span class="ar-lbl">then challenge a player below.</span>
+        </div>
+        <ul class="ar-players" id="playerList"></ul>
+      </div>
+    </div>
+
+    <!-- GAME -->
+    <div id="gameView" hidden>
+      <div class="ar-card">
+        <div class="ar-seatbar" id="seatBar"></div>
+        <div class="ar-board" id="board"></div>
+        <div class="ar-turnbar">
+          <div class="ar-status" id="status">Starting…</div>
+          <div class="ar-dice" id="dice"></div>
+          <div class="ar-opts" id="opts"></div>
+          <div class="ar-controls">
+            <button class="btn-ar primary" id="btnRoll" type="button" disabled>Roll</button>
+            <button class="btn-ar ok" id="btnBank" type="button" disabled>Bank</button>
+            <button class="btn-ar warn" id="btnLeave" type="button">Leave game</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="links-row">
+      <a href="towers-lab.html">Summit Lab (solo)</a>
+      <a href="journal.html#entry-2026-07-18-001">Journal</a>
+    </div>
+
+    <aside class="ar-notice" aria-label="About this page">
+      Summit Arena is a personal, non-commercial project &mdash; a private lobby I built for my
+      own kids to play the push-your-luck climbing game from the Makerchip ASIC Design Showdown.
+      The underlying game concept is <em>Can&rsquo;t Stop</em>, designed by Sid Sackson; all rights
+      remain with their respective owners. Not affiliated with, sponsored by, or endorsed by them,
+      not a product, and not meant for wider distribution.
+    </aside>
+  </main>
+
+  <!-- Incoming invite -->
+  <div id="inviteOverlay" class="ar-overlay" hidden>
+    <div class="ar-box">
+      <h4 id="inviteTitle">Challenge!</h4>
+      <div class="ar-smack" id="inviteBody"></div>
+      <div class="ar-row">
+        <button class="btn-ar ok" id="inviteAccept" type="button">Accept</button>
+        <button class="btn-ar warn" id="inviteReject" type="button">Decline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bust -->
+  <div id="bustOverlay" class="ar-overlay" hidden>
+    <div class="ar-box bust">
+      <h4>BUSTED!</h4>
+      <div class="ar-dice" id="bustDice"></div>
+      <div class="ar-smack" id="bustSmack"></div>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+  <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
+  <script src="js/arena.js?v=1"></script>
+</body>
+</html>

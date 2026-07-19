@@ -29,25 +29,73 @@
   var THEME_LABEL = { slate:'Slate (default)', neon:'Neon Arcade', candy:'Candy Pop', mountain:'Summit' };
   var LS_THEME = 'sl_theme_v1';
 
-  // ── Bust alert: pause + a bit of 1990s-arcade smack when a HUMAN busts ──
+  // ── Bust alert: 90s CD-ROM host energy (YDKJ-adjacent), family-safe ──
+  // Shuffle-bag so the same line never repeats until the bag is empty.
   var LS_BUSTALERT = 'sl_bustalert_v1';
   var bustAlertOn = true;
   var SMACK = [
-    'Insert coin to continue!',
-    'GAME OVER, rookie.',
-    'HA! Was that your best shot?',
-    'You crashed and burned!',
-    'Too bad, so sad.',
-    'Nice try, human.',
-    'You got greedy. Classic.',
-    'Down you go — better luck next quarter.',
-    'Should have banked, hot shot.',
-    'K.O.! The dice have spoken.',
-    'Press START to cry about it.',
-    'That roll goes straight in the bin.',
-    'Womp womp. My turn now.',
-    'Insufficient skill detected.'
+    // Host energy — cheeky, not mean
+    'Hey! You drooling on the keyboard, or was that the plan?',
+    'BZZZT! Wrong answer — and also, no climb for you.',
+    'Welcome to the bust club. Membership is free. Dignity costs extra.',
+    'That was bold. That was brave. That was… a mistake.',
+    'Somebody call the bank — oh wait, you didn\'t.',
+    'The dice have spoken. Their accent is pure mockery.',
+    'I\'d clap, but my hands are busy high-fiving the probability table.',
+    'Pro tip from the 90s: bank before the fireworks.',
+    'Insert coin… oh wait, this one\'s free. Still busted though.',
+    'Nice try, champ. The towers send their regards.',
+    // Greed / push-your-luck
+    'Greed is good… until the fourth die says otherwise.',
+    'You pushed your luck so hard it filed a complaint.',
+    'Shoulda banked, hotshot. Shoulda banked.',
+    'Live by the roll, die by the roll. Mostly the second one.',
+    'That climb needed a seatbelt. And a plan. And a bank.',
+    'You almost had it! Psych. You almost had it.',
+    'The greedy goose got cooked. Classic fairy tale, really.',
+    // Dice / game-show
+    'Four dice, zero legal moves. That\'s performance art.',
+    'The number gods are taking personal days. Yours included.',
+    'Survey says… BUST. Ding ding ding!',
+    'We\'ve got a live one! Unfortunately, not for long.',
+    'And the crowd goes mild. Very mild.',
+    'That roll went straight in the recycling bin.',
+    'Plot twist: the towers were never on your side.',
+    // Sibling / family table
+    'Pass the tablet — your ego needs a cool-down lap.',
+    'Sibling note: this one goes in the family history book.',
+    'Don\'t cry into the dice. They\'re already salty enough.',
+    'Next time, try the revolutionary strategy called "banking."',
+    'You\'ve been reduced to a cautionary tale. Congrats?',
+    // Dad-joke adjacent
+    'Why did the climber fall? Because the dice said so. I\'ll see myself out.',
+    'This bust was brought to you by the letter B and the number zero.',
+    'I\'d say "better luck next time," but luck just left the chat.',
+    'Error 404: legal climb not found.',
+    'Your strategy called. It wants a refund.',
+    'That was less "master plan" and more "jazz improvisation."',
+    // Soft KO lines
+    'K.O.! The dice are holding up the scorecard.',
+    'Game over, rookie. Try again when the math loves you.',
+    'Womp womp. Still friends though. Probably.',
+    'Down you go — the view from the bottom is educational.',
+    'Press CONTINUE to pretend that didn\'t sting.',
+    'Insufficient skill detected. Download more bank buttons.',
+    'The house always wins… and today the house is probability.',
+    'You rolled like a legend. You finished like a legend\'s cousin.'
   ];
+  var smackBag = [];
+  function refillSmackBag() {
+    smackBag = SMACK.slice();
+    for (var i = smackBag.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = smackBag[i]; smackBag[i] = smackBag[j]; smackBag[j] = t;
+    }
+  }
+  function nextSmack() {
+    if (!smackBag.length) refillSmackBag();
+    return smackBag.pop();
+  }
 
   // ── Local records: player aliases + a game ledger. Per-browser, no server. ──
   var LS_ALIASES = 'sl_aliases_v1';
@@ -220,10 +268,11 @@
     }
     sel.onchange = function () { applyTheme(sel.value); };
   }
-  // The taunter is the next seat if it's a bot; otherwise a generic arcade voice.
+  // Taunter = next seat if bot, else a cheesy 90s host voice. Lines never
+  // repeat until the whole bag has been heard once (then reshuffle).
   function smackLine(nextIdx) {
-    var line = SMACK[Math.floor(rnd() * SMACK.length)];
-    var who = (nextIdx != null && G && isBot(nextIdx)) ? PILOTS[G.players[nextIdx].pilot].label : 'ARCADE';
+    var line = nextSmack();
+    var who = (nextIdx != null && G && isBot(nextIdx)) ? PILOTS[G.players[nextIdx].pilot].label : 'HOST';
     return { who: who, line: line };
   }
   function showBustOverlay(dice, nextIdx, onContinue) {

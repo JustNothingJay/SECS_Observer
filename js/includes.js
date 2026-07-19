@@ -63,13 +63,14 @@
             li('terminal.html', 'Run (Terminal)'),
             li('game.html', 'The Game'),
             li('towers-lab.html', 'Summit Lab'),
+            li('arena.html', 'Summit Arena'),
             li('neurotrophic.html', 'Neurotrophic OS'),
             li('neurotrophic-proof.html', 'Neurotrophic Proof'),
             li('sovereign.html', 'Sovereign'),
             li('verticals.html', 'Vertical Surfaces'),
             li('vertical-demo.html?vertical=robotics', 'Workflow Demos'),
             li('gtf.html', 'GTF')
-        ], ['architecture.html', 'terminal.html', 'game.html', 'towers-lab.html', 'neurotrophic.html', 'neurotrophic-proof.html', 'sovereign.html', 'verticals.html', 'gtf.html', 'vertical-demo.html']) +
+        ], ['architecture.html', 'terminal.html', 'game.html', 'towers-lab.html', 'arena.html', 'neurotrophic.html', 'neurotrophic-proof.html', 'sovereign.html', 'verticals.html', 'gtf.html', 'vertical-demo.html']) +
         dropdown('Research', [
             li('equation.html', 'Equation (C)'),
             li('research.html', 'Papers'),
