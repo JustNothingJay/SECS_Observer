@@ -249,8 +249,29 @@
     .ar-col.hot .ar-collab { color: #e8c36a; }
     .ar-stack { display: flex; flex-direction: column-reverse; gap: 2px; width: 100%; max-width: 40px; }
     .ar-floor { height: 11px; border-radius: 2px; background: var(--ar-floor, #2a3548); border: 1px solid var(--ar-floor-border, #1a2030); position: relative; overflow: hidden; }
-    .ar-floor.top-claim { box-shadow: 0 0 6px currentColor; }
+    .ar-floor.claimed-floor { box-shadow: 0 0 6px currentColor; }
+    .ar-floor.top-claim { box-shadow: 0 0 10px currentColor, 0 0 18px currentColor; filter: brightness(1.15); }
+    .ar-floor.climb-ring { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.85); }
+    .ar-col.tower-claimed .ar-stack { filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
     .ar-floor .st { position: absolute; top: 0; bottom: 0; }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-floor.climb-ring {
+      box-shadow: inset 0 0 0 2px #fff, 0 0 8px currentColor;
+      filter: brightness(1.2);
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-floor.claimed-floor {
+      box-shadow: 0 0 8px currentColor, 0 0 14px currentColor;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-floor.top-claim {
+      box-shadow: 0 0 14px currentColor, 0 0 28px currentColor, 0 0 4px #fff;
+      animation: arBombClaimPulse 1.1s ease-in-out infinite alternate;
+    }
+    .ar-wrap[data-ar-skin="bombaclarttttt"] .ar-col.tower-claimed .ar-collab {
+      text-shadow: 0 0 8px currentColor;
+    }
+    @keyframes arBombClaimPulse {
+      from { filter: brightness(1.1); }
+      to { filter: brightness(1.45); }
+    }
     .ar-collab { font-size: 0.68rem; color: var(--ar-muted, #8b9bb4); font-weight: 700; }
 
     .ar-turnbar { border-top: 1px solid #2a3548; margin-top: 0.65rem; padding-top: 0.7rem; }
@@ -628,6 +649,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/arena.js?v=16"></script>
+  <script src="js/arena.js?v=17"></script>
 </body>
 </html>

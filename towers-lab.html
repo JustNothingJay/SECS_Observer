@@ -102,9 +102,41 @@
       border: 1px solid var(--lab-floor-border); box-shadow: var(--lab-floor-glow);
       position: relative; overflow: hidden;
     }
-    .floor.top-claim { background: var(--lab-claim) !important; box-shadow: 0 0 6px var(--lab-claim); }
+    /* Glow uses the pill's own jersey colour (inline background + color) */
+    .floor.top-claim {
+      box-shadow: 0 0 10px currentColor, 0 0 18px currentColor;
+      filter: brightness(1.15);
+    }
+    .floor.claimed-floor {
+      box-shadow: 0 0 6px currentColor;
+    }
+    .col.tower-claimed .stack {
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.35));
+    }
     .floor.climb-ring { box-shadow: inset 0 0 0 2px #fff7; }
     .floor .stripe { position: absolute; top: 0; bottom: 0; }
+    /* BOMBACLARTTTTT — jersey pills pop on the black pitch */
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .floor.climb-ring {
+      box-shadow: inset 0 0 0 2px #fff, 0 0 8px currentColor;
+      filter: brightness(1.2);
+    }
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .floor.claimed-floor {
+      box-shadow: 0 0 8px currentColor, 0 0 14px currentColor;
+    }
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .floor.top-claim {
+      box-shadow: 0 0 14px currentColor, 0 0 28px currentColor, 0 0 4px #fff;
+      animation: bombClaimPulse 1.1s ease-in-out infinite alternate;
+    }
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .col.tower-claimed .stack {
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+    .lab-wrap[data-lab-theme="bombaclarttttt"] .col.tower-claimed .col-lab {
+      text-shadow: 0 0 8px currentColor;
+    }
+    @keyframes bombClaimPulse {
+      from { filter: brightness(1.1); }
+      to { filter: brightness(1.45); }
+    }
     .col-lab { font-size: 0.7rem; color: #8b9bb4; font-weight: 700; }
     .col.hot .col-lab { color: var(--lab-hot); }
 
@@ -373,6 +405,6 @@
 
   <div id="site-footer"></div>
   <script>document.getElementById('site-footer').outerHTML=secsFooter(false);</script>
-  <script src="js/towers-lab.js?v=11"></script>
+  <script src="js/towers-lab.js?v=12"></script>
 </body>
 </html>

@@ -24,8 +24,8 @@
     neon:     ['#00e5ff','#ff2bd6','#7dff3a','#ffb300','#b14bff'],
     candy:    ['#ff5d8f','#ffa53d','#3ec8ff','#7ed957','#c86bff'],
     mountain: ['#6aa06a','#b5732f','#7d94b8','#d9b64a','#9a7b4f'],
-    // Elijah — oztag · black & white
-    bombaclarttttt: ['#ffffff','#b0b0b0','#707070','#e8e8e8','#4a4a4a']
+    // Elijah — BOMBACLARTTTTT: pitch UI is B&W; climb pills = oztag jersey kits
+    bombaclarttttt: ['#e31c23', '#1b4f9c', '#f5c400', '#00a651', '#ff5a00']
   };
   var THEME_ORDER = ['slate','neon','candy','mountain','bombaclarttttt'];
   var THEME_LABEL = {
@@ -723,18 +723,25 @@
     for (var s = 2; s <= 12; s++) {
       var col = document.createElement('div');
       col.className = 'col' + ((s === 6 || s === 7 || s === 8) ? ' hot' : '');
-      if (claimed(G, s)) col.style.opacity = '0.45';
+      var owner = claimed(G, s) ? G.claimedGlobal[s] : null;
+      if (owner != null) col.classList.add('tower-claimed');
       var stack = document.createElement('div');
       stack.className = 'stack';
       var h = H[s];
       for (var f = 1; f <= h; f++) {
         var fl = document.createElement('div');
         fl.className = 'floor';
-        if (claimed(G, s) && f === h) fl.classList.add('top-claim');
-        else {
+        if (owner != null) {
+          // Whole tower lights up in the claimer's jersey colour
+          var jc = COL[owner % COL.length];
+          fl.style.background = jc;
+          fl.style.color = jc;
+          fl.classList.add('claimed-floor');
+          if (f === h) fl.classList.add('top-claim');
+        } else {
           var occ = [];
           for (var pi = 0; pi < G.n; pi++) if (effH(pi, s) >= f) occ.push(pi);
-          if (occ.length === 1) fl.style.background = COL[occ[0]];
+          if (occ.length === 1) fl.style.background = COL[occ[0] % COL.length];
           else if (occ.length > 1) {
             var pct = 100 / occ.length;
             occ.forEach(function (pi, i) {
@@ -742,7 +749,7 @@
               st.className = 'stripe';
               st.style.left = (i * pct) + '%';
               st.style.width = pct + '%';
-              st.style.background = COL[pi];
+              st.style.background = COL[pi % COL.length];
               fl.appendChild(st);
             });
           }
@@ -754,6 +761,10 @@
       var lab = document.createElement('div');
       lab.className = 'col-lab';
       lab.textContent = s + (G.climbing.has(s) ? '▲' : '');
+      if (owner != null) {
+        lab.style.color = COL[owner % COL.length];
+        lab.style.fontWeight = '800';
+      }
       col.appendChild(stack);
       col.appendChild(lab);
       board.appendChild(col);

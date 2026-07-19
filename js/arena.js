@@ -19,8 +19,8 @@
   // Each win unlocks a design session; skins stack forever.
   var SKIN_COLS = {
     default: ['#3d9a6a', '#c45a7a', '#7a6bc4', '#c47a3a', '#4a9a9a'],
-    // Elijah — oztag · black & white · BOMBACLARTTTTT
-    bombaclarttttt: ['#ffffff', '#b0b0b0', '#707070', '#e8e8e8', '#4a4a4a']
+    // Elijah — pitch B&W; climb pills = oztag jersey kits
+    bombaclarttttt: ['#e31c23', '#1b4f9c', '#f5c400', '#00a651', '#ff5a00']
   };
   var SKIN_ORDER = ['default', 'bombaclarttttt'];
   var SKIN_META = {
@@ -1320,6 +1320,7 @@
       col.className = 'ar-col' + ((s === 6 || s === 7 || s === 8) ? ' hot' : '');
       var claimedBy = curState.claimedGlobal[s];
       if (claimedBy === undefined) claimedBy = curState.claimedGlobal[String(s)];
+      if (claimedBy !== undefined && claimedBy !== null) col.classList.add('tower-claimed');
       var stack = document.createElement('div'); stack.className = 'ar-stack';
       var h = H[s];
       for (var f = 1; f <= h; f++) {
@@ -1327,14 +1328,18 @@
         if (claimedBy !== undefined && claimedBy !== null) {
           var c = COL[claimedBy % COL.length];
           fl.style.background = c;
-          if (f === h) { fl.classList.add('top-claim'); fl.style.color = c; }
+          fl.style.color = c;
+          fl.classList.add('claimed-floor');
+          if (f === h) fl.classList.add('top-claim');
         } else {
           var occ = [];
           for (var seat = 0; seat < curState.n; seat++) {
             if (effFloor(seat, s) >= f) occ.push(seat);
           }
-          if (occ.length === 1) fl.style.background = COL[occ[0] % COL.length];
-          else if (occ.length > 1) {
+          if (occ.length === 1) {
+            fl.style.background = COL[occ[0] % COL.length];
+            fl.style.color = COL[occ[0] % COL.length];
+          } else if (occ.length > 1) {
             var pct = 100 / occ.length;
             occ.forEach(function (seat, k) {
               var st = document.createElement('div'); st.className = 'st';
@@ -1343,11 +1348,23 @@
               fl.appendChild(st);
             });
           }
+          // Live climb (not banked yet) — ring the new floors
+          var meFloor = (curState.players[curState.current] &&
+            curState.players[curState.current].floor[s]) || 0;
+          var climbTo = curState.climbFloor[s] || 0;
+          if (curState.winner == null && climbTo >= f && meFloor < f &&
+              curState.climbing && curState.climbing.indexOf(s) !== -1) {
+            fl.classList.add('climb-ring');
+          }
         }
         stack.appendChild(fl);
       }
       var lab = document.createElement('div'); lab.className = 'ar-collab';
       lab.textContent = s + (curState.climbing.indexOf(s) !== -1 ? '▲' : '');
+      if (claimedBy !== undefined && claimedBy !== null) {
+        lab.style.color = COL[claimedBy % COL.length];
+        lab.style.fontWeight = '800';
+      }
       col.appendChild(stack); col.appendChild(lab);
       board.appendChild(col);
     }
