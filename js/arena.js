@@ -33,6 +33,8 @@
   // ── State ──
   var ws = null, youId = null, mySeat = null, curState = null, seats = null;
   var lobby = [], reconnectT = null, bustHideT = null, everConnected = false;
+  var reconnectAttempt = 0;
+  var intentionalClose = false;
 
   function setConn(on, text) {
     $('connDot').className = 'ar-dot' + (on ? ' on' : '');
@@ -40,25 +42,58 @@
   }
   function send(o) { try { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); } catch (e) {} }
 
-  // ── Connect / reconnect ──
+  // ── Connect / reconnect (exponential backoff — no thrash when offline) ──
   function connect() {
-    setConn(false, everConnected ? 'reconnecting…' : 'connecting…');
-    try { ws = new WebSocket(WS_URL); } catch (e) { scheduleReconnect(); return; }
+    if (reconnectT) { clearTimeout(reconnectT); reconnectT = null; }
+    // Close any half-open socket before opening another.
+    if (ws) {
+      try {
+        intentionalClose = true;
+        ws.onopen = ws.onmessage = ws.onclose = ws.onerror = null;
+        if (ws.readyState === 0 || ws.readyState === 1) ws.close();
+      } catch (e) {}
+      ws = null;
+      intentionalClose = false;
+    }
+    var host = WS_URL.replace(/^wss?:\/\//, '');
+    setConn(false, reconnectAttempt ? ('reconnecting in a moment… · ' + host) : ('connecting… · ' + host));
+    try { ws = new WebSocket(WS_URL); } catch (e) {
+      setConn(false, 'offline · bad server URL');
+      scheduleReconnect();
+      return;
+    }
     ws.onopen = function () {
       everConnected = true;
-      setConn(true, 'online · ' + WS_URL.replace(/^wss?:\/\//, ''));
-      send({ t: 'hello', alias: myAlias() });
+      reconnectAttempt = 0;
+      setConn(true, 'online · ' + host);
+      send({ t: 'hello', alias: myAlias() || 'Player' });
     };
     ws.onmessage = function (ev) {
       var m; try { m = JSON.parse(ev.data); } catch (e) { return; }
       handle(m);
     };
-    ws.onclose = function () { setConn(false, 'disconnected'); showLobby(); scheduleReconnect(); };
-    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+    ws.onclose = function (ev) {
+      if (intentionalClose) return;
+      var code = ev && ev.code;
+      var hint = everConnected ? 'disconnected' : 'server unreachable';
+      if (code === 1006 && !everConnected) hint = 'can\'t reach arena server';
+      setConn(false, hint + ' · ' + host);
+      // Stay on lobby; don't wipe mid-game UI if we only dropped for a second —
+      // but if we were in a game, showLobby after a real disconnect.
+      if (everConnected) {
+        try { if (!$('gameView').hidden) setStatus('Connection lost — reconnecting…', ''); } catch (e) {}
+      }
+      scheduleReconnect();
+    };
+    ws.onerror = function () { /* onclose will fire and schedule reconnect */ };
   }
   function scheduleReconnect() {
     if (reconnectT) return;
-    reconnectT = setTimeout(function () { reconnectT = null; connect(); }, 1800);
+    reconnectAttempt = Math.min(reconnectAttempt + 1, 8);
+    // 1.5s, 3s, 5s… up to ~20s
+    var delay = Math.min(20000, 1000 + reconnectAttempt * 1500);
+    setConn(false, 'retry in ' + Math.round(delay / 1000) + 's · ' + WS_URL.replace(/^wss?:\/\//, ''));
+    reconnectT = setTimeout(function () { reconnectT = null; connect(); }, delay);
   }
 
   // ── Message handling ──
