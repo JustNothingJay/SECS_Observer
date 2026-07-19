@@ -296,15 +296,29 @@
     // Prefer server lobby avatar when we know this person is online
     for (var i = 0; i < lobbyPlayers.length; i++) {
       var p = lobbyPlayers[i];
-      if (p && p.alias && String(p.alias).toLowerCase() === k && p.avatar) return p.avatar;
+      if (p && p.alias && String(p.alias).toLowerCase() === k &&
+          p.avatar && p.avatar !== '🙂') return p.avatar;
+    }
+    // Party members (table) when lobby list is stale
+    if (myParty && myParty.members) {
+      for (var j = 0; j < myParty.members.length; j++) {
+        var mm = myParty.members[j];
+        if (mm && mm.alias && String(mm.alias).toLowerCase() === k &&
+            mm.avatar && mm.avatar !== '🙂') return mm.avatar;
+      }
     }
     return '🙂';
   }
-  /** Avatar for a lobby/party member object (server field wins for others). */
+  /** Avatar for a lobby/party/game player object (server non-default wins, then local cache). */
   function avatarForPlayer(p) {
     if (!p) return '🙂';
-    if (p.avatar) return p.avatar;
-    return avatarFor(p.alias || p.name || '');
+    var name = p.alias || p.name || '';
+    var serverAv = p.avatar;
+    if (serverAv && serverAv !== '🙂' && serverAv !== '🤖') {
+      if (name) setAvatarFor(name, serverAv);
+      return serverAv;
+    }
+    return avatarFor(name);
   }
   function setAvatarFor(name, emoji) {
     var k = String(name || '').toLowerCase();
@@ -312,6 +326,34 @@
     var m = getAvatarMap();
     m[k] = emoji;
     setAvatarMap(m);
+  }
+  /** Remember faces from lobby / party snapshots so they show at the table and in-game. */
+  function learnAvatarsFromList(list) {
+    if (!list || !list.length) return;
+    for (var i = 0; i < list.length; i++) {
+      var p = list[i];
+      if (!p) continue;
+      var name = p.alias || p.name;
+      var av = p.avatar;
+      if (name && av && av !== '🙂' && av !== '🤖') setAvatarFor(name, av);
+    }
+  }
+  function ensureMyAvatarOnServer() {
+    var me = myAlias();
+    var want = avatarFor(me);
+    if (!me || !want || want === '🙂') return;
+    var have = null;
+    if (myParty && myParty.members) {
+      for (var i = 0; i < myParty.members.length; i++) {
+        if (myParty.members[i].id === youId) { have = myParty.members[i].avatar; break; }
+      }
+    }
+    if (!have) {
+      for (var j = 0; j < lobbyPlayers.length; j++) {
+        if (lobbyPlayers[j].id === youId) { have = lobbyPlayers[j].avatar; break; }
+      }
+    }
+    if (have !== want) send({ t: 'setAvatar', avatar: want });
   }
   function hasChosenAvatar(name) {
     var k = String(name || '').toLowerCase();
@@ -640,6 +682,8 @@
       case 'lobby':
         lobbyPlayers = m.players || [];
         lobbyParties = m.parties || [];
+        learnAvatarsFromList(lobbyPlayers);
+        lobbyParties.forEach(function (pp) { learnAvatarsFromList(pp.members); });
         // Keep myParty in sync if we're listed
         if (myParty) {
           var found = null;
@@ -648,11 +692,32 @@
           }
           myParty = found;
         }
+        ensureMyAvatarOnServer();
         renderLobby();
         break;
       case 'party':
         myParty = m.party;
+        if (myParty && myParty.members) learnAvatarsFromList(myParty.members);
+        ensureMyAvatarOnServer();
+        if (m.request && myParty && myParty.hostId === youId) {
+          var rq = m.request;
+          if (rq.type === 'bots') {
+            toast((rq.fromAlias || 'Guest') + ' asks for ' + rq.bots +
+              ' Rival' + (rq.bots === 1 ? '' : 's'), 'ok');
+          } else if (rq.type === 'start') {
+            toast((rq.fromAlias || 'Guest') + ' wants to start — accept to play', 'ok');
+          }
+        }
+        if (m.requestDeclined && myParty && myParty.hostId !== youId) {
+          toast((m.byAlias || 'Host') + ' said not yet', 'warn');
+        }
         renderLobby();
+        break;
+      case 'partyRequestSent':
+        if (m.msg) toast(m.msg, 'ok');
+        break;
+      case 'partyRequestResult':
+        if (m.msg) toast(m.msg, m.accept ? 'ok' : 'warn');
         break;
       case 'invited':
         showInvite(m);
@@ -862,6 +927,7 @@
     $('openActions').hidden = atTable;
     if (atTable) {
       var isHost = myParty.hostId === youId;
+      learnAvatarsFromList(myParty.members);
       var names = myParty.members.map(function (m) {
         var tag = m.id === myParty.hostId ? ' (host)' : '';
         var you = m.id === youId ? ' ★' : '';
@@ -877,14 +943,58 @@
       $('myTableMembers').innerHTML = names || '…';
       $('hostControls').hidden = !isHost;
       $('guestControls').hidden = isHost;
+      var reqBox = $('hostRequestBox');
+      var req = myParty.pendingRequest || null;
+      if (reqBox) {
+        if (isHost && req) {
+          reqBox.hidden = false;
+          var face = avatarHtml(req.fromAlias || '?', '', req.fromAvatar || avatarFor(req.fromAlias));
+          var line = face + ' <b>' + esc(req.fromAlias || 'Guest') + '</b> ';
+          if (req.type === 'bots') {
+            line += 'asks for <b>' + (req.bots | 0) + '</b> Rival' +
+              ((req.bots | 0) === 1 ? '' : 's');
+          } else {
+            line += 'wants to <b>start</b> (' + (myParty.bots | 0) + ' Rival' +
+              ((myParty.bots | 0) === 1 ? '' : 's') + ')';
+          }
+          if ($('hostRequestText')) $('hostRequestText').innerHTML = line;
+          reqBox.setAttribute('data-req-id', req.id || '');
+        } else {
+          reqBox.hidden = true;
+          reqBox.removeAttribute('data-req-id');
+        }
+      }
       if (isHost) {
         var bc = $('botCount');
         var maxBots = Math.max(0, 5 - myParty.members.length);
         // rebuild options if needed
         var want = String(Math.min(myParty.bots, maxBots));
         if (bc.value !== want) bc.value = want;
-        $('btnStart').disabled = myParty.members.length < 2;
+        // Host may start with 2+ humans, or 1 human + rivals
+        $('btnStart').disabled = myParty.members.length < 2 && myParty.bots < 1;
+      } else {
+        var sum = $('guestTableSummary');
+        if (sum) {
+          sum.textContent = 'Host sets the table · now ' + (myParty.bots | 0) +
+            ' Rival' + ((myParty.bots | 0) === 1 ? '' : 's') +
+            (req && req.fromId === youId
+              ? ' · waiting on host…'
+              : ' · ask below if you want a change');
+        }
+        var gba = $('guestBotAsk');
+        if (gba && !req) {
+          var gWant = String(Math.min(myParty.bots, Math.max(0, 5 - myParty.members.length)));
+          if (gba.value !== gWant) gba.value = gWant;
+        }
+        if ($('btnRequestBots')) $('btnRequestBots').disabled = !!(req && req.fromId === youId);
+        if ($('btnRequestStart')) {
+          $('btnRequestStart').disabled =
+            !!(req && req.fromId === youId) ||
+            (myParty.members.length < 2 && myParty.bots < 1);
+        }
       }
+    } else if ($('hostRequestBox')) {
+      $('hostRequestBox').hidden = true;
     }
 
     // Open parties list
@@ -917,7 +1027,12 @@
       btn.disabled = !!(myParty) || p.members.length >= 5;
       btn.onclick = function () {
         setErr('');
-        send({ t: 'joinParty', partyId: p.id });
+        // Carry face onto the table so host sees the right avatar immediately
+        send({
+          t: 'joinParty',
+          partyId: p.id,
+          avatar: avatarFor(myAlias())
+        });
       };
       li.appendChild(left);
       li.appendChild(btn);
@@ -1047,7 +1162,9 @@
       var d = document.createElement('div');
       d.className = 'ar-seat' + (i === curState.current ? ' cur' : '');
       var role = p.human ? roleForName(p.name) : null;
-      var face = p.human ? avatarHtml(p.name) : '<span class="ar-avatar" title="Rival">🤖</span>';
+      var face = p.human
+        ? avatarHtml(p.name, '', avatarForPlayer(p))
+        : '<span class="ar-avatar" title="Rival">🤖</span>';
       d.innerHTML =
         face +
         '<span class="ar-swatch" style="background:' + COL[i % COL.length] + '"></span>' +
@@ -1306,10 +1423,44 @@
     send({ t: 'startParty' });
   };
   $('botCount').onchange = function () {
+    // Host only — guests use Ask host
     if (myParty && myParty.hostId === youId) {
       send({ t: 'setPartyBots', bots: parseInt($('botCount').value, 10) || 0 });
     }
   };
+  if ($('btnRequestBots')) {
+    $('btnRequestBots').onclick = function () {
+      if (!myParty || myParty.hostId === youId) return;
+      setErr('');
+      var n = parseInt(($('guestBotAsk') && $('guestBotAsk').value) || '0', 10) || 0;
+      n = Math.max(0, Math.min(3, n));
+      send({ t: 'requestPartyBots', bots: n });
+      toast('Asked host for ' + n + ' Rival' + (n === 1 ? '' : 's'), 'ok');
+    };
+  }
+  if ($('btnRequestStart')) {
+    $('btnRequestStart').onclick = function () {
+      if (!myParty || myParty.hostId === youId) return;
+      setErr('');
+      send({ t: 'requestStart' });
+      toast('Asked host to start', 'ok');
+    };
+  }
+  function respondTableRequest(accept) {
+    if (!myParty || myParty.hostId !== youId || !myParty.pendingRequest) return;
+    setErr('');
+    send({
+      t: 'respondPartyRequest',
+      requestId: myParty.pendingRequest.id,
+      accept: !!accept
+    });
+  }
+  if ($('btnAcceptRequest')) {
+    $('btnAcceptRequest').onclick = function () { respondTableRequest(true); };
+  }
+  if ($('btnDeclineRequest')) {
+    $('btnDeclineRequest').onclick = function () { respondTableRequest(false); };
+  }
 
   $('btnRoll').onclick = function () {
     if (myTurn()) send({ t: 'action', action: 'roll' });
