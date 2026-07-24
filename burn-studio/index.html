@@ -3,9 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
-  <title>SECS Burn Studio (isolated)</title>
-  <meta name="description" content="Isolated laboratory: deterministic burn log, scrub, recompute, WebGL projection of fast and slow path. Not public nav.">
+  <title>SECS — Burn Studio</title>
+  <meta name="description" content="Deterministic burn log, scrub, recompute, and WebGL projection of fast and slow path. Same seed + same events ⇒ same hash.">
+  <link rel="canonical" href="https://secs.observer/burn-studio/">
+  <meta property="og:title" content="SECS — Burn Studio">
+  <meta property="og:description" content="Artifact-first collapse replay in the browser. GPU projects state; the log is truth.">
+  <meta property="og:url" content="https://secs.observer/burn-studio/">
   <link rel="stylesheet" href="css/burn-studio.css">
 </head>
 <body>
@@ -19,7 +22,7 @@
         </p>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <span class="badge iso">isolated · not in public nav</span>
+        <span class="badge iso">demo · browser-local</span>
         <span class="badge" id="status-badge">idle</span>
       </div>
     </header>
@@ -143,11 +146,12 @@
         </div>
 
         <div class="section">
-          <div class="section-title">Doctrine</div>
+          <div class="section-title">About</div>
           <p class="doctrine-note">
-            Isolated laboratory. See <code>DOCTRINE.md</code>.
-            Not connected to public nav. Sparks are identity-free digests.
-            Replay = recompute from artifacts — not a video.
+            Browser demo of the burn / collapse contract. Sparks are identity-free digests.
+            Replay recomputes from artifacts — not a video. See <code>DOCTRINE.md</code> for the formal rules.
+            This is not the live Fly gate; for admission use the
+            <a href="../terminal.html" style="color:#80c0a0">Sovereign Terminal</a>.
           </p>
         </div>
       </div>

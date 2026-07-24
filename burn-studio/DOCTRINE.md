@@ -1,7 +1,6 @@
-# Burn Studio — Doctrine (isolated)
+# Burn Studio — Doctrine
 
-**Status:** isolated laboratory surface. Not linked from public nav until promoted.  
-**Job:** make the formal object *visible* and *replayable* without soft-middle demos.
+**Job:** make the formal burn object *visible* and *replayable* without soft-middle demos.
 
 ## Non-negotiables (SECS standards)
 
@@ -35,8 +34,8 @@ chain(i)   = H(chain(i-1) || canonical(event_i))
 
 Seeking to time T uses the latest snapshot with `snap.seq <= target`, then folds forward. Snapshot must match recomputed hash or the burn is **corrupt** (hard fail).
 
-## Isolation
+## Scope
 
-- Lives under `/burn-studio/` only.
-- Must not mutate Sovereign runtime, terminal, or production nav until an explicit promote step.
-- May later *consume* sparks from terminal/game via the same event schema.
+- Lives under `/burn-studio/` on secs.observer.
+- Runs entirely in the browser; it does not mutate the live Sovereign runtime.
+- May consume sparks from terminal/game via the same event schema (`source: terminal|game`).

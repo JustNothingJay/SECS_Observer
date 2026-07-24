@@ -112,7 +112,7 @@ Defined in `js/includes.js` / `includes.min.js`:
 | Journal author | `journal-author.html` | Authoring helper (not primary nav) |
 | Compute demos | `dev-compute-visuals.html` | Public compute demos hub |
 | Propagation | `propagation.html` (+ v1/v2) | Field / heal visualisations |
-| Burn Studio | `burn-studio/` | Local burn pipeline UI (see its README) |
+| Burn Studio | `burn-studio/` | Public burn / collapse replay demo (browser-local) |
 | Origin | `origin.html` | Secondary narrative |
 | Apps | `apps.html` | Secondary listing |
 
@@ -188,7 +188,7 @@ SECS_Observer/
   assets/                Favicon, OG, architecture PNGs
   equation-c/            Public Equation (C) reproduce pack
   research.html          Paper index (PDFs on GitHub)
-  burn-studio/           Burn pipeline mini-app
+  burn-studio/           Burn / collapse replay demo
   governance/            Catalog, validators, traces (local/audit)
   draft/                 Working notes (not necessarily public)
   tools/                 Minify helpers
